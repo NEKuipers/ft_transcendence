@@ -34,7 +34,7 @@ services:
     restart: always
     environment:
       PGADMIN_DEFAULT_EMAIL:    ${PGADMIN_DEFAULT_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${POSTGRES_PASSWORD}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
       PGADMIN_PORT:             ${PGADMIN_PORT}
     volumes:
       - pgadmin:/var/lib/pgadmin
@@ -57,7 +57,7 @@ services:
       PGRST_DB_ANON_ROLE:             ${POSTGRES_USER} #In production this role should not be the same as the one used for the connection
       PGRST_OPENAPI_SERVER_PROXY_URI: http://127.0.0.1:${PGREST_PORT}
     ports:
-      - "${PGREST_PORT}:${PGREST_PORT}"
+      - "${PGREST_PORT}:3000"
     depends_on:
       - postgres
     networks:
@@ -71,7 +71,7 @@ services:
     environment:
       API_URL: http://localhost:${PGREST_PORT}/
     ports:
-      - "8080:8080"
+      - "${SWAGGER_UI_PORT}:8080"
     depends_on:
       - pgrest
     networks:
