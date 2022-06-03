@@ -7,6 +7,14 @@
 import { defineComponent } from 'vue';
 import HelloWorld from './components/HelloWorld.vue';
 
+/*
+fetch('http://localhost:3000/test')
+  .then(response => response.text())
+  .then((body) => {
+    console.log(body);
+  });
+*/
+
 export default defineComponent({
   name: 'App',
   components: {
