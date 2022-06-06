@@ -1,16 +1,22 @@
 <template>
   <div>
-    <nav>
-      <router-link to="/">Home</router-link> |
-      <router-link to="/login">Login</router-link> |
-      <router-link to="/pong">Pong</router-link> |
-      <router-link to="/chat">Chat</router-link> |
-      <router-link to="/users">Users</router-link> |
-      <router-link to="/about">About</router-link>
-    </nav>
-    <router-view/>
+    <NavBar></NavBar>
   </div>
 </template>
+
+<script lang="ts">
+
+import { defineComponent } from 'vue';
+import NavBar from './components/NavBar.vue';
+
+export default defineComponent({
+  name: 'App',
+  components: {
+    NavBar,
+  },
+});
+
+</script>
 
 <style>
 #app {

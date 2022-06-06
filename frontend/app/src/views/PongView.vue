@@ -1,5 +1,6 @@
 <template>
-  <div class="about">
-    <h1>Game goes here</h1>
+  <div class="game">
+    <h1>Let's play!</h1>
+    <img alt="Vue logo" src="../assets/pong-video-game.gif">
   </div>
 </template>
