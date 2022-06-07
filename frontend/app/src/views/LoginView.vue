@@ -1,6 +1,6 @@
 <template>
   <div class="login">
-    <h1>Login page goes here</h1>
+    <h1>Login with your Intra account to play!</h1>
     <header>
       <LoginComponent />
       <!-- <MyButton text="Just push this for vibes" color="red"/> -->
