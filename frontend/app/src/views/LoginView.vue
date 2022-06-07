@@ -3,7 +3,7 @@
     <h1>Login page goes here</h1>
     <header>
       <LoginComponent />
-      <MyButton text="Just push this for vibes" color="red"/>
+      <!-- <MyButton text="Just push this for vibes" color="red"/> -->
     </header>
   </div>
 </template>
@@ -19,7 +19,7 @@ export default {
   },
   components: {
     LoginComponent,
-    MyButton,
+    // MyButton,
   }
 }
 </script>

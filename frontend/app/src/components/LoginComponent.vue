@@ -38,6 +38,10 @@ export default {
 <style scoped>
 .add-form {
   margin-bottom: 40px;
+  border: 8px solid #2c3e50;
+  border-radius: 10px;
+  width: 500px;
+  display: inline-block;
 }
 .form-control {
   margin: 20px 0;
@@ -46,7 +50,7 @@ export default {
   display: block;
 }
 .form-control input {
-  width: 20%;
+  width: 30%;
   height: 40px;
   margin: 5px;
   padding: 3px 7px;
