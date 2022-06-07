@@ -16,7 +16,7 @@ from flask import (
 TOKEN_FILE_NAME = '.token'
 
 app             = Flask(__name__)
-port            = 5000
+port            = 5020
 redirect_uri    = 'http://localhost:{}/callback'.format(port)
 
 auth_state = secrets.token_urlsafe()
@@ -127,5 +127,5 @@ def auth_callback():
 
 
 if __name__ == '__main__':
-    port = int(os.environ.get('FLASK_PORT', 5000))
+    port = int(os.environ.get('FLASK_PORT', port))
     app.run(host='0.0.0.0', port=port)
