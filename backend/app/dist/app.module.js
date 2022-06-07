@@ -18,7 +18,7 @@ AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
             serve_static_1.ServeStaticModule.forRoot({
-                rootPath: (0, path_1.join)(__dirname, '..', '../frontend/dist'),
+                rootPath: (0, path_1.join)(__dirname, '..', '../../frontend/app/src'),
             }),
         ],
         controllers: [app_controller_1.AppController],
