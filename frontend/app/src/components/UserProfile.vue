@@ -11,16 +11,24 @@
         <h4>Games won: {{user.gamesWon}}</h4>
         <h4>Games lost: {{user.gamesLost}}</h4>
     </section>
+	<div v-if="user.id != '3'"> <!-- TODO change to login-id -->
+        <SmallButton class="user-btn" text="Message"></SmallButton>
+        <SmallButton class="user-btn" text="Invite to game"></SmallButton>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import SmallButton from '../components/SmallButton.vue'
 
 export default defineComponent({
 	name: 'UserProfile',
 	props: {
 		user: Object
+	},
+	components: {
+		SmallButton,
 	}
 });
 </script>
@@ -39,6 +47,11 @@ export default defineComponent({
 .game-stats h4 {
   padding: 0px;
   margin: 5px;
+}
+
+.user-btn {
+  margin-left: 5px;
+  margin-right: 5px;
 }
 
 </style>

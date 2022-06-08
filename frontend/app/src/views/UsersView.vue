@@ -3,10 +3,6 @@
     <div v-for="user in users" :key="user.id">
       <section class="profile">
         <UserProfile :user="user"></UserProfile>
-        <div v-if="user.id != 3"> <!-- change to login-id -->
-          <SmallButton class="user-btn" text="Message"></SmallButton>
-          <SmallButton class="user-btn" text="Invite to game"></SmallButton>
-        </div>
       </section>
     </div>
   </div>
@@ -32,7 +28,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import  UserProfile from '../components/UserProfile.vue';
-import SmallButton from '../components/SmallButton.vue';
 
 export default defineComponent({
   name: 'ProfileView',
@@ -48,11 +43,10 @@ export default defineComponent({
     fetch('http://localhost:3000/users/')
     .then(res => res.json())
     .then(data => this.users = data)
-    .catch(err => console.log(err));
+    .catch(err => console.log(err));    
   },
   components: {
-    UserProfile,
-    SmallButton
+    UserProfile
   },
   methods: {
 
@@ -62,17 +56,13 @@ export default defineComponent({
 </script>
 
 <style scoped>
+
 .profile {
   float:left;
   width: 25%;
   padding: 10px;
   box-sizing: border-box;
 
-}
-
-.user-btn {
-  margin-left: 5px;
-  margin-right: 5px;
 }
 
 </style>
