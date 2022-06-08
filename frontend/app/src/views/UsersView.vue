@@ -1,7 +1,7 @@
 <template>
   <div v-if="users">
     <div v-for="user in users" :key="user.id">
-      <section class="profile">
+      <section class="profileContainer">
         <UserProfile :user="user"></UserProfile>
       </section>
     </div>
@@ -57,12 +57,13 @@ export default defineComponent({
 
 <style scoped>
 
-.profile {
+.profileContainer {
   float:left;
-  width: 25%;
-  padding: 10px;
+  padding: 30px;
   box-sizing: border-box;
-
+  flex-wrap: wrap;
+  display: flex;
+  overflow-y: hidden;
 }
 
 </style>

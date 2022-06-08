@@ -1,10 +1,12 @@
 <template>
-  <div v-if="user">
-    <UserProfile :user="user"></UserProfile>
+  <div>
+    <div v-if="user">
+      <UserProfile :user="user"></UserProfile>
+    </div>
+    <div v-else>
+      <h2>User not found</h2>
+    </div> <!-- TODO add loading for user -->
   </div>
-  <div v-else>
-    <h2>User not found</h2>
-  </div> <!-- TODO add loading for user -->
 </template>
 
 <style>

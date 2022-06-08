@@ -3,7 +3,7 @@
     <img class="profilePicture" src="../assets/Profile-picture-default.png">
     <br>
     <section class="names">
-      <h1>{{user.userName}}</h1>
+      <h1 class="username"><a v-bind:href="'http://localhost:8080/profile/' + user.id">{{user.userName}}</a></h1>
       <h3>{{user.firstName}} {{user.lastName}}</h3>
     </section>
     <section class="game-stats">
@@ -39,6 +39,24 @@ export default defineComponent({
   margin-top: 0px;
 }
 
+a:link{
+	text-decoration: none;
+}
+
+.username {
+	margin-top: 3px;
+	font-size: 28px;
+	text-decoration: none;
+}
+
+.username:hover {
+	text-decoration: underline;
+}
+
+a:visited {
+  color: #2c3e50;
+}
+
 .game-stats {
   padding: 0px;
   margin: 0px;
@@ -53,5 +71,6 @@ export default defineComponent({
   margin-left: 5px;
   margin-right: 5px;
 }
+
 
 </style>
