@@ -1,7 +1,8 @@
 {
-	"jobs": [
-		{ "title": "Ninja UX Designer", "id": 1, "details": "lorem ipsum" },
-		{ "title": "Ninja Web Developer", "id": 2, "details": "lorem ipsum" },
-		{ "title": "Ninja Vue Developer", "id": 3, "details": "lorem ipsum" }
+	"users": [
+		{"firstName": "Jesse", "lastName": "van der Wolf", "userName": "jevan-de", "id": 3, "gamesPlayed": 8, "gamesWon": 2, "gamesLost": 6},
+		{"firstName": "Turlough", "lastName": "Mullan", "userName": "tmullan", "id": 2, "gamesPlayed": 3, "gamesWon": 2, "gamesLost": 1},
+		{"firstName": "Nick", "lastName": "Kuipers", "userName": "nkuipers", "id": 1, "gamesPlayed": 42, "gamesWon": 41, "gamesLost": 1},
+		{"firstName": "Jasper", "lastName": "Simonis", "userName": "jsimonis", "id": 4, "gamesPlayed": 100, "gamesWon": 50, "gamesLost": 50}
 	]
 }
