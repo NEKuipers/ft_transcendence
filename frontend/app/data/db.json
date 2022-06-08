@@ -1,8 +1,8 @@
 {
 	"users": [
-		{"firstName": "Jesse", "lastName": "van der Wolf", "userName": "jevan-de", "id": 3, "gamesPlayed": 8, "gamesWon": 2, "gamesLost": 6},
-		{"firstName": "Turlough", "lastName": "Mullan", "userName": "tmullan", "id": 2, "gamesPlayed": 3, "gamesWon": 2, "gamesLost": 1},
-		{"firstName": "Nick", "lastName": "Kuipers", "userName": "nkuipers", "id": 1, "gamesPlayed": 42, "gamesWon": 41, "gamesLost": 1},
-		{"firstName": "Jasper", "lastName": "Simonis", "userName": "jsimonis", "id": 4, "gamesPlayed": 100, "gamesWon": 50, "gamesLost": 50}
+		{"id": "1", "firstName": "Jesse", "lastName": "van der Wolf", "userName": "jevan-de", "gamesPlayed": 8, "gamesWon": 2, "gamesLost": 6},
+		{"id": "2", "firstName": "Turlough", "lastName": "Mullan", "userName": "tmullan", "gamesPlayed": 3, "gamesWon": 2, "gamesLost": 1},
+		{"id": "3", "firstName": "Nick", "lastName": "Kuipers", "userName": "nkuipers",  "gamesPlayed": 42, "gamesWon": 41, "gamesLost": 1},
+		{"id": "4", "firstName": "Jasper", "lastName": "Simonis", "userName": "jsimonis", "gamesPlayed": 100, "gamesWon": 50, "gamesLost": 50}
 	]
 }
