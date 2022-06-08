@@ -3,7 +3,7 @@
 			<div class="navbar">
 				<nav>
 					<router-link to="/">Home</router-link>
-					<router-link to="/login">Login</router-link>
+					<router-link to="/profile">Profile</router-link>
 					<router-link to="/pong">Pong</router-link>
 					<router-link to="/chat">Chat</router-link>
 					<router-link to="/users">Users</router-link>
