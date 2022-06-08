@@ -12,9 +12,9 @@
         <h4>Games lost: {{user.gamesLost}}</h4>
     </section>
 	<div v-if="user.id != '3'"> <!-- TODO change to login-id -->
-        <SmallButton class="user-btn" text="Message"></SmallButton>
-        <SmallButton class="user-btn" text="Invite to game"></SmallButton>
-    </div>
+		<SmallButton class="user-btn" text="Message"></SmallButton>
+		<SmallButton class="user-btn" text="Invite to game"></SmallButton>
+	</div><!-- TODO make this look better -->
   </div>
 </template>
 
