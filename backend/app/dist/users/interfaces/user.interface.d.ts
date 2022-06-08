@@ -6,4 +6,5 @@ export interface User {
     gamesPlayed: number;
     gamesWon: number;
     gamesLost: number;
+    profilePicture?: string;
 }

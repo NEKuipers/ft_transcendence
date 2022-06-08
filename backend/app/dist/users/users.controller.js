@@ -27,13 +27,13 @@ let UsersController = class UsersController {
         return this.usersService.findOne(id);
     }
     create(CreateUserDto) {
-        return 'User created';
+        return 'User creation not yet implemented';
     }
     delete(id) {
-        return `Deleted user ${id}`;
+        return 'User deletion not yet implemented';
     }
     update(updateUserDto, id) {
-        return (`Update ${id} - Username ${updateUserDto.userName}`);
+        return 'User edit not yet implemented';
     }
 };
 __decorate([
