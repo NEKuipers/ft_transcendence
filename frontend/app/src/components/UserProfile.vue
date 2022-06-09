@@ -16,7 +16,9 @@
 		<SmallButton class="user-btn" text="Invite to game"></SmallButton>
 	</div>
   <div v-else>
+    <router-link to="myprofile-edit">
 		<SmallButton class="user-btn" text="Edit profile"></SmallButton>
+    </router-link>
   </div>
   </div>
 </template>

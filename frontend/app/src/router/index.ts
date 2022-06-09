@@ -7,6 +7,7 @@ import ChatView from '@/views/ChatView.vue'
 import AboutView from '@/views/AboutView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 import MyProfileView from '@/views/MyProfileView.vue'
+import EditProfileView from '@/views/EditProfileView.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -23,6 +24,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/myprofile',
     name: 'myprofile',
     component: MyProfileView,
+  },
+  {
+    path: '/myprofile-edit',
+    name: 'myprofile-edit',
+    component: EditProfileView,
   },
   {
     path: '/pong',
