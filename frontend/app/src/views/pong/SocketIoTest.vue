@@ -1,6 +1,5 @@
 <template>
 	<div>
-		<p>TODO: Because the connect event is only fired once we actually connect, and we connect as soon as we load the home page, the event is not triggered, thus not setting the isConnected flag, startign on this page works fine though</p>
 		<p v-if="isConnected">We're connected to the server!</p>
 		<p v-else>Not connected to the server!</p>
 		<p>Message from server: "{{socketMessage}}"</p>
@@ -22,15 +21,14 @@ export default {
 
 	mounted() {
 		this.socket.on("connect", () => {
-			console.log("connect!")
+			console.log("connected to pong server!")
 			this.isConnected = true;
 		});
 		this.socket.on("disconnect", () => {
-			console.log("disconnect!")
+			console.log("disconnected from pong server!")
 			this.isConnected = false;
 		});
 		this.socket.on("customEmit", (data) => {
-			console.log("disconnect!")
 			this.socketMessage = data;
 		});
 	},
