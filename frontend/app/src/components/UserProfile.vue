@@ -14,7 +14,10 @@
 	<div v-if="user.id != '3'"> <!-- TODO change to login-id -->
 		<SmallButton class="user-btn" text="Message"></SmallButton>
 		<SmallButton class="user-btn" text="Invite to game"></SmallButton>
-	</div><!-- TODO make this look better -->
+	</div>
+  <div v-else>
+		<SmallButton class="user-btn" text="Edit profile"></SmallButton>
+  </div>
   </div>
 </template>
 

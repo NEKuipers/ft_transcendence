@@ -6,7 +6,7 @@ import UsersView from '@/views/UsersView.vue'
 import ChatView from '@/views/ChatView.vue'
 import AboutView from '@/views/AboutView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
-
+import MyProfileView from '@/views/MyProfileView.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -18,6 +18,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/profile/:id?',
     name: 'profile',
     component: ProfileView,
+  },
+  {
+    path: '/myprofile',
+    name: 'myprofile',
+    component: MyProfileView,
   },
   {
     path: '/pong',
