@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "socket.io-client": "^4.5.1",
+    "socketio": "^1.0.0",
+    "vue-3-socket.io": "^1.0.5"
+  }
+}
