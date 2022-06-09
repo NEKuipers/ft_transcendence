@@ -9,36 +9,39 @@
 </template>
 
 <script lang = "ts">
+import { io } from "socket.io-client";
 
 export default {
 	data() {
 		return {
+			socket: io(":4113"),
 			isConnected: false,
 			socketMessage: ''
 		}
 	},
 
-	sockets: {
-		connect: function () {
-			console.log('socket connected')	
-
+	mounted() {
+		this.socket.on("connect", () => {
+			console.log("connect!")
 			this.isConnected = true;
-		},
-		disconnect() {
-			console.log("socket disconnected!");
+		});
+		this.socket.on("disconnect", () => {
+			console.log("disconnect!")
 			this.isConnected = false;
-		},
-
-		customEmit: function (data) {
-			console.log("this method was fired by the socket server. eg: io.emit(\"customEmit\", {"+data+"})");
+		});
+		this.socket.on("customEmit", (data) => {
+			console.log("disconnect!")
 			this.socketMessage = data;
-		}
+		});
+	},
+
+	unmounted() {
+		this.socket.disconnect();
 	},
 
 	methods: {
-        pingServer: function (data) {
-            // $socket is socket.io-client instance
-            this.$socket.emit('message', "client data")
+        pingServer: function () {
+            this.socket.emit('message', "client data")
         }
     }
 }
