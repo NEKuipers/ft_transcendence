@@ -1,7 +1,8 @@
 <template>
   <div>
+	<h1>Edit profile</h1>
     <div v-if="user">
-      <UserProfile :user="user"></UserProfile>
+      <EditUserProfile :user="user"></EditUserProfile>
     </div>
     <div v-else>
       <h2>User not found</h2>
@@ -24,7 +25,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import  UserProfile from '../components/UserProfile.vue';
+import  EditUserProfile from '../components/EditUserProfile.vue';
 
 export default defineComponent({
   name: 'EditProfileView',
@@ -49,7 +50,7 @@ export default defineComponent({
     await this.loadUserData(g_login_id); //TODO this still works kind of weird, make sure page reloads     
   },
   components: {
-    UserProfile,
+    EditUserProfile,
   },
 });
 
