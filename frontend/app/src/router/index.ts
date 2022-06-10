@@ -8,6 +8,7 @@ import AboutView from '@/views/AboutView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 import MyProfileView from '@/views/MyProfileView.vue'
 import EditProfileView from '@/views/EditProfileView.vue'
+import LeaderboardView from '@/views/LeaderboardView.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -39,6 +40,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/users',
     name: 'users',
     component: UsersView,
+  },
+  {
+    path: '/leaderboard',
+    name: 'leaderboard',
+    component: LeaderboardView,
   },
   {
     path: '/chat',

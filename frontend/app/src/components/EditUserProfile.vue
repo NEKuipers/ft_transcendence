@@ -6,7 +6,6 @@
 	<v-dialog v-model="dialog">
 		<h1 class="username">{{user.userName}}</h1>
 	</v-dialog>
-      <h3>{{user.firstName}} {{user.lastName}}</h3>
     </section>
     <section class="game-stats">
         <h4>Games played: {{user.gamesPlayed}}</h4>

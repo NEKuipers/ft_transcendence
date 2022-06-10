@@ -6,19 +6,37 @@
     <div v-else>
       <h2>User not found</h2>
     </div> <!-- TODO add loading for user -->
+    <br>
+    <br>
+    <div class="row">
+    <div class="column">
+      Friends
+    </div>
+    <div class="column">
+      Achievements
+    </div>
+    <div class="column">
+      Blocked Users
+    </div>
+    </div>
   </div>
 </template>
 
-<style>
-.profilePicture {
-  background-repeat: no-repeat;
-  background-size: cover;
-  border-radius: 20%;
-  height: 200px;
-  width: 200px;
-  border: solid;
-  border-width: 3px;
+<style scoped>
+
+.column {
+  float: left;
+  width: 33.33%;
+  box-sizing: border-box;
 }
+
+.row:after {
+  content:"";
+  display: table;
+  clear:both;
+}
+
+
 
 </style>
 
@@ -52,5 +70,6 @@ export default defineComponent({
     UserProfile,
   },
 });
+
 
 </script>
