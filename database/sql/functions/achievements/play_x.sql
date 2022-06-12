@@ -3,10 +3,10 @@ RETURNS BOOLEAN
 LANGUAGE SQL
 AS
 $func$
-WITH _matches
+WITH match_history
 AS
 (
-   /* get all games as player 1 */
+    /* get all games as player 1 */
     SELECT u.id
     FROM users u
         INNER JOIN matches m
@@ -24,9 +24,9 @@ AS
 )
 SELECT
 CASE
-    WHEN (COUNT(_matches.id) = $2)
+    WHEN (COUNT(match_history.id) = $2)
     THEN TRUE
     ELSE FALSE
 END
-FROM _matches;
+FROM match_history;
 $func$;

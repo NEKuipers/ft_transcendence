@@ -7,7 +7,7 @@ RETURNS BOOLEAN
 LANGUAGE SQL
 AS
 $func$
-WITH _matches
+WITH match_history
 AS
 (
     /* get all games as player 1 */
@@ -42,7 +42,7 @@ CASE
     THEN TRUE
     ELSE FALSE
 END
-FROM _matches m1
+FROM match_history m1
 WHERE NOT EXISTS
 (
     /*
@@ -50,7 +50,7 @@ WHERE NOT EXISTS
     ** earlier start_time and a different winner_id exists.
     */
     SELECT *
-    FROM _matches m2
+    FROM match_history m2
     WHERE m1.winner_id <> m2.winner_id
         AND m2.start_time > m1.start_time
 )
