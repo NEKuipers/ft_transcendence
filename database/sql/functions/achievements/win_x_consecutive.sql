@@ -38,7 +38,7 @@ AS
 )
 SELECT
 CASE
-    WHEN (COUNT(m1.winner_id) > $2)
+    WHEN (COUNT(m1.winner_id) = $2)
     THEN TRUE
     ELSE FALSE
 END

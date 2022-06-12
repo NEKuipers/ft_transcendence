@@ -1,3 +1,5 @@
+USE transcendence;
+
 CREATE EXTENSION IF NOT EXISTS hstore;
 
 /*
@@ -23,7 +25,8 @@ DROP TABLE IF EXISTS public.two_factor_auth;
 CREATE TABLE public.two_factor_auth
 (
     id        BIGINT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    user_id   BIGINT REFERENCES public.users(id)
+    user_id   BIGINT REFERENCES public.users(id),
+    seed      VARCHAR(64)
 );
 
 /*
@@ -149,7 +152,7 @@ CREATE TABLE public.matches
     id          BIGINT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     player_one  BIGINT REFERENCES public.users(id),
     player_two  BIGINT REFERENCES public.users(id),
-    winner_id   BIGINT REFERENCES public.users(id),
+    winner_id   BIGINT REFERENCES public.users(id) CHECK (winner_id IN (player_one, player_two)),
     meta        HSTORE,
     options     HSTORE
 );

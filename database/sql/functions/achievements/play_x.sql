@@ -24,7 +24,7 @@ AS
 )
 SELECT
 CASE
-    WHEN (COUNT(_matches.id) > $2)
+    WHEN (COUNT(_matches.id) = $2)
     THEN TRUE
     ELSE FALSE
 END

@@ -1,9 +1,9 @@
 CREATE OR REPLACE FUNCTION fnc_achievement_exec(text)
 RETURNS SETOF RECORD
-LANGUAGE 'plpgsql'
+LANGUAGE PLPGSQL
 AS
-$BODY$
+$func$
 BEGIN
     RETURN QUERY EXECUTE $1;
 END
-$BODY$;
+$func$;
