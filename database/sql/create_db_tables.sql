@@ -1,5 +1,3 @@
-USE transcendence;
-
 CREATE EXTENSION IF NOT EXISTS hstore;
 
 /*

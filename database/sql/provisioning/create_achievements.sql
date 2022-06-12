@@ -1,5 +1,3 @@
-USE transcendence;
-
 TRUNCATE TABLE public.achievements RESTART IDENTITY CASCADE;
 
 INSERT INTO public.achievements(name, description, func_name, func_args)
