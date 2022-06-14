@@ -17,7 +17,8 @@ io.on("connection", (socket) => {
 
 	socket.on('message', (msg) => {
 		console.log("Got message:", msg)
-		io.emit('customEmit', `server: ${msg}`);
+		//io.emit('customEmit', `server: ${msg}`);	// This is broadcast
+		socket.emit('customEmit', `server: ${msg}`);
 	});
 
 	socket.on("disconnect", (reason) => {
