@@ -15,6 +15,13 @@ export default defineComponent({
 			type: String,
 			required: true
 		},
+		options: {
+			type: Object,
+			default() {
+				return {};	// Tbh i have NO CLUE how to set this as a property
+				//return {query:"yeets=hi", auth:{ token: "hii"} };
+			}
+		},
 		server_name: {
 			type: String,
 			default: "server"
@@ -23,7 +30,7 @@ export default defineComponent({
 
 	data() {
 		return {
-			socket: io(this.uri),
+			socket: io(this.uri as unknown as string, this.options as unknown as object),
 			isConnected: false,
 		}
 	},
