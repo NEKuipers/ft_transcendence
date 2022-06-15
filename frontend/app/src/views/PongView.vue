@@ -229,7 +229,11 @@ export default defineComponent({
 		let socket = (this.$refs.connection as typeof SocketIoConnection).socket as Socket;
 		this.socket = socket;
 		
+		socket.on("connect", () => {
+			this.draw_searching_for_players();
+		})
 		socket.on("disconnect", () => {
+			this.clear_canvas();
 			this.stop();
 		})
 		socket.on("match_start", (player: number) => {
@@ -320,19 +324,12 @@ export default defineComponent({
 
 				this.running = false;
 
-				// Clear the canvas
-				let canvas = this.canvas as HTMLCanvasElement;
-				let context = this.context as CanvasRenderingContext2D;
-				let width = canvas.width;
-				let height = canvas.height;
-				
-				context.fillStyle = "#000";
-				context.fillRect(0, 0, width, height);
-
 				let socket = this.socket as Socket;
 				this.ball?.rem_recv(socket);
 				this.p1?.rem_recv(socket);
 				this.p2?.rem_recv(socket);
+
+				this.draw_searching_for_players();
 			}
 		},
 
@@ -392,7 +389,7 @@ export default defineComponent({
 			return dir * dt * this.move_speed;
 		},
 
-		draw_game() {
+		clear_canvas() {
 			let context = this.context as CanvasRenderingContext2D;
 			let canvas = this.canvas as HTMLCanvasElement;
 			let width = canvas.width;
@@ -401,6 +398,30 @@ export default defineComponent({
 			// Clear the canvas
 			context.fillStyle = "#000";
 			context.fillRect(0, 0, width, height);
+		},
+
+		draw_searching_for_players() {
+			let context = this.context as CanvasRenderingContext2D;
+			let canvas = this.canvas as HTMLCanvasElement;
+			let width = canvas.width;
+			let height = canvas.height;
+
+			this.clear_canvas();
+
+			context.font = "50px serif";
+			context.fillStyle = "#fff";
+			context.textAlign = "center";
+			context.textBaseline = "alphabetic";
+			context.fillText("Searching for opponent", width / 2, height / 2);
+		},
+
+		draw_game() {
+			let context = this.context as CanvasRenderingContext2D;
+			let canvas = this.canvas as HTMLCanvasElement;
+			let width = canvas.width;
+			let height = canvas.height;
+
+			this.clear_canvas();
 
 			// Test: draw game
 			//context.fillStyle = "#aaa"
