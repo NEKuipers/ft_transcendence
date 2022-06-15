@@ -6,7 +6,9 @@ import UsersView from '@/views/UsersView.vue'
 import ChatView from '@/views/ChatView.vue'
 import AboutView from '@/views/AboutView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
-
+import MyProfileView from '@/views/MyProfileView.vue'
+import EditProfileView from '@/views/EditProfileView.vue'
+import LeaderboardView from '@/views/LeaderboardView.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -20,6 +22,16 @@ const routes: Array<RouteRecordRaw> = [
     component: ProfileView,
   },
   {
+    path: '/myprofile',
+    name: 'myprofile',
+    component: MyProfileView,
+  },
+  {
+    path: '/myprofile-edit',
+    name: 'myprofile-edit',
+    component: EditProfileView,
+  },
+  {
     path: '/pong',
     name: 'pong',
     component: PongView,
@@ -28,6 +40,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/users',
     name: 'users',
     component: UsersView,
+  },
+  {
+    path: '/leaderboard',
+    name: 'leaderboard',
+    component: LeaderboardView,
   },
   {
     path: '/chat',

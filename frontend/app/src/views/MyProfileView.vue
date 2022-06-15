@@ -1,34 +1,51 @@
 <template>
   <div>
-	<h1>Edit profile</h1>
     <div v-if="user">
-      <EditUserProfile :user="user"></EditUserProfile>
+      <UserProfile :user="user"></UserProfile>
     </div>
     <div v-else>
       <h2>User not found</h2>
     </div> <!-- TODO add loading for user -->
+    <br>
+    <br>
+    <div class="row">
+    <div class="column">
+      Friends
+    </div>
+    <div class="column">
+      Achievements
+    </div>
+    <div class="column">
+      Blocked Users
+    </div>
+    </div>
   </div>
 </template>
 
-<style>
-.profilePicture {
-  background-repeat: no-repeat;
-  background-size: cover;
-  border-radius: 20%;
-  height: 200px;
-  width: 200px;
-  border: solid;
-  border-width: 3px;
+<style scoped>
+
+.column {
+  float: left;
+  width: 33.33%;
+  box-sizing: border-box;
 }
+
+.row:after {
+  content:"";
+  display: table;
+  clear:both;
+}
+
+
 
 </style>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import  EditUserProfile from '../components/EditUserProfile.vue';
+import  UserProfile from '../components/UserProfile.vue';
 
 export default defineComponent({
-  name: 'EditProfileView',
+  name: 'MyProfileView',
   props: {
     },
     methods: {
@@ -50,8 +67,9 @@ export default defineComponent({
     await this.loadUserData(g_login_id); //TODO this still works kind of weird, make sure page reloads     
   },
   components: {
-    EditUserProfile,
+    UserProfile,
   },
 });
+
 
 </script>

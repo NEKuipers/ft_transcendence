@@ -3,22 +3,20 @@
     <img class="profilePicture" src="../assets/Profile-picture-default.png">
     <br>
     <section class="names">
-      <h1 class="username"><a v-bind:href="'http://localhost:8080/profile/' + user.id">{{user.userName}}</a></h1>
+	<v-dialog v-model="dialog">
+		<h1 class="username">{{user.userName}}</h1>
+	</v-dialog>
     </section>
     <section class="game-stats">
         <h4>Games played: {{user.gamesPlayed}}</h4>
         <h4>Games won: {{user.gamesWon}}</h4>
         <h4>Games lost: {{user.gamesLost}}</h4>
     </section>
-	<div v-if="user.id != '3'"> <!-- TODO change to login-id -->
-		<SmallButton class="user-btn" text="Message"></SmallButton>
-		<SmallButton class="user-btn" text="Invite to game"></SmallButton>
+	<div>
+		<router-link to="myprofile">
+			<SmallButton class="user-btn" text="Save profile" v-on:click="saveProfile()"/>
+		</router-link>
 	</div>
-  <div v-else>
-    <router-link to="myprofile-edit">
-		<SmallButton class="user-btn" text="Edit profile"></SmallButton>
-    </router-link>
-  </div>
   </div>
 </template>
 
@@ -27,12 +25,23 @@ import { defineComponent } from 'vue'
 import SmallButton from '../components/SmallButton.vue'
 
 export default defineComponent({
-	name: 'UserProfile',
+	name: 'EditUserProfile',
 	props: {
 		user: Object
 	},
 	components: {
 		SmallButton,
+	},
+	methods: {
+		saveProfile() {
+			//TODO Change edits here
+			alert("Profile saved.");
+		},
+	},
+	data () {
+		return {
+			newUserName: String,
+		}
 	}
 });
 </script>
@@ -53,9 +62,6 @@ a:link{
 	text-decoration: none;
 }
 
-.username:hover {
-	text-decoration: underline;
-}
 
 a:visited {
   color: #2c3e50;
