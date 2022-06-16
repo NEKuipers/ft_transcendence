@@ -1,7 +1,8 @@
 export class CreateUserDto {
-	readonly id: string;
+	readonly id: number;
 	userName: string;
 	gamesPlayed: number;
 	gamesWon: number;
 	gamesLost: number;
+	isLoggedIn: boolean;
 }

@@ -5,8 +5,8 @@ export declare class UsersController {
     private readonly usersService;
     constructor(usersService: UsersService);
     findAll(): User[];
-    findOne(id: any): User;
+    findOne(id: number): User;
     create(CreateUserDto: CreateUserDto): string;
     delete(id: any): string;
-    update(updateUserDto: CreateUserDto, id: any): string;
+    update(updateUserDto: CreateUserDto, id: number): string;
 }

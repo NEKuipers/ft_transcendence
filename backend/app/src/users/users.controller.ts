@@ -13,7 +13,7 @@ export class UsersController {
 	}
 
 	@Get(':id')
-	findOne(@Param('id') id): User { 
+	findOne(@Param('id') id: number): User { 
 		return this.usersService.findOne(id);
 	}
 
@@ -28,7 +28,7 @@ export class UsersController {
 		//return `Deleted user ${id}`;
 	}
 	@Patch(':id')
-	update(@Body() updateUserDto: CreateUserDto, @Param('id') id): string {
+	update(@Body() updateUserDto: CreateUserDto, @Param('id') id: number): string {
 		return 'User edit not yet implemented';
 		//return (`Update ${id} - Username ${updateUserDto.userName}`);
 	}

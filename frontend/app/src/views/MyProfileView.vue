@@ -36,8 +36,6 @@
   clear:both;
 }
 
-
-
 </style>
 
 <script lang="ts">

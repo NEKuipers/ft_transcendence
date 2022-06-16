@@ -1,8 +1,8 @@
 export interface User {
-    id: string;
+    readonly id: number;
     userName: string;
     gamesPlayed: number;
     gamesWon: number;
     gamesLost: number;
-    profilePicture?: string;
+    isLoggedIn: boolean;
 }
