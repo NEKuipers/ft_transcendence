@@ -6,21 +6,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AppModule = void 0;
+exports.MessagesModule = void 0;
 const common_1 = require("@nestjs/common");
-const app_controller_1 = require("./app.controller");
-const app_service_1 = require("./app.service");
-const users_module_1 = require("./users/users.module");
-const matches_module_1 = require("./matches/matches.module");
-const messages_module_1 = require("./messages/messages.module");
-let AppModule = class AppModule {
+const messages_service_1 = require("./messages.service");
+const messages_controller_1 = require("./messages.controller");
+let MessagesModule = class MessagesModule {
 };
-AppModule = __decorate([
+MessagesModule = __decorate([
     (0, common_1.Module)({
-        imports: [users_module_1.UsersModule, matches_module_1.MatchesModule, messages_module_1.MessagesModule],
-        controllers: [app_controller_1.AppController],
-        providers: [app_service_1.AppService],
+        providers: [messages_service_1.MessagesService],
+        controllers: [messages_controller_1.MessagesController]
     })
-], AppModule);
-exports.AppModule = AppModule;
-//# sourceMappingURL=app.module.js.map
+], MessagesModule);
+exports.MessagesModule = MessagesModule;
+//# sourceMappingURL=messages.module.js.map

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
 import { User } from './interfaces/user.interface';
@@ -27,7 +27,7 @@ export class UsersController {
 		return 'User deletion not yet implemented';
 		//return `Deleted user ${id}`;
 	}
-	@Put(':id')
+	@Patch(':id')
 	update(@Body() updateUserDto: CreateUserDto, @Param('id') id): string {
 		return 'User edit not yet implemented';
 		//return (`Update ${id} - Username ${updateUserDto.userName}`);
