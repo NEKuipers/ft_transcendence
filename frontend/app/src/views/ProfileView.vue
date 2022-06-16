@@ -7,12 +7,16 @@
       <h2>User not found</h2>
     </div> <!-- TODO add loading for user -->
     <br>
+    <br>
     <div class="row">
     <div class="column">
       Friends
     </div>
     <div class="column">
       Achievements
+    </div>
+    <div class="column">
+      {{ login.loggedInStatus }}
     </div>
     </div>
   </div>
@@ -31,7 +35,7 @@
 
 .column {
   float: right;
-  width: 50%;
+  width: 33.33%;
   box-sizing: border-box;
 }
 
@@ -47,6 +51,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import  UserProfile from '../components/UserProfile.vue';
+import { loginStatusStore } from '../stores/profileData'
+
 
 export default defineComponent({
   name: 'ProfileView',
@@ -64,10 +70,12 @@ export default defineComponent({
     return {
       selectedFile: null,
       user: null,
+      login: {}
     }
   },
   async mounted() {
     await this.loadUserData(this.$route.params.id[0]);     
+    this.login = loginStatusStore()
   },
   components: {
     UserProfile,
