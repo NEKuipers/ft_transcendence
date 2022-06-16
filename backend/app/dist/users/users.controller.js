@@ -64,7 +64,7 @@ __decorate([
     __metadata("design:returntype", String)
 ], UsersController.prototype, "delete", null);
 __decorate([
-    (0, common_1.Put)(':id'),
+    (0, common_1.Patch)(':id'),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
@@ -76,4 +76,4 @@ UsersController = __decorate([
     __metadata("design:paramtypes", [users_service_1.UsersService])
 ], UsersController);
 exports.UsersController = UsersController;
-//# sourceMappingURL=users.controller.js.map
+//# sourceMappingURL=Users.controller.js.map
