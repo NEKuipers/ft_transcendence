@@ -8,15 +8,15 @@ import { defineStore } from 'pinia'
 export const loginStatusStore = defineStore ({
     id: 'login',
     state: () => ({
-        loggedInStatus: 'Diocane'
+        loggedInStatus: false
     }),
     getters: {},
     actions: {
-        // logIn(): void {
-        //     this.loggedIn = 'Ora sium'   
-        // },
-        // logOut(): void {
-        //     this.loggedIn = 'Diocane'
-        // }
+        logIn(): void {
+            this.loggedInStatus = true   
+        },
+        logOut(): void {
+            this.loggedInStatus = false
+        }
     }
 })

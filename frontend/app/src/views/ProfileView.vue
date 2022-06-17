@@ -15,9 +15,9 @@
     <div class="column">
       Achievements
     </div>
-    <div class="column">
+    <!-- <div class="column">
       {{ login.loggedInStatus }}
-    </div>
+    </div> -->
     </div>
   </div>
 </template>
@@ -35,7 +35,7 @@
 
 .column {
   float: right;
-  width: 33.33%;
+  width: 50%;
   box-sizing: border-box;
 }
 

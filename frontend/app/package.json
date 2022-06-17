@@ -10,13 +10,12 @@
   "dependencies": {
     "core-js": "^3.8.3",
     "json-server": "^0.17.0",
+    "pinia": "^2.0.14",
     "socket.io-client": "^4.5.1",
     "vue": "^3.2.13",
-    "vue-router": "^4.0.3",
-    "vue-socket.io": "^3.0.10",
-    "pinia": "^2.0.14",
     "vue-advanced-chat": "https://github.com/antoine92190/vue-advanced-chat/tarball/next",
-    "vue-router": "^4.0.3"
+    "vue-router": "^4.0.3",
+    "vue-socket.io": "^3.0.10"
   },
   "devDependencies": {
     "@types/socket.io": "^3.0.2",
