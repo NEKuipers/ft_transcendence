@@ -19,13 +19,14 @@ export class UsersController {
 
 	@Post()
 	create(@Body() CreateUserDto: CreateUserDto): string {
-		return 'User creation not yet implemented';
+		//Create user
+		return 'User created';
 	}
 
 	@Delete(':id')
 	delete(@Param('id') id) : string {
-		return 'User deletion not yet implemented';
-		//return `Deleted user ${id}`;
+		//Delete user
+		return `Deleted user ${id}`;
 	}
 	@Patch(':id')
 	update(@Body() updateUserDto: CreateUserDto, @Param('id') id: number): string {

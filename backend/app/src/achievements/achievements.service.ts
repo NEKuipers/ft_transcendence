@@ -14,6 +14,7 @@ export class AchievementsService {
 	] //TODO collect from DB instead
 
 	findAll(): Achievement[] {
+		//http request -> postgress/achievemnents
 		return this.achievements;
 	}
 
