@@ -1,5 +1,9 @@
 # dependencies
 node_modules/
+dist/
+
+# assets
+src/avatars/assets/
 
 # IDE
 /.idea
@@ -14,6 +18,7 @@ packages/**/*.js
 
 # misc
 .DS_Store
+*/.DS_Store
 lerna-debug.log
 npm-debug.log
 yarn-error.log
@@ -34,5 +39,3 @@ yarn-error.log
 /packages/graphql
 /benchmarks/memory
 build/config\.gypi
-
-dist/
