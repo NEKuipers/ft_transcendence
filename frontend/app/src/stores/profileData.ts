@@ -8,7 +8,7 @@ import { defineStore } from 'pinia'
 export const loginStatusStore = defineStore ({
     id: 'login',
     state: () => ({
-        loggedInStatus: false
+        loggedInStatus: true // This should default to false but is true for testing.
     }),
     getters: {},
     actions: {

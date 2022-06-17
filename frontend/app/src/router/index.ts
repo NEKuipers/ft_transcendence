@@ -84,6 +84,9 @@ router.beforeEach((to) => {
   if (to.name !== 'login' && !loggedIn.loggedInStatus) {
     return('/login')
   }
+  if (to.name === 'login' && loggedIn.loggedInStatus) {
+    return('/')
+  }
 })
 
 

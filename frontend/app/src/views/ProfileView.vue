@@ -14,10 +14,8 @@
     </div>
     <div class="column">
       Achievements
+      <AchievementsList/>
     </div>
-    <!-- <div class="column">
-      {{ login.loggedInStatus }}
-    </div> -->
     </div>
   </div>
 </template>
@@ -50,8 +48,9 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import  UserProfile from '../components/UserProfile.vue';
 import { loginStatusStore } from '../stores/profileData'
+import  UserProfile from '../components/UserProfile.vue';
+import AchievementsList from '../components/AchievementsList.vue'
 
 
 export default defineComponent({
@@ -79,6 +78,7 @@ export default defineComponent({
   },
   components: {
     UserProfile,
+    AchievementsList,
   },
 });
 
