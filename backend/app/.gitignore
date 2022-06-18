@@ -3,7 +3,7 @@ node_modules/
 dist/
 
 # assets
-src/avatars/assets/
+src/avatars/assets/upload
 
 # IDE
 /.idea

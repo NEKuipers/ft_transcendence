@@ -3,7 +3,15 @@ import { Avatar } from './avatars.interface';
 
 @Injectable()
 export class AvatarsService {
-	avatars: Avatar[];
+	avatars: Avatar[] = [];
+
+	returnDefault(): string {
+		return `http://localhost:3000/avatars/assets/default.png`
+	}
+
+	setAvatar(file: Express.Multer.File) {
+		this.avatars.push({id: this.avatars.length + 1, file: file});
+	}
 
 	findAll(): Avatar[] {
 		return this.avatars;

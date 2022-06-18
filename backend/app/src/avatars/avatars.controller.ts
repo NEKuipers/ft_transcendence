@@ -19,10 +19,15 @@ export class AvatarsController {
 		return this.avatarsService.findOne(id);
 	}
 
+	@Get('default')
+	returnDefault(): string {
+		return this.avatarsService.returnDefault();
+	}
+
 	@Post('upload') //Might need to make this async?
-	@UseInterceptors(FileInterceptor('file', {dest:'./src/avatars/assets/'}))
+	@UseInterceptors(FileInterceptor('file', {dest:'./src/avatars/assets/upload'}))
 	uploadFile(@UploadedFile() file: Express.Multer.File): string {
-		console.log(file);
+		this.avatarsService.setAvatar(file);
 		return `${file.originalname} received`;
 	}
 }
