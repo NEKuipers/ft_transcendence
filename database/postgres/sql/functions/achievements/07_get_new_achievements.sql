@@ -19,6 +19,7 @@ achievements := ARRAY (
         FROM user_achievements ua
             INNER JOIN users u
                 ON ua.user_id = u.id
+                    AND ua.achievement_id = a.id
         WHERE u.id = user_id
     )
     AND f.achieved = TRUE
