@@ -10,15 +10,16 @@
     <br>
     <div class="row">
     <div class="column">
-      Friends
+      Achievements
     </div>
     <div class="column">
-      Achievements
+      Friends
     </div>
     <div class="column">
       Blocked Users
     </div>
     </div>
+    <AchievementsList class="column"/>
   </div>
 </template>
 
@@ -43,6 +44,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import  UserProfile from '../components/UserProfile.vue';
+import AchievementsList from '@/components/AchievementsList.vue';
 
 export default defineComponent({
   name: 'MyProfileView',
@@ -68,6 +70,7 @@ export default defineComponent({
   },
   components: {
     UserProfile,
+    AchievementsList,
   },
 });
 
