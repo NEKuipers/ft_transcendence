@@ -22,7 +22,6 @@
         {
           roomId: 1,
           roomName: 'Room 1',
-          avatar: 'assets/imgs/people.png',
           unreadCount: 4,
           index: 3,
           lastMessage: {
@@ -39,7 +38,6 @@
             {
               _id: 1234,
               username: 'John Doe',
-              avatar: 'assets/imgs/doe.png',
               status: {
                 state: 'online',
                 lastChanged: 'today, 14:30'
@@ -65,7 +63,6 @@
           content: 'Wanna play pong?',
           senderId: 1234,
           username: 'John Doe',
-          avatar: 'assets/imgs/doe.png',
           date: '13 November',
           timestamp: '10:20',
           system: false,
@@ -83,7 +80,6 @@
           content: 'No go away',
           senderId: 1235,
           username: 'John Doe',
-          avatar: 'assets/imgs/doe.png',
           date: '13 November',
           timestamp: '10:20',
           system: false,

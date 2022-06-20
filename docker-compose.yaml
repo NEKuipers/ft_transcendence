@@ -12,8 +12,9 @@ services:
 
   # https://hub.docker.com/_/postgres
   postgres:
-    container_name: postgres
-    image: postgres
+    build:
+      context: ./database/postgres
+      dockerfile: Dockerfile
     restart: always
     environment:
       POSTGRES_USER:      ${POSTGRES_USER}
