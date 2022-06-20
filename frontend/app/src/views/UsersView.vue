@@ -40,7 +40,7 @@ export default defineComponent({
     }
   },
   mounted() {
-    fetch('http://localhost:3000/users/')
+    fetch('api/users/')
     .then(res => res.json())
     .then(data => this.users = data)
     .catch(err => console.log(err));    

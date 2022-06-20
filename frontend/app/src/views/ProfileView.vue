@@ -59,7 +59,7 @@ export default defineComponent({
     },
     methods: {
       async loadUserData(id: string) {
-        fetch('http://localhost:3000/users/' + id)
+        fetch('api/users/' + id)
         .then(res => res.json())
         .then(data => this.user = data)
         .catch(err => console.log(err));

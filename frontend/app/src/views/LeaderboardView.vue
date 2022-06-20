@@ -26,7 +26,7 @@ export default defineComponent({
 	}
 	},
 	mounted() {
-	fetch('http://localhost:3000/users/')
+	fetch(`api/users/`)
 	.then(res => res.json())
 	.then(data => this.users = data.sort((a:any ,b:any) => b.gamesWon - a.gamesWon))
 	.catch(err => console.log(err));    
