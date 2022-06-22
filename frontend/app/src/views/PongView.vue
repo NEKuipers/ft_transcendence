@@ -111,6 +111,12 @@ class player extends rect {
 	owner: boolean;
 	score: number;
 
+	moved_since_last_send: boolean;
+
+	target_y: number;
+	last_y: number;
+	pr: number;
+
 	constructor(player_id: number, owner: boolean, name: string, x: number, y: number, size_x: number, size_y: number) {
 		super(x, y, size_x, size_y);
 
@@ -118,9 +124,15 @@ class player extends rect {
 		this.name = name;
 		this.owner = owner;
 		this.score = 0;
+		
+		this.moved_since_last_send = false;
+
+		this.target_y = y;
+		this.last_y = y;
+		this.pr = 0;
 	}
 
-	update(move_if_owner: number, game: rect, socket: Socket | undefined) {
+	update(move_if_owner: number, game: rect, socket: Socket | undefined, pr: number) {
 		if (this.owner) {
 			this.y += move_if_owner;
 
@@ -131,15 +143,27 @@ class player extends rect {
 				this.y = game.y + game.size_y - this.size_y;
 			}
 
-			if (socket && move_if_owner !== 0) {
+			if (move_if_owner !== 0) {
+				this.moved_since_last_send = true;
+			}
+
+			if (socket && this.moved_since_last_send) {
+				this.moved_since_last_send = false;
 				socket.emit("paddle:" + this.player_id, this.y);
 			}
+		} else {
+			this.pr += pr;
+			if (this.pr > 1) { this.pr = 1; }
+
+			this.y = this.last_y + (this.target_y - this.last_y) * this.pr;
 		}
 	}
 
 	add_recv(socket: Socket) {
 		socket.on("paddle:" + this.player_id, (pos_y) => {
-			this.y = pos_y;
+			this.pr = 0;
+			this.last_y = this.y;
+			this.target_y = pos_y;
 		})
 	}
 	rem_recv(socket: Socket) {
@@ -412,8 +436,13 @@ export default defineComponent({
 			let socket = this.socket as Socket;
 
 			let diff = this.get_local_player_move_offset(dt);
-			this.p1?.update(diff, this.game as rect, send ? socket : undefined);
-			this.p2?.update(diff, this.game as rect, send ? socket : undefined);
+			this.p1?.update(diff, this.game as rect, send ? socket : undefined, dt / (this.send_time / 1000));
+			this.p2?.update(diff, this.game as rect, send ? socket : undefined, dt / (this.send_time / 1000));
+
+			if ((this.p1 as player).owner) {
+				(this.p1 as player).y = this.p2?.y as number;
+				(this.p1 as player).moved_since_last_send = true;
+			}
 
 			let ball = this.ball as ball;
 			let winner = ball.update(dt, this.game as rect);
