@@ -145,44 +145,54 @@ class player extends rect {
 	}
 }
 
+class settings {
+	paddle_width: number;
+	paddle_height: number;
+	ball_size: number;
+	wall_offset: number;
+	move_speed: number;
+	ball_speed: number;
+	speed_increment: number;
+	bounce_strength: number;
+	border_size: number;
+
+	constructor(
+		paddle_width: number,
+		paddle_height: number,
+		ball_size: number,
+		wall_offset: number,
+		move_speed: number,
+		ball_speed: number,
+		speed_increment: number,
+		bounce_strength: number,
+		border_size: number)
+	{
+		this.paddle_width = paddle_width;
+		this.paddle_height = paddle_height;
+		this.ball_size = ball_size;
+		this.wall_offset = wall_offset;
+		this.move_speed = move_speed;
+		this.ball_speed = ball_speed;
+		this.speed_increment = speed_increment;
+		this.bounce_strength = bounce_strength;
+		this.border_size = border_size;
+	}
+}
+
 export default defineComponent({
 	props: {
-		paddle_width: {
-			type: Number,
-			default: 20
+		match_type: {
+			type: String,
+			default: "classic"
 		},
-		paddle_height: {
-			type: Number,
-			default: 60
+
+		// Game settings:
+		settings: {
+			type: settings,
+			default: new settings(20, 60, 20, 20, 400, 300, 1.05, 2, 20),
 		},
-		ball_size: {
-			type: Number,
-			default: 20
-		},
-		wall_offset: {
-			type: Number,
-			default: 20
-		},
-		move_speed: {
-			type: Number,
-			default: 400
-		},
-		ball_speed: {
-			type: Number,
-			default: 300
-		},
-		speed_increment: {
-			type: Number,
-			default: 1.05
-		},
-		bounce_strength: {
-			type: Number,
-			default: 2
-		},
-		border_size: {
-			type: Number,
-			default: 20
-		},
+
+		// Visual settings:
 		center_size: {
 			type: Number,
 			default: 10
@@ -226,10 +236,15 @@ export default defineComponent({
 	},
 
 	mounted() {
-		let socket = (this.$refs.connection as typeof SocketIoConnection).socket as Socket;
+		let connection = (this.$refs.connection as typeof SocketIoConnection);
+		connection.connect({});
+
+		let socket = connection.socket as Socket;
 		this.socket = socket;
 		
 		socket.on("connect", () => {
+			socket.emit("join_queue", "classic");
+			
 			this.draw_searching_for_players();
 		})
 		socket.on("disconnect", () => {
@@ -250,6 +265,8 @@ export default defineComponent({
 		})
 		socket.on("match_stop", () => {
 			this.stop();
+
+			socket.emit("join_queue", "classic");
 		})
 
 		let canvas =  this.$refs.canvas as HTMLCanvasElement;
@@ -257,7 +274,8 @@ export default defineComponent({
 
 		this.context = canvas.getContext("2d");
 
-		this.game = new rect(this.border_size - this.ball_size, this.border_size, canvas.width - (this.border_size - this.ball_size) * 2, canvas.height - this.border_size * 2);
+		let settings = this.settings;
+		this.game = new rect(settings.border_size - settings.ball_size, settings.border_size, canvas.width - (settings.border_size - settings.ball_size) * 2, canvas.height - settings.border_size * 2);
 	},
 
 	methods: {
@@ -279,33 +297,35 @@ export default defineComponent({
 				window.addEventListener("keydown", this.keydown);
 				window.addEventListener("keyup", this.keyup);
 
+				let settings = this.settings;
+
 				let canvas =  this.canvas as HTMLCanvasElement;
 				this.ball = new ball(
-					(canvas.width - this.ball_size) / 2,
-					(canvas.height - this.ball_size) / 2,
-					this.ball_size,
-					this.ball_size,
-					this.bounce_strength,
-					this.ball_speed,
-					this.ball_speed
+					(canvas.width - settings.ball_size) / 2,
+					(canvas.height - settings.ball_size) / 2,
+					settings.ball_size,
+					settings.ball_size,
+					settings.bounce_strength,
+					settings.ball_speed,
+					settings.ball_speed
 				);
 
 				this.p1 = new player(
 					1,
 					player_id == 1, 
-					this.wall_offset,
-					(canvas.height - this.paddle_height) / 2,
-					this.paddle_width,
-					this.paddle_height
+					settings.wall_offset,
+					(canvas.height - settings.paddle_height) / 2,
+					settings.paddle_width,
+					settings.paddle_height
 				);
 
 				this.p2 = new player(
 					2,
 					player_id == 2, 
-					canvas.width - this.wall_offset - this.paddle_width,
-					(canvas.height - this.paddle_height) / 2,
-					this.paddle_width,
-					this.paddle_height
+					canvas.width - settings.wall_offset - settings.paddle_width,
+					(canvas.height - settings.paddle_height) / 2,
+					settings.paddle_width,
+					settings.paddle_height
 				);
 
 				let socket = this.socket as Socket;
@@ -362,10 +382,12 @@ export default defineComponent({
 			let ball = this.ball as ball;
 			let winner = ball.update(dt, this.game as rect);
 
+			let settings = this.settings;
+
 			if (ball.vel_x > 0) {
-				ball.bounce(this.p2 as player, socket, this.speed_increment);
+				ball.bounce(this.p2 as player, socket, settings.speed_increment);
 			} else if (ball.vel_x < 0) {
-				ball.bounce(this.p1 as player, socket, this.speed_increment);
+				ball.bounce(this.p1 as player, socket, settings.speed_increment);
 			}
 
 			if (winner != 0 && winner != this.player && !this.has_lost) {
@@ -373,10 +395,10 @@ export default defineComponent({
 				socket.emit("loss");
 
 				let canvas = this.canvas as HTMLCanvasElement;
-				ball.x = (canvas.width - this.ball_size) / 2;
-				ball.y = (canvas.height - this.ball_size) / 2;
-				ball.vel_y = this.ball_speed;
-				ball.vel_x = ball.vel_x > 0 ? this.ball_speed : -this.ball_speed;
+				ball.x = (canvas.width - settings.ball_size) / 2;
+				ball.y = (canvas.height - settings.ball_size) / 2;
+				ball.vel_y = settings.ball_speed;
+				ball.vel_x = ball.vel_x > 0 ? settings.ball_speed : -settings.ball_speed;
 				ball.send(socket);
 			}			
 		},
@@ -386,7 +408,7 @@ export default defineComponent({
 			let down = this.keysPressed["KeyS"] || this.keysPressed["ArrowDown"];
 
 			let dir = (up ? -1 : 0) + (down ? 1 : 0);
-			return dir * dt * this.move_speed;
+			return dir * dt * this.settings.move_speed;
 		},
 
 		clear_canvas() {
@@ -420,6 +442,7 @@ export default defineComponent({
 			let canvas = this.canvas as HTMLCanvasElement;
 			let width = canvas.width;
 			let height = canvas.height;
+			let settings = this.settings;
 
 			this.clear_canvas();
 
@@ -429,8 +452,8 @@ export default defineComponent({
 
 			// Draw nice outline
 			context.strokeStyle = "#fff";
-			context.lineWidth = this.border_size / 4;
-			context.strokeRect(this.border_size / 2, this.border_size / 2, width - this.border_size, height - this.border_size);
+			context.lineWidth = settings.border_size / 4;
+			context.strokeRect(settings.border_size / 2, settings.border_size / 2, width - settings.border_size, height - settings.border_size);
 
 			// Draw players
 			context.fillStyle = "#fff";
@@ -441,8 +464,8 @@ export default defineComponent({
 			this.ball?.draw(context);
 
 			// Draw center
-			let start = this.border_size / 2;
-			let end = height - this.border_size / 2;
+			let start = settings.border_size / 2;
+			let end = height - settings.border_size / 2;
 			let step = (end - start) / (this.center_num_lines * 2 - 1) * 2;
 			for (var i = 0; i < this.center_num_lines; i += 1) {
 				context.fillRect((width - this.center_size) / 2, start + i * step, this.center_size, step / 2);
@@ -452,9 +475,9 @@ export default defineComponent({
 			context.font = "50px serif";
 			context.textBaseline = "top";
 			context.textAlign = "right";
-			context.fillText((this.p1 as player).score.toString(), (width - this.center_size - this.border_size) / 2, this.border_size);
+			context.fillText((this.p1 as player).score.toString(), (width - this.center_size - settings.border_size) / 2, settings.border_size);
 			context.textAlign = "left";
-			context.fillText((this.p2 as player).score.toString(), (width + this.center_size + this.border_size) / 2, this.border_size);
+			context.fillText((this.p2 as player).score.toString(), (width + this.center_size + settings.border_size) / 2, settings.border_size);
 		}
 	},
 })
