@@ -107,13 +107,15 @@ class ball extends rect {
 
 class player extends rect {
 	player_id: number;
+	name: string;
 	owner: boolean;
 	score: number;
 
-	constructor(player_id: number, owner: boolean, x: number, y: number, size_x: number, size_y: number) {
+	constructor(player_id: number, owner: boolean, name: string, x: number, y: number, size_x: number, size_y: number) {
 		super(x, y, size_x, size_y);
 
 		this.player_id = player_id;
+		this.name = name;
 		this.owner = owner;
 		this.score = 0;
 	}
@@ -198,7 +200,7 @@ export default defineComponent({
 			type: Number,
 			default: 10
 		},
-		
+
 		// Network settings
 		send_time: {
 			type: Number,
@@ -244,18 +246,16 @@ export default defineComponent({
 		this.socket = socket;
 		
 		socket.on("connect", () => {
-			socket.emit("join_queue", this.match_type);
-
-			this.draw_searching_for_players();
+			this.join_queue(this.match_type);
 		})
 		socket.on("disconnect", () => {
 			this.clear_canvas();
 			this.stop();
 		})
-		socket.on("match_start", (player: number, settings: settings) => {
+		socket.on("match_start", (player: number, settings: settings, player_1_name: string, player_2_name: string) => {
 			this.settings = settings;
 			this.game = new rect(settings.border_size - settings.ball_size, settings.border_size, canvas.width - (settings.border_size - settings.ball_size) * 2, canvas.height - settings.border_size * 2);
-			this.start(player);
+			this.start(player, player_1_name, player_2_name);
 		})
 		socket.on("match_winner", (player: number) => {
 			if (player === 1) {
@@ -266,10 +266,29 @@ export default defineComponent({
 
 			this.has_lost = false;
 		})
-		socket.on("match_stop", () => {
+		socket.on("match_stop", (winner: number) => {
 			this.stop();
 
-			socket.emit("join_queue", this.match_type);
+			if (winner === 0) {
+				this.draw_center_text("Its a tie!", 100);
+			} else {
+				if (this.player !== 0) {
+					if (this.player == winner) {
+						this.draw_center_text("You won!", 100);
+					} else {
+						this.draw_center_text("You lost!", 100);
+					}
+				} else {
+					// TODO: Draw names of winner
+					this.draw_center_text("Player " + winner + " won!", 100);
+				}
+			}
+			
+
+			// After 2.5 seconds, join the queue again
+			setTimeout(() => {
+				this.join_queue(this.match_type);
+			}, 2500);
 		})
 
 		let canvas =  this.$refs.canvas as HTMLCanvasElement;
@@ -288,7 +307,12 @@ export default defineComponent({
 			this.keysPressed[e.code] = false;
 		},
 
-		start(player_id: number) {
+		join_queue(queue: string) {
+			(this.socket as Socket).emit("join_queue", queue);
+			this.draw_searching_for_players();
+		},
+
+		start(player_id: number, player_1_name: string, player_2_name: string) {
 			if (!this.running) {
 				this.player = player_id;
 
@@ -313,6 +337,7 @@ export default defineComponent({
 				this.p1 = new player(
 					1,
 					player_id == 1, 
+					player_1_name,
 					settings.wall_offset,
 					(canvas.height - settings.paddle_height) / 2,
 					settings.paddle_width,
@@ -322,6 +347,7 @@ export default defineComponent({
 				this.p2 = new player(
 					2,
 					player_id == 2, 
+					player_2_name,
 					canvas.width - settings.wall_offset - settings.paddle_width,
 					(canvas.height - settings.paddle_height) / 2,
 					settings.paddle_width,
@@ -348,8 +374,6 @@ export default defineComponent({
 				this.ball?.rem_recv(socket);
 				this.p1?.rem_recv(socket);
 				this.p2?.rem_recv(socket);
-
-				this.draw_searching_for_players();
 			}
 		},
 
@@ -423,18 +447,24 @@ export default defineComponent({
 		},
 
 		draw_searching_for_players() {
+			this.clear_canvas();
+			this.draw_center_text("Searching for opponent", 50);
+		},
+
+		draw_center_text(text: string, size: number) {
 			let context = this.context as CanvasRenderingContext2D;
 			let canvas = this.canvas as HTMLCanvasElement;
 			let width = canvas.width;
 			let height = canvas.height;
 
-			this.clear_canvas();
-
-			context.font = "50px serif";
+			context.font = size + "px serif";
 			context.fillStyle = "#fff";
 			context.textAlign = "center";
 			context.textBaseline = "alphabetic";
-			context.fillText("Searching for opponent", width / 2, height / 2);
+			context.strokeStyle = "#000";
+			context.lineWidth = 15;
+			context.strokeText(text, width / 2, height / 2);
+			context.fillText(text, width / 2, height / 2);
 		},
 
 		draw_game() {
@@ -471,13 +501,20 @@ export default defineComponent({
 				context.fillRect((width - this.center_size) / 2, start + i * step, this.center_size, step / 2);
 			}
 
-			// Draw scores
+			// Draw scores & player names
 			context.font = "50px serif";
 			context.textBaseline = "top";
 			context.textAlign = "right";
 			context.fillText((this.p1 as player).score.toString(), (width - this.center_size - settings.border_size) / 2, settings.border_size);
 			context.textAlign = "left";
 			context.fillText((this.p2 as player).score.toString(), (width + this.center_size + settings.border_size) / 2, settings.border_size);
+
+			// Draw player names
+			context.font = "40px serif";
+			context.textAlign = "left";
+			context.fillText((this.p1 as player).name.toString(), settings.border_size, settings.border_size);
+			context.textAlign = "right";
+			context.fillText((this.p2 as player).name.toString(), (width - settings.border_size), settings.border_size);
 		}
 	},
 })

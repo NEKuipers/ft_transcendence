@@ -30,7 +30,7 @@ io.use((socket, next) => {
 	}
 
 	// TODO: Actually read username from auth token
-	socket.data.username = "insert generic name here";
+	socket.data.username = "player";
 	socket.data.userid = 0;
 	next();
 })
@@ -48,7 +48,7 @@ class Match {
 	room_name: string;
 	p1_score: number;
 	p2_score: number;
-	events: EventEmitter;
+	event: EventEmitter;
 
 	constructor(settings: pong_settings, p1: Socket, p2: Socket) {
 		p1.data.state = SocketState.InMatch;
@@ -59,7 +59,7 @@ class Match {
 		this.p2 = p2;
 		this.p1_score = 0;
 		this.p2_score = 0;
-		this.events = new EventEmitter();
+		this.event = new EventEmitter();
 
 		this.room_name = get_new_match_room_name();
 
@@ -67,8 +67,8 @@ class Match {
 		p1.join(this.room_name);
 		p2.join(this.room_name);
 
-		p1.emit("match_start", 1, settings);
-		p2.emit("match_start", 2, settings);
+		p1.emit("match_start", 1, settings, p1.data.username, p2.data.username);
+		p2.emit("match_start", 2, settings, p1.data.username, p2.data.username);
 
 		p1.on("disconnect", () => this.finish());
 		p2.on("disconnect", () => this.finish());
@@ -82,17 +82,34 @@ class Match {
 		p1.on("loss", () => {
 			this.p2_score += 1
 			io.to(this.room_name).emit("match_winner", 2)
+			this.event.emit("match_winner", 2)
 		});
 		p2.on("loss", () => {
 			this.p1_score += 1
 			io.to(this.room_name).emit("match_winner", 1)
+			this.event.emit("match_winner", 1)
+		});
+
+		this.event.on("match_winner", () => {
+			if (this.p1_score >= this.settings.rounds || this.p2_score >= this.settings.rounds) {
+				this.finish();
+			}
 		});
 	}
 
 	finish() {
-		// Make everyone leave the room
-		io.to(this.room_name).emit("match_stop");
+		// Decide winner
+		let winner : number;
+		if (this.p1.connected != this.p2.connected) {
+			winner = this.p1.connected ? 1 : 2;
+		} else if (this.p1_score != this.p2_score) {
+			winner = this.p1_score > this.p2_score ? 1 : 2;
+		} else {
+			// Guess its a tie
+			winner = 0;	
+		}
 
+		// Disconnect events
 		if (this.p1.connected) {
 			this.p1.data.state = SocketState.Menu;
 
@@ -109,8 +126,15 @@ class Match {
 			this.p2.removeAllListeners("loss");
 			this.p2.removeAllListeners("ball");
 		}
+		
+		// Send results
+		console.log("The winner is:", winner)
+		io.to(this.room_name).emit("match_stop", winner);
 
-		this.events.emit("match_stop");
+		// TODO: Send winner to database
+		// Location: POST /matches/???
+		// Also achievements?
+		this.event.emit("match_stop", winner);
 	}
 }
 
@@ -136,11 +160,9 @@ class MatchMaker {
 			let match = new Match(this.settings, p1, p2);	// Will set socket state to be in match
 
 			this.running_matches.push(match);
-			match.events.addListener("match-stop", () => {
+			match.event.addListener("match-stop", () => {
 				let index = this.running_matches.indexOf(match);
-				if (index >= 0) {
-					this.running_matches.splice(index, 1);
-				}
+				this.running_matches.splice(index, 1);
 			})
 		}
 	}
@@ -159,9 +181,9 @@ class MatchMaker {
 		this.matchmake();
 	}
 }
-let classic_matchmaker = new MatchMaker(new pong_settings(20, 60, 20, 20, 400, 300, 1, 1, 20, 9));
-let speedup_matchmaker = new MatchMaker(new pong_settings(20, 60, 20, 20, 400, 300, 1.05, 2, 20, 7));
-let rush_matchmaker = new MatchMaker(new pong_settings(20, 60, 20, 20, 550, 300, 1.1, 3, 20, 5));
+let classic_matchmaker = new MatchMaker(new pong_settings(20, 60, 20, 20, 400, 300, 1, 1, 20, 5));
+let speedup_matchmaker = new MatchMaker(new pong_settings(20, 60, 20, 20, 400, 300, 1.05, 2, 20, 4));
+let rush_matchmaker = new MatchMaker(new pong_settings(20, 60, 20, 20, 550, 300, 1.1, 3, 20, 3));
 let expert_matchmaker = new MatchMaker(new pong_settings(10, 20, 20, 20, 200, 300, 1.05, 3, 20, 5));
 
 io.on("connection", (socket) => {
