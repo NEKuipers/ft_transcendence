@@ -1,4 +1,4 @@
-import { createServer } from "http";
+import { request, createServer } from "http";
 import { Server, Socket } from "socket.io";
 
 import { EventEmitter } from 'events';
@@ -21,6 +21,32 @@ enum SocketState {
 	InMatch,
 }
 
+function post_db(path: string, data: object) {
+	let json_data = JSON.stringify(data);
+	console.log(`Sending request: ${json_data} to ${path}`)
+	let req = request({
+		hostname: 'localhost',
+		port: 3000,
+		path: path,
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			'Content-Length': json_data.length,
+		},
+	}, res => {
+		if (res.statusCode != 201) {	// 201 created
+			console.log(`Got statusCode for ${path}: ${res.statusCode}: ${res.headers}`)
+		}
+	});
+
+	req.on("error", error => {
+		console.error(`Got error doing request to: ${path}: ${error}`);
+	})
+
+	req.write(json_data);
+	req.end();
+}
+
 io.use((socket, next) => {
 	if (socket.handshake.auth.token !== "abcd") {	// TODO: Actually validate the auth token
 		const err = new Error("Bad auth token (TODO: currently only \"abcd\" is valid, make this actually check if the token is valid)!");
@@ -30,8 +56,8 @@ io.use((socket, next) => {
 	}
 
 	// TODO: Actually read username from auth token
+	socket.data.userid = 1;
 	socket.data.username = "player";
-	socket.data.userid = 0;
 	next();
 })
 
@@ -49,6 +75,7 @@ class Match {
 	p1_score: number;
 	p2_score: number;
 	event: EventEmitter;
+	start_time: number;
 
 	constructor(settings: pong_settings, p1: Socket, p2: Socket) {
 		p1.data.state = SocketState.InMatch;
@@ -60,6 +87,7 @@ class Match {
 		this.p1_score = 0;
 		this.p2_score = 0;
 		this.event = new EventEmitter();
+		this.start_time = Date.now();
 
 		this.room_name = get_new_match_room_name();
 
@@ -117,13 +145,18 @@ class Match {
 	finish() {
 		// Decide winner
 		let winner : number;
+		let winner_reason : string;
+
 		if (this.p1.connected != this.p2.connected) {
 			winner = this.p1.connected ? 1 : 2;
+			winner_reason = "disconnect";
 		} else if (this.p1_score != this.p2_score) {
 			winner = this.p1_score > this.p2_score ? 1 : 2;
+			winner_reason = "max-points-reached";
 		} else {
 			// Guess its a tie
-			winner = 0;	
+			winner = 0;
+			winner_reason = "tie";
 		}
 
 		// Disconnect events
@@ -152,6 +185,26 @@ class Match {
 		// Location: POST /matches/???
 		// Also achievements?
 		this.event.emit("match_stop", winner);
+
+		let winner_id : number;
+		if (winner != 0) {
+			winner_id = winner == 1 ? this.p1.data.userid : this.p2.data.userid;
+		} else {
+			winner_id = 0;
+		}
+
+		post_db("/matches", {
+			"player_one": this.p1.data.userid,
+			"player_two": this.p2.data.userid,
+			"winner_id": winner_id,
+			"start_time": new Date(this.start_time).toISOString(),
+			"end_time": new Date(Date.now()).toISOString(),
+			"p1_points": this.p1_score,
+			"p2_points": this.p2_score,
+			"reason": winner_reason,
+			"meta": "",
+			"options": ""
+		})
 	}
 }
 
