@@ -4,7 +4,6 @@
     <br>
     <section class="names">
       <h1 class="username"><a v-bind:href="'http://localhost:8080/profile/' + user.id">{{user.userName}}</a></h1>
-      <h3>{{user.firstName}} {{user.lastName}}</h3>
     </section>
     <section class="game-stats">
         <h4>Games played: {{user.gamesPlayed}}</h4>
@@ -14,7 +13,12 @@
 	<div v-if="user.id != '3'"> <!-- TODO change to login-id -->
 		<SmallButton class="user-btn" text="Message"></SmallButton>
 		<SmallButton class="user-btn" text="Invite to game"></SmallButton>
-	</div><!-- TODO make this look better -->
+	</div>
+  <div v-else>
+    <router-link to="myprofile-edit">
+		<SmallButton class="user-btn" text="Edit profile"></SmallButton>
+    </router-link>
+  </div>
   </div>
 </template>
 

@@ -3,10 +3,11 @@
 			<div class="navbar">
 				<nav>
 					<router-link to="/">Home</router-link>
-					<router-link to="/profile">Profile</router-link>
+					<router-link to="/myprofile">My Profile</router-link>
 					<router-link to="/pong">Pong</router-link>
 					<router-link to="/chat">Chat</router-link>
 					<router-link to="/users">Users</router-link>
+					<router-link to="/leaderboard">Leaderboard</router-link>
 					<router-link to="/about">About</router-link>
 					<h1 class="title">ft_transcendence</h1>
 				</nav>

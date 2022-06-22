@@ -1,7 +1,7 @@
-import { Controller, Get, Post, Put, Delete, Body, Param } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
+import { Controller, Get, Post, Patch, Delete, Body, Param } from '@nestjs/common';
+import { CreateUserDto } from './create-user.dto';
 import { UsersService } from './users.service';
-import { User } from './interfaces/user.interface';
+import { User } from './user.interface';
 
 @Controller('users')
 export class UsersController {
@@ -13,22 +13,23 @@ export class UsersController {
 	}
 
 	@Get(':id')
-	findOne(@Param('id') id): User { 
+	findOne(@Param('id') id: number): User { 
 		return this.usersService.findOne(id);
 	}
 
 	@Post()
 	create(@Body() CreateUserDto: CreateUserDto): string {
-		return 'User creation not yet implemented';
+		//Create user
+		return 'User created';
 	}
 
 	@Delete(':id')
 	delete(@Param('id') id) : string {
-		return 'User deletion not yet implemented';
-		//return `Deleted user ${id}`;
+		//Delete user
+		return `Deleted user ${id}`;
 	}
-	@Put(':id')
-	update(@Body() updateUserDto: CreateUserDto, @Param('id') id): string {
+	@Patch(':id')
+	update(@Body() updateUserDto: CreateUserDto, @Param('id') id: number): string {
 		return 'User edit not yet implemented';
 		//return (`Update ${id} - Username ${updateUserDto.userName}`);
 	}

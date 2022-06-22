@@ -6,10 +6,19 @@
     <div v-else>
       <h2>User not found</h2>
     </div> <!-- TODO add loading for user -->
+    <br>
+    <div class="row">
+    <div class="column">
+      Friends
+    </div>
+    <div class="column">
+      Achievements
+    </div>
+    </div>
   </div>
 </template>
 
-<style>
+<style scoped>
 .profilePicture {
   background-repeat: no-repeat;
   background-size: cover;
@@ -19,6 +28,19 @@
   border: solid;
   border-width: 3px;
 }
+
+.column {
+  float: right;
+  width: 50%;
+  box-sizing: border-box;
+}
+
+.row:after {
+  content:"";
+  display: table;
+  clear:both;
+}
+
 
 </style>
 
@@ -45,8 +67,7 @@ export default defineComponent({
     }
   },
   async mounted() {
-    let g_login_id = '3'; // This variable directs you to various profiles, need to fix
-    await this.loadUserData(this.$route.params.id[0] ? this.$route.params.id[0] : g_login_id); //TODO this still works kind of weird, make sure page reloads     
+    await this.loadUserData(this.$route.params.id[0]);     
   },
   components: {
     UserProfile,

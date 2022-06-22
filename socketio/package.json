@@ -1,7 +1,17 @@
 {
-  "dependencies": {
-    "json-server": "^0.17.0",
-    "socket.io": "^4.5.1",
-    "typescript": "^4.7.3"
-  }
+	"name": "socketio",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"json-server": "^0.17.0",
+		"socket.io": "^4.5.1",
+		"typescript": "^4.7.3"
+	}
 }
