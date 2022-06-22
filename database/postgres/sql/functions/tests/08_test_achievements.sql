@@ -217,3 +217,5 @@ BEGIN
     ASSERT achieved = TRUE, 'fnc_achievement_win_x_consecutive(' || user_id || ',' || x || ') ASSERT failed (x wins after loss)';
 END;
 $$;
+
+TRUNCATE TABLE public.users RESTART IDENTITY CASCADE;

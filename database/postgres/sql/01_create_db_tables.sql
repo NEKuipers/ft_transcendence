@@ -1,6 +1,54 @@
 CREATE EXTENSION IF NOT EXISTS hstore;
 
 /*
+** Custom types made queryable through ENUM type
+*/
+DROP TYPE IF EXISTS user_status;
+
+CREATE TYPE user_status AS ENUM
+(
+    'online',
+    'offline',
+    'ingame'
+);
+
+DROP TYPE IF EXISTS avatar_format;
+
+CREATE TYPE avatar_format AS ENUM
+(
+    'img/png',
+    'img/jpg'
+);
+
+DROP TYPE IF EXISTS friend_status;
+
+CREATE TYPE friend_status AS ENUM
+(
+    'send',
+    'declined',
+    'accepted'
+);
+
+DROP TYPE IF EXISTS channel_type;
+
+CREATE TYPE channel_type AS ENUM
+(
+    'public',
+    'private',
+    'protected',
+    'direct'
+);
+
+DROP TYPE IF EXISTS loose_reason;
+
+CREATE TYPE loose_reason AS ENUM
+(
+    'disconnect',
+    'out-of-time',
+    'max-points-reached'
+);
+
+/*
 ** The users table ...
 */
 DROP TABLE IF EXISTS public.users CASCADE;
@@ -9,7 +57,7 @@ CREATE TABLE public.users
 (
     id                              BIGINT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     username                        VARCHAR(256),
-    status                          TEXT CHECK (status IN ('online', 'offline', 'ingame')),
+    status                          USER_STATUS,
     oauth_refresh_token             VARCHAR(1024),
     oauth_token_expiration_time     TIMESTAMP,
     is_logged_in                    BOOL
@@ -43,7 +91,7 @@ CREATE TABLE public.avatars
   width   INT,
   height  INT,
   name    VARCHAR(256),
-  format  TEXT CHECK (format IN ('img/png', 'img/jpg'))
+  format  AVATAR_FORMAT
 );
 
 /*
@@ -59,7 +107,7 @@ CREATE TABLE public.friends
     id              BIGINT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     from_user_id    BIGINT REFERENCES public.users(id),
     to_user_id      BIGINT REFERENCES public.users(id),
-    status          TEXT CHECK (status IN ('send', 'declinded', 'accepted')),
+    status          FRIEND_STATUS,
     send_time       TIMESTAMP DEFAULT now(),
     response_time   TIMESTAMP
 );
@@ -73,7 +121,7 @@ CREATE TABLE public.channels
 (
     id            BIGINT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     name          VARCHAR(256),
-    type          TEXT CHECK (type IN ('public', 'private', 'protected', 'direct')),
+    type          CHANNEL_TYPE,
     owner_id      BIGINT REFERENCES public.users(id),
     is_closed     BOOL
 );
@@ -151,6 +199,11 @@ CREATE TABLE public.matches
     player_one  BIGINT REFERENCES public.users(id),
     player_two  BIGINT REFERENCES public.users(id),
     winner_id   BIGINT REFERENCES public.users(id) CHECK (winner_id IN (player_one, player_two)),
+    start_time  TIMESTAMP,
+    end_time    TIMESTAMP,
+    p1_points   INTEGER,
+    p2_points   INTEGER,
+    reason      LOOSE_REASON,
     meta        HSTORE,
     options     HSTORE
 );
