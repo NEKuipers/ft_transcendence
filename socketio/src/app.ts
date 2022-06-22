@@ -1,6 +1,11 @@
 import { createServer } from "http";
 import { Server, Socket } from "socket.io";
 
+import { EventEmitter } from 'events';
+
+import { settings as pong_settings } from './pong';
+
+
 const httpServer = createServer();
 const io = new Server(httpServer, {
 	cors: {
@@ -18,7 +23,7 @@ enum SocketState {
 
 io.use((socket, next) => {
 	if (socket.handshake.auth.token !== "abcd") {	// TODO: Actually validate the auth token
-		const err = new Error("Bad auth token!");
+		const err = new Error("Bad auth token (TODO: currently only \"abcd\" is valid, make this actually check if the token is valid)!");
 		err.stack = null;
 		next(err);
 		return;
@@ -36,21 +41,25 @@ function get_new_match_room_name(): string {
 	return "match:" + last_room_id;
 }
 
-class match {
+class Match {
+	settings: pong_settings;
 	p1: Socket;
 	p2: Socket;
 	room_name: string;
 	p1_score: number;
 	p2_score: number;
+	events: EventEmitter;
 
-	constructor(p1: Socket, p2: Socket) {
+	constructor(settings: pong_settings, p1: Socket, p2: Socket) {
 		p1.data.state = SocketState.InMatch;
 		p2.data.state = SocketState.InMatch;
 
+		this.settings = settings;
 		this.p1 = p1;
 		this.p2 = p2;
 		this.p1_score = 0;
 		this.p2_score = 0;
+		this.events = new EventEmitter();
 
 		this.room_name = get_new_match_room_name();
 
@@ -58,8 +67,8 @@ class match {
 		p1.join(this.room_name);
 		p2.join(this.room_name);
 
-		p1.emit("match_start", 1)
-		p2.emit("match_start", 2)
+		p1.emit("match_start", 1, settings);
+		p2.emit("match_start", 2, settings);
 
 		p1.on("disconnect", () => this.finish());
 		p2.on("disconnect", () => this.finish());
@@ -100,14 +109,20 @@ class match {
 			this.p2.removeAllListeners("loss");
 			this.p2.removeAllListeners("ball");
 		}
+
+		this.events.emit("match_stop");
 	}
 }
 
-class matchmaker {
+class MatchMaker {
+	settings: pong_settings;
 	waiting_for_game_connections : Array<Socket>;
+	running_matches : Array<Match>;
 
-	constructor() {
+	constructor(settings: pong_settings) {
+		this.settings = settings;
 		this.waiting_for_game_connections = new Array();
+		this.running_matches = new Array();
 	}
 
 	matchmake() {
@@ -117,8 +132,16 @@ class matchmaker {
 	
 			p1.removeAllListeners("disconnect");
 			p2.removeAllListeners("disconnect");
-	
-			new match(p1, p2);	// Will set socket state to be in match
+			
+			let match = new Match(this.settings, p1, p2);	// Will set socket state to be in match
+
+			this.running_matches.push(match);
+			match.events.addListener("match-stop", () => {
+				let index = this.running_matches.indexOf(match);
+				if (index >= 0) {
+					this.running_matches.splice(index, 1);
+				}
+			})
 		}
 	}
 
@@ -126,7 +149,7 @@ class matchmaker {
 		socket.data.state = SocketState.InQueue;
 
 		this.waiting_for_game_connections.push(socket);
-		socket.on("disconnect", (reason) => {
+		socket.on("disconnect", (_) => {
 			let index = this.waiting_for_game_connections.indexOf(socket);
 			if (index >= 0) {
 				this.waiting_for_game_connections.splice(index, 1);
@@ -136,8 +159,10 @@ class matchmaker {
 		this.matchmake();
 	}
 }
-let classic_matchmaker = new matchmaker();	// Classic game modes
-let random_matchmaker = new matchmaker();	// Randomized game mode
+let classic_matchmaker = new MatchMaker(new pong_settings(20, 60, 20, 20, 400, 300, 1, 1, 20, 9));
+let speedup_matchmaker = new MatchMaker(new pong_settings(20, 60, 20, 20, 400, 300, 1.05, 2, 20, 7));
+let rush_matchmaker = new MatchMaker(new pong_settings(20, 60, 20, 20, 550, 300, 1.1, 3, 20, 5));
+let expert_matchmaker = new MatchMaker(new pong_settings(10, 20, 20, 20, 200, 300, 1.05, 3, 20, 5));
 
 io.on("connection", (socket) => {
 	console.log("Got connection:", socket.id);
@@ -152,8 +177,16 @@ io.on("connection", (socket) => {
 
 		if (queue === "classic") {
 			classic_matchmaker.add_to_waiting_list(socket);
-		} else if (queue === "random") {
-			random_matchmaker.add_to_waiting_list(socket);
+		} else if (queue === "speedup") {
+			speedup_matchmaker.add_to_waiting_list(socket);
+		} else if (queue === "rush") {
+			rush_matchmaker.add_to_waiting_list(socket);
+		} else if (queue === "expert") {
+			expert_matchmaker.add_to_waiting_list(socket);
+		} else {
+			console.log("socket", socket.id, "tired to join a queue that does not exist:", queue);
+			socket.disconnect(true);
+			return;
 		}
 	})	
 });

@@ -155,6 +155,7 @@ class settings {
 	speed_increment: number;
 	bounce_strength: number;
 	border_size: number;
+	rounds: number;
 
 	constructor(
 		paddle_width: number,
@@ -165,7 +166,8 @@ class settings {
 		ball_speed: number,
 		speed_increment: number,
 		bounce_strength: number,
-		border_size: number)
+		border_size: number,
+		rounds: number)
 	{
 		this.paddle_width = paddle_width;
 		this.paddle_height = paddle_height;
@@ -176,6 +178,7 @@ class settings {
 		this.speed_increment = speed_increment;
 		this.bounce_strength = bounce_strength;
 		this.border_size = border_size;
+		this.rounds = rounds;
 	}
 }
 
@@ -183,16 +186,10 @@ export default defineComponent({
 	props: {
 		match_type: {
 			type: String,
-			default: "classic"
+			default: "rush"
 		},
 
-		// Game settings:
-		settings: {
-			type: settings,
-			default: new settings(20, 60, 20, 20, 400, 300, 1.05, 2, 20),
-		},
-
-		// Visual settings:
+		// Visual settings
 		center_size: {
 			type: Number,
 			default: 10
@@ -201,6 +198,8 @@ export default defineComponent({
 			type: Number,
 			default: 10
 		},
+		
+		// Network settings
 		send_time: {
 			type: Number,
 			default: 20
@@ -218,6 +217,8 @@ export default defineComponent({
 			canvas: null as HTMLCanvasElement | null,
 			context: null as CanvasRenderingContext2D | null,
 			socket: null as Socket | null,
+
+			settings: null as settings | null,
 
 			ball: null as ball | null,
 
@@ -243,15 +244,17 @@ export default defineComponent({
 		this.socket = socket;
 		
 		socket.on("connect", () => {
-			socket.emit("join_queue", "classic");
-			
+			socket.emit("join_queue", this.match_type);
+
 			this.draw_searching_for_players();
 		})
 		socket.on("disconnect", () => {
 			this.clear_canvas();
 			this.stop();
 		})
-		socket.on("match_start", (player: number) => {
+		socket.on("match_start", (player: number, settings: settings) => {
+			this.settings = settings;
+			this.game = new rect(settings.border_size - settings.ball_size, settings.border_size, canvas.width - (settings.border_size - settings.ball_size) * 2, canvas.height - settings.border_size * 2);
 			this.start(player);
 		})
 		socket.on("match_winner", (player: number) => {
@@ -266,16 +269,13 @@ export default defineComponent({
 		socket.on("match_stop", () => {
 			this.stop();
 
-			socket.emit("join_queue", "classic");
+			socket.emit("join_queue", this.match_type);
 		})
 
 		let canvas =  this.$refs.canvas as HTMLCanvasElement;
 		this.canvas = canvas;
 
 		this.context = canvas.getContext("2d");
-
-		let settings = this.settings;
-		this.game = new rect(settings.border_size - settings.ball_size, settings.border_size, canvas.width - (settings.border_size - settings.ball_size) * 2, canvas.height - settings.border_size * 2);
 	},
 
 	methods: {
@@ -297,7 +297,7 @@ export default defineComponent({
 				window.addEventListener("keydown", this.keydown);
 				window.addEventListener("keyup", this.keyup);
 
-				let settings = this.settings;
+				let settings = this.settings as settings;
 
 				let canvas =  this.canvas as HTMLCanvasElement;
 				this.ball = new ball(
@@ -382,7 +382,7 @@ export default defineComponent({
 			let ball = this.ball as ball;
 			let winner = ball.update(dt, this.game as rect);
 
-			let settings = this.settings;
+			let settings = this.settings as settings;
 
 			if (ball.vel_x > 0) {
 				ball.bounce(this.p2 as player, socket, settings.speed_increment);
@@ -408,7 +408,7 @@ export default defineComponent({
 			let down = this.keysPressed["KeyS"] || this.keysPressed["ArrowDown"];
 
 			let dir = (up ? -1 : 0) + (down ? 1 : 0);
-			return dir * dt * this.settings.move_speed;
+			return dir * dt * (this.settings as settings).move_speed;
 		},
 
 		clear_canvas() {
@@ -442,7 +442,7 @@ export default defineComponent({
 			let canvas = this.canvas as HTMLCanvasElement;
 			let width = canvas.width;
 			let height = canvas.height;
-			let settings = this.settings;
+			let settings = this.settings as settings;
 
 			this.clear_canvas();
 
