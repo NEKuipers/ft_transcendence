@@ -158,6 +158,8 @@ class settings {
 	bounce_strength: number;
 	border_size: number;
 	rounds: number;
+	width: number;
+	height: number;
 
 	constructor(
 		paddle_width: number,
@@ -169,7 +171,9 @@ class settings {
 		speed_increment: number,
 		bounce_strength: number,
 		border_size: number,
-		rounds: number)
+		rounds: number,
+		width: number,
+		height: number,)
 	{
 		this.paddle_width = paddle_width;
 		this.paddle_height = paddle_height;
@@ -181,6 +185,8 @@ class settings {
 		this.bounce_strength = bounce_strength;
 		this.border_size = border_size;
 		this.rounds = rounds;
+		this.width = width;
+		this.height = height;
 	}
 }
 
@@ -254,6 +260,11 @@ export default defineComponent({
 		})
 		socket.on("match_start", (player: number, settings: settings, player_1_name: string, player_2_name: string) => {
 			this.settings = settings;
+
+			let canvas =  this.canvas as HTMLCanvasElement;
+			canvas.width = settings.width;
+			canvas.height = settings.height;
+
 			this.game = new rect(settings.border_size - settings.ball_size, settings.border_size, canvas.width - (settings.border_size - settings.ball_size) * 2, canvas.height - settings.border_size * 2);
 			this.start(player, player_1_name, player_2_name);
 		})
@@ -267,6 +278,7 @@ export default defineComponent({
 			this.has_lost = false;
 		})
 		socket.on("match_stop", (winner: number) => {
+			this.draw_game();	// Draw the last score update too
 			this.stop();
 
 			if (winner === 0) {
@@ -330,8 +342,8 @@ export default defineComponent({
 					settings.ball_size,
 					settings.ball_size,
 					settings.bounce_strength,
-					settings.ball_speed,
-					settings.ball_speed
+					0,
+					0
 				);
 
 				this.p1 = new player(
@@ -417,13 +429,6 @@ export default defineComponent({
 			if (winner != 0 && winner != this.player && !this.has_lost) {
 				this.has_lost = true;
 				socket.emit("loss");
-
-				let canvas = this.canvas as HTMLCanvasElement;
-				ball.x = (canvas.width - settings.ball_size) / 2;
-				ball.y = (canvas.height - settings.ball_size) / 2;
-				ball.vel_y = settings.ball_speed;
-				ball.vel_x = ball.vel_x > 0 ? settings.ball_speed : -settings.ball_speed;
-				ball.send(socket);
 			}			
 		},
 

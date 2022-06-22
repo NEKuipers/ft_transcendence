@@ -9,6 +9,8 @@ export class settings {
 	bounce_strength: number;
 	border_size: number;
 	rounds: number;
+	width: number;
+	height: number;
 
 	constructor(
 		paddle_width: number,
@@ -20,7 +22,9 @@ export class settings {
 		speed_increment: number,
 		bounce_strength: number,
 		border_size: number,
-		rounds: number)
+		rounds: number,
+		width: number,
+		height: number,)
 	{
 		this.paddle_width = paddle_width;
 		this.paddle_height = paddle_height;
@@ -32,5 +36,7 @@ export class settings {
 		this.bounce_strength = bounce_strength;
 		this.border_size = border_size;
 		this.rounds = rounds;
+		this.width = width;
+		this.height = height;
 	}
 }

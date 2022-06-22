@@ -82,12 +82,16 @@ class Match {
 		p1.on("loss", () => {
 			this.p2_score += 1
 			io.to(this.room_name).emit("match_winner", 2)
-			this.event.emit("match_winner", 2)
+			this.event.emit("match_winner", 2);
+
+			this.reset_ball(true);
 		});
 		p2.on("loss", () => {
 			this.p1_score += 1
 			io.to(this.room_name).emit("match_winner", 1)
 			this.event.emit("match_winner", 1)
+
+			this.reset_ball(false);
 		});
 
 		this.event.on("match_winner", () => {
@@ -95,6 +99,19 @@ class Match {
 				this.finish();
 			}
 		});
+
+		this.reset_ball(true);
+	}
+
+	reset_ball(for_p1: boolean) {
+		let settings = this.settings;
+
+		io.to(this.room_name).emit("ball",
+			(settings.width - settings.ball_size) / 2,
+			(settings.height - settings.ball_size) / 2,
+			for_p1 ? -settings.ball_speed : settings.ball_speed,
+			settings.ball_speed
+		);
 	}
 
 	finish() {
@@ -181,10 +198,10 @@ class MatchMaker {
 		this.matchmake();
 	}
 }
-let classic_matchmaker = new MatchMaker(new pong_settings(20, 60, 20, 20, 400, 300, 1, 1, 20, 5));
-let speedup_matchmaker = new MatchMaker(new pong_settings(20, 60, 20, 20, 400, 300, 1.05, 2, 20, 4));
-let rush_matchmaker = new MatchMaker(new pong_settings(20, 60, 20, 20, 550, 300, 1.1, 3, 20, 3));
-let expert_matchmaker = new MatchMaker(new pong_settings(10, 20, 20, 20, 200, 300, 1.05, 3, 20, 5));
+let classic_matchmaker = new MatchMaker(new pong_settings(20, 60, 20, 20, 400, 300, 1, 1, 20, 5, 700, 400));
+let speedup_matchmaker = new MatchMaker(new pong_settings(20, 60, 20, 20, 400, 300, 1.05, 2, 20, 4, 700, 400));
+let rush_matchmaker = new MatchMaker(new pong_settings(20, 60, 20, 20, 550, 300, 1.1, 3, 20, 3, 700, 400));
+let expert_matchmaker = new MatchMaker(new pong_settings(10, 20, 20, 20, 200, 300, 1.05, 3, 20, 5, 700, 400));
 
 io.on("connection", (socket) => {
 	console.log("Got connection:", socket.id);
