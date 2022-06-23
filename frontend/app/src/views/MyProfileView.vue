@@ -10,15 +10,16 @@
     <br>
     <div class="row">
     <div class="column">
-      Friends
+      Achievements
     </div>
     <div class="column">
-      Achievements
+      Friends
     </div>
     <div class="column">
       Blocked Users
     </div>
     </div>
+    <AchievementsList class="column"/>
   </div>
 </template>
 
@@ -41,6 +42,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import  UserProfile from '../components/UserProfile.vue';
+import AchievementsList from '@/components/AchievementsList.vue';
 
 export default defineComponent({
   name: 'MyProfileView',
@@ -48,7 +50,7 @@ export default defineComponent({
     },
     methods: {
       async loadUserData(id: string) {
-        fetch('http://localhost:3000/users/' + id)
+        fetch('api/users/' + id)
         .then(res => res.json())
         .then(data => this.user = data)
         .catch(err => console.log(err));
@@ -66,6 +68,7 @@ export default defineComponent({
   },
   components: {
     UserProfile,
+    AchievementsList,
   },
 });
 

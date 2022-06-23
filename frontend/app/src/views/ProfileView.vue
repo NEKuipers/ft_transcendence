@@ -7,12 +7,14 @@
       <h2>User not found</h2>
     </div> <!-- TODO add loading for user -->
     <br>
+    <br>
     <div class="row">
     <div class="column">
       Friends
     </div>
     <div class="column">
       Achievements
+      <AchievementsList/>
     </div>
     </div>
   </div>
@@ -46,7 +48,10 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { loginStatusStore } from '../stores/profileData'
 import  UserProfile from '../components/UserProfile.vue';
+import AchievementsList from '../components/AchievementsList.vue'
+
 
 export default defineComponent({
   name: 'ProfileView',
@@ -54,7 +59,7 @@ export default defineComponent({
     },
     methods: {
       async loadUserData(id: string) {
-        fetch('http://localhost:3000/users/' + id)
+        fetch('api/users/' + id)
         .then(res => res.json())
         .then(data => this.user = data)
         .catch(err => console.log(err));
@@ -64,13 +69,16 @@ export default defineComponent({
     return {
       selectedFile: null,
       user: null,
+      login: {}
     }
   },
   async mounted() {
     await this.loadUserData(this.$route.params.id[0]);     
+    this.login = loginStatusStore()
   },
   components: {
     UserProfile,
+    AchievementsList,
   },
 });
 
