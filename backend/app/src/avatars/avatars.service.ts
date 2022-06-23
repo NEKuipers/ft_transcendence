@@ -6,7 +6,7 @@ export class AvatarsService {
 	avatars: Avatar[] = [];
 
 	returnDefault(): string {
-		return `http://localhost:3000/avatars/assets/default.png`
+		return `http://localhost:3030/avatars/assets/default.png`
 	}
 
 	setAvatar(file: Express.Multer.File) {

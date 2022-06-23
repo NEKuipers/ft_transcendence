@@ -8,8 +8,8 @@ them up at any imac at codam. However, i needed to use a --force flag at one poi
 to get past dependency errors we need to solve soon.
 
 Backend (NestJS API) currently contains a first controller for /users. 
-You can request all users by sending a GET request to http://localhost:3000/users,
-or a single user by sending a GET request to http://localhost:3000/users/[id].
+You can request all users by sending a GET request to http://localhost:3030/users,
+or a single user by sending a GET request to http://localhost:3030/users/[id].
 
 ## Postgres services
 The `docker-compose.yaml` file sets up the following services:
@@ -27,7 +27,7 @@ version 3.8 (docker-compose comes pre-installed with docker).
 #### environment
 The `docker-compose.yaml` file will require some environment variables. Make sure to create
 a file located next to the docker compose file with the name `.env`. Then add the below variables
-with corresponding values to it. For the port's I've already added the defaults.
+with corresponding values to it. For the ports I've already added the defaults.
 ```bash
 POSTGRES_USER=
 POSTGRES_PASSWORD=
@@ -41,11 +41,13 @@ PGADMIN_PORT=5050
 PGREST_PORT=3000
 
 SWAGGER_UI_PORT=8080
+
+NESTJS_PORT=3030
 ```
 
 #### pre-commit
-A special repo is added to the `.pre-commit-config.yaml` file to make sure the docker-compose file is
-valid and any shell scripts that support it are also. See rule:
+A special repo is added to the `.pre-commit-config.yaml` file to make sure the docker-compose file
+and any shell scripts supporting it are valid. See rule:
 ```yaml
 - repo: https://github.com/IamTheFij/docker-pre-commit
 ```
