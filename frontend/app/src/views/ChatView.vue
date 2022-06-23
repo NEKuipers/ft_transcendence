@@ -53,7 +53,6 @@
               }
             }
           ],
-          typingUsers: [ 4321 ]
         }
       ],
         messages: [
@@ -75,7 +74,7 @@
           disableReactions: false,
         },
         {
-          _id: 7890,
+          _id: 7891,
           indexId: 12092,
           content: 'No go away',
           senderId: 1235,
