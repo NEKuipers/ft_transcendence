@@ -3,7 +3,7 @@ CREATE EXTENSION IF NOT EXISTS hstore;
 /*
 ** Custom types made queryable through ENUM type
 */
-DROP TYPE IF EXISTS user_status;
+DROP TYPE IF EXISTS user_status CASCADE;
 
 CREATE TYPE user_status AS ENUM
 (
@@ -12,7 +12,7 @@ CREATE TYPE user_status AS ENUM
     'ingame'
 );
 
-DROP TYPE IF EXISTS avatar_format;
+DROP TYPE IF EXISTS avatar_format CASCADE;
 
 CREATE TYPE avatar_format AS ENUM
 (
@@ -20,7 +20,7 @@ CREATE TYPE avatar_format AS ENUM
     'img/jpg'
 );
 
-DROP TYPE IF EXISTS friend_status;
+DROP TYPE IF EXISTS friend_status CASCADE;
 
 CREATE TYPE friend_status AS ENUM
 (
@@ -29,7 +29,7 @@ CREATE TYPE friend_status AS ENUM
     'accepted'
 );
 
-DROP TYPE IF EXISTS channel_type;
+DROP TYPE IF EXISTS channel_type CASCADE;
 
 CREATE TYPE channel_type AS ENUM
 (
@@ -39,13 +39,31 @@ CREATE TYPE channel_type AS ENUM
     'direct'
 );
 
-DROP TYPE IF EXISTS loose_reason;
+DROP TYPE IF EXISTS loose_reason CASCADE;
 
 CREATE TYPE loose_reason AS ENUM
 (
     'disconnect',
     'out-of-time',
     'max-points-reached'
+);
+
+/*
+** The avatars table ...
+**
+** Following documentation shows how to retrieve images directly:
+** https://postgrest.org/en/stable/how-tos/providing-images-for-img.html?highlight=blob
+*/
+DROP TABLE IF EXISTS public.avatars CASCADE;
+
+CREATE TABLE public.avatars
+(
+  id      BIGINT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  img     BYTEA,
+  width   INT,
+  height  INT,
+  name    VARCHAR(256),
+  format  AVATAR_FORMAT
 );
 
 /*
@@ -58,6 +76,7 @@ CREATE TABLE public.users
     id                              BIGINT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     username                        VARCHAR(256),
     status                          USER_STATUS,
+    avatar_id                       BIGINT REFERENCES public.avatars(id) DEFAULT 1,
     oauth_refresh_token             VARCHAR(1024),
     oauth_token_expiration_time     TIMESTAMP,
     is_logged_in                    BOOL
@@ -73,25 +92,6 @@ CREATE TABLE public.two_factor_auth
     id        BIGINT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     user_id   BIGINT REFERENCES public.users(id),
     seed      VARCHAR(64)
-);
-
-/*
-** The avatars table ...
-**
-** Following documentation shows how to retrieve images directly:
-** https://postgrest.org/en/stable/how-tos/providing-images-for-img.html?highlight=blob
-*/
-DROP TABLE IF EXISTS public.avatars;
-
-CREATE TABLE public.avatars
-(
-  id      BIGINT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-  user_id BIGINT REFERENCES public.users(id),
-  img     BYTEA,
-  width   INT,
-  height  INT,
-  name    VARCHAR(256),
-  format  AVATAR_FORMAT
 );
 
 /*
@@ -239,4 +239,3 @@ CREATE TABLE public.user_achievements
     user_id         BIGINT REFERENCES public.users(id),
     achievement_id  INT REFERENCES public.achievements(id)
 );
-
