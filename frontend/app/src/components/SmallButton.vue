@@ -1,5 +1,5 @@
 <template>
-	<button @click="onClick()" :style="{background: color }" class="btn">{{text}}</button>
+	<button @click="onClick()"  class="btn">{{text}}</button>
 </template>
 
 <script>

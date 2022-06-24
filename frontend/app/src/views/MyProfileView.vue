@@ -42,7 +42,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import  UserProfile from '../components/UserProfile.vue';
-import AchievementsList from '@/components/AchievementsList.vue';
+import AchievementsList from '../components/AchievementsList.vue';
 
 export default defineComponent({
   name: 'MyProfileView',
