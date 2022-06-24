@@ -1,8 +1,8 @@
 <template>
   <div class="home">
-    <h1>You have to login</h1>
-    <img alt="pingpong" src="../assets/logo.png">
-    <hr>
+    <h1>Login required</h1>
+    <img height="300" width="300" alt="pingpong" src="../assets/atari-joystick.jpg">
+    <br>
     <button @click="OAuthLogin">Login to Intra</button>
   </div>
 </template>

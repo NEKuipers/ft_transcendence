@@ -29,7 +29,7 @@ import SmallButton from '../components/SmallButton.vue'
 export default defineComponent({
 	name: 'UserProfile',
 	props: {
-		user: Object
+		user: Object,
 	},
 	components: {
 		SmallButton,
