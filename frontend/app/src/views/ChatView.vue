@@ -11,6 +11,7 @@
 
 <script lang="ts">
   /*
+  should probably rearrange this later in a more logical way
   list of data requirements (fetch() calls) for this view:
   GET:
     - Users

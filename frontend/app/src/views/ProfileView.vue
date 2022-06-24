@@ -47,6 +47,37 @@
 </style>
 
 <script lang="ts">
+  /*
+  list of data requirements (fetch() calls) for this view:
+  GET:
+    - Users
+      * id
+      * username
+      * status?
+      * games played, wins, losses
+      * leaderboard position based on match history
+      * achievements won by this user
+    - Avatars
+      * id
+      * user_id
+      * img
+    - Friends
+      * list of friends, match friend with username
+    - Achievements
+      * list of achievements and if this user has them
+
+  POST:
+    - Blocked users (if you block someone on their profile)
+    - Friends (if you send a friend request)
+
+  PATCH:
+    - Friends (if you accept a friend request? figure this out soon)
+  
+  DELETE: 
+    - Friends (if you unfriend someone?)
+    - Blocked_users (if you unblock someone)
+    
+  */
 import { defineComponent } from 'vue';
 import { loginStatusStore } from '../stores/profileData'
 import  UserProfile from '../components/UserProfile.vue';
@@ -59,7 +90,7 @@ export default defineComponent({
     },
     methods: {
       async loadUserData(id: string) {
-        fetch('api/users/' + id)
+        fetch('/api/users/' + id)
         .then(res => res.json())
         .then(data => this.user = data)
         .catch(err => console.log(err));

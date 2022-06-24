@@ -12,8 +12,40 @@
 </template>
 
 <script lang="ts">
+  /*
+  list of data requirements (fetch() calls) for this view:
+  GET:
+    - Users
+		* id
+		* username
+		* status
+		* match history created via a database view
+	- Avatars
+		* id
+		* user_id
+		* img
+	
+  */
 import { defineComponent } from 'vue';
 import  ListedUser from '../components/ListedUser.vue';
+
+enum user_status {
+	online,
+	offline,
+	ingame
+}
+
+type User = {
+	readonly id: number;
+	userName: string;
+	status: user_status;
+	oauth_refresh_token: string;
+	oauth_token_expiration_timestamp: string;
+	gamesPlayed: number; //TODO remove this later on
+	gamesWon: number; //TODO remove this later on
+	gamesLost: number; //TODO remove this later on
+	isLoggedIn: boolean;
+}
 
 export default defineComponent({
 	name: 'ProfileView',
@@ -22,13 +54,13 @@ export default defineComponent({
 	data () {
 	return {
 		selectedFile: null,
-		users: null,
+		users: Object as () => User,
 	}
 	},
 	mounted() {
 	fetch(`api/users/`)
 	.then(res => res.json())
-	.then(data => this.users = data.sort((a:any ,b:any) => b.gamesWon - a.gamesWon))
+	.then(data => this.users = data.sort((a:User ,b:User) => b.gamesWon - a.gamesWon))
 	.catch(err => console.log(err));    
 	},
 	components: {

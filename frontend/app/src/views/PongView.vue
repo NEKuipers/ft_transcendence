@@ -7,7 +7,16 @@
 </template>
 
 <script lang="ts">
-
+/*
+ list of data requirements (fetch() calls) for this view:
+	GET:
+		Not entirely sure, usernames?
+	POST:
+		- Matches (at start of game)
+	
+	PATCH:
+		- Matches (at end of game)
+*/
 import SocketIoConnection from '../components/SocketIoConnection.vue';
 import { Socket } from "socket.io-client";
 import { defineComponent } from 'vue'
