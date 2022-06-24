@@ -11,6 +11,7 @@
         <h4>Games played: {{user.gamesPlayed}}</h4>
         <h4>Games won: {{user.gamesWon}}</h4>
         <h4>Games lost: {{user.gamesLost}}</h4>
+        <h4>Leaderboard position: </h4>
     </section>
 	<div v-if="user.id != '3'"> <!-- TODO change to login-id -->
 		<SmallButton class="user-btn" text="Message"></SmallButton>
