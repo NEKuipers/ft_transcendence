@@ -59,10 +59,10 @@ export default defineComponent({
     },
     methods: {
       async loadUserData(id: string) {
-        fetch('api/users/' + id)
+        fetch('/api/users/' + id)
         .then(res => res.json())
         .then(data => this.user = data)
-        .catch(err => console.log(err));
+        .catch(err => console.log('What is: ' + err));
       }
     },
   data () {

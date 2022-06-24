@@ -29,7 +29,9 @@ AppModule = __decorate([
     (0, common_1.Module)({
         imports: [config_1.ConfigModule.forRoot({
                 envFilePath: '../../.env',
-            }), users_module_1.UsersModule, matches_module_1.MatchesModule, messages_module_1.MessagesModule, participants_module_1.ParticipantsModule, two_factor_auth_module_1.TwoFactorAuthModule, channels_module_1.ChannelsModule, user_achievements_module_1.UserAchievementsModule, achievements_module_1.AchievementsModule, blocked_users_module_1.BlockedUsersModule, avatars_module_1.AvatarsModule, friends_module_1.FriendsModule, login_module_1.LoginModule],
+            }), users_module_1.UsersModule, matches_module_1.MatchesModule, messages_module_1.MessagesModule,
+            participants_module_1.ParticipantsModule, two_factor_auth_module_1.TwoFactorAuthModule, channels_module_1.ChannelsModule, user_achievements_module_1.UserAchievementsModule, achievements_module_1.AchievementsModule, blocked_users_module_1.BlockedUsersModule,
+            avatars_module_1.AvatarsModule, friends_module_1.FriendsModule, login_module_1.LoginModule],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
     })
