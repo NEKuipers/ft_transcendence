@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-// import { HttpModule, HttpService } from '@nestjs/axios';
+import { HttpModule } from '@nestjs/axios';
 import { LoginController } from './login.controller';
 import { LoginService } from './login.service';
 
 @Module({
-  // imports: [HttpModule, HttpService],
+  imports: [HttpModule],
   controllers: [LoginController],
   providers: [LoginService]
 })

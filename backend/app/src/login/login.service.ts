@@ -1,12 +1,26 @@
 import { Injectable } from '@nestjs/common';
-// import { HttpModule, HttpService } from '@nestjs/axios';
+import { HttpService } from '@nestjs/axios';
+import { Observable } from 'rxjs';
+import { AxiosResponse } from 'axios';
 
 @Injectable()
 export class LoginService {
-    // constructor(private readonly httpService: HttpService) {}
+    constructor(private readonly httpService: HttpService) {}
 
-    returnToken(): void {
-        const auth = 'https://api.intra.42.fr/oauth/authorize?'
-        // console.log(this.httpService.get('https://ecosia.com'))
+    returnToken(): Observable<AxiosResponse<any, any>> {
+        // const auth = 'https://api.intra.42.fr/oauth/authorize?'
+        // console.log('turboskrrrrrt' + this.httpService.get('https://ecosia.com'))
+        const res = this.httpService.get('https://api.intra.42.fr/oauth/authorize', {
+             params: {
+                client_id: process.env.CLIENT_ID,
+                redirect_uri: 'http://localhost:3030/callback',
+                scope: 'public',
+                state: 'auth_state',
+                response_type: 'code'
+            }})
+        // res.subscribe(
+        //     response => console.log(response)
+        // )
+        return res
     }
 }

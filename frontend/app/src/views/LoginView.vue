@@ -16,7 +16,7 @@ export default defineComponent({
   },
   methods: {
     OAuthLogin() {
-      fetch('api/login').then(data  => console.log(data.text()))
+      fetch('/api/login').then(res  => console.log(res.text()))
       
     }
   }
