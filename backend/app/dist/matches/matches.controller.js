@@ -16,7 +16,16 @@ let MatchesController = class MatchesController {
     constructor(matchesService) {
         this.matchesService = matchesService;
     }
+    findAll() {
+        return this.matchesService.findAll();
+    }
 };
+__decorate([
+    (0, common_1.Get)(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Array)
+], MatchesController.prototype, "findAll", null);
 MatchesController = __decorate([
     (0, common_1.Controller)('matches'),
     __metadata("design:paramtypes", [matches_service_1.MatchesService])

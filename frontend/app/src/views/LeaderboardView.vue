@@ -52,16 +52,16 @@ export default defineComponent({
 	props: {
 	},
 	data () {
-	return {
-		selectedFile: null,
-		users: Object as () => User,
-	}
+		return {
+			selectedFile: null,
+			users: Object as () => User,
+		}
 	},
 	mounted() {
-	fetch(`api/users/`)
-	.then(res => res.json())
-	.then(data => this.users = data.sort((a:User ,b:User) => b.gamesWon - a.gamesWon))
-	.catch(err => console.log(err));    
+		fetch(`api/users/`)
+		.then(res => res.json())
+		.then(data => this.users = data.sort((a:User ,b:User) => b.gamesWon - a.gamesWon))
+		.catch(err => console.log(err));    
 	},
 	components: {
 		ListedUser,

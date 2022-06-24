@@ -9,6 +9,31 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MatchesService = void 0;
 const common_1 = require("@nestjs/common");
 let MatchesService = class MatchesService {
+    constructor() {
+        this.matches = [
+            {
+                match_id: 42,
+                player_one: "nkuipers",
+                player_two: "tmullan",
+                mode: "Classic",
+            },
+            {
+                match_id: 45,
+                player_one: "jsimonis",
+                player_two: "mrpers",
+                mode: "HyperPong",
+            },
+            {
+                match_id: 46,
+                player_one: "jevan-de",
+                player_two: "cwinner",
+                mode: "Classic",
+            },
+        ];
+    }
+    findAll() {
+        return this.matches;
+    }
 };
 MatchesService = __decorate([
     (0, common_1.Injectable)()

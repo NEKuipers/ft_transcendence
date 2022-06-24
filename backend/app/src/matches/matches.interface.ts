@@ -6,3 +6,10 @@ export interface Match {
 	meta: Object;
 	options: Object;
 }
+
+export interface SpectateMatch {
+	readonly match_id: number;
+	player_one: string;
+	player_two: string;
+	mode: string;	
+}
