@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<h1>Select a game mode</h1>
+		<h1 id="title">Select a game mode</h1>
 		<div class="buttons">
 			<div class="button-with-explanation">
 				<router-link to="pong">
@@ -90,11 +90,13 @@ export default defineComponent({
 	padding: 30px;
 }
 
-
 .spectate {
 	margin:200px;
 }
 
+#title {
+	font-size: 50px;
+}
 .listed-game-ctr{
 	align-items: center;
 	margin: 0 auto 0 auto;

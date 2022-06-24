@@ -81,11 +81,11 @@ export default defineComponent({
 	border-left-width: 1px;
 	border-right-width: 1px;
 	width:80%;
-	background-color: #f3f3f3;
 }
 
 .leaderboardList {
 	border-bottom-width:1px;
+	margin: 0 auto 0 auto;
 	width:80%;
 }
 
