@@ -49,7 +49,7 @@ export default defineComponent({
 }
 
 .game-stats {
-	float:left;
+	float:center;
 	margin-left: 40px
 }
 

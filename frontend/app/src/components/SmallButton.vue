@@ -1,5 +1,5 @@
 <template>
-	<button @click="onClick()"  class="btn">{{text}}</button>
+	<button @click="onClick()"  class="small-button">{{text}}</button>
 </template>
 
 <script>
@@ -17,11 +17,19 @@ export default {
 }
 </script>
 
-<style scoped>
-.btn {
+<style>
+.small-button {
 	font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  margin-top: 0px;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	margin-top: 0px;
 }
+
+.small-button:hover{
+	background: #42b983;
+	color:#fff;
+	cursor: pointer;
+}
+
+
 </style>

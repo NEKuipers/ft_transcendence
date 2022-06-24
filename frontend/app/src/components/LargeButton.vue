@@ -1,5 +1,5 @@
 <template>
-	<button @click="onClick()" class="button" >{{text}}</button>
+	<button @click="onClick()" class="large-button" >{{text}}</button>
 </template>
 
 <script>
@@ -18,17 +18,21 @@ export default {
 </script>
 
 <style>
-.button{
+.large-button{
 	background-color: rgb(16, 25, 70);
 	color:#fff;
 	padding: 10px 15px;
 	border:none;
-	margin:20px;
+	margin:60px;
 	font-size: 42px;
+	border-radius: 16px;
+
 }
 
-.button:hover{
+.large-button:hover{
 	background: #42b983;
 	color:#fff;
+	cursor: pointer;
 }
+
 </style>
