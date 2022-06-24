@@ -30,6 +30,24 @@
 </template>
 
 <script lang="ts">
+  /*
+  list of data requirements (fetch() calls) for this view:
+  GET:
+    - Users
+      * id
+      * username
+    
+    - Avatars
+      * id
+      * user_id
+      * img
+  
+  POST:
+    - Avatars
+
+  PATCH:
+    - Users
+  */
 import { defineComponent } from 'vue'
 import LargeButton from '../components/LargeButton.vue'
 
