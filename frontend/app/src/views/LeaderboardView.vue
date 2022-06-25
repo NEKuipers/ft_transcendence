@@ -28,24 +28,7 @@
   */
 import { defineComponent } from 'vue';
 import  ListedUser from '../components/ListedUser.vue';
-
-enum user_status {
-	online,
-	offline,
-	ingame
-}
-
-type User = {
-	readonly id: number;
-	userName: string;
-	status: user_status;
-	oauth_refresh_token: string;
-	oauth_token_expiration_timestamp: string;
-	gamesPlayed: number; //TODO remove this later on
-	gamesWon: number; //TODO remove this later on
-	gamesLost: number; //TODO remove this later on
-	isLoggedIn: boolean;
-}
+import { User } from '../types/UserType'
 
 export default defineComponent({
 	name: 'ProfileView',

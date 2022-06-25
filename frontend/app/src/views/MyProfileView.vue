@@ -74,6 +74,7 @@
 import { defineComponent } from 'vue';
 import  UserProfile from '../components/UserProfile.vue';
 import AchievementsList from '../components/AchievementsList.vue';
+import { loginStatusStore } from '../stores/profileData';
 
 export default defineComponent({
   name: 'MyProfileView',
@@ -91,11 +92,13 @@ export default defineComponent({
     return {
       selectedFile: null,
       user: null,
+      login: {}
     }
   },
   async mounted() {
     let g_login_id = '3'; //TODO This variable directs you to various profiles, need to fix
-    await this.loadUserData(g_login_id); //TODO this still works kind of weird, make sure page reloads     
+    await this.loadUserData(g_login_id); //TODO this still works kind of weird, make sure page reloads
+    this.login = loginStatusStore()
   },
   components: {
     UserProfile,

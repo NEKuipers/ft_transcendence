@@ -3,7 +3,7 @@ import { Match, SpectateMatch } from './matches.interface';
 
 @Injectable()
 export class MatchesService {
-	matches: SpectateMatch[] =  [
+	ongoing_matches: SpectateMatch[] =  [
 		{
 			match_id: 42,
 			player_one: "nkuipers",
@@ -25,6 +25,17 @@ export class MatchesService {
 	];
 
 	findAll(): SpectateMatch[] {
-		return this.matches;
+		/*
+		This is where a GET request needs to be made to the database.
+		The response will replace the above placeholder variables.
+		*/
+		return this.ongoing_matches;
 	}
+
+	findOne(id: number): SpectateMatch {
+		return this.ongoing_matches.find(ongoing_matches => ongoing_matches.match_id == id);
+	}
+
+	
+
 }

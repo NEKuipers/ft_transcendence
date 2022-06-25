@@ -21,15 +21,6 @@
 </template>
 
 <style scoped>
-.profilePicture {
-  background-repeat: no-repeat;
-  background-size: cover;
-  border-radius: 20%;
-  height: 200px;
-  width: 200px;
-  border: solid;
-  border-width: 3px;
-}
 
 .column {
   float: right;
@@ -105,7 +96,7 @@ export default defineComponent({
   },
   async mounted() {
     await this.loadUserData(this.$route.params.id[0]);     
-    this.login = loginStatusStore()
+    this.login = loginStatusStore();
   },
   components: {
     UserProfile,

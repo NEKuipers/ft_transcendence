@@ -1,5 +1,6 @@
 import { SpectateMatch } from './matches.interface';
 export declare class MatchesService {
-    matches: SpectateMatch[];
+    ongoing_matches: SpectateMatch[];
     findAll(): SpectateMatch[];
+    findOne(id: number): SpectateMatch;
 }

@@ -10,7 +10,7 @@ exports.MatchesService = void 0;
 const common_1 = require("@nestjs/common");
 let MatchesService = class MatchesService {
     constructor() {
-        this.matches = [
+        this.ongoing_matches = [
             {
                 match_id: 42,
                 player_one: "nkuipers",
@@ -32,7 +32,10 @@ let MatchesService = class MatchesService {
         ];
     }
     findAll() {
-        return this.matches;
+        return this.ongoing_matches;
+    }
+    findOne(id) {
+        return this.ongoing_matches.find(ongoing_matches => ongoing_matches.match_id == id);
     }
 };
 MatchesService = __decorate([
