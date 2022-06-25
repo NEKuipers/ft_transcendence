@@ -1,5 +1,5 @@
 
-//For POST and PATCH requests at the start and end of pong games
+//DTO for POST and PATCH requests at the start and end of pong games
 export interface Match {
 	readonly id: number;
 	player_one: number;

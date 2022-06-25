@@ -19,14 +19,14 @@ export class MatchesController {
 	
 	//POST request at the start of a pong game
 	@Post()
-	create(): string {
-		return 'Match created';
+	create(@Body() match: Match): string {
+		return this.matchesService.createMatch(match);
 	}
 	
 	//PATCH request at the end of a pong game
 	@Patch(':id')
-	update() : string {
-		return 'Match updated';
+	update(@Param('id') id: number, @Body() match: Match) : string {
+		return this.matchesService.updateMatch(id, match);
 	}
 
 }

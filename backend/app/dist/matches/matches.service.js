@@ -37,6 +37,12 @@ let MatchesService = class MatchesService {
     findOne(id) {
         return this.ongoing_matches.find(ongoing_matches => ongoing_matches.match_id == id);
     }
+    createMatch(match) {
+        return "Match created";
+    }
+    updateMatch(id, match) {
+        return "Match updated";
+    }
 };
 MatchesService = __decorate([
     (0, common_1.Injectable)()

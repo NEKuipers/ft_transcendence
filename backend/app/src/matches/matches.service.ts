@@ -36,6 +36,14 @@ export class MatchesService {
 		return this.ongoing_matches.find(ongoing_matches => ongoing_matches.match_id == id);
 	}
 
-	
+	createMatch(match: Match) {
+		//send POST request to database
+		return "Match created";
+	}
+
+	updateMatch(id: number, match: Match) {
+		//update match by id with new match content
+		return "Match updated";
+	}
 
 }

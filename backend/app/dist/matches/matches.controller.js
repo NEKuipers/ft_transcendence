@@ -25,11 +25,11 @@ let MatchesController = class MatchesController {
     findOne(id) {
         return this.matchesService.findOne(id);
     }
-    create() {
-        return 'Match created';
+    create(match) {
+        return this.matchesService.createMatch(match);
     }
-    update() {
-        return 'Match updated';
+    update(id, match) {
+        return this.matchesService.updateMatch(id, match);
     }
 };
 __decorate([
@@ -47,14 +47,17 @@ __decorate([
 ], MatchesController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Post)(),
+    __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", String)
 ], MatchesController.prototype, "create", null);
 __decorate([
     (0, common_1.Patch)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Number, Object]),
     __metadata("design:returntype", String)
 ], MatchesController.prototype, "update", null);
 MatchesController = __decorate([
