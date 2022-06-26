@@ -12,6 +12,14 @@ CREATE TYPE user_status AS ENUM
     'ingame'
 );
 
+DROP TYPE IF EXISTS match_status CASCADE;
+
+CREATE TYPE match_status AS ENUM
+(
+    'ongoing',
+    'finished'
+);
+
 DROP TYPE IF EXISTS avatar_format CASCADE;
 
 CREATE TYPE avatar_format AS ENUM
@@ -108,7 +116,7 @@ CREATE TABLE public.friends
     from_user_id    BIGINT REFERENCES public.users(id),
     to_user_id      BIGINT REFERENCES public.users(id),
     status          FRIEND_STATUS,
-    send_time       TIMESTAMP DEFAULT now(),
+    send_time       TIMESTAMP DEFAULT NOW(),
     response_time   TIMESTAMP
 );
 
@@ -203,6 +211,7 @@ CREATE TABLE public.matches
     end_time    TIMESTAMP,
     p1_points   INTEGER,
     p2_points   INTEGER,
+    status      MATCH_STATUS,
     reason      LOOSE_REASON,
     meta        HSTORE,
     options     HSTORE
