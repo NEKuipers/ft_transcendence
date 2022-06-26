@@ -10,7 +10,7 @@ export interface Match {
 }
 
 //For GET requests in the select-game page
-export interface SpectateMatch {
+export interface OngoingMatch {
 	readonly match_id: number;
 	player_one: string;
 	player_two: string;

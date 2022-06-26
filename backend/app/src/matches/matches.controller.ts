@@ -1,19 +1,19 @@
 import { Controller, Get, Post, Patch, Delete, Body, Param } from '@nestjs/common';
 import { MatchesService } from './matches.service';
-import { SpectateMatch, Match } from './matches.interface';
+import {  OngoingMatch, Match } from './matches.interface';
 
 @Controller('matches')
 export class MatchesController {
 	constructor(private readonly matchesService: MatchesService) {}
 	
 	@Get()
-	findAll(): SpectateMatch[] {
+	findAll(): OngoingMatch[] {
 		return this.matchesService.findAll();
 	}
 
 	//idk if we even need this but I'm adding it just in case
 	@Get(':id')
-	findOne(@Param('id') id: number): SpectateMatch { 
+	findOne(@Param('id') id: number): OngoingMatch { 
 		return this.matchesService.findOne(id);
 	}
 	

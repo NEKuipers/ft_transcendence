@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { Match, SpectateMatch } from './matches.interface';
+import { Match, OngoingMatch } from './matches.interface';
 
 @Injectable()
 export class MatchesService {
-	ongoing_matches: SpectateMatch[] =  [
+	ongoing_matches: OngoingMatch[] =  [
 		{
 			match_id: 42,
 			player_one: "nkuipers",
@@ -24,7 +24,7 @@ export class MatchesService {
 		},
 	];
 
-	findAll(): SpectateMatch[] {
+	findAll(): OngoingMatch[] {
 		/*
 		This is where a GET request needs to be made to the database.
 		The response will replace the above placeholder variables.
@@ -32,7 +32,7 @@ export class MatchesService {
 		return this.ongoing_matches;
 	}
 
-	findOne(id: number): SpectateMatch {
+	findOne(id: number): OngoingMatch {
 		return this.ongoing_matches.find(ongoing_matches => ongoing_matches.match_id == id);
 	}
 
