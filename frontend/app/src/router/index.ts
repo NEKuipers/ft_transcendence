@@ -70,7 +70,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/login',
     name: 'login',
     component: LoginView,
-  }
+  },
+  {
+    path: '/intraAuth',
+    redirect: 'https://api.intra.42.fr/oauth/authorize'
+  },
 ]
 
 const router = createRouter({

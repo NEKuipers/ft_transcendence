@@ -16,9 +16,28 @@ export default defineComponent({
   },
   methods: {
     OAuthLogin() {
-      fetch('/api/login').then(res  => console.log(res.text()))
+      let bruh: string
+      fetch('/api/login')
+      .then(res => res.text())
+      .then(data => {console.log('Come one man'); window.location.href = data})
+      .catch(error => {
+        console.log(error)
+        bruh = 'https://boia.de'
+      })
+      // const client_id = process.env.VUE_APP_CLIENTID
+      // console.log('client id is: ' + client_id)
+      // window.location.href = bruh
+      // window.location.href = 'https://api.intra.42.fr/oauth/authorize?client_id=' + process.env.CLIENT_ID 
+      //   + '&redirect_uri=' + 'http://localhost:3030/callback' + '&scope=public&state=authstate&response_type=code'
+      // this.$router.push({name: 'intraAuth', params: {
+      //   client_id: process.env.CLIENT_ID,
+      //   redirect_uri: 'http://localhost:3030/callback',
+      //   scope: 'public',
+      //   state: 'auth_state',
+      //   response_type: 'code'
+      // }})
       
     }
-  }
+  },
 });
 </script>
