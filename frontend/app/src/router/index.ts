@@ -11,6 +11,7 @@ import NotFoundView from '@/views/NotFoundView.vue'
 import MyProfileView from '@/views/MyProfileView.vue'
 import EditProfileView from '@/views/EditProfileView.vue'
 import LeaderboardView from '@/views/LeaderboardView.vue'
+import GameSelectView from '@/views/GameSelectView.vue'
 
 
 
@@ -40,6 +41,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/pong',
     name: 'pong',
     component: PongView,
+  },
+  {
+    path: '/select-game',
+    name: 'select-game',
+    component: GameSelectView,
   },
   {
     path: '/users',

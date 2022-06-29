@@ -10,6 +10,56 @@
 </template>
 
 <script lang="ts">
+  /*
+  should probably rearrange this later in a more logical way
+  list of data requirements (fetch() calls) for this view:
+  GET:
+    - Users
+      * id
+      * username
+      * status
+      * is_logged_in
+
+    - Channels
+      * id
+      * name
+      * type
+      * owner_id
+      * is_closed
+      * 
+    - Participants
+      * id
+      * participant_id
+      * is_admin
+      * is_muted
+      * ban_meta
+      * channel_id
+
+    - Messages
+      * channel_id
+      * user_id
+      * message
+
+    - Blocked_users
+      * id
+      * blocked_by_id
+      * blocked_user_id
+  
+  POST:
+    - Channels
+    - Participants
+    - Messages
+    - Blocked_users
+
+  PATCH:
+    - Channels
+    - Participants
+
+  DELETE:
+    - Blocked_users
+    - Participants
+
+  */
   import ChatWindow from 'vue-advanced-chat'
   import 'vue-advanced-chat/dist/vue-advanced-chat.css'  
   export default {
@@ -53,7 +103,6 @@
               }
             }
           ],
-          typingUsers: [ 4321 ]
         }
       ],
         messages: [
@@ -75,7 +124,7 @@
           disableReactions: false,
         },
         {
-          _id: 7890,
+          _id: 7891,
           indexId: 12092,
           content: 'No go away',
           senderId: 1235,

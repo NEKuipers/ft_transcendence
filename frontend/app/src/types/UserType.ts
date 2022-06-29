@@ -4,7 +4,7 @@ enum user_status {
 	ingame
 }
 
-export interface User {
+export type User = {
 	readonly id: number;
 	userName: string;
 	status: user_status;
@@ -15,4 +15,4 @@ export interface User {
 	gamesLost: number; //TODO remove this later on
 	isLoggedIn: boolean;
 	leaderboardPosition: number;
-}
+} 

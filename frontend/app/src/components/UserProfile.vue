@@ -3,16 +3,23 @@
     <img class="profilePicture" src="../assets/Profile-picture-default.png">
     <br>
     <section class="names">
-      <h1 class="username"><a v-bind:href="'http://localhost:8080/profile/' + user.id">{{user.userName}}</a></h1>
+      <h1 class="username"><a v-bind:href="'http://localhost:8080/profile/' + user?.id">{{user?.userName}}</a></h1>
+      <h5 v-if="user?.isLoggedIn === true">Online</h5>
+      <h5 v-else>Offline</h5>
     </section>
     <section class="game-stats">
-        <h4>Games played: {{user.gamesPlayed}}</h4>
-        <h4>Games won: {{user.gamesWon}}</h4>
-        <h4>Games lost: {{user.gamesLost}}</h4>
+        <h4>Games played: {{user?.gamesPlayed}}</h4>
+        <h4>Games won: {{user?.gamesWon}}</h4>
+        <h4>Games lost: {{user?.gamesLost}}</h4>
+        <h4>Overall ranking:  #{{user?.leaderboardPosition}}</h4>
     </section>
-	<div v-if="user.id != '3'"> <!-- TODO change to login-id -->
+	<div v-if="user?.id != '3'"> <!-- TODO change to login-id -->
 		<SmallButton class="user-btn" text="Message"></SmallButton>
 		<SmallButton class="user-btn" text="Invite to game"></SmallButton>
+    <br>
+    <br>
+		<SmallButton class="user-btn" text="Add Friend"></SmallButton>
+		<SmallButton class="user-btn" text="Block User"></SmallButton>
 	</div>
   <div v-else>
     <router-link to="myprofile-edit">
@@ -29,7 +36,7 @@ import SmallButton from '../components/SmallButton.vue'
 export default defineComponent({
 	name: 'UserProfile',
 	props: {
-		user: Object
+		user: Object,
 	},
 	components: {
 		SmallButton,

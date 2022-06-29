@@ -4,7 +4,7 @@
 				<nav>
 					<router-link to="/">Home</router-link>
 					<router-link to="/myprofile">My Profile</router-link>
-					<router-link to="/pong">Pong</router-link>
+					<router-link to="/select-game">Play</router-link>
 					<router-link to="/chat">Chat</router-link>
 					<router-link to="/users">Users</router-link>
 					<router-link to="/leaderboard">Leaderboard</router-link>

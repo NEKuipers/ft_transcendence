@@ -1,6 +1,5 @@
 <template>
 	<div class="game">
-		<h1>Let's play!</h1>
 		<SocketIoConnection ref="connection" uri=":4113" server_name="pong server"/>
 		<!-- img alt="Vue logo" src="../assets/pong-video-game.gif"-->
 		<canvas id="canvas=" ref="canvas" width="700" height="400" style="background: black;"></canvas>
@@ -8,7 +7,16 @@
 </template>
 
 <script lang="ts">
-
+/*
+ list of data requirements (fetch() calls) for this view:
+	GET:
+		Not entirely sure, usernames?
+	POST:
+		- Matches (at start of game)
+	
+	PATCH:
+		- Matches (at end of game)
+*/
 import SocketIoConnection from '../components/SocketIoConnection.vue';
 import { Socket } from "socket.io-client";
 import { defineComponent } from 'vue'
