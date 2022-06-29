@@ -1,4 +1,4 @@
-import { Controller, Get, Redirect, Res, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Redirect, Res, Query, UseGuards, UseFilters } from '@nestjs/common';
 import { Response } from 'express'
 import { LoginService } from './login.service';
 import { HttpService } from '@nestjs/axios'
@@ -12,7 +12,7 @@ import { User } from '../users/user.interface'
 import { UsersService } from 'src/users/users.service';
 
 @Controller('login')
-@UseGuards(IntraAuthGuard)
+// @UseGuards(IntraAuthGuard)
 export class LoginController {
     constructor(private readonly loginService: LoginService) {}
 
@@ -20,6 +20,7 @@ export class LoginController {
         This is the route for intra authentication
     */
     @Get()
+    @UseGuards(IntraAuthGuard)
     OAuthRequest(): any {
         return;
     // OAuthRequest() : Observable<AxiosResponse<any, any>> {
@@ -49,20 +50,12 @@ export class LoginController {
     @Get('callback')
     @UseGuards(IntraAuthGuard)
     callback(@Res() res: Response) {
-
-        console.log('Yoo hello?')
-        res.send(200)
-        // var passport = require('passport')
-
-        // passport.authenticate('42', { failureRedirect: '/'}),
-        // function(req, res) {
-        //     console.log('It worked')
-        //     res.redirect('http://localhost:8080/')
-        // }
+        console.log('PORCALAMADONNAMAIALADIOCANACCIOARRUGGINITOAFAPOMPINI')
+        res.status(200).send('Hi there')
     }
 
-    @Get('status')
-    status() {}
+    // @Get('status')
+    // status() {}
 
 }
 

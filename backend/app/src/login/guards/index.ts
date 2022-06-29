@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 export class IntraAuthGuard extends AuthGuard('42') {
     async canActivate(context: ExecutionContext): Promise<any> {
         const activate = (await super.canActivate(context)) as boolean
-        console.log(activate)
+        console.log('Cane di buddha', activate)
         const request = context.switchToHttp().getRequest()
         console.log(request)
         await super.logIn(request)

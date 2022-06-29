@@ -10,12 +10,17 @@ export class intraStrategy extends PassportStrategy(Strategy) {
             clientID: process.env.CLIENT_ID,
             clientSecret: process.env.CLIENT_SECRET,
             callbackURL: process.env.CALLBACK_URL,
-            scope: 'public'
+            profileFields: {
+                'id': function(obj) {
+                    return String(obj.id)
+                },
+                username: 'login'
+            }
         })
     }
 
-    async validateUser(accessToken: string, refreshToken: string, userProfile: any) {
-        const { userName, status, id, leaderboardPosition } = userProfile;
-        console.log(userName, status, id, leaderboardPosition)
+    async validate(accessToken: string, refreshToken: string, userProfile: any) {
+        const { username, id } = userProfile;
+        console.log('Diogane sono io:', username, id)
     }
 }
