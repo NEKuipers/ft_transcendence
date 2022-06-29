@@ -19,7 +19,7 @@ export default defineComponent({
       let bruh: string
       fetch('/api/login')
       .then(res => res.text())
-      .then(data => {console.log('Come one man'); window.location.href = data})
+      .then(data => {console.log('Come on man');})
       .catch(error => {
         console.log(error)
         bruh = 'https://boia.de'
