@@ -2,10 +2,13 @@ import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
 import { LoginController } from './login.controller';
 import { LoginService } from './login.service';
+import { intraStrategy } from './strategies';
+import { UsersModule } from '../users/users.module';
+import { UsersService } from 'src/users/users.service';
 
 @Module({
-  imports: [HttpModule],
+  imports: [HttpModule, UsersModule],
   controllers: [LoginController],
-  providers: [LoginService]
+  providers: [LoginService, intraStrategy, UsersService]
 })
 export class LoginModule {}

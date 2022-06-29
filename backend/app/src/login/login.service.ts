@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
+import { UsersService } from '../users/users.service'
 import { Observable } from 'rxjs';
 import { AxiosResponse } from 'axios';
 
 @Injectable()
 export class LoginService {
-    constructor(private readonly httpService: HttpService) {}
+    // constructor(private readonly httpService: HttpService) {}
+    constructor(private readonly userService: UsersService) {}
 
-    // returnToken(): Observable<AxiosResponse<any, any>> {
     returnUri(): string {
         return 'https://api.intra.42.fr/oauth/authorize?client_id=' + process.env.CLIENT_ID 
         + '&redirect_uri=' + 'http://localhost:3030/callback' + '&scope=public&state=authstate&response_type=code'
@@ -26,5 +27,14 @@ export class LoginService {
         // )
 
         // return res
+    }
+
+    async validateUser(username: string, pass: string): Promise<any> {
+        const user = await this.userService.findOneByName(username)
+        if (user && user.oauth_refresh_token === pass) {
+            const { oauth_refresh_token, ...result } = user;
+            return result
+        }
+        return null
     }
 }
