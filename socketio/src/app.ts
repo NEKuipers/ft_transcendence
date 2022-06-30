@@ -297,6 +297,13 @@ io.on("connection", (socket) => {
 			return;
 		}
 
+		// Spectate request?
+		let data = all_matches[queue];
+		if (data) {
+			data.spectate(socket);
+			return;
+		}
+
 		console.log(`${socket.id} wants to queue on ${queue}`)
 		if (queue === "classic") {
 			classic_matchmaker.add_to_waiting_list(socket);
@@ -313,6 +320,7 @@ io.on("connection", (socket) => {
 		}
 	})
 
+	/*
 	socket.on("spectate", (room_name, ackFn) => {
 		if (socket.data.state !== SocketState.Menu) {
 			console.log("socket", socket.id, "tired to spectate while it was not in the menu state, it was in:", socket.data.state);
@@ -330,6 +338,7 @@ io.on("connection", (socket) => {
 			ackFn(false, `No room exists with the name ${room_name}`)
 		}
 	})
+	*/
 });
 
 const port = 4113;

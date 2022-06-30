@@ -14,9 +14,6 @@
 */
 
 // TODO: This view is a mess clean it up
-// Also keep in mind that there are 2 ways to start a match:
-//	1: Spectate
-//	2: Gamemode
 
 import SocketIoConnection from '../components/SocketIoConnection.vue';
 import { Socket } from "socket.io-client";
@@ -285,6 +282,8 @@ export default defineComponent({
 		socket.on("disconnect", () => {
 			this.stop();
 			this.clear_canvas();
+
+			this.$router.push('/select-game');
 		})
 		socket.on("match_start", (player: number, settings: settings, player_1_name: string, player_2_name: string) => {
 			this.settings = settings;
