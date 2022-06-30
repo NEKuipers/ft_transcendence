@@ -10,15 +10,16 @@
     <br>
     <div class="row">
     <div class="column">
-      Friends
+      Achievements
     </div>
     <div class="column">
-      Achievements
+      Friends
     </div>
     <div class="column">
       Blocked Users
     </div>
     </div>
+    <AchievementsList class="column"/>
   </div>
 </template>
 
@@ -39,8 +40,41 @@
 </style>
 
 <script lang="ts">
+  /*
+  list of data requirements (fetch() calls) for this view:
+  GET:
+    - Users
+      * id
+      * username
+      * status?
+      * games played, wins, losses
+      * leaderboard position based on match history
+      * achievements won by this user
+    - Avatars
+      * id
+      * user_id
+      * img
+    - Friends
+      * list of friends, match friend with username
+    - Achievements
+      * list of achievements and if this user has them
+
+  POST:
+    - Blocked users (if you block someone on their profile)
+    - Friends (if you send a friend request)
+
+  PATCH:
+    - Friends (if you accept a friend request? figure this out soon)
+  
+  DELETE: 
+    - Friends (if you unfriend someone?)
+    - Blocked_users (if you unblock someone)
+    
+  */
 import { defineComponent } from 'vue';
 import  UserProfile from '../components/UserProfile.vue';
+import AchievementsList from '../components/AchievementsList.vue';
+import { loginStatusStore } from '../stores/profileData';
 
 export default defineComponent({
   name: 'MyProfileView',
@@ -48,7 +82,7 @@ export default defineComponent({
     },
     methods: {
       async loadUserData(id: string) {
-        fetch('http://localhost:3000/users/' + id)
+        fetch('/api/users/' + id)
         .then(res => res.json())
         .then(data => this.user = data)
         .catch(err => console.log(err));
@@ -58,14 +92,17 @@ export default defineComponent({
     return {
       selectedFile: null,
       user: null,
+      login: {}
     }
   },
   async mounted() {
     let g_login_id = '3'; //TODO This variable directs you to various profiles, need to fix
-    await this.loadUserData(g_login_id); //TODO this still works kind of weird, make sure page reloads     
+    await this.loadUserData(g_login_id); //TODO this still works kind of weird, make sure page reloads
+    this.login = loginStatusStore()
   },
   components: {
     UserProfile,
+    AchievementsList,
   },
 });
 

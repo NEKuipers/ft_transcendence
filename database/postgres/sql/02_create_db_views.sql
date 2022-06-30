@@ -13,6 +13,7 @@ AS
         m.player_two,
         m.winner_id,
         m.id,
+        m.status,
         m.meta
     FROM users u
         INNER JOIN matches m
@@ -27,6 +28,7 @@ AS
         m.player_two,
         m.winner_id,
         m.id,
+        m.status,
         m.meta
     FROM users u
         INNER JOIN matches m
@@ -38,6 +40,7 @@ SELECT
     p2.username AS player_two,
     w.username  AS winner,
     mh.id       AS match_id,
+    mh.status   AS match_status,
     mh.meta     AS meta
 FROM match_history mh
     INNER JOIN users u
@@ -48,6 +51,87 @@ FROM match_history mh
         ON mh.player_two = p2.id
     INNER JOIN users w
         ON mh.user_id = w.id;
+
+
+/*
+** Displays all your friends ongoing matches so that you're able
+** to join as a spectator.
+*/
+CREATE OR REPLACE VIEW vw_spectate
+AS
+SELECT
+    u.id            AS user_id,
+    f.to_user_id    AS friend_id,
+    fu.username     AS friend_username,
+    m.match_id      AS match_id,
+    m.player_one    AS player_one,
+    m.player_two    AS player_two
+FROM users u
+    INNER JOIN friends f
+        ON u.id = f.from_user_id
+            AND f.status = 'accepted'
+    INNER JOIN users fu
+        ON f.to_user_id = fu.id
+    INNER JOIN vw_matches m
+        ON f.to_user_id = m.user_id
+            AND m.match_status = 'ongoing';
+
+
+/*
+** Displays a user his list of friends and potential friends to be
+** (i.e. a friend request has been send)
+*/
+CREATE OR REPLACE VIEW vw_friends
+AS
+SELECT
+    u.id            AS user_id,
+    u.username      AS username,
+    f.to_user_id    AS to_user_id,
+    fu.username     AS to_username,
+    f.status        AS status,
+    f.send_time     AS send_time,
+    f.response_time AS response_time
+FROM users u
+    INNER JOIN friends f
+        ON u.id = f.from_user_id
+    INNER JOIN users fu
+        ON f.to_user_id = fu.id
+WHERE f.status IN ('send', 'accepted');
+
+
+/*
+** Displays the list of friend requests for each user
+*/
+CREATE OR REPLACE VIEW vw_friend_requests
+AS
+SELECT
+    u.id            AS user_id,
+    u.username      AS username,
+    f.from_user_id  AS from_user_id,
+    fu.username     AS from_username,
+    f.send_time     AS send_time
+FROM users u
+    INNER JOIN friends f
+        ON u.id = f.to_user_id
+    INNER JOIN users fu
+        ON f.from_user_id = fu.id
+WHERE f.status = 'send';
+
+
+/*
+** Displays all users that you blocked (so that you may unblock them)
+*/
+CREATE OR REPLACE VIEW vw_blocked_users
+AS
+SELECT
+    u.id                AS user_id,
+    bu.blocked_user_id  AS blocked_user_id,
+    buu.username        AS blocked_user_name
+FROM users u
+    INNER JOIN blocked_users bu
+        ON u.id = bu.blocked_by_id
+    INNER JOIN users buu
+        ON bu.blocked_user_id = buu.id;
 
 
 /*

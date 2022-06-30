@@ -12,24 +12,39 @@
 </template>
 
 <script lang="ts">
+  /*
+  list of data requirements (fetch() calls) for this view:
+  GET:
+    - Users
+		* id
+		* username
+		* status
+		* match history created via a database view
+	- Avatars
+		* id
+		* user_id
+		* img
+	
+  */
 import { defineComponent } from 'vue';
 import  ListedUser from '../components/ListedUser.vue';
+import { User } from '../types/UserType'
 
 export default defineComponent({
 	name: 'ProfileView',
 	props: {
 	},
 	data () {
-	return {
-		selectedFile: null,
-		users: null,
-	}
+		return {
+			selectedFile: null,
+			users: Object as () => User,
+		}
 	},
 	mounted() {
-	fetch('http://localhost:3000/users/')
-	.then(res => res.json())
-	.then(data => this.users = data.sort((a:any ,b:any) => b.gamesWon - a.gamesWon))
-	.catch(err => console.log(err));    
+		fetch(`api/users/`)
+		.then(res => res.json())
+		.then(data => this.users = data.sort((a:User ,b:User) => b.gamesWon - a.gamesWon))
+		.catch(err => console.log(err));    
 	},
 	components: {
 		ListedUser,
@@ -49,11 +64,11 @@ export default defineComponent({
 	border-left-width: 1px;
 	border-right-width: 1px;
 	width:80%;
-	background-color: #f3f3f3;
 }
 
 .leaderboardList {
 	border-bottom-width:1px;
+	margin: 0 auto 0 auto;
 	width:80%;
 }
 

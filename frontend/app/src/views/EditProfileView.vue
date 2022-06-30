@@ -24,6 +24,24 @@
 </style>
 
 <script lang="ts">
+  /*
+  list of data requirements (fetch() calls) for this view:
+  GET:
+    - Users
+      * id
+      * username
+    
+    - Avatars
+      * id
+      * user_id
+      * img
+  
+  POST:
+    - Avatars
+
+  PATCH:
+    - Users
+  */
 import { defineComponent } from 'vue';
 import  EditUserProfile from '../components/EditUserProfile.vue';
 
@@ -33,7 +51,7 @@ export default defineComponent({
     },
     methods: {
       async loadUserData(id: string) {
-        fetch('http://localhost:3000/users/' + id)
+        fetch('api/users/' + id)
         .then(res => res.json())
         .then(data => this.user = data)
         .catch(err => console.log(err));

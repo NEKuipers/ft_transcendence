@@ -4,6 +4,12 @@
 **  - x-1 played
 **  - x played
 */
+TRUNCATE TABLE public.avatars RESTART IDENTITY CASCADE;
+
+INSERT INTO public.avatars(img, width, height, name, format)
+VALUES
+('\xDEADBEEF', 0, 0, 'default', 'img/png');
+
 TRUNCATE TABLE public.users RESTART IDENTITY CASCADE;
 
 INSERT INTO public.users(username, status, oauth_refresh_token, oauth_token_expiration_time, is_logged_in)

@@ -14,4 +14,5 @@ export interface User {
 	gamesWon: number; //TODO remove this later on
 	gamesLost: number; //TODO remove this later on
 	isLoggedIn: boolean;
+	leaderboardPosition: number;
 }

@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
+import { loginStatusStore } from '@/stores/profileData'
+import LoginView from '@/views/LoginView.vue'
 import HomeView from '@/views/HomeView.vue'
 import ProfileView from '@/views/ProfileView.vue'
 import PongView from '@/views/PongView.vue'
@@ -9,12 +11,16 @@ import NotFoundView from '@/views/NotFoundView.vue'
 import MyProfileView from '@/views/MyProfileView.vue'
 import EditProfileView from '@/views/EditProfileView.vue'
 import LeaderboardView from '@/views/LeaderboardView.vue'
+import GameSelectView from '@/views/GameSelectView.vue'
+
+
+
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'home',
-    component: HomeView
+    component: HomeView,
   },
   {
     path: '/profile/:id?',
@@ -35,6 +41,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/pong',
     name: 'pong',
     component: PongView,
+  },
+  {
+    path: '/select-game',
+    name: 'select-game',
+    component: GameSelectView,
   },
   {
     path: '/users',
@@ -60,6 +71,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/:catchAll(.*)',
     name: 'not-found',
     component: NotFoundView,
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: LoginView,
   }
 ]
 
@@ -67,5 +83,17 @@ const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
 })
+
+router.beforeEach((to) => {
+  const loggedIn = loginStatusStore()
+
+  if (to.name !== 'login' && !loggedIn.loggedInStatus) {
+    return('/login')
+  }
+  if (to.name === 'login' && loggedIn.loggedInStatus) {
+    return('/')
+  }
+})
+
 
 export default router

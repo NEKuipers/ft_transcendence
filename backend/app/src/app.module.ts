@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
@@ -14,7 +15,9 @@ import { AvatarsModule } from './avatars/avatars.module';
 import { FriendsModule } from './friends/friends.module';
 
 @Module({
-  imports: [UsersModule, MatchesModule, MessagesModule, ParticipantsModule, TwoFactorAuthModule, ChannelsModule, UserAchievementsModule, AchievementsModule, BlockedUsersModule, AvatarsModule, FriendsModule],
+  imports: [ConfigModule.forRoot({
+    envFilePath: '../../.env',
+  }), UsersModule, MatchesModule, MessagesModule, ParticipantsModule, TwoFactorAuthModule, ChannelsModule, UserAchievementsModule, AchievementsModule, BlockedUsersModule, AvatarsModule, FriendsModule],
   controllers: [AppController],
   providers: [AppService],
 })
