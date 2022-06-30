@@ -9,14 +9,10 @@
 <script lang="ts">
 /*
  list of data requirements (fetch() calls) for this view:
-	GET:
-		Not entirely sure, usernames?
-	POST:
-		- Matches (at start of game)
-	
-	PATCH:
-		- Matches (at end of game)
+	UserID and Username and can be validated by the socketIO server
+	No POST/PATCH, that is all done by the socketIO server
 */
+
 import SocketIoConnection from '../components/SocketIoConnection.vue';
 import { Socket } from "socket.io-client";
 import { defineComponent } from 'vue'
@@ -287,8 +283,8 @@ export default defineComponent({
 			this.join_queue(this.match_type);
 		})
 		socket.on("disconnect", () => {
-			this.clear_canvas();
 			this.stop();
+			this.clear_canvas();
 		})
 		socket.on("match_start", (player: number, settings: settings, player_1_name: string, player_2_name: string) => {
 			this.settings = settings;

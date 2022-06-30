@@ -132,6 +132,8 @@ class Match {
 		});
 
 		this.reset_ball(true);
+
+		// TODO: Make post request that a match is starting
 	}
 
 	reset_ball(for_p1: boolean) {
@@ -193,24 +195,6 @@ class Match {
 			winner_id = 0;
 		}
 
-		// TODO: Send status 
-		// And suddenly, i need to make requests to the backend and not the database, sure
-		/*
-		post(3000, "/matches", {
-			"player_one": this.p1.data.userid,
-			"player_two": this.p2.data.userid,
-			"winner_id": winner_id,
-			"start_time": new Date(this.start_time).toISOString(),
-			"end_time": new Date(Date.now()).toISOString(),
-			"p1_points": this.p1_score,
-			"p2_points": this.p2_score,
-			"status": "finished",
-			"reason": winner_reason,
-			"meta": "",
-			"options": ""
-		})
-		*/
-
 		post(3030, "/matches", {
 			"player_one": this.p1.data.userid,
 			"player_two": this.p2.data.userid,
@@ -231,6 +215,8 @@ class Match {
 				console.log("End of transmission")
 			})
 		})
+
+		// TODO: make DELETE request that the ongoing match has ended
 	}
 }
 
