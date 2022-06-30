@@ -148,6 +148,14 @@ class Match {
 		spectator.join(this.room_name);
 		spectator.data.state = SocketState.Spectating;
 		this.spectators.push(spectator);
+
+		// Wow this is a AWFULL way of setitng the scores correct
+		for (let step = 0; step < this.p1_score; step++) {
+			spectator.emit("match_winner", 1)
+		}
+		for (let step = 0; step < this.p2_score; step++) {
+			spectator.emit("match_winner", 2)
+		}
 	}
 
 	reset_ball(for_p1: boolean) {
