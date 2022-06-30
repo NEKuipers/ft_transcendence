@@ -6,14 +6,21 @@ import { Ladder } from './ladder.interface';
 
 @Injectable()
 export class LadderService {
-	constructor(private readonly httpService: HttpService) {}
+	//WORK IN PROGRESS... find out how to connect to DB
+	// constructor(private readonly httpService: HttpService) {}
 	ladder: Ladder[];
 
-	findAll(): Observable<AxiosResponse<Ladder[]>> {		
-		return this.httpService.get('https://localhost:3000');
+	findAll() : Ladder [] {
+		return this.ladder;
 	}
+	findOne(id: number): Ladder {
+		return this.ladder.find(ladder => ladder.user_id == id);
+	}
+	// findAll(): Observable<AxiosResponse<Ladder[]>> {		
+	// 	return this.httpService.get('https://localhost:3000');
+	// }
 
-	findOne(id: number): Observable<AxiosResponse<Ladder>> {
-		return this.httpService.get('https://localhost:3000' + id.toString());
-	}
+	// findOne(id: number): Observable<AxiosResponse<Ladder>> {
+	// 	return this.httpService.get('https://localhost:3000' + id.toString());
+	// }
 }
