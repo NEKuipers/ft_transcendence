@@ -12,7 +12,6 @@ import { User } from '../users/user.interface'
 import { UsersService } from 'src/users/users.service';
 
 @Controller('login')
-// @UseGuards(IntraAuthGuard)
 export class LoginController {
     constructor(private readonly loginService: LoginService) {}
 
@@ -23,25 +22,6 @@ export class LoginController {
     @UseGuards(IntraAuthGuard)
     OAuthRequest(): any {
         return;
-    // OAuthRequest() : Observable<AxiosResponse<any, any>> {
-        // var FortyTwoStrategy = require('passport-42').Strategy
-        // // var passport = require('passport')
-
-        // console.log('Buongiorno diobestia')
-        // passport.use(new FortyTwoStrategy({
-        //     clientID: process.env.CLIENT_ID,
-        //     clientSecret: process.env.CLIENT_SECRET,
-        //     callbackURL: 'http://127.0.0.1:3030/login/callback',
-        //     profileFields: {
-        //         'id': function (obj) { return stringify(obj.id)},
-        //         'username': 'login'
-        //     }
-        //   }))
-        // // function(accessToken, refreshToken, profile, cb) {
-        // //     return cb(null, profile)
-        // // }))
-
-        // passport.authenticate('42')
     }
 
     /* 

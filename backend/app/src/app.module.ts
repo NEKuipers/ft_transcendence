@@ -15,13 +15,16 @@ import { BlockedUsersModule } from './blocked_users/blocked_users.module';
 import { AvatarsModule } from './avatars/avatars.module';
 import { FriendsModule } from './friends/friends.module';
 import { LoginModule } from './login/login.module';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [ConfigModule.forRoot({
     envFilePath: '../../.env',
-  }), UsersModule, MatchesModule, MessagesModule,
-   ParticipantsModule, TwoFactorAuthModule, ChannelsModule, UserAchievementsModule, AchievementsModule, BlockedUsersModule, 
-   AvatarsModule, FriendsModule, LoginModule],
+  }),
+  PassportModule.register({ session: true}),
+  UsersModule, MatchesModule, MessagesModule,
+  ParticipantsModule, TwoFactorAuthModule, ChannelsModule, UserAchievementsModule, AchievementsModule, BlockedUsersModule, 
+  AvatarsModule, FriendsModule, LoginModule],
   controllers: [AppController],
   providers: [AppService],
 })

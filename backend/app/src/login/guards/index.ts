@@ -5,11 +5,9 @@ import { Observable } from 'rxjs';
 
 @Injectable()
 export class IntraAuthGuard extends AuthGuard('42') {
-    async canActivate(context: ExecutionContext): Promise<any> {
+    async canActivate(context: ExecutionContext): Promise<boolean> {
         const activate = (await super.canActivate(context)) as boolean
-        console.log('Cane di buddha', activate)
         const request = context.switchToHttp().getRequest()
-        console.log(request)
         await super.logIn(request)
         return activate
     }
