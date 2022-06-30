@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@nestjs/axios": "^0.0.8",
     "json-server": "^0.17.0",
     "pinia": "^2.0.14",
     "socket.io": "^4.5.1"

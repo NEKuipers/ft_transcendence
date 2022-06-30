@@ -1,10 +1,10 @@
 import { MatchesService } from './matches.service';
-import { SpectateMatch, Match } from './matches.interface';
+import { OngoingMatch, Match } from './matches.interface';
 export declare class MatchesController {
     private readonly matchesService;
     constructor(matchesService: MatchesService);
-    findAll(): SpectateMatch[];
-    findOne(id: number): SpectateMatch;
+    findAll(): OngoingMatch[];
+    findOne(id: number): OngoingMatch;
     create(match: Match): string;
     update(id: number, match: Match): string;
 }

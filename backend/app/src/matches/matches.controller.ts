@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Patch, Delete, Body, Param } from '@nestjs/common';
 import { MatchesService } from './matches.service';
-import {  OngoingMatch, Match } from './matches.interface';
+import { OngoingMatch, Match } from './matches.interface';
 
 @Controller('matches')
 export class MatchesController {
