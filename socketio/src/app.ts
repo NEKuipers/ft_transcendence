@@ -293,6 +293,7 @@ io.on("connection", (socket) => {
 			return;
 		}
 
+		console.log(`${socket.id} wants to queue on ${queue}`)
 		if (queue === "classic") {
 			classic_matchmaker.add_to_waiting_list(socket);
 		} else if (queue === "speedup") {
