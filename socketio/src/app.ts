@@ -1,4 +1,4 @@
-import { request, createServer } from "http";
+import { request, createServer, IncomingMessage } from "http";
 import { Server, Socket } from "socket.io";
 
 import { EventEmitter } from 'events';
@@ -21,23 +21,26 @@ enum SocketState {
 	InMatch,
 }
 
-function post_db(path: string, data: object) {
+function post(port: number, path: string, data: object, callback?: (res: IncomingMessage) => void) {
 	let json_data = JSON.stringify(data);
 	console.log(`Sending request: ${json_data} to ${path}`)
+
+	callback ??= res => {
+		if (res.statusCode != 201) {	// 201 created
+			console.log(`Got statusCode for ${path}: ${res.statusCode} (${res.statusMessage}): ${res.headers}`)
+		}
+	};
+
 	let req = request({
 		hostname: 'localhost',
-		port: 3000,
+		port: port,
 		path: path,
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
 			'Content-Length': json_data.length,
 		},
-	}, res => {
-		if (res.statusCode != 201) {	// 201 created
-			console.log(`Got statusCode for ${path}: ${res.statusCode}: ${res.headers}`)
-		}
-	});
+	}, callback);
 
 	req.on("error", error => {
 		console.error(`Got error doing request to: ${path}: ${error}`);
@@ -181,9 +184,6 @@ class Match {
 		console.log("The winner is:", winner)
 		io.to(this.room_name).emit("match_stop", winner);
 
-		// TODO: Send winner to database
-		// Location: POST /matches/???
-		// Also achievements?
 		this.event.emit("match_stop", winner);
 
 		let winner_id : number;
@@ -193,7 +193,25 @@ class Match {
 			winner_id = 0;
 		}
 
-		post_db("/matches", {
+		// TODO: Send status 
+		// And suddenly, i need to make requests to the backend and not the database, sure
+		/*
+		post(3000, "/matches", {
+			"player_one": this.p1.data.userid,
+			"player_two": this.p2.data.userid,
+			"winner_id": winner_id,
+			"start_time": new Date(this.start_time).toISOString(),
+			"end_time": new Date(Date.now()).toISOString(),
+			"p1_points": this.p1_score,
+			"p2_points": this.p2_score,
+			"status": "finished",
+			"reason": winner_reason,
+			"meta": "",
+			"options": ""
+		})
+		*/
+
+		post(3030, "/matches", {
 			"player_one": this.p1.data.userid,
 			"player_two": this.p2.data.userid,
 			"winner_id": winner_id,
@@ -204,6 +222,14 @@ class Match {
 			"reason": winner_reason,
 			"meta": "",
 			"options": ""
+		}, res => {
+			res = res.setEncoding('utf8');
+			res.on("data", chunk => {
+				console.log("Got chunk:", chunk)
+			})
+			res.on("end", () => {
+				console.log("End of transmission")
+			})
 		})
 	}
 }

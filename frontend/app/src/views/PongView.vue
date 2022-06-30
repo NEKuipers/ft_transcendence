@@ -447,10 +447,10 @@ export default defineComponent({
 			this.p1?.update(diff, this.game as rect, send ? socket : undefined, dt / (this.send_time / 1000));
 			this.p2?.update(diff, this.game as rect, send ? socket : undefined, dt / (this.send_time / 1000));
 
-			if ((this.p1 as player).owner) {
-				(this.p1 as player).y = this.p2?.y as number;
-				(this.p1 as player).moved_since_last_send = true;
-			}
+			//if ((this.p1 as player).owner) {
+			//	(this.p1 as player).y = this.p2?.y as number;
+			//	(this.p1 as player).moved_since_last_send = true;
+			//}
 
 			let ball = this.ball as ball;
 			let winner = ball.update(dt, this.game as rect);
