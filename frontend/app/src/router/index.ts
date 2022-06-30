@@ -38,28 +38,9 @@ const routes: Array<RouteRecordRaw> = [
     component: EditProfileView,
   },
   {
-    path: '/pong/classic',
-    name: 'pong_classic',
+    path: '/pong/:mode',
+    name: 'pong',
     component: PongView,
-    props: { match_type: "classic" }
-  },
-  {
-    path: '/pong/speedup',
-    name: 'pong_speedup',
-    component: PongView,
-    props: { match_type: "speedup" }
-  },
-  {
-    path: '/pong/rush',
-    name: 'pong_rush',
-    component: PongView,
-    props: { match_type: "rush" }
-  },
-  {
-    path: '/pong/expert',
-    name: 'pong_expert',
-    component: PongView,
-    props: { match_type: "expert" }
   },
   {
     path: '/select-game',

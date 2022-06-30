@@ -13,6 +13,11 @@
 	No POST/PATCH, that is all done by the socketIO server
 */
 
+// TODO: This view is a mess clean it up
+// Also keep in mind that there are 2 ways to start a match:
+//	1: Spectate
+//	2: Gamemode
+
 import SocketIoConnection from '../components/SocketIoConnection.vue';
 import { Socket } from "socket.io-client";
 import { defineComponent } from 'vue'
@@ -220,11 +225,6 @@ class settings {
 
 export default defineComponent({
 	props: {
-		match_type: {
-			type: String,
-			default: "rush"
-		},
-
 		// Visual settings
 		center_size: {
 			type: Number,
@@ -280,7 +280,7 @@ export default defineComponent({
 		this.socket = socket;
 		
 		socket.on("connect", () => {
-			this.join_queue(this.match_type);
+			this.join_queue(this.$route.params.mode as string);
 		})
 		socket.on("disconnect", () => {
 			this.stop();
@@ -319,15 +319,17 @@ export default defineComponent({
 						this.draw_center_text("You lost!", 100);
 					}
 				} else {
-					// TODO: Draw names of winner
-					this.draw_center_text("Player " + winner + " won!", 100);
+					if (winner === 0) {
+						this.draw_center_text((this.p1 as player).name + " won!", 100);
+					} else {
+						this.draw_center_text((this.p2 as player).name + " won!", 100);
+					}
 				}
 			}
-			
 
 			// After 2.5 seconds, join the queue again
 			setTimeout(() => {
-				this.join_queue(this.match_type);
+				this.join_queue(this.$route.params.mode as string);
 			}, 2500);
 		})
 

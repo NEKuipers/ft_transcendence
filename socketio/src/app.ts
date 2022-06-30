@@ -1,5 +1,5 @@
 import { request, createServer, IncomingMessage } from "http";
-import { Server, Socket } from "socket.io";
+import { Namespace, Server, Socket } from "socket.io";
 
 import { EventEmitter } from 'events';
 
@@ -19,6 +19,7 @@ enum SocketState {
 	Menu,
 	InQueue,
 	InMatch,
+	Spectating,
 }
 
 function post(port: number, path: string, data: object, callback?: (res: IncomingMessage) => void) {
@@ -70,6 +71,8 @@ function get_new_match_room_name(): string {
 	return "match:" + last_room_id;
 }
 
+let all_matches : { [key: string]: Match } = {}
+
 class Match {
 	settings: pong_settings;
 	p1: Socket;
@@ -79,6 +82,7 @@ class Match {
 	p2_score: number;
 	event: EventEmitter;
 	start_time: number;
+	spectators: Array<Socket>;
 
 	constructor(settings: pong_settings, p1: Socket, p2: Socket) {
 		p1.data.state = SocketState.InMatch;
@@ -91,10 +95,11 @@ class Match {
 		this.p2_score = 0;
 		this.event = new EventEmitter();
 		this.start_time = Date.now();
+		this.spectators = new Array();
 
 		this.room_name = get_new_match_room_name();
 
-		console.log("Playing match between", p1.id, "and", p2.id)
+		console.log("Playing match between", p1.id, "and", p2.id, "in room", this.room_name)
 		p1.join(this.room_name);
 		p2.join(this.room_name);
 
@@ -134,6 +139,15 @@ class Match {
 		this.reset_ball(true);
 
 		// TODO: Make post request that a match is starting
+
+		all_matches[this.room_name] = this;
+	}
+
+	spectate(spectator: Socket) {
+		spectator.emit("match_start", 0, this.settings, this.p1.data.username, this.p2.data.username);
+		spectator.join(this.room_name);
+		spectator.data.state = SocketState.Spectating;
+		this.spectators.push(spectator);
 	}
 
 	reset_ball(for_p1: boolean) {
@@ -164,7 +178,7 @@ class Match {
 			winner_reason = "tie";
 		}
 
-		// Disconnect events
+		// Disconnect events & apply state
 		if (this.p1.connected) {
 			this.p1.data.state = SocketState.Menu;
 
@@ -181,12 +195,14 @@ class Match {
 			this.p2.removeAllListeners("loss");
 			this.p2.removeAllListeners("ball");
 		}
+		for (let spectator of this.spectators) {
+			spectator.data.state = SocketState.Menu;
+		}
 		
 		// Send results
 		console.log("The winner is:", winner)
 		io.to(this.room_name).emit("match_stop", winner);
-
-		this.event.emit("match_stop", winner);
+		io.sockets.in(this.room_name).socketsLeave(this.room_name);	// Make all sockets leave the room
 
 		let winner_id : number;
 		if (winner != 0) {
@@ -217,6 +233,8 @@ class Match {
 		})
 
 		// TODO: make DELETE request that the ongoing match has ended
+
+		delete all_matches[this.room_name];
 	}
 }
 
@@ -293,7 +311,25 @@ io.on("connection", (socket) => {
 			socket.disconnect(true);
 			return;
 		}
-	})	
+	})
+
+	socket.on("spectate", (room_name, ackFn) => {
+		if (socket.data.state !== SocketState.Menu) {
+			console.log("socket", socket.id, "tired to spectate while it was not in the menu state, it was in:", socket.data.state);
+			socket.disconnect(true);
+			return;
+		}
+
+		console.log(`${socket.id} wants to spectate ${room_name}`)
+		let data = all_matches[room_name];
+
+		if (data) {
+			data.spectate(socket);
+			ackFn(true);
+		} else {
+			ackFn(false, `No room exists with the name ${room_name}`)
+		}
+	})
 });
 
 const port = 4113;
