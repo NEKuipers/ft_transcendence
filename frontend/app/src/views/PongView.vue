@@ -277,7 +277,7 @@ export default defineComponent({
 		this.socket = socket;
 		
 		socket.on("connect", () => {
-			this.join_queue(this.$route.params.mode as string);
+			this.join(this.$route.params.mode as string);
 		})
 		socket.on("disconnect", () => {
 			this.stop();
@@ -328,7 +328,7 @@ export default defineComponent({
 
 			// After 2.5 seconds, join the queue again
 			setTimeout(() => {
-				this.join_queue(this.$route.params.mode as string);
+				this.join(this.$route.params.mode as string);
 			}, 2500);
 		})
 
@@ -348,9 +348,9 @@ export default defineComponent({
 			this.keysPressed[e.code] = false;
 		},
 
-		join_queue(queue: string) {
-			(this.socket as Socket).emit("join_queue", queue);
-			this.draw_searching_for_players();
+		join(queue: string) {
+			(this.socket as Socket).emit("join", queue);
+			this.draw_searching_for_players();	// Technically it should only do this IF its not a spectate request, but we have no clue if its a spectate request or not, otherwise it sould say something like "Joining..."
 		},
 
 		start(player_id: number, player_1_name: string, player_2_name: string) {

@@ -77,6 +77,7 @@ class Match {
 	settings: pong_settings;
 	p1: Socket;
 	p2: Socket;
+	gamemode_name: string;
 	room_name: string;
 	p1_score: number;
 	p2_score: number;
@@ -84,13 +85,14 @@ class Match {
 	start_time: number;
 	spectators: Array<Socket>;
 
-	constructor(settings: pong_settings, p1: Socket, p2: Socket) {
+	constructor(gamemode_name: string, settings: pong_settings, p1: Socket, p2: Socket) {
 		p1.data.state = SocketState.InMatch;
 		p2.data.state = SocketState.InMatch;
 
 		this.settings = settings;
 		this.p1 = p1;
 		this.p2 = p2;
+		this.gamemode_name = gamemode_name;
 		this.p1_score = 0;
 		this.p2_score = 0;
 		this.event = new EventEmitter();
@@ -228,6 +230,7 @@ class Match {
 			"p1_points": this.p1_score,
 			"p2_points": this.p2_score,
 			"reason": winner_reason,
+			"gamemode": this.gamemode_name,
 			"meta": "",
 			"options": ""
 		}, res => {
@@ -247,11 +250,13 @@ class Match {
 }
 
 class MatchMaker {
+	gamemode_name: string;
 	settings: pong_settings;
 	waiting_for_game_connections : Array<Socket>;
 	running_matches : Array<Match>;
 
-	constructor(settings: pong_settings) {
+	constructor(gamemode_name: string, settings: pong_settings) {
+		this.gamemode_name = gamemode_name;
 		this.settings = settings;
 		this.waiting_for_game_connections = new Array();
 		this.running_matches = new Array();
@@ -265,7 +270,7 @@ class MatchMaker {
 			p1.removeAllListeners("disconnect");
 			p2.removeAllListeners("disconnect");
 			
-			let match = new Match(this.settings, p1, p2);	// Will set socket state to be in match
+			let match = new Match(this.gamemode_name, this.settings, p1, p2);	// Will set socket state to be in match
 
 			this.running_matches.push(match);
 			match.event.addListener("match-stop", () => {
@@ -289,64 +294,48 @@ class MatchMaker {
 		this.matchmake();
 	}
 }
-let classic_matchmaker = new MatchMaker(new pong_settings(20, 60, 20, 20, 400, 300, 1, 1, 20, 5, 700, 400));
-let speedup_matchmaker = new MatchMaker(new pong_settings(20, 60, 20, 20, 400, 300, 1.05, 2, 20, 4, 700, 400));
-let rush_matchmaker = new MatchMaker(new pong_settings(20, 60, 20, 20, 550, 300, 1.1, 3, 20, 3, 700, 400));
-let expert_matchmaker = new MatchMaker(new pong_settings(10, 20, 20, 20, 200, 300, 1.05, 3, 20, 5, 700, 400));
+
+let matchmakers = [
+	new MatchMaker("classic", new pong_settings(20, 60, 20, 20, 400, 300, 1, 1, 20, 5, 700, 400)),
+	new MatchMaker("speedup", new pong_settings(20, 60, 20, 20, 400, 300, 1.05, 2, 20, 4, 700, 400)),
+	new MatchMaker("rush", new pong_settings(20, 60, 20, 20, 550, 300, 1.1, 3, 20, 3, 700, 400)),
+	new MatchMaker("expert", new pong_settings(10, 20, 20, 20, 200, 300, 1.05, 3, 20, 5, 700, 400)),
+
+	// Secret modes /shrug
+	new MatchMaker("tiny", new pong_settings(10, 30, 10, 20, 400, 300, 1.05, 2, 20, 4, 350, 200)),
+	new MatchMaker("big", new pong_settings(40, 120, 40, 20, 400, 300, 1.05, 2, 20, 4, 1400, 800)),
+	new MatchMaker("speed", new pong_settings(20, 60, 20, 20, 1500, 300, 1.2, 5, 20, 4, 700, 400)),
+];
 
 io.on("connection", (socket) => {
 	console.log("Got connection:", socket.id);
 	socket.data.state = SocketState.Menu;
 
-	socket.on("join_queue", (queue) => {
+	socket.on("join", (request) => {
 		if (socket.data.state !== SocketState.Menu) {
-			console.log("socket", socket.id, "tired to join a queue while it was not in the menu state, it was in:", socket.data.state);
+			console.log("socket", socket.id, "tired to join while it was not in the menu state, it was in:", socket.data.state);
 			socket.disconnect(true);
 			return;
 		}
 
 		// Spectate request?
-		let data = all_matches[queue];
+		let data = all_matches[request];
 		if (data) {
 			data.spectate(socket);
 			return;
 		}
 
-		console.log(`${socket.id} wants to queue on ${queue}`)
-		if (queue === "classic") {
-			classic_matchmaker.add_to_waiting_list(socket);
-		} else if (queue === "speedup") {
-			speedup_matchmaker.add_to_waiting_list(socket);
-		} else if (queue === "rush") {
-			rush_matchmaker.add_to_waiting_list(socket);
-		} else if (queue === "expert") {
-			expert_matchmaker.add_to_waiting_list(socket);
-		} else {
-			console.log("socket", socket.id, "tired to join a queue that does not exist:", queue);
-			socket.disconnect(true);
-			return;
+		//console.log(`${socket.id} wants to join on ${queue}`)
+		for (let matchmaker of matchmakers) {
+			if (matchmaker.gamemode_name === request) {
+				matchmaker.add_to_waiting_list(socket);
+				return;
+			}
 		}
+		
+		console.log("socket", socket.id, "tired to join that does not exist:", request);
+		socket.disconnect(true);
 	})
-
-	/*
-	socket.on("spectate", (room_name, ackFn) => {
-		if (socket.data.state !== SocketState.Menu) {
-			console.log("socket", socket.id, "tired to spectate while it was not in the menu state, it was in:", socket.data.state);
-			socket.disconnect(true);
-			return;
-		}
-
-		console.log(`${socket.id} wants to spectate ${room_name}`)
-		let data = all_matches[room_name];
-
-		if (data) {
-			data.spectate(socket);
-			ackFn(true);
-		} else {
-			ackFn(false, `No room exists with the name ${room_name}`)
-		}
-	})
-	*/
 });
 
 const port = 4113;
