@@ -9,6 +9,7 @@
 <script lang = "ts">
 import { io, Socket, ManagerOptions, SocketOptions } from "socket.io-client";
 import { defineComponent } from 'vue'
+import { loginStatusStore } from '../stores/profileData';
 
 export default defineComponent({
 	props: {
@@ -38,7 +39,7 @@ export default defineComponent({
 		connect(options: object) {
 			this.disconnect();
 			
-			(options as ManagerOptions & SocketOptions).auth = { token: "abcd" };	// TODO: Read auth token from Pinia
+			(options as ManagerOptions & SocketOptions).auth = { token: loginStatusStore().loggedInStatus?.authString };
 
 			this.socket = io(this.uri as unknown as string, options);
 

@@ -25,7 +25,7 @@ export const loginStatusStore = defineStore ({
 	state: () => ({
 		// All these defaults shuold be changed, but currently set to these for testing.
 
-		loggedInStatus: new LoginData(3, "nkuipers", "abcd") as undefined | LoginData
+		loggedInStatus: new LoginData(3, "nkuipers", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOjMsInVzZXJuYW1lIjoibmt1aXBlcnMifQ.9UXbpTe67YNIz4EsQbqo0cHXDuKGL3gzaRaBtJ0o81s") as undefined | LoginData
 	}),
 	getters: {},
 	actions: {
