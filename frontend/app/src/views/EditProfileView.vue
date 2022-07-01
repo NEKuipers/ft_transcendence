@@ -44,13 +44,14 @@
   */
 import { defineComponent } from 'vue';
 import  EditUserProfile from '../components/EditUserProfile.vue';
+import { loginStatusStore } from '../stores/profileData';
 
 export default defineComponent({
   name: 'EditProfileView',
   props: {
     },
     methods: {
-      async loadUserData(id: string) {
+      async loadUserData(id: number) {
         fetch('api/users/' + id)
         .then(res => res.json())
         .then(data => this.user = data)
@@ -64,8 +65,13 @@ export default defineComponent({
     }
   },
   async mounted() {
-    let g_login_id = '3'; //TODO This variable directs you to various profiles, need to fix
-    await this.loadUserData(g_login_id); //TODO this still works kind of weird, make sure page reloads     
+	let login = loginStatusStore();
+	if (login.loggedInStatus) {
+      await this.loadUserData(login.loggedInStatus.userID); //TODO this still works kind of weird, make sure page reloads
+	} else {
+		// We are not logged in, The router SHOULD prevent us from going here, yet we still got here
+		console.error("Loading EditProfileView while not logged in!")
+	}
   },
   components: {
     EditUserProfile,

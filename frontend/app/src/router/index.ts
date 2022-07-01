@@ -85,14 +85,14 @@ const router = createRouter({
 })
 
 router.beforeEach((to) => {
-  const loggedIn = loginStatusStore()
+	const loggedIn = loginStatusStore();
 
-  if (to.name !== 'login' && !loggedIn.loggedInStatus) {
-    return('/login')
-  }
-  if (to.name === 'login' && loggedIn.loggedInStatus) {
-    return('/')
-  }
+	if (to.name !== 'login' && loggedIn.loggedInStatus === undefined) {
+		return('/login')
+	}
+	if (to.name === 'login' && loggedIn.loggedInStatus !== undefined) {
+		return('/')
+	}
 })
 
 
