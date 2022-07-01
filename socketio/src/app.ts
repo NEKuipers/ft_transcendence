@@ -1,15 +1,17 @@
 import { request, createServer, IncomingMessage } from "http";
 import { Namespace, Server, Socket } from "socket.io";
+import jwt from "jsonwebtoken";
 
 import { EventEmitter } from 'events';
 
 import { settings as pong_settings } from './pong';
 
+const SECRET_AUTH = "secret_token";
 
 const httpServer = createServer();
 const io = new Server(httpServer, {
 	cors: {
-		origin: "*:*",
+		origin: "*",
 		credentials: true
 	},
 	allowEIO3: true
@@ -52,16 +54,23 @@ function post(port: number, path: string, data: object, callback?: (res: Incomin
 }
 
 io.use((socket, next) => {
-	if (socket.handshake.auth.token !== "abcd") {	// TODO: Actually validate the auth token
-		const err = new Error("Bad auth token (TODO: currently only \"abcd\" is valid, make this actually check if the token is valid)!");
+	let data = jwt.verify(socket.handshake.auth.token, SECRET_AUTH);
+	if (data === undefined) {
+		const err = new Error("Bad auth token!");
 		err.stack = null;
 		next(err);
 		return;
 	}
 
-	// TODO: Actually read username from auth token
-	socket.data.userid = 1;
-	socket.data.username = "player";
+	if (typeof(data.userid) !== typeof(0) || typeof(data.username) !== typeof("")) {
+		const err = new Error("Auth token valid, but contains bad data!");
+		err.stack = null;
+		next(err);
+		return;
+	}
+	
+	socket.data.userid = data.userid;
+	socket.data.username = data.username;
 	next();
 })
 
