@@ -12,9 +12,11 @@ export class LoginService {
     async validateUser(details: UserDetails) {
         const userId = details.id
         // Here we have to interact with the database to find or create this user
+        // If User doesn't exist, create user in DB and consider them signed in.
+        // If User exists, turn them into signed in
         const userDb = await this.userService.findOneByName(details.username) // This probably should be changed to ID
         if (userDb) {
-            console.log('Found user', details.username)
+            console.log('Found user', userDb.userName)
         } // video at 1:08:00
     }
 
