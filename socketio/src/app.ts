@@ -6,7 +6,7 @@ import { EventEmitter } from 'events';
 
 import { settings as pong_settings } from './pong';
 
-const SECRET_AUTH = "secret_token";
+const SECRET_AUTH = process.env.JSON_WEB_TOKEN_SECRET;
 
 const httpServer = createServer();
 const io = new Server(httpServer, {
