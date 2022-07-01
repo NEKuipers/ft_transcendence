@@ -2,4 +2,5 @@ FROM node:lts-alpine
 WORKDIR /app
 RUN chown -R node:node /root
 COPY ./entrypoint.sh /
+EXPOSE 8080
 ENTRYPOINT [ "/bin/sh", "/entrypoint.sh" ]
