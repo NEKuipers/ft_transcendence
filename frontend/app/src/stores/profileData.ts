@@ -4,19 +4,36 @@ import { defineStore } from 'pinia'
 //     loggedIn: boolean,
 // }
 
+class LoginData {
+	userID: number;
+	userName: string;
+
+	authString: string;	// Not %100 sure this is the correct place for this
+
+	constructor(userID: number, userName: string, authString: string) {
+		this.userID = userID;
+		this.userName = userName;
+
+		this.authString = authString;
+	}
+}
+
 
 export const loginStatusStore = defineStore ({
-    id: 'login',
-    state: () => ({
-        loggedInStatus: true // This should default to false but is true for testing.
-    }),
-    getters: {},
-    actions: {
-        logIn(): void {
-            this.loggedInStatus = true   
-        },
-        logOut(): void {
-            this.loggedInStatus = false
-        }
-    }
+	id: 'login',
+
+	state: () => ({
+		// All these defaults shuold be changed, but currently set to these for testing.
+
+		loggedInStatus: new LoginData(3, "nkuipers", "abcd") as undefined | LoginData
+	}),
+	getters: {},
+	actions: {
+		logIn(loginData: LoginData): void {
+			this.loggedInStatus = loginData   
+		},
+		logOut(): void {
+			this.loggedInStatus = undefined
+		}
+	}
 })
