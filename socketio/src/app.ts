@@ -24,34 +24,56 @@ enum SocketState {
 	Spectating,
 }
 
-function post(port: number, path: string, data: object, callback?: (res: IncomingMessage) => void) {
+function make_request(port: number, path: string, method: string, data: object, data_callback?: (data: Object) => void) {
 	let json_data = JSON.stringify(data);
-	console.log(`Sending request: ${json_data} to ${path}`)
-
-	callback ??= res => {
-		if (res.statusCode != 201) {	// 201 created
-			console.log(`Got statusCode for ${path}: ${res.statusCode} (${res.statusMessage}): ${res.headers}`)
-		}
-	};
+	console.log(`Sending ${method} request to ${path} with data: ${json_data}`)
 
 	let req = request({
 		hostname: 'localhost',
 		port: port,
 		path: path,
-		method: 'POST',
+		method: method,
 		headers: {
 			'Content-Type': 'application/json',
 			'Content-Length': json_data.length,
 		},
-	}, callback);
+	}, res => {
+		if (method == "POST") {
+			if (res.statusCode != 201) {	// 201 created
+				console.log(`Got statusCode for ${path}: ${res.statusCode} (${res.statusMessage}): ${res.headers}`)
+			} else if (data_callback) {
+				res = res.setEncoding('utf8');
+
+				let combined = "";
+				res.on("data", chunk => {
+					//console.log("Got chunk:", chunk)
+					combined += chunk;
+				})
+				res.on("end", () => {
+					//console.log("End of transmission")
+					data_callback(JSON.parse(combined));
+				})
+			}
+		} else if (method == "PATCH") {
+			if (res.statusCode != 204) {	// 204 no content
+				console.log(`Got statusCode for ${path}: ${res.statusCode} (${res.statusMessage}): ${res.headers}`)
+			}
+		}
+	});
 
 	req.on("error", error => {
 		console.error(`Got error doing request to: ${path}: ${error}`);
 	})
 
+	if (data_callback) {
+		req.setHeader("Prefer", "return=representation");
+	}
 	req.write(json_data);
 	req.end();
 }
+
+// Delete matches that are still "ongoing", even though we just started, therefore they are NOT running
+make_request(3000, `/matches?status=eq.ongoing`, "DELETE", {});
 
 io.use((socket, next) => {
 	let data = jwt.verify(socket.handshake.auth.token, SECRET_AUTH);
@@ -93,6 +115,7 @@ class Match {
 	event: EventEmitter;
 	start_time: number;
 	spectators: Array<Socket>;
+	match_id: number;
 
 	constructor(gamemode_name: string, settings: pong_settings, p1: Socket, p2: Socket) {
 		p1.data.state = SocketState.InMatch;
@@ -149,7 +172,24 @@ class Match {
 
 		this.reset_ball(true);
 
-		// TODO: Make post request that a match is starting
+		// TODO: Maybe not allow the match to start in case this call fails
+		make_request(3000, "/matches", "POST", {
+			"player_one": this.p1.data.userid,
+			"player_two": this.p2.data.userid,
+			"winner_id": this.p1.data.userid,	// IDK
+			"start_time": new Date(this.start_time).toISOString(),
+			"end_time": new Date(this.start_time).toISOString(),	// IDK
+			"p1_points": 0,	// IDK
+			"p2_points": 0,	// IDK
+			"status": "ongoing",
+			"reason": "out-of-time",	// IDK
+			"meta": "",
+			"options": "",
+		}, data => {
+			this.match_id = data[0].id;
+			console.log("Got match id: ", this.match_id);
+		})
+		this.match_id = -1;
 
 		all_matches[this.room_name] = this;
 	}
@@ -230,29 +270,16 @@ class Match {
 			winner_id = 0;
 		}
 
-		post(3030, "/matches", {
-			"player_one": this.p1.data.userid,
-			"player_two": this.p2.data.userid,
-			"winner_id": winner_id,
-			"start_time": new Date(this.start_time).toISOString(),
-			"end_time": new Date(Date.now()).toISOString(),
-			"p1_points": this.p1_score,
-			"p2_points": this.p2_score,
-			"reason": winner_reason,
-			"gamemode": this.gamemode_name,
-			"meta": "",
-			"options": ""
-		}, res => {
-			res = res.setEncoding('utf8');
-			res.on("data", chunk => {
-				console.log("Got chunk:", chunk)
+		if (this.match_id >= 0) {
+			make_request(3000, `/matches?id=eq.${this.match_id}`, "PATCH", {
+				"winner_id": winner_id,
+				"end_time": new Date(Date.now()).toISOString(),
+				"p1_points": this.p1_score,
+				"p2_points": this.p2_score,
+				"status": "finished",
+				"reason": winner_reason,
 			})
-			res.on("end", () => {
-				console.log("End of transmission")
-			})
-		})
-
-		// TODO: make DELETE request that the ongoing match has ended
+		}
 
 		delete all_matches[this.room_name];
 	}
