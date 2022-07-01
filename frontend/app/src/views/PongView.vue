@@ -279,11 +279,17 @@ export default defineComponent({
 		socket.on("connect", () => {
 			this.join(this.$route.params.mode as string);
 		})
-		socket.on("disconnect", () => {
+		socket.on("disconnect", (reason, description) => {
 			this.stop();
 			this.clear_canvas();
+			this.draw_center_text("Disconnected", 100)
 
-			this.$router.push('/select-game');
+			console.error("Disconnect reason:", reason, description)
+
+			// The socketIO server has purposefully disconnected us, lets not retry
+			if (reason == "io server disconnect") {
+				this.$router.push('/select-game');
+			}
 		})
 		socket.on("match_start", (player: number, settings: settings, player_1_name: string, player_2_name: string) => {
 			this.settings = settings;
@@ -328,7 +334,7 @@ export default defineComponent({
 
 			// After 2.5 seconds, join the queue again
 			setTimeout(() => {
-				this.join(this.$route.params.mode as string);
+				this.join(this.$route.params.mode as string);	// Note: In case of spectating, this may cause us to be disconnected from a invalid request
 			}, 2500);
 		})
 
