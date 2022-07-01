@@ -9,7 +9,7 @@ import { settings as pong_settings } from './pong';
 const httpServer = createServer();
 const io = new Server(httpServer, {
 	cors: {
-		origin: "http://localhost:8080",
+		origin: "*:*",
 		credentials: true
 	},
 	allowEIO3: true
