@@ -4,7 +4,7 @@ import { User } from './user.interface';
 export declare class UsersController {
     private readonly usersService;
     constructor(usersService: UsersService);
-    findAll(): User[];
+    findAll(): Promise<User[]>;
     findOne(id: number): User;
     create(CreateUserDto: CreateUserDto): string;
     delete(id: any): string;

@@ -16,7 +16,7 @@ export class LoginService {
         // If User exists, turn them into signed in
         const userDb = await this.userService.findOneByName(details.username) // This probably should be changed to ID
         if (userDb) {
-            console.log('Found user', userDb.userName)
+            console.log('Found user', userDb.username)
         } // video at 1:08:00
     }
 

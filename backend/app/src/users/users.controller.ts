@@ -8,8 +8,12 @@ export class UsersController {
 	constructor(private readonly usersService: UsersService) {}
 
 	@Get()
-	findAll(): User[] {
-		return this.usersService.findAll();
+	async findAll(): Promise<User[]> {
+	// findAll(): User[] {
+		const users = await this.usersService.findAll()
+		// const users = this.usersService.findAll()
+		console.log('Diocane',users)
+		return users
 	}
 
 	@Get(':id')

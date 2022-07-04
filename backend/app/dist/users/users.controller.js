@@ -20,8 +20,10 @@ let UsersController = class UsersController {
     constructor(usersService) {
         this.usersService = usersService;
     }
-    findAll() {
-        return this.usersService.findAll();
+    async findAll() {
+        const users = await this.usersService.findAll();
+        console.log('Diocane', users);
+        return users;
     }
     findOne(id) {
         return this.usersService.findOne(id);
@@ -40,7 +42,7 @@ __decorate([
     (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Array)
+    __metadata("design:returntype", Promise)
 ], UsersController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)(':id'),

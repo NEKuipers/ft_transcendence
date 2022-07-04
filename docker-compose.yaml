@@ -9,31 +9,31 @@ networks:
     driver: bridge
   
 services:
-  frontend:
-    container_name: frontend
-    build: ./frontend
-    depends_on:
-      - backend
-    volumes:
-      - ./frontend/app:/app
-    ports:
-      - 8008:8008
-    restart: on-failure
-    networks:
-      - appNetwork
+  # frontend:
+  #   container_name: frontend
+  #   build: ./frontend
+  #   depends_on:
+  #     - backend
+  #   volumes:
+  #     - ./frontend/app:/app
+  #   ports:
+  #     - 8008:8008
+  #   restart: on-failure
+  #   networks:
+  #     - appNetwork
 
-  backend:
-    container_name: backend
-    build: ./backend
-    depends_on:
-      - postgres
-    volumes:
-      - ./backend/app:/app
-    ports:
-      - 3030:3030
-    restart: on-failure
-    networks:
-      - appNetwork
+  # backend:
+  #   container_name: backend
+  #   build: ./backend
+  #   depends_on:
+  #     - postgres
+  #   volumes:
+  #     - ./backend/app:/app
+  #   ports:
+  #     - 3030:3030
+  #   restart: on-failure
+  #   networks:
+  #     - appNetwork
 
   # https://hub.docker.com/_/postgres
   postgres:
