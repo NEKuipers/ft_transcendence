@@ -19,13 +19,10 @@ export class UsersService {
 	];
 
 	async findAll(): Promise<User[]> {
-	// findAll(): User[] {
 		const res = this.httpService.get('http://localhost:3000/users')
 		await res.forEach(element => {
-			// console.log('Element:', element.data)
 			this.users = element.data
 		});
-		// console.log(this.users)
 		return this.users;
 	}
 
