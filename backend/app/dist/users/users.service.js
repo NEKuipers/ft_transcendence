@@ -46,8 +46,17 @@ let UsersService = class UsersService {
         });
         return this.user;
     }
-    createUser(CreateUserDto) {
-        this.httpService.post('');
+    async createUser(CreateUserDto) {
+        const data = JSON.stringify(CreateUserDto);
+        this.httpService.post('http://localhost:3000/users', {
+            username: CreateUserDto.username,
+            status: CreateUserDto.status,
+            avatar_id: CreateUserDto.avatar_id,
+            oauth_refresh_token: CreateUserDto.oauth_refresh_token,
+            oauth_token_expiration_time: CreateUserDto.oauth_token_expiration_time,
+            is_logged_in: CreateUserDto.is_logged_in
+        })
+            .subscribe(response => console.log(response.statusText));
         return 'User created fr';
     }
 };

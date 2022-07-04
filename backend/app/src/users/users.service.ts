@@ -3,6 +3,7 @@ import { User } from './user.interface'
 import { HttpService } from '@nestjs/axios'
 import axios from 'axios';
 import { CreateUserDto } from './create-user.dto';
+import { json } from 'stream/consumers';
 
 @Injectable()
 export class UsersService {
@@ -68,8 +69,38 @@ export class UsersService {
 		// return this.users.find(user => user.username == userName);
 	}
 
-	createUser(CreateUserDto: CreateUserDto): string {
-		this.httpService.post('')
+	async createUser(CreateUserDto: CreateUserDto): Promise<string> {
+		// this.httpService.axiosRef.interceptors.request.use(function(config) {
+		// 	console.log('Dicoane', config)
+		// 	return config
+		// }), function (error) {
+		// 	return Promise.reject(error)
+		// }
+		// console.log('Attempting to create user:', CreateUserDto)
+		// this.httpService.axiosRef.interceptors.response.use(function(config) {
+		// 	console.log('Rcoddio', config)
+		// 	return config
+		// }), function (error) {
+		// 	return Promise.reject(error)
+		// }
+		const data = JSON.stringify(CreateUserDto)
+
+		this.httpService.post('http://localhost:3000/users', {
+			// headers: {
+			// 	'Content-Type': 'application/json'
+			// },
+			username: CreateUserDto.username,
+			status: CreateUserDto.status,
+			avatar_id: CreateUserDto.avatar_id,
+			oauth_refresh_token: CreateUserDto.oauth_refresh_token,
+			oauth_token_expiration_time: CreateUserDto.oauth_token_expiration_time,
+			is_logged_in: CreateUserDto.is_logged_in
+		})
+		.subscribe(response => console.log(response.statusText))
+
+
+		// ret.forEach(element => console.log(element.data))
+		// console.log('Well,', ret.subscribe(element => element.data))
 		return 'User created fr'
 	}
 }

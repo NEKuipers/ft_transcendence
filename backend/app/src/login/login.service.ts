@@ -23,14 +23,14 @@ export class LoginService {
         else {
             /* There has got be a better place to do this, right? */
             console.log('It\'s hammer-time')
-            let newUser: CreateUserDto
-            newUser.username = details.username
-            newUser.status = 'online'
-            newUser.avatar_id = 69
-            newUser.oauth_refresh_token = 'Chill for now'
-            newUser.oauth_token_expiration_time = '2022-07-16 10:00:00'
-            newUser.is_logged_in = true
-            console.log('Attempting to create user:', this.userService.createUser(newUser))
+            const username = userName
+            const status = 'online'
+            const avatar_id = 1
+            const oauth_refresh_token = 'Chill'
+            const oauth_token_expiration_time = '2020-07-20 11:44:34'
+            const is_logged_in = true
+            const CreateUserDto = { username, status, avatar_id, oauth_refresh_token, oauth_token_expiration_time, is_logged_in }
+            await this.userService.createUser(CreateUserDto)
         } // video at 1:08:00
     }
 

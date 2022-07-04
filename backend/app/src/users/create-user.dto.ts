@@ -1,5 +1,5 @@
 export class CreateUserDto {
-	readonly id: number;
+	readonly id?: number;
 	username: string;
 	status: string;
 	avatar_id: number;
