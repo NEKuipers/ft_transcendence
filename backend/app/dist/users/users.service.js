@@ -24,11 +24,31 @@ let UsersService = class UsersService {
         });
         return this.users;
     }
-    findOne(id) {
-        return this.users.find(user => user.id == id);
+    async findOne(id) {
+        const ret = await this.httpService.get('http://localhost:3000/users', {
+            params: {
+                id: 'eq.' + id
+            }
+        });
+        await ret.forEach(element => {
+            this.user = element.data[0];
+        });
+        return this.user;
     }
-    findOneByName(userName) {
-        return this.users.find(user => user.username == userName);
+    async findOneByName(userName) {
+        const ret = await this.httpService.get('http://localhost:3000/users', {
+            params: {
+                username: 'eq.' + userName
+            }
+        });
+        await ret.forEach(element => {
+            this.user = element.data[0];
+        });
+        return this.user;
+    }
+    createUser(CreateUserDto) {
+        this.httpService.post('');
+        return 'User created fr';
     }
 };
 UsersService = __decorate([

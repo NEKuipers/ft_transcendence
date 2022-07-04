@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { User } from './user.interface'
 import { HttpService } from '@nestjs/axios'
+import axios from 'axios';
+import { CreateUserDto } from './create-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -18,6 +20,8 @@ export class UsersService {
 		// {id: 8, username: "mrpers", status: 0, oauth_refresh_token: "", oauth_token_expiration_timestamp: "2022-06-16 17:00:00", gamesPlayed: 4, gamesWon: 0, gamesLost: 4, isLoggedIn: false, leaderboardPosition: 8}
 	];
 
+	user: User
+
 	async findAll(): Promise<User[]> {
 		const res = this.httpService.get('http://localhost:3000/users')
 		await res.forEach(element => {
@@ -26,11 +30,46 @@ export class UsersService {
 		return this.users;
 	}
 
-	findOne(id: number): User {
-		return this.users.find(user => user.id == id);
+	async findOne(id: number): Promise<User> {
+		// this.httpService.axiosRef.interceptors.request.use(function(config) {
+		// 	console.log('Dicoane', config)
+		// 	return config
+		// }), function (error) {
+		// 	return Promise.reject(error)
+		// }
+		const ret = await this.httpService.get('http://localhost:3000/users', {
+			params: {
+				id: 'eq.' + id
+			}
+		})
+		await ret.forEach(element => {
+			this.user = element.data[0]
+		})
+		return this.user
 	}
 
-	findOneByName(userName: string): User {
-		return this.users.find(user => user.username == userName);
+	async findOneByName(userName: string): Promise<User> {
+		// this.httpService.axiosRef.interceptors.request.use(function(config) {
+		// 	console.log('Dicoane', config)
+		// 	return config
+		// }), function (error) {
+		// 	return Promise.reject(error)
+		// }
+		const ret = await this.httpService.get('http://localhost:3000/users', {
+			params: {
+				username: 'eq.' + userName
+			}
+		})
+		
+		await ret.forEach(element => {
+			this.user = element.data[0]
+		})
+		return this.user
+		// return this.users.find(user => user.username == userName);
+	}
+
+	createUser(CreateUserDto: CreateUserDto): string {
+		this.httpService.post('')
+		return 'User created fr'
 	}
 }

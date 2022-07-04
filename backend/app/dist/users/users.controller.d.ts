@@ -5,7 +5,7 @@ export declare class UsersController {
     private readonly usersService;
     constructor(usersService: UsersService);
     findAll(): Promise<User[]>;
-    findOne(id: number): User;
+    findOne(id: number): Promise<User>;
     create(CreateUserDto: CreateUserDto): string;
     delete(id: any): string;
     update(updateUserDto: CreateUserDto, id: number): string;

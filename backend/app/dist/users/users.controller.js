@@ -22,11 +22,11 @@ let UsersController = class UsersController {
     }
     async findAll() {
         const users = await this.usersService.findAll();
-        console.log('Diocane', users);
         return users;
     }
-    findOne(id) {
-        return this.usersService.findOne(id);
+    async findOne(id) {
+        const user = await this.usersService.findOne(id);
+        return user;
     }
     create(CreateUserDto) {
         return 'User created';
@@ -49,7 +49,7 @@ __decorate([
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
-    __metadata("design:returntype", Object)
+    __metadata("design:returntype", Promise)
 ], UsersController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Post)(),
