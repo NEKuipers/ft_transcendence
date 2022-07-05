@@ -48,16 +48,21 @@ let UsersService = class UsersService {
     }
     async createUser(CreateUserDto) {
         const data = JSON.stringify(CreateUserDto);
-        this.httpService.post('http://localhost:3000/users', {
-            username: CreateUserDto.username,
-            status: CreateUserDto.status,
-            avatar_id: CreateUserDto.avatar_id,
-            oauth_refresh_token: CreateUserDto.oauth_refresh_token,
-            oauth_token_expiration_time: CreateUserDto.oauth_token_expiration_time,
-            is_logged_in: CreateUserDto.is_logged_in
-        })
-            .subscribe(response => console.log(response.statusText));
-        return 'User created fr';
+        try {
+            this.httpService.post('http://localhost:3000/users', {
+                username: CreateUserDto.username,
+                status: CreateUserDto.status,
+                avatar_id: CreateUserDto.avatar_id,
+                oauth_refresh_token: CreateUserDto.oauth_refresh_token,
+                oauth_token_expiration_time: CreateUserDto.oauth_token_expiration_time,
+                is_logged_in: CreateUserDto.is_logged_in
+            })
+                .subscribe(response => console.log('Creation request outcome: ', response.statusText));
+        }
+        catch (error) {
+            console.log('error', error.status);
+        }
+        return this.findOneByName(CreateUserDto.username);
     }
 };
 UsersService = __decorate([

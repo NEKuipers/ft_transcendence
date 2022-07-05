@@ -6,10 +6,11 @@ import { intraStrategy } from './strategies';
 import { UsersModule } from '../users/users.module';
 import { UsersService } from 'src/users/users.service';
 import { ConfigService } from '@nestjs/config';
+import { SessionSerialiser } from './utils/Serialiser';
 
 @Module({
   imports: [HttpModule, UsersModule],
   controllers: [LoginController],
-  providers: [LoginService, intraStrategy, UsersService, ConfigService]
+  providers: [LoginService, SessionSerialiser, intraStrategy, UsersService, ConfigService]
 })
 export class LoginModule {}

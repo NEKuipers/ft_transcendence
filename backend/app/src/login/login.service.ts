@@ -5,23 +5,21 @@ import { AxiosResponse } from 'axios';
 import { UserDetails } from './login.types'
 import { UsersService } from '../users/users.service';
 import { CreateUserDto } from 'src/users/create-user.dto';
+import { User } from '../users/user.interface'
 
 @Injectable()
 export class LoginService {
     constructor(private readonly userService: UsersService) {}
 
     async validateUser(details: UserDetails) {
-        const userId = details.id
         const userName = details.username
-        // Here we have to interact with the database to find or create this user
-        // If User doesn't exist, create user in DB and consider them signed in.
-        // If User exists, turn them into signed in
         const userDb = await this.userService.findOneByName(userName) // This probably should be changed to ID
         if (userDb) {
             console.log('Found user', userDb.username)
+            return userDb
         }
         else {
-            /* There has got be a better place to do this, right? */
+            /* There has got be a better place to do this, right? Or perhaps not */
             console.log('It\'s hammer-time')
             const username = userName
             const status = 'online'
@@ -30,17 +28,17 @@ export class LoginService {
             const oauth_token_expiration_time = '2020-07-20 11:44:34'
             const is_logged_in = true
             const CreateUserDto = { username, status, avatar_id, oauth_refresh_token, oauth_token_expiration_time, is_logged_in }
-            await this.userService.createUser(CreateUserDto)
-        } // video at 1:08:00
+            return await this.userService.createUser(CreateUserDto)
+        }
     }
 
     createUser() {
 
-        // throw new Error('Method not implemented.')
     }
 
-    findUser() {
-        throw new Error('Method not implemented.')
+    async findUser(username: string): Promise<User | undefined> {
+        return await this.userService.findOneByName(username)
+        // throw new Error('Method not implemented.')
     }
 
     // async validateUser(username: string, pass: string): Promise<any> {

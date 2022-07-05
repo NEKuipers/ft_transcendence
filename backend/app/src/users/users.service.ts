@@ -69,7 +69,7 @@ export class UsersService {
 		// return this.users.find(user => user.username == userName);
 	}
 
-	async createUser(CreateUserDto: CreateUserDto): Promise<string> {
+	async createUser(CreateUserDto: CreateUserDto): Promise<User> {
 		// this.httpService.axiosRef.interceptors.request.use(function(config) {
 		// 	console.log('Dicoane', config)
 		// 	return config
@@ -85,22 +85,24 @@ export class UsersService {
 		// }
 		const data = JSON.stringify(CreateUserDto)
 
-		this.httpService.post('http://localhost:3000/users', {
-			// headers: {
-			// 	'Content-Type': 'application/json'
-			// },
-			username: CreateUserDto.username,
-			status: CreateUserDto.status,
-			avatar_id: CreateUserDto.avatar_id,
-			oauth_refresh_token: CreateUserDto.oauth_refresh_token,
-			oauth_token_expiration_time: CreateUserDto.oauth_token_expiration_time,
-			is_logged_in: CreateUserDto.is_logged_in
-		})
-		.subscribe(response => console.log(response.statusText))
+		try {
+			this.httpService.post('http://localhost:3000/users', {
+				username: CreateUserDto.username,
+				status: CreateUserDto.status,
+				avatar_id: CreateUserDto.avatar_id,
+				oauth_refresh_token: CreateUserDto.oauth_refresh_token,
+				oauth_token_expiration_time: CreateUserDto.oauth_token_expiration_time,
+				is_logged_in: CreateUserDto.is_logged_in
+			})
+			.subscribe(response => console.log('Creation request outcome: ', response.statusText))
+		}
+		catch (error) {
+			console.log('error', error.status);
+		}
 
 
 		// ret.forEach(element => console.log(element.data))
 		// console.log('Well,', ret.subscribe(element => element.data))
-		return 'User created fr'
+		return this.findOneByName(CreateUserDto.username)
 	}
 }

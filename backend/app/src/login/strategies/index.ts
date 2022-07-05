@@ -30,6 +30,6 @@ export class intraStrategy extends PassportStrategy(Strategy) {
         const { username, id, profileUrl } = userProfile;
         console.log('Diogane sono io:', username, id, profileUrl)
         const details = { id, username }
-        await this.loginService.validateUser(details)
+        return this.loginService.validateUser(details)
     }
 }

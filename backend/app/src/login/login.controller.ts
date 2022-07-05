@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 import { PassportStrategy } from '@nestjs/passport';
 import { passport } from 'passport-42'
 import { stringify } from 'querystring';
-import { IntraAuthGuard } from './guards';
+import { AuthenticatedGuard, IntraAuthGuard } from './guards';
 import { User } from '../users/user.interface'
 import { UsersService } from 'src/users/users.service';
 
@@ -34,8 +34,11 @@ export class LoginController {
         res.status(200).send('Hi there')
     }
 
-    // @Get('status')
-    // status() {}
+    @Get('status')
+    @UseGuards(AuthenticatedGuard)
+    status() {
+        return 'ok'
+    }
 
 }
 

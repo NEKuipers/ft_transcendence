@@ -9,5 +9,5 @@ export declare class UsersService {
     findAll(): Promise<User[]>;
     findOne(id: number): Promise<User>;
     findOneByName(userName: string): Promise<User>;
-    createUser(CreateUserDto: CreateUserDto): Promise<string>;
+    createUser(CreateUserDto: CreateUserDto): Promise<User>;
 }
