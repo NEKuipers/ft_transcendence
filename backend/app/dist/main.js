@@ -13,7 +13,7 @@ async function bootstrap() {
         },
         secret: 'diorandagio',
         resave: false,
-        saveUninitialized: false
+        saveUninitialized: false,
     }));
     app.use(passport.initialize());
     app.use(passport.session());

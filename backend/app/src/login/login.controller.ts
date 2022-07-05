@@ -30,6 +30,7 @@ export class LoginController {
     @Get('callback')
     @UseGuards(IntraAuthGuard)
     callback(@Res() res: Response) {
+        console.log(res.req.query.code)
         console.log('PORCALAMADONNAMAIALADIOCANACCIOARRUGGINITOAFAPOMPINI')
         res.status(200).send('Hi there')
     }
