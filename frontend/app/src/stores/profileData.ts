@@ -12,6 +12,11 @@ export const loginStatusStore = defineStore ({
     }),
     getters: {},
     actions: {
+        /* 
+            It seems that...
+        */
+
+
         logIn(): void {
             this.loggedInStatus = true   
         },

@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { profile } from 'console'
 import { Config } from 'prettier';
 import { LoginService } from '../login.service'
+import { callbackify } from 'util';
 
 @Injectable()
 export class intraStrategy extends PassportStrategy(Strategy) {
@@ -20,16 +21,18 @@ export class intraStrategy extends PassportStrategy(Strategy) {
                 'id': function(obj) {
                     return String(obj.id)
                 },
-                username: 'login',
-                profileUrl: 'url'
+                username: 'login'
             }
         })
     }
 
-    async validate(accessToken: string, refreshToken: string, userProfile: any) {
-        const { username, id, profileUrl } = userProfile;
-        console.log('Diogane sono io:', username, id, profileUrl)
+    async validate(accessToken: string, refreshToken: string, 
+        userProfile: any, callback: (error: any, user: any) => void) {
+        const { username, id } = userProfile;
+        console.log('Diogane sono io:', username, id)
         const details = { id, username }
-        return this.loginService.validateUser(details)
+        // return this.loginService.validateUser(details)
+        const user = await this.loginService.validateUser(details)
+        callback(null, { id: user.id } )
     }
 }

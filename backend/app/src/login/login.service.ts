@@ -20,7 +20,7 @@ export class LoginService {
         }
         else {
             /* There has got be a better place to do this, right? Or perhaps not */
-            console.log('It\'s hammer-time')
+            // console.log('It\'s hammer-time')
             const username = userName
             const status = 'online'
             const avatar_id = 1

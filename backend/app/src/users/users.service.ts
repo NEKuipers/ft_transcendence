@@ -94,7 +94,7 @@ export class UsersService {
 				oauth_token_expiration_time: CreateUserDto.oauth_token_expiration_time,
 				is_logged_in: CreateUserDto.is_logged_in
 			})
-			.subscribe(response => console.log('Creation request outcome: ', response.statusText))
+			.subscribe(response => console.log('Creation request outcome:', response.statusText))
 		}
 		catch (error) {
 			console.log('error', error.status);

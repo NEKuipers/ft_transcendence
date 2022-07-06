@@ -28,11 +28,16 @@ export class LoginController {
         This is the redirect URL the OAuth2 Provider will call
     */
     @Get('callback')
-    @UseGuards(IntraAuthGuard)
+    @UseGuards(IntraAuthGuard) // for some reason the first time, it isn't authenticated yet
     callback(@Res() res: Response) {
-        console.log(res.req.query.code)
+
+        // console.log(res.req.query.code)
+        // const code = res.req.query.code
         console.log('PORCALAMADONNAMAIALADIOCANACCIOARRUGGINITOAFAPOMPINI')
-        res.status(200).send('Hi there')
+
+        console.log(res.req.cookies)
+        res.redirect('http://localhost:8081/')
+        // res.status(200).send('Hi there')
     }
 
     @Get('status')

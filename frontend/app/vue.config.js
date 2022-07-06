@@ -9,6 +9,7 @@ module.exports = defineConfig({
         changeOrigin: true,
         logLevel: 'debug',
         pathRewrite: { '^/api': '/'},
+        ws: true
       }
     }
   }

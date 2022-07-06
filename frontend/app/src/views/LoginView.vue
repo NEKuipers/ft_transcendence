@@ -17,7 +17,12 @@ export default defineComponent({
   methods: {
     OAuthLogin() {
       let bruh: string
-      fetch('/api/login')
+      console.log('Ma porcoddio')
+      fetch('/api/login', {
+        // headers: {
+        //   'Access-Control-Allow-Origin': 'https://intra.42.fr'
+        // }
+      })
       .then(res => res.text())
       .then(data => {console.log('Come on man');})
       .catch(error => {
