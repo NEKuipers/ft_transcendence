@@ -1,7 +1,7 @@
 import { User } from '../users/user.interface'
 
 export type UserDetails = {
-    id: string
+    id?: string
     username: string
 }
 

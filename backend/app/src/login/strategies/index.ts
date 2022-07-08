@@ -28,11 +28,13 @@ export class intraStrategy extends PassportStrategy(Strategy) {
 
     async validate(accessToken: string, refreshToken: string, 
         userProfile: any, callback: (error: any, user: any) => void) {
-        const { username, id } = userProfile;
-        console.log('Diogane sono io:', username, id)
+        const { id, username } = userProfile;
+        console.log('Diogane sono io:', username)
         const details = { id, username }
         // return this.loginService.validateUser(details)
         const user = await this.loginService.validateUser(details)
+        console.log('access token', accessToken, 'refresh token', refreshToken)
+        // console.log('Username', user.username)
         callback(null, { id: user.id } )
     }
 }

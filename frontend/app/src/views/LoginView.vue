@@ -15,32 +15,21 @@ export default defineComponent({
   components: {
   },
   methods: {
-    OAuthLogin() {
-      let bruh: string
-      console.log('Ma porcoddio')
-      fetch('/api/login', {
-        // headers: {
-        //   'Access-Control-Allow-Origin': 'https://intra.42.fr'
-        // }
-      })
-      .then(res => res.text())
-      .then(data => {console.log('Come on man');})
-      .catch(error => {
-        console.log(error)
-        bruh = 'https://boia.de'
-      })
-      // const client_id = process.env.VUE_APP_CLIENTID
-      // console.log('client id is: ' + client_id)
-      // window.location.href = bruh
-      // window.location.href = 'https://api.intra.42.fr/oauth/authorize?client_id=' + process.env.CLIENT_ID 
-      //   + '&redirect_uri=' + 'http://localhost:3030/callback' + '&scope=public&state=authstate&response_type=code'
-      // this.$router.push({name: 'intraAuth', params: {
-      //   client_id: process.env.CLIENT_ID,
-      //   redirect_uri: 'http://localhost:3030/callback',
-      //   scope: 'public',
-      //   state: 'auth_state',
-      //   response_type: 'code'
-      // }})
+    OAuthLogin(e: Event) {
+      // let bruh: string
+      // e.preventDefault()
+      window.location.href = '/api/login'
+      // fetch('/api/login', {
+      //   // headers: {
+      //   //   'Access-Control-Allow-Origin': 'https://intra.42.fr'
+      //   // }
+      // })
+      // .then(res => res.text())
+      // .then(data => {console.log('Come on man');})
+      // .catch(error => {
+      //   console.log(error)
+      //   bruh = 'https://boia.de'
+      // })
       
     }
   },

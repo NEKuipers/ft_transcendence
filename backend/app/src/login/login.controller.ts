@@ -21,7 +21,7 @@ export class LoginController {
     @Get()
     @UseGuards(IntraAuthGuard)
     OAuthRequest(): any {
-        return;
+        return 'Ye';
     }
 
     /* 
@@ -35,7 +35,12 @@ export class LoginController {
         // const code = res.req.query.code
         console.log('PORCALAMADONNAMAIALADIOCANACCIOARRUGGINITOAFAPOMPINI')
 
-        console.log(res.req.cookies)
+        // console.log('Cookie', res.req.cookies)
+        res.set({
+            'Access-Control-Allow-Origin': '*',
+            'Referrer-Policy': 'origin',
+        })
+        console.log('Header',res.getHeader('Access-Control-Allow-Origin'))
         res.redirect('http://localhost:8081/')
         // res.status(200).send('Hi there')
     }
