@@ -1,27 +1,27 @@
 import { defineStore } from 'pinia'
+import { storeToRefs } from 'pinia'
 
 // interface login {
 //     loggedIn: boolean,
 // }
 
 
-export const loginStatusStore = defineStore ({
-    id: 'login',
+export const useLoginStatusStore = defineStore ('login', {
     state: () => ({
-        loggedInStatus: false // This should default to false but is true for testing.
+        loggedInStatus: false, // This should default to false but is true for testing.
+        diocane: 0
     }),
-    getters: {},
     actions: {
-        /* 
-            It seems that...
-        */
-
-
-        logIn(): void {
-            this.loggedInStatus = true   
+        logIn() {
+            this.loggedInStatus = true
+            this.diocane++
+            console.log('So I have logged in', this.loggedInStatus)
         },
-        logOut(): void {
+        logOut() {
             this.loggedInStatus = false
         }
+    },
+    getters: {
+        getLoginStatus: (state) => state.loggedInStatus
     }
 })

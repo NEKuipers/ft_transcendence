@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
-import { loginStatusStore } from '@/stores/profileData'
+import { useLoginStatusStore } from '@/stores/profileData'
 import LoginView from '@/views/LoginView.vue'
 import HomeView from '@/views/HomeView.vue'
 import ProfileView from '@/views/ProfileView.vue'
@@ -85,14 +85,19 @@ const router = createRouter({
 })
 
 router.beforeEach((to) => {
-  const loggedIn = loginStatusStore()
+  // const { getLoginStatus: loggedIn } = useLoginStatusStore()
+  const store = useLoginStatusStore()
 
-  if (to.name !== 'login' && !loggedIn.loggedInStatus) {
+  const loggedIn = store.getLoginStatus
+  console.log('Ma perché', store.$state.loggedInStatus)
+  console.log('E', store.$state.diocane)
+  
+  if (to.name !== 'login' && !loggedIn) {
     return('/login')
   }
-  if (to.name === 'login' && loggedIn.loggedInStatus) {
-    return('/')
-  }
+  // if (to.name === 'login' && loggedIn.loggedInStatus) {
+  //   return('/')
+  // }
 })
 
 

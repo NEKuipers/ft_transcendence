@@ -70,7 +70,7 @@
     
   */
 import { defineComponent } from 'vue';
-import { loginStatusStore } from '../stores/profileData'
+import { useLoginStatusStore } from '../stores/profileData'
 import  UserProfile from '../components/UserProfile.vue';
 import AchievementsList from '../components/AchievementsList.vue'
 
@@ -96,7 +96,7 @@ export default defineComponent({
   },
   async mounted() {
     await this.loadUserData(this.$route.params.id[0]);     
-    this.login = loginStatusStore();
+    this.login = useLoginStatusStore();
   },
   components: {
     UserProfile,

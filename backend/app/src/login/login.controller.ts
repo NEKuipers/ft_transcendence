@@ -33,14 +33,14 @@ export class LoginController {
 
         // console.log(res.req.query.code)
         // const code = res.req.query.code
-        console.log('PORCALAMADONNAMAIALADIOCANACCIOARRUGGINITOAFAPOMPINI')
+        // console.log('PORCALAMADONNAMAIALADIOCANACCIOARRUGGINITOAFAPOMPINI')
 
-        // console.log('Cookie', res.req.cookies)
-        res.set({
-            'Access-Control-Allow-Origin': '*',
-            'Referrer-Policy': 'origin',
-        })
-        console.log('Header',res.getHeader('Access-Control-Allow-Origin'))
+        // // console.log('Cookie', res.req.cookies)
+        // res.set({
+        //     'Access-Control-Allow-Origin': '*',
+        //     'Referrer-Policy': 'origin',
+        // })
+        // console.log('Header',res.getHeader('Access-Control-Allow-Origin'))
         res.redirect('http://localhost:8081/')
         // res.status(200).send('Hi there')
     }

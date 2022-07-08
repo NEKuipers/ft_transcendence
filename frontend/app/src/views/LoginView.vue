@@ -9,6 +9,8 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { useLoginStatusStore } from '../stores/profileData'
+import { storeToRefs } from 'pinia'
 
 export default defineComponent({
   name: 'HomeView',
@@ -16,9 +18,11 @@ export default defineComponent({
   },
   methods: {
     OAuthLogin(e: Event) {
-      // let bruh: string
-      // e.preventDefault()
       window.location.href = '/api/login'
+      const store = useLoginStatusStore()
+      const { getLoginStatus: status } = storeToRefs(store) 
+      store.logIn()
+      
       // fetch('/api/login', {
       //   // headers: {
       //   //   'Access-Control-Allow-Origin': 'https://intra.42.fr'
@@ -30,7 +34,6 @@ export default defineComponent({
       //   console.log(error)
       //   bruh = 'https://boia.de'
       // })
-      
     }
   },
 });
