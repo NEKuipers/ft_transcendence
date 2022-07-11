@@ -5,6 +5,20 @@ import { storeToRefs } from 'pinia'
 //     loggedIn: boolean,
 // }
 
+class LoginData {
+	userID: number;
+	userName: string;
+
+	authString: string;	// Not %100 sure this is the correct place for this
+
+	constructor(userID: number, userName: string, authString: string) {
+		this.userID = userID;
+		this.userName = userName;
+
+		this.authString = authString;
+	}
+}
+
 
 export const useLoginStatusStore = defineStore ('login', {
     state: () => ({
@@ -24,4 +38,5 @@ export const useLoginStatusStore = defineStore ('login', {
     getters: {
         getLoginStatus: (state) => state.loggedInStatus
     }
+
 })

@@ -16,6 +16,7 @@ import { AvatarsModule } from './avatars/avatars.module';
 import { FriendsModule } from './friends/friends.module';
 import { LoginModule } from './login/login.module';
 import { PassportModule } from '@nestjs/passport';
+import { LadderModule } from './ladder/ladder.module';
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -24,7 +25,7 @@ import { PassportModule } from '@nestjs/passport';
   PassportModule.register({ session: true}),
   UsersModule, MatchesModule, MessagesModule,
   ParticipantsModule, TwoFactorAuthModule, ChannelsModule, UserAchievementsModule, AchievementsModule, BlockedUsersModule, 
-  AvatarsModule, FriendsModule, LoginModule],
+  AvatarsModule, FriendsModule, LoginModule, LadderModule],
   controllers: [AppController],
   providers: [AppService],
 })

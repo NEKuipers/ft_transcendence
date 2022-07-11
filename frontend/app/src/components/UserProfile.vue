@@ -13,7 +13,7 @@
         <h4>Games lost: {{user?.gamesLost}}</h4>
         <h4>Overall ranking:  #{{user?.leaderboardPosition}}</h4> -->
     </section>
-	<div v-if="user?.id != '3'"> <!-- TODO change to login-id -->
+	<div v-if="user?.id != loginStatusStore.loggedInStatus?.userID">
 		<SmallButton class="user-btn" text="Message"></SmallButton>
 		<SmallButton class="user-btn" text="Invite to game"></SmallButton>
     <br>
@@ -32,11 +32,17 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import SmallButton from '../components/SmallButton.vue'
+import { loginStatusStore } from '../stores/profileData';
 
 export default defineComponent({
 	name: 'UserProfile',
 	props: {
 		user: Object,
+	},
+	data () {
+		return {
+			loginStatusStore: loginStatusStore()
+		}
 	},
 	components: {
 		SmallButton,

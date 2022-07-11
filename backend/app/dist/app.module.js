@@ -24,6 +24,7 @@ const avatars_module_1 = require("./avatars/avatars.module");
 const friends_module_1 = require("./friends/friends.module");
 const login_module_1 = require("./login/login.module");
 const passport_1 = require("@nestjs/passport");
+const ladder_module_1 = require("./ladder/ladder.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -34,7 +35,7 @@ AppModule = __decorate([
             passport_1.PassportModule.register({ session: true }),
             users_module_1.UsersModule, matches_module_1.MatchesModule, messages_module_1.MessagesModule,
             participants_module_1.ParticipantsModule, two_factor_auth_module_1.TwoFactorAuthModule, channels_module_1.ChannelsModule, user_achievements_module_1.UserAchievementsModule, achievements_module_1.AchievementsModule, blocked_users_module_1.BlockedUsersModule,
-            avatars_module_1.AvatarsModule, friends_module_1.FriendsModule, login_module_1.LoginModule],
+            avatars_module_1.AvatarsModule, friends_module_1.FriendsModule, login_module_1.LoginModule, ladder_module_1.LadderModule],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
     })
