@@ -12,7 +12,7 @@ export class MatchesController {
 	}
 
 	@Get('/ongoing')
-	findAllOngoing(): OngoingMatch[] {
+	findAllOngoing(): Promise<OngoingMatch[]> {
 		return this.matchesService.findAllOngoing();
 	}	
 

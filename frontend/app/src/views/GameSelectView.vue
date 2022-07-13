@@ -33,8 +33,7 @@
 			<div v-if="matches.length > 0">
 			<ul class="active-games" v-for="match in matches" :key="match.match_id">
 				<div class="listed-game-ctr">
-				<li class="listed-game" >MATCH #{{match.match_id}} | {{match.mode}} | <b>{{match.player_one}}</b> vs <b>{{match.player_two}}</b> | <a class="link" 
-				href="#">SPECTATE</a></li>
+				<li class="listed-game" >MATCH #{{match.match_id}} | {{match.mode}} | <b>{{match.player_one}}</b> vs <b>{{match.player_two}}</b> | <a class="link" :href="'/pong/match:' + match.match_id">SPECTATE</a></li>
 				</div>
 			</ul>
 			</div>
@@ -80,16 +79,33 @@ export default defineComponent({
 	data() {
 		return {
 			matches: Object as () => Match,
+			handle: -1,
 		}
 	},
+
 	mounted() {
-		fetch('api/matches/ongoing')
-		.then(res => res.json())
-		.then(data => this.matches = data.sort((a:Match ,b:Match) => a.match_id - b.match_id))
-		.catch(err => console.log(err))
+		this.refreshOngoing();
+
+		this.handle = setInterval(() => {
+			this.refreshOngoing();
+		}, 2500);
+
 	},
 
+	unmounted() {
+		clearInterval(this.handle);
+	},
 
+	methods: {
+		refreshOngoing() {
+			console.log("Getting all ongoing matches!");
+
+			fetch('api/matches/ongoing')
+				.then(res => res.json())
+				.then(data => this.matches = data.sort((a:Match ,b:Match) => a.match_id - b.match_id))
+				.catch(err => console.log(err))
+		}
+	}
 
 })
 </script>

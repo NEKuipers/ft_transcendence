@@ -4,7 +4,7 @@ export declare class MatchesController {
     private readonly matchesService;
     constructor(matchesService: MatchesService);
     findAllCompleted(): CompletedMatch[];
-    findAllOngoing(): OngoingMatch[];
+    findAllOngoing(): Promise<OngoingMatch[]>;
     findOne(id: number): OngoingMatch;
     create(match: Match): string;
     update(id: number, match: Match): string;
