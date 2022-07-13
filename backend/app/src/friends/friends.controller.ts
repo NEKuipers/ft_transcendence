@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Patch, Delete, Body, Param } from '@nestjs/common';
 import { FriendsService } from './friends.service';
-import { Friend } from './friends.interface';
+import { Friend, FriendRequest, FriendTable } from './friends.interface';
 
 @Controller('friends')
 export class FriendsController {
@@ -11,14 +11,19 @@ export class FriendsController {
 		return this.friendsService.findAll();
 	}
 
+	@Get('/requests')
+	findAllRequests(): FriendRequest[] { 
+		return this.friendsService.findAllRequests();
+	} 
+
 	@Post()
-	create(@Body() friend: Friend): string {
-		return this.friendsService.createFriendRequest(friend);
+	create(@Body() friendtable: FriendTable): string {
+		return this.friendsService.createFriend(friendtable);
 	}
 
 	@Patch(':id')
-	update(@Param('id') id: number, @Body() friend: Friend) : string {
-		return this.friendsService.updateFriendRequest(id, friend);
+	update(@Param('id') id: number, @Body() friendtable: FriendTable) : string {
+		return this.friendsService.updateFriend(id, friendtable);
 	}
 
 	@Delete(':id')
