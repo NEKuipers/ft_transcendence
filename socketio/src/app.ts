@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import { EventEmitter } from 'events';
 
 import { settings as pong_settings } from './pong';
+import { HttpService } from "@nestjs/axios";
 
 const SECRET_AUTH = process.env.JSON_WEB_TOKEN_SECRET;
 
@@ -24,9 +25,15 @@ enum SocketState {
 	Spectating,
 }
 
-function make_request(port: number, path: string, method: string, data: object, data_callback?: (data: Object) => void) {
+function make_request(port: number, path: string, method: string, data: object, data_callback?: (data: Object) => void, error_callback?: (data: Object) => void) {
 	let json_data = JSON.stringify(data);
 	console.log(`Sending ${method} request to ${path} with data: ${json_data}`)
+
+	if (!error_callback) {
+		error_callback = (error) => {
+			console.error(`Got error doing request to: ${path}: ${error}`);
+		}
+	}
 
 	let req = request({
 		hostname: 'localhost',
@@ -40,8 +47,13 @@ function make_request(port: number, path: string, method: string, data: object, 
 	}, res => {
 		if (method == "POST") {
 			if (res.statusCode != 201) {	// 201 created
-				console.log(`Got statusCode for ${path}: ${res.statusCode} (${res.statusMessage}): ${res.headers}`)
-			} else if (data_callback) {
+				console.log(`Got statusCode for ${path}: ${res.statusCode} (${res.statusMessage}): ${JSON.stringify(res.headers, null, 4)}`)
+
+				data_callback = function(data: Object) {
+					console.log(`Its hint is: ${JSON.stringify(data, null, 4)}`);
+				}
+			}
+			if (data_callback) {
 				res = res.setEncoding('utf8');
 
 				let combined = "";
@@ -56,13 +68,15 @@ function make_request(port: number, path: string, method: string, data: object, 
 			}
 		} else if (method == "PATCH") {
 			if (res.statusCode != 204) {	// 204 no content
-				console.log(`Got statusCode for ${path}: ${res.statusCode} (${res.statusMessage}): ${res.headers}`)
+				console.log(`Got statusCode for ${path}: ${res.statusCode} (${res.statusMessage}): ${JSON.stringify(res.headers, null, 4)}`)
 			}
 		}
 	});
 
 	req.on("error", error => {
-		console.error(`Got error doing request to: ${path}: ${error}`);
+		if (error_callback) {
+			error_callback(error);
+		}
 	})
 
 	if (data_callback) {
@@ -96,12 +110,6 @@ io.use((socket, next) => {
 	next();
 })
 
-let last_room_id = 0;
-function get_new_match_room_name(): string {
-	last_room_id += 1;
-	return "match:" + last_room_id;
-}
-
 let all_matches : { [key: string]: Match } = {}
 
 class Match {
@@ -131,46 +139,9 @@ class Match {
 		this.start_time = Date.now();
 		this.spectators = new Array();
 
-		this.room_name = get_new_match_room_name();
+		this.room_name = undefined;
 
-		console.log("Playing match between", p1.id, "and", p2.id, "in room", this.room_name)
-		p1.join(this.room_name);
-		p2.join(this.room_name);
-
-		p1.emit("match_start", 1, settings, p1.data.username, p2.data.username);
-		p2.emit("match_start", 2, settings, p1.data.username, p2.data.username);
-
-		p1.on("disconnect", () => this.finish());
-		p2.on("disconnect", () => this.finish());
-
-		p1.on("paddle:1", (pos: number) => this.p1.to(this.room_name).emit("paddle:1", pos));
-		p2.on("paddle:2", (pos: number) => this.p2.to(this.room_name).emit("paddle:2", pos));
-
-		p1.on("ball", (pos_x: number, pos_y: number, vel_x: number, vel_y: number) => this.p1.to(this.room_name).emit("ball", pos_x, pos_y, vel_x, vel_y));
-		p2.on("ball", (pos_x: number, pos_y: number, vel_x: number, vel_y: number) => this.p2.to(this.room_name).emit("ball", pos_x, pos_y, vel_x, vel_y));
-
-		p1.on("loss", () => {
-			this.p2_score += 1
-			io.to(this.room_name).emit("match_winner", 2)
-			this.event.emit("match_winner", 2);
-
-			this.reset_ball(true);
-		});
-		p2.on("loss", () => {
-			this.p1_score += 1
-			io.to(this.room_name).emit("match_winner", 1)
-			this.event.emit("match_winner", 1)
-
-			this.reset_ball(false);
-		});
-
-		this.event.on("match_winner", () => {
-			if (this.p1_score >= this.settings.rounds || this.p2_score >= this.settings.rounds) {
-				this.finish();
-			}
-		});
-
-		this.reset_ball(true);
+		this.match_id = -1;
 
 		// TODO: Maybe not allow the match to start in case this call fails
 		make_request(3000, "/matches", "POST", {
@@ -188,13 +159,67 @@ class Match {
 		}, data => {
 			this.match_id = data[0].id;
 			console.log("Got match id: ", this.match_id);
-		})
-		this.match_id = -1;
 
-		all_matches[this.room_name] = this;
+			this.room_name = "match:" + this.match_id;
+
+			console.log("Playing match between", p1.id, "and", p2.id, "in room", this.room_name)
+			p1.join(this.room_name);
+			p2.join(this.room_name);
+
+			p1.emit("match_start", 1, settings, p1.data.username, p2.data.username);
+			p2.emit("match_start", 2, settings, p1.data.username, p2.data.username);
+
+			p1.on("disconnect", () => this.finish());
+			p2.on("disconnect", () => this.finish());
+
+			p1.on("paddle:1", (pos: number) => this.p1.to(this.room_name).emit("paddle:1", pos));
+			p2.on("paddle:2", (pos: number) => this.p2.to(this.room_name).emit("paddle:2", pos));
+
+			p1.on("ball", (pos_x: number, pos_y: number, vel_x: number, vel_y: number) => this.p1.to(this.room_name).emit("ball", pos_x, pos_y, vel_x, vel_y));
+			p2.on("ball", (pos_x: number, pos_y: number, vel_x: number, vel_y: number) => this.p2.to(this.room_name).emit("ball", pos_x, pos_y, vel_x, vel_y));
+
+			p1.on("loss", () => {
+				this.p2_score += 1
+				io.to(this.room_name).emit("match_winner", 2)
+				this.event.emit("match_winner", 2);
+
+				this.reset_ball(true);
+			});
+			p2.on("loss", () => {
+				this.p1_score += 1
+				io.to(this.room_name).emit("match_winner", 1)
+				this.event.emit("match_winner", 1)
+
+				this.reset_ball(false);
+			});
+
+			this.event.on("match_winner", () => {
+				if (this.p1_score >= this.settings.rounds || this.p2_score >= this.settings.rounds) {
+					this.finish();
+				}
+			});
+
+			this.reset_ball(true);
+
+			all_matches[this.room_name] = this;
+		}, error => {
+			console.error(`Got error when making POST request to database to start match: ${error}`);
+
+			p1.emit("match_stop", 0);
+			p1.emit("match_stop", 0);
+
+			this.p1.data.state = SocketState.Menu;
+			this.p1.data.state = SocketState.Menu;
+		})
 	}
 
 	spectate(spectator: Socket) {
+		if (this.match_id < 0) {
+			console.error(`Someone tried to spectate a match THAT HAS NOT STARTED`);
+			spectator.disconnect();
+			return;
+		}
+
 		spectator.emit("match_start", 0, this.settings, this.p1.data.username, this.p2.data.username);
 		spectator.join(this.room_name);
 		spectator.data.state = SocketState.Spectating;

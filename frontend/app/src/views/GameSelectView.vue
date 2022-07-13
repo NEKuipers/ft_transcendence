@@ -33,8 +33,7 @@
 			<div v-if="matches.length > 0">
 			<ul class="active-games" v-for="match in matches" :key="match.match_id">
 				<div class="listed-game-ctr">
-				<li class="listed-game" >MATCH #{{match.match_id}} | {{match.mode}} | <b>{{match.player_one}}</b> vs <b>{{match.player_two}}</b> | <a class="link" 
-				href="#">SPECTATE</a></li>
+				<li class="listed-game" >MATCH #{{match.match_id}} | {{match.mode}} | <b>{{match.player_one}}</b> vs <b>{{match.player_two}}</b> | <a class="link" :href="'/pong/match:' + match.match_id">SPECTATE</a></li>
 				</div>
 			</ul>
 			</div>
