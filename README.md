@@ -43,6 +43,8 @@ PGREST_PORT=3000
 SWAGGER_UI_PORT=8080
 
 NESTJS_PORT=3030
+
+JSON_WEB_TOKEN_SECRET=my_secret_key
 ```
 
 #### pre-commit

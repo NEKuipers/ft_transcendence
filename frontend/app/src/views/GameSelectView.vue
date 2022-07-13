@@ -3,16 +3,28 @@
 		<h1 id="title">Select a game mode</h1>
 		<div class="buttons">
 			<div class="button-with-explanation">
-				<router-link to="pong">
-					<large-button class="game-button" text="Classic" />
+				<router-link to="/pong/classic">
+					<large-button class="game-button" text="Classic"/>
 				</router-link>
 				<h3>That classic game of Pong we all know and love.</h3>
 			</div>
 			<div class="button-with-explanation">
-				<router-link to="pong">
-					<large-button class="game-button" text="HyperPong"/>
+				<router-link to="/pong/speedup">
+					<large-button class="game-button" text="Speedup"/>
 				</router-link>
-					<h3>Pong, but with some adjustments.</h3>
+				<h3>Pong, but with a slight speed increase.</h3>
+			</div>
+			<div class="button-with-explanation">
+				<router-link to="/pong/rush">
+					<large-button class="game-button" text="Rush"/>
+				</router-link>
+				<h3>Pong, for the impatient</h3>
+			</div>
+			<div class="button-with-explanation">
+				<router-link to="/pong/expert">
+					<large-button class="game-button" text="Expert"/>
+				</router-link>
+				<h3>Expert mode, small paddles, slow move speed</h3>
 			</div>
 		</div>
 		<br><br><br>

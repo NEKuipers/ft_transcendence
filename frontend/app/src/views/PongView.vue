@@ -9,52 +9,220 @@
 <script lang="ts">
 /*
  list of data requirements (fetch() calls) for this view:
-	GET:
-		Not entirely sure, usernames?
-	POST:
-		- Matches (at start of game)
-	
-	PATCH:
-		- Matches (at end of game)
+	UserID and Username and can be validated by the socketIO server
+	No POST/PATCH, that is all done by the socketIO server
 */
+
+// TODO: This view is a mess clean it up
+
 import SocketIoConnection from '../components/SocketIoConnection.vue';
 import { Socket } from "socket.io-client";
 import { defineComponent } from 'vue'
 
+class rect {
+	x: number;
+	y: number;
+	size_x: number;
+	size_y: number;
+
+	constructor(x: number, y: number, size_x: number, size_y: number) {
+		this.x = x;
+		this.y = y;
+		this.size_x = size_x;
+		this.size_y = size_y;
+	}
+
+	intersects(other: rect): boolean {
+		return this.x < other.x + other.size_x && this.x + this.size_x > other.x
+			&& this.y < other.y + other.size_y && this.y + this.size_y > other.y;
+	}
+
+
+	draw(context: CanvasRenderingContext2D) {
+		context.fillRect(this.x, this.y, this.size_x, this.size_y);
+	}
+}
+
+class ball extends rect {
+	vel_x: number;
+	vel_y: number;
+	bounce_strength: number;
+
+	constructor(x: number, y: number, size_x: number, size_y: number, bounce_strength: number, vel_x: number, vel_y: number) {
+		super(x, y, size_x, size_y);
+
+		this.bounce_strength = bounce_strength;
+		this.vel_x = vel_x;
+		this.vel_y = vel_y;
+	}
+
+	update(dt: number, game: rect): number {
+		this.x += this.vel_x * dt;
+		this.y += this.vel_y * dt;
+
+		// Bounce off game rect...
+		if (this.y < game.y) {
+			this.y = game.y + (game.y - this.y);	// Move back inside
+			this.vel_y = -this.vel_y;	// Bounce!
+		}
+
+		if (this.y + this.size_y > game.y + game.size_y) {
+			this.y = game.y + game.size_y - this.size_y + (game.y + game.size_y - this.y - this.size_y);	// Move back inside
+			this.vel_y = -this.vel_y;	// Bounce!
+		}
+
+		// Get winner
+		if (this.x < game.x) {
+			return 2;
+		} else if (this.x + this.size_x > game.x + game.size_x) {
+			return 1;
+		}
+		return 0;
+	}
+
+	bounce(player: player, socket: Socket, speed_increment: number) {
+		if(this.intersects(player)) {
+			this.vel_x = -this.vel_x;
+			let diff = (this.y + this.size_y / 2) - (player.y + player.size_y / 2);
+			this.vel_y += diff * this.bounce_strength;
+
+			this.vel_x *= speed_increment;
+			this.vel_y *= speed_increment;
+
+			if (player.owner) {
+				this.send(socket);
+			}
+		}
+	}
+
+	send(socket: Socket) {
+		socket.emit("ball", this.x, this.y, this.vel_x, this.vel_y);
+	}
+	add_recv(socket: Socket) {
+		socket.on("ball", (pos_x: number, pos_y: number, vel_x: number, vel_y: number) => {
+			this.x = pos_x;
+			this.y = pos_y;
+			this.vel_x = vel_x;
+			this.vel_y = vel_y;
+		})
+	}
+	rem_recv(socket: Socket) {
+		socket.removeAllListeners("ball");
+	}
+}
+
+class player extends rect {
+	player_id: number;
+	name: string;
+	owner: boolean;
+	score: number;
+
+	moved_since_last_send: boolean;
+
+	target_y: number;
+	last_y: number;
+	pr: number;
+
+	constructor(player_id: number, owner: boolean, name: string, x: number, y: number, size_x: number, size_y: number) {
+		super(x, y, size_x, size_y);
+
+		this.player_id = player_id;
+		this.name = name;
+		this.owner = owner;
+		this.score = 0;
+		
+		this.moved_since_last_send = false;
+
+		this.target_y = y;
+		this.last_y = y;
+		this.pr = 0;
+	}
+
+	update(move_if_owner: number, game: rect, socket: Socket | undefined, pr: number) {
+		if (this.owner) {
+			this.y += move_if_owner;
+
+			// Clamp
+			if (this.y < game.y) {
+				this.y = game.y;
+			} else if (this.y + this.size_y > game.y + game.size_y) {
+				this.y = game.y + game.size_y - this.size_y;
+			}
+
+			if (move_if_owner !== 0) {
+				this.moved_since_last_send = true;
+			}
+
+			if (socket && this.moved_since_last_send) {
+				this.moved_since_last_send = false;
+				socket.emit("paddle:" + this.player_id, this.y);
+			}
+		} else {
+			this.pr += pr;
+			if (this.pr > 1) { this.pr = 1; }
+
+			this.y = this.last_y + (this.target_y - this.last_y) * this.pr;
+		}
+	}
+
+	add_recv(socket: Socket) {
+		socket.on("paddle:" + this.player_id, (pos_y) => {
+			this.pr = 0;
+			this.last_y = this.y;
+			this.target_y = pos_y;
+		})
+	}
+	rem_recv(socket: Socket) {
+		socket.removeAllListeners("paddle:" + this.player_id);
+	}
+}
+
+class settings {
+	paddle_width: number;
+	paddle_height: number;
+	ball_size: number;
+	wall_offset: number;
+	move_speed: number;
+	ball_speed: number;
+	speed_increment: number;
+	bounce_strength: number;
+	border_size: number;
+	rounds: number;
+	width: number;
+	height: number;
+
+	constructor(
+		paddle_width: number,
+		paddle_height: number,
+		ball_size: number,
+		wall_offset: number,
+		move_speed: number,
+		ball_speed: number,
+		speed_increment: number,
+		bounce_strength: number,
+		border_size: number,
+		rounds: number,
+		width: number,
+		height: number,)
+	{
+		this.paddle_width = paddle_width;
+		this.paddle_height = paddle_height;
+		this.ball_size = ball_size;
+		this.wall_offset = wall_offset;
+		this.move_speed = move_speed;
+		this.ball_speed = ball_speed;
+		this.speed_increment = speed_increment;
+		this.bounce_strength = bounce_strength;
+		this.border_size = border_size;
+		this.rounds = rounds;
+		this.width = width;
+		this.height = height;
+	}
+}
+
 export default defineComponent({
 	props: {
-		paddle_width: {
-			type: Number,
-			default: 20
-		},
-		paddle_height: {
-			type: Number,
-			default: 60
-		},
-		ball_size: {
-			type: Number,
-			default: 20
-		},
-		wall_offset: {
-			type: Number,
-			default: 20
-		},
-		move_speed: {
-			type: Number,
-			default: 400
-		},
-		ball_speed: {
-			type: Number,
-			default: 300
-		},
-		bounce_strength: {
-			type: Number,
-			default: 2
-		},
-		border_size: {
-			type: Number,
-			default: 20
-		},
+		// Visual settings
 		center_size: {
 			type: Number,
 			default: 10
@@ -63,6 +231,8 @@ export default defineComponent({
 			type: Number,
 			default: 10
 		},
+
+		// Network settings
 		send_time: {
 			type: Number,
 			default: 20
@@ -74,18 +244,21 @@ export default defineComponent({
 
 	data() {
 		return {
+			player: 0,
+			has_lost: false,
+
 			canvas: null as HTMLCanvasElement | null,
 			context: null as CanvasRenderingContext2D | null,
 			socket: null as Socket | null,
 
-			ball_x: 0,
-			ball_y: 0,
+			settings: null as settings | null,
 
-			ball_vx: this.ball_speed,
-			ball_vy: this.ball_speed,
+			ball: null as ball | null,
 
-			p1_paddle_y: 0,
-			p2_paddle_y: 0,
+			p1: null as player | null,
+			p2: null as player | null,
+
+			game: null as rect | null,
 
 			running: false,
 
@@ -93,55 +266,82 @@ export default defineComponent({
 			last_send: 0,
 
 			keysPressed: {} as {[key: string]: boolean},
-
-			p1_score: 21,
-			p2_score: 42,
-
-			player: 0
 		}
 	},
 
 	mounted() {
-		let socket = (this.$refs.connection as typeof SocketIoConnection).socket as Socket;
+		let connection = (this.$refs.connection as typeof SocketIoConnection);
+		connection.connect({});
+
+		let socket = connection.socket as Socket;
 		this.socket = socket;
 		
-		socket.on("disconnect", () => {
+		socket.on("connect", () => {
+			this.join(this.$route.params.mode as string);
+		})
+		socket.on("disconnect", (reason, description) => {
 			this.stop();
-		})
-		socket.on("match_start", (player: number) => {
-			this.start(player);
-		})
-		socket.on("match_stop", () => {
-			this.stop();
-		})
+			this.clear_canvas();
+			this.draw_center_text("Disconnected", 100)
 
-		socket.on("paddle", (player: number, pos: number) => {
-			//console.log("Got paddle:", player, pos);
-			if (player === 1) {
-				this.p1_paddle_y = pos;
-			} else if (player === 2) {
-				this.p2_paddle_y = pos;
+			console.error("Disconnect reason:", reason, description)
+
+			// The socketIO server has purposefully disconnected us, lets not retry
+			if (reason == "io server disconnect") {
+				this.$router.push('/select-game');
 			}
 		})
+		socket.on("match_start", (player: number, settings: settings, player_1_name: string, player_2_name: string) => {
+			this.settings = settings;
 
-		socket.on("ball", (pos_x: number, pos_y: number, vel_x: number, vel_y: number) => {
-			//console.log("Got ball:", pos_x, pos_y, vel_x, vel_y);
-			this.ball_x = pos_x;
-			this.ball_y = pos_y;
-			this.ball_vx = vel_x;
-			this.ball_vy = vel_y;
+			let canvas =  this.canvas as HTMLCanvasElement;
+			canvas.width = settings.width;
+			canvas.height = settings.height;
+
+			this.game = new rect(settings.border_size - settings.ball_size, settings.border_size, canvas.width - (settings.border_size - settings.ball_size) * 2, canvas.height - settings.border_size * 2);
+			this.start(player, player_1_name, player_2_name);
+		})
+		socket.on("match_winner", (player: number) => {
+			if (player === 1) {
+				(this.p1 as player).score += 1;
+			} else if (player === 2) {
+				(this.p2 as player).score += 1;
+			}
+
+			this.has_lost = false;
+		})
+		socket.on("match_stop", (winner: number) => {
+			this.draw_game();	// Draw the last score update too
+			this.stop();
+
+			if (winner === 0) {
+				this.draw_center_text("Its a tie!", 100);
+			} else {
+				if (this.player !== 0) {
+					if (this.player == winner) {
+						this.draw_center_text("You won!", 100);
+					} else {
+						this.draw_center_text("You lost!", 100);
+					}
+				} else {
+					if (winner === 0) {
+						this.draw_center_text((this.p1 as player).name + " won!", 100);
+					} else {
+						this.draw_center_text((this.p2 as player).name + " won!", 100);
+					}
+				}
+			}
+
+			// After 2.5 seconds, join the queue again
+			setTimeout(() => {
+				this.join(this.$route.params.mode as string);	// Note: In case of spectating, this may cause us to be disconnected from a invalid request
+			}, 2500);
 		})
 
 		let canvas =  this.$refs.canvas as HTMLCanvasElement;
 		this.canvas = canvas;
 
 		this.context = canvas.getContext("2d");
-
-		this.ball_x = (canvas.width - this.ball_size) / 2;
-		this.ball_y = (canvas.height - this.ball_size) / 2;
-
-		this.p1_paddle_y = (canvas.height - this.paddle_height) / 2;
-		this.p2_paddle_y = (canvas.height - this.paddle_height) / 2;
 	},
 
 	methods: {
@@ -154,15 +354,57 @@ export default defineComponent({
 			this.keysPressed[e.code] = false;
 		},
 
-		start(player: number) {
-			if (!this.running) {
-				console.log("I am player", player);
+		join(queue: string) {
+			(this.socket as Socket).emit("join", queue);
+			this.draw_searching_for_players();	// Technically it should only do this IF its not a spectate request, but we have no clue if its a spectate request or not, otherwise it sould say something like "Joining..."
+		},
 
-				this.player = player;
+		start(player_id: number, player_1_name: string, player_2_name: string) {
+			if (!this.running) {
+				this.player = player_id;
+
 				this.last_frame = Date.now();
 
 				window.addEventListener("keydown", this.keydown);
 				window.addEventListener("keyup", this.keyup);
+
+				let settings = this.settings as settings;
+
+				let canvas =  this.canvas as HTMLCanvasElement;
+				this.ball = new ball(
+					(canvas.width - settings.ball_size) / 2,
+					(canvas.height - settings.ball_size) / 2,
+					settings.ball_size,
+					settings.ball_size,
+					settings.bounce_strength,
+					0,
+					0
+				);
+
+				this.p1 = new player(
+					1,
+					player_id == 1, 
+					player_1_name,
+					settings.wall_offset,
+					(canvas.height - settings.paddle_height) / 2,
+					settings.paddle_width,
+					settings.paddle_height
+				);
+
+				this.p2 = new player(
+					2,
+					player_id == 2, 
+					player_2_name,
+					canvas.width - settings.wall_offset - settings.paddle_width,
+					(canvas.height - settings.paddle_height) / 2,
+					settings.paddle_width,
+					settings.paddle_height
+				);
+
+				let socket = this.socket as Socket;
+				this.ball.add_recv(socket);
+				this.p1.add_recv(socket);
+				this.p2.add_recv(socket);
 
 				this.running = true;
 				this.game_loop();
@@ -172,17 +414,13 @@ export default defineComponent({
 			if (this.running) {
 				window.removeEventListener("keydown", this.keydown);
 				window.removeEventListener("keyup", this.keyup);
-	
+
 				this.running = false;
 
-				// Clear the canvas
-				let canvas = this.canvas as HTMLCanvasElement;
-				let context = this.context as CanvasRenderingContext2D;
-				let width = canvas.width;
-				let height = canvas.height;
-				
-				context.fillStyle = "#000";
-				context.fillRect(0, 0, width, height);
+				let socket = this.socket as Socket;
+				this.ball?.rem_recv(socket);
+				this.p1?.rem_recv(socket);
+				this.p2?.rem_recv(socket);
 			}
 		},
 
@@ -202,32 +440,36 @@ export default defineComponent({
 			}
 
 			this.update(dt, send);
-
 			this.draw_game();
-
 		},
 		
 		update(dt: number, send: boolean) {
 			let socket = this.socket as Socket;
 
 			let diff = this.get_local_player_move_offset(dt);
-			if (diff != 0) {
-				if (this.player === 1) {
-					this.p1_paddle_y += diff;
-					this.p1_paddle_y = this.clamp_paddle_y(this.p1_paddle_y);
-					if (send) {
-						socket.emit("paddle", this.p1_paddle_y);
-					}
-				} else if (this.player === 2) {
-					this.p2_paddle_y += diff;
-					this.p2_paddle_y = this.clamp_paddle_y(this.p2_paddle_y);
-					if (send) {
-						socket.emit("paddle", this.p2_paddle_y);
-					}
-				}
+			this.p1?.update(diff, this.game as rect, send ? socket : undefined, dt / (this.send_time / 1000));
+			this.p2?.update(diff, this.game as rect, send ? socket : undefined, dt / (this.send_time / 1000));
+
+			//if ((this.p1 as player).owner) {
+			//	(this.p1 as player).y = this.p2?.y as number;
+			//	(this.p1 as player).moved_since_last_send = true;
+			//}
+
+			let ball = this.ball as ball;
+			let winner = ball.update(dt, this.game as rect);
+
+			let settings = this.settings as settings;
+
+			if (ball.vel_x > 0) {
+				ball.bounce(this.p2 as player, socket, settings.speed_increment);
+			} else if (ball.vel_x < 0) {
+				ball.bounce(this.p1 as player, socket, settings.speed_increment);
 			}
 
-			this.update_ball(dt);
+			if (winner != 0 && winner != this.player && !this.has_lost) {
+				this.has_lost = true;
+				socket.emit("loss");
+			}			
 		},
 
 		get_local_player_move_offset(dt: number) {
@@ -235,60 +477,10 @@ export default defineComponent({
 			let down = this.keysPressed["KeyS"] || this.keysPressed["ArrowDown"];
 
 			let dir = (up ? -1 : 0) + (down ? 1 : 0);
-			return dir * dt * this.move_speed;
-		},
-		clamp_paddle_y(y: number): number {
-			let canvas = this.canvas as HTMLCanvasElement;
-			let height = canvas.height;
-
-			if (y < this.border_size) {
-				return this.border_size;
-			}
-			if (y + this.paddle_height > height - this.border_size) {
-				return height - this.border_size - this.paddle_height;
-			}
-
-			return y;
+			return dir * dt * (this.settings as settings).move_speed;
 		},
 
-		update_ball(dt: number) {
-			let canvas = this.canvas as HTMLCanvasElement;
-			let width = canvas.width;
-			let height = canvas.height;
-
-			// Update ball
-			this.ball_x += this.ball_vx * dt;
-			this.ball_y += this.ball_vy * dt;
-
-			if (this.ball_y <= this.border_size) { this.ball_vy = Math.abs(this.ball_vy); }
-			if (this.ball_y >= height - this.ball_size - this.border_size) { this.ball_vy = -Math.abs(this.ball_vy); }
-
-			// Bounce off paddles
-			if (this.ball_x <= this.wall_offset + this.paddle_width && this.ball_vx < 0) {	// Can bounce of p1
-				if (this.ball_y <= this.p1_paddle_y + this.paddle_height && this.ball_y + this.ball_size >= this.p1_paddle_y) {	// And y also matches
-					this.ball_vx = -this.ball_vx;
-					let diff = (this.ball_y + this.ball_size / 2) - (this.p1_paddle_y + this.paddle_height / 2);
-					this.ball_vy += diff * this.bounce_strength;
-
-					if (this.player === 1) {
-						this.socket?.emit("ball", this.ball_x, this.ball_y, this.ball_vx, this.ball_vy);
-					}
-				}
-			}
-			if (this.ball_x + this.ball_size >= width - this.wall_offset - this.paddle_width && this.ball_vx > 0) {	// Can bounce of p2 (x)
-				if (this.ball_y <= this.p2_paddle_y + this.paddle_height && this.ball_y + this.ball_size >= this.p2_paddle_y) {	// And y also matches
-					this.ball_vx = -this.ball_vx;
-					let diff = (this.ball_y + this.ball_size / 2) - (this.p2_paddle_y + this.paddle_height / 2);
-					this.ball_vy += diff * this.bounce_strength;
-
-					if (this.player === 2) {
-						this.socket?.emit("ball", this.ball_x, this.ball_y, this.ball_vx, this.ball_vy);
-					}
-				}
-			}
-		},
-
-		draw_game() {
+		clear_canvas() {
 			let context = this.context as CanvasRenderingContext2D;
 			let canvas = this.canvas as HTMLCanvasElement;
 			let width = canvas.width;
@@ -297,36 +489,77 @@ export default defineComponent({
 			// Clear the canvas
 			context.fillStyle = "#000";
 			context.fillRect(0, 0, width, height);
+		},
+
+		draw_searching_for_players() {
+			this.clear_canvas();
+			this.draw_center_text("Searching for opponent", 50);
+		},
+
+		draw_center_text(text: string, size: number) {
+			let context = this.context as CanvasRenderingContext2D;
+			let canvas = this.canvas as HTMLCanvasElement;
+			let width = canvas.width;
+			let height = canvas.height;
+
+			context.font = size + "px serif";
+			context.fillStyle = "#fff";
+			context.textAlign = "center";
+			context.textBaseline = "alphabetic";
+			context.strokeStyle = "#000";
+			context.lineWidth = 15;
+			context.strokeText(text, width / 2, height / 2);
+			context.fillText(text, width / 2, height / 2);
+		},
+
+		draw_game() {
+			let context = this.context as CanvasRenderingContext2D;
+			let canvas = this.canvas as HTMLCanvasElement;
+			let width = canvas.width;
+			let height = canvas.height;
+			let settings = this.settings as settings;
+
+			this.clear_canvas();
+
+			// Test: draw game
+			//context.fillStyle = "#aaa"
+			//this.game?.draw(context);
 
 			// Draw nice outline
 			context.strokeStyle = "#fff";
-			context.lineWidth = this.border_size / 4;
-			context.strokeRect(this.border_size / 2, this.border_size / 2, width - this.border_size, height - this.border_size);
+			context.lineWidth = settings.border_size / 4;
+			context.strokeRect(settings.border_size / 2, settings.border_size / 2, width - settings.border_size, height - settings.border_size);
 
 			// Draw players
 			context.fillStyle = "#fff";
-
-			context.fillRect(this.wall_offset, this.p1_paddle_y, this.paddle_width, this.paddle_height);
-			context.fillRect(width - this.wall_offset - this.paddle_width, this.p2_paddle_y, this.paddle_width, this.paddle_height);
+			this.p1?.draw(context);
+			this.p2?.draw(context);
 
 			// Draw ball
-			context.fillRect(this.ball_x, this.ball_y, this.ball_size, this.ball_size);
+			this.ball?.draw(context);
 
 			// Draw center
-			let start = this.border_size / 2;
-			let end = height - this.border_size / 2;
+			let start = settings.border_size / 2;
+			let end = height - settings.border_size / 2;
 			let step = (end - start) / (this.center_num_lines * 2 - 1) * 2;
 			for (var i = 0; i < this.center_num_lines; i += 1) {
 				context.fillRect((width - this.center_size) / 2, start + i * step, this.center_size, step / 2);
 			}
 
-			// Draw scores
+			// Draw scores & player names
 			context.font = "50px serif";
 			context.textBaseline = "top";
 			context.textAlign = "right";
-			context.fillText(this.p1_score.toString(), (width - this.center_size - this.border_size) / 2, this.border_size);
+			context.fillText((this.p1 as player).score.toString(), (width - this.center_size - settings.border_size) / 2, settings.border_size);
 			context.textAlign = "left";
-			context.fillText(this.p2_score.toString(), (width + this.center_size + this.border_size) / 2, this.border_size);
+			context.fillText((this.p2 as player).score.toString(), (width + this.center_size + settings.border_size) / 2, settings.border_size);
+
+			// Draw player names
+			context.font = "40px serif";
+			context.textAlign = "left";
+			context.fillText((this.p1 as player).name.toString(), settings.border_size, settings.border_size);
+			context.textAlign = "right";
+			context.fillText((this.p2 as player).name.toString(), (width - settings.border_size), settings.border_size);
 		}
 	},
 })
