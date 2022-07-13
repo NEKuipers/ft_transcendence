@@ -9,13 +9,12 @@
     <br>
     <br>
     <div class="row">
-    <div class="column">
-      Friends
-    </div>
-    <div class="column">
-      Achievements
-      <AchievementsList/>
-    </div>
+      <div class="column">
+        <FriendsList/>
+      </div>
+      <div class="column">
+        <AchievementsList/>
+      </div>
     </div>
   </div>
 </template>
@@ -73,6 +72,7 @@ import { defineComponent } from 'vue';
 import { loginStatusStore } from '../stores/profileData'
 import  UserProfile from '../components/UserProfile.vue';
 import AchievementsList from '../components/AchievementsList.vue'
+import FriendsList from '../components/FriendsList.vue';
 
 
 export default defineComponent({
@@ -101,7 +101,8 @@ export default defineComponent({
   components: {
     UserProfile,
     AchievementsList,
-  },
+    FriendsList
+},
 });
 
 </script>

@@ -5,13 +5,14 @@
 		<!-- Need to figure out how to filter only friends of logged in user! -->
 			<div v-for="friend in friends" :key="friend?.id">
 				<section class="listed-friend">
-					<SmallButton text="Remove"/>
+					<SmallButton v-if="user?.id != loginStatusStore.loggedInStatus?.userID" text="Remove"/>
+					<!-- TODO THIS BUTTON STORE THING DOESNT WORK -->
 					<a class="friend" v-bind:href="'http://localhost:8080/profile/' + friend.to_user_id">{{friend.to_username}}</a>
 				</section>
 			</div>
 		</div>
 		<div v-else>
-			<h3>No match history found</h3>
+			<h3>No friends yet</h3>
 		</div>
 	</div>
 </template>
@@ -19,6 +20,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import SmallButton from '../components/SmallButton.vue'
+import { loginStatusStore } from '../stores/profileData';
+
 
 export default defineComponent({
 	name: 'FriendsList',
@@ -26,6 +29,7 @@ export default defineComponent({
 	data () {
 		return {
 			friends: null,
+			loginStatusStore: loginStatusStore()
 		}
 	},
 	async mounted() {
