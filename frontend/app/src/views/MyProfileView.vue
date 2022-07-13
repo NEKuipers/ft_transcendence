@@ -14,6 +14,7 @@
     </div>
     <div class="column">
       <h3>Friends</h3>
+      <FriendsList/>
     </div>
     <div class="column">
       <h3>Blocked Users</h3>
@@ -30,8 +31,10 @@
 
 .column {
   float: left;
-  width: 33.33%;
+  width: 33%;
   box-sizing: border-box;
+  margin: 0;
+  padding: 0; 
 }
 
 .row:after {
@@ -78,7 +81,8 @@ import { defineComponent } from 'vue';
 import  UserProfile from '../components/UserProfile.vue';
 import AchievementsList from '../components/AchievementsList.vue';
 import { loginStatusStore } from '../stores/profileData';
-import MatchHistory from '@/components/MatchHistory.vue';
+import MatchHistory from '../components/MatchHistory.vue';
+import FriendsList from '../components/FriendsList.vue';
 
 export default defineComponent({
   name: 'MyProfileView',
@@ -111,6 +115,7 @@ export default defineComponent({
     UserProfile,
     AchievementsList,
     MatchHistory,
+    FriendsList,
   },
 });
 
