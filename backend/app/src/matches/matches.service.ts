@@ -73,7 +73,7 @@ export class MatchesService {
 			let req = request({
 				hostname: 'localhost',
 				port: +process.env.PGREST_PORT,
-				path: "/matches?status=eq.ongoing",
+				path: "/vw_spectate",
 				method: "GET",
 			}, res => {
 				//console.log("Got res: ", res);
@@ -97,14 +97,14 @@ export class MatchesService {
 	
 					//console.log(`Its ret is: ${JSON.stringify(json, null, 4)}`);
 	
-					var new_matches = [];
-					for (var match of json) {
+					let new_matches = [];
+					for (let match of json) {
 						new_matches.push(
 							{
-								match_id: match.id as number,
-								player_one: "player" + (match.player_one as number),
-								player_two: "player" + (match.player_two as number),
-								mode: "unknown",
+								match_id: match.match_id as number,
+								player_one: match.player_one as string,
+								player_two: match.player_two as string,
+								mode: match.game_mode as string,
 							}
 						)
 					}

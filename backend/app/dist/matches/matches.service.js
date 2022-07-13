@@ -79,7 +79,7 @@ let MatchesService = class MatchesService {
             let req = (0, http_1.request)({
                 hostname: 'localhost',
                 port: +process.env.PGREST_PORT,
-                path: "/matches?status=eq.ongoing",
+                path: "/vw_spectate",
                 method: "GET",
             }, res => {
                 if (res.statusCode != 200) {
@@ -94,13 +94,13 @@ let MatchesService = class MatchesService {
                 });
                 res.on("end", () => {
                     let json = JSON.parse(combined);
-                    var new_matches = [];
-                    for (var match of json) {
+                    let new_matches = [];
+                    for (let match of json) {
                         new_matches.push({
-                            match_id: match.id,
-                            player_one: "player" + match.player_one,
-                            player_two: "player" + match.player_two,
-                            mode: "unknown",
+                            match_id: match.match_id,
+                            player_one: match.player_one,
+                            player_two: match.player_two,
+                            mode: match.game_mode,
                         });
                     }
                     accept(new_matches);

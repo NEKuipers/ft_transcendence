@@ -147,7 +147,7 @@ class Match {
 		// TODO: Maybe not allow the match to start in case this call fails
 		make_request(DATABASE_PORT, "/matches", "POST", {
 			"player_one": this.p1.data.userid,
-			"player_two": this.p2.data.userid + 1,
+			"player_two": this.p2.data.userid,
 			"winner_id": this.p1.data.userid,	// IDK
 			"start_time": new Date(this.start_time).toISOString(),
 			"end_time": new Date(this.start_time).toISOString(),	// IDK
