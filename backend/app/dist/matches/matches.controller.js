@@ -45,7 +45,7 @@ __decorate([
     (0, common_1.Get)('/ongoing'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Array)
+    __metadata("design:returntype", Promise)
 ], MatchesController.prototype, "findAllOngoing", null);
 __decorate([
     (0, common_1.Get)(':id'),

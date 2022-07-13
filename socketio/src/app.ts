@@ -8,6 +8,7 @@ import { settings as pong_settings } from './pong';
 import { HttpService } from "@nestjs/axios";
 
 const SECRET_AUTH = process.env.JSON_WEB_TOKEN_SECRET;
+const DATABASE_PORT = +process.env.PGREST_PORT;
 
 const httpServer = createServer();
 const io = new Server(httpServer, {
@@ -87,7 +88,7 @@ function make_request(port: number, path: string, method: string, data: object, 
 }
 
 // Delete matches that are still "ongoing", even though we just started, therefore they are NOT running
-make_request(3000, `/matches?status=eq.ongoing`, "DELETE", {});
+make_request(DATABASE_PORT, `/matches?status=eq.ongoing`, "DELETE", {});
 
 io.use((socket, next) => {
 	let data = jwt.verify(socket.handshake.auth.token, SECRET_AUTH);
@@ -144,7 +145,7 @@ class Match {
 		this.match_id = -1;
 
 		// TODO: Maybe not allow the match to start in case this call fails
-		make_request(3000, "/matches", "POST", {
+		make_request(DATABASE_PORT, "/matches", "POST", {
 			"player_one": this.p1.data.userid,
 			"player_two": this.p2.data.userid,
 			"winner_id": this.p1.data.userid,	// IDK
@@ -296,7 +297,7 @@ class Match {
 		}
 
 		if (this.match_id >= 0) {
-			make_request(3000, `/matches?id=eq.${this.match_id}`, "PATCH", {
+			make_request(DATABASE_PORT, `/matches?id=eq.${this.match_id}`, "PATCH", {
 				"winner_id": winner_id,
 				"end_time": new Date(Date.now()).toISOString(),
 				"p1_points": this.p1_score,

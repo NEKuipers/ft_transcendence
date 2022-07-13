@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Match, OngoingMatch, CompletedMatch } from './matches.interface';
+import { request, createServer, IncomingMessage } from "http";
 
 @Injectable()
 export class MatchesService {
@@ -17,7 +18,7 @@ export class MatchesService {
 			mode: "HyperPong",
 		},
 		{
-			match_id: 46,
+			match_id: 270,
 			player_one: "jevan-de",
 			player_two: "cwinner",
 			mode: "Classic",
@@ -67,16 +68,82 @@ export class MatchesService {
 		},
 	];
 
+	updateOngoingMatchesFromDataBase(): Promise<OngoingMatch[]> {
+		return new Promise((accept, reject) => {
+			let req = request({
+				hostname: 'localhost',
+				port: +process.env.PGREST_PORT,
+				path: "/matches?status=eq.ongoing",
+				method: "GET",
+			}, res => {
+				//console.log("Got res: ", res);
+	
+				if (res.statusCode != 200) {	// 201 created
+					console.log(`Got statusCode: ${res.statusCode} (${res.statusMessage}): ${JSON.stringify(res.headers, null, 4)}`)
+					return;
+				}
+	
+				res = res.setEncoding('utf8');
+	
+				let combined = "";
+				res.on("data", chunk => {
+					//console.log("Got chunk:", chunk)
+					combined += chunk;
+				})
+				res.on("end", () => {
+					//console.log("End of transmission")
+					let json = JSON.parse(combined);
+	
+					//console.log(`Its ret is: ${JSON.stringify(json, null, 4)}`);
+	
+					var new_matches = [];
+					for (var match of json) {
+						new_matches.push(
+							{
+								match_id: match.id as number,
+								player_one: "player" + (match.player_one as number),
+								player_two: "player" + (match.player_two as number),
+								mode: "unknown",
+							}
+						)
+					}
+
+					accept(new_matches);
+				})
+			});
+		
+			req.on("error", error => {
+				//console.error(`Got error doing request: ${error}`);
+				reject(error);
+			})
+	
+			req.end();
+		})
+
+	}
+
 	findAllCompleted(): CompletedMatch[] {
 		return this.matches;
 	}
 
-	findAllOngoing(): OngoingMatch[] {
+	findAllOngoing(): Promise<OngoingMatch[]> {
 		/*
 		This is where a GET request needs to be made to the database.
 		The response will replace the above placeholder variables.
 		*/
+
+		return this.updateOngoingMatchesFromDataBase();
+
+		/*
+		this.updateOngoingMatchesFromDataBase()
+			.then((matches) => {
+				this.ongoing_matches = matches;
+			}).catch((error) => {
+				console.error(`Got error doing request: ${error}`);
+			});
+
 		return this.ongoing_matches;
+		*/
 	}
 
 	findOne(id: number): OngoingMatch {

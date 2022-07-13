@@ -79,16 +79,33 @@ export default defineComponent({
 	data() {
 		return {
 			matches: Object as () => Match,
+			handle: -1,
 		}
 	},
+
 	mounted() {
-		fetch('api/matches/ongoing')
-		.then(res => res.json())
-		.then(data => this.matches = data.sort((a:Match ,b:Match) => a.match_id - b.match_id))
-		.catch(err => console.log(err))
+		this.refreshOngoing();
+
+		this.handle = setInterval(() => {
+			this.refreshOngoing();
+		}, 2500);
+
 	},
 
+	unmounted() {
+		clearInterval(this.handle);
+	},
 
+	methods: {
+		refreshOngoing() {
+			console.log("Getting all ongoing matches!");
+
+			fetch('api/matches/ongoing')
+				.then(res => res.json())
+				.then(data => this.matches = data.sort((a:Match ,b:Match) => a.match_id - b.match_id))
+				.catch(err => console.log(err))
+		}
+	}
 
 })
 </script>

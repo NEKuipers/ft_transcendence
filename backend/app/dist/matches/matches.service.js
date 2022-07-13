@@ -8,6 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MatchesService = void 0;
 const common_1 = require("@nestjs/common");
+const http_1 = require("http");
 let MatchesService = class MatchesService {
     constructor() {
         this.ongoing_matches = [
@@ -24,7 +25,7 @@ let MatchesService = class MatchesService {
                 mode: "HyperPong",
             },
             {
-                match_id: 46,
+                match_id: 270,
                 player_one: "jevan-de",
                 player_two: "cwinner",
                 mode: "Classic",
@@ -73,11 +74,48 @@ let MatchesService = class MatchesService {
             },
         ];
     }
+    updateOngoingMatchesFromDataBase() {
+        return new Promise((accept, reject) => {
+            let req = (0, http_1.request)({
+                hostname: 'localhost',
+                port: +process.env.PGREST_PORT,
+                path: "/matches?status=eq.ongoing",
+                method: "GET",
+            }, res => {
+                if (res.statusCode != 200) {
+                    console.log(`Got statusCode: ${res.statusCode} (${res.statusMessage}): ${JSON.stringify(res.headers, null, 4)}`);
+                    return;
+                }
+                res = res.setEncoding('utf8');
+                let combined = "";
+                res.on("data", chunk => {
+                    combined += chunk;
+                });
+                res.on("end", () => {
+                    let json = JSON.parse(combined);
+                    var new_matches = [];
+                    for (var match of json) {
+                        new_matches.push({
+                            match_id: match.id,
+                            player_one: "player" + match.player_one,
+                            player_two: "player" + match.player_two,
+                            mode: "unknown",
+                        });
+                    }
+                    accept(new_matches);
+                });
+            });
+            req.on("error", error => {
+                reject(error);
+            });
+            req.end();
+        });
+    }
     findAllCompleted() {
         return this.matches;
     }
     findAllOngoing() {
-        return this.ongoing_matches;
+        return this.updateOngoingMatchesFromDataBase();
     }
     findOne(id) {
         return this.ongoing_matches.find(ongoing_matches => ongoing_matches.match_id == id);
