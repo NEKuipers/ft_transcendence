@@ -82,7 +82,8 @@ FROM matches m
     INNER JOIN users u1
         ON m.player_one = u1.id
     INNER JOIN users u2
-        ON m.player_two = u2.id;
+        ON m.player_two = u2.id
+WHERE m.status = 'ongoing';
 
 
 /*
