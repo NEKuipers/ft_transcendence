@@ -75,18 +75,14 @@ FROM match_history mh
 CREATE OR REPLACE VIEW vw_spectate
 AS
 SELECT
-    m.match_id      AS match_id,
-    m.player_one    AS player_one,
-    m.player_two    AS player_two
-FROM users u
-    INNER JOIN friends f
-        ON u.id = f.from_user_id
-            AND f.status = 'accepted'
-    INNER JOIN users fu
-        ON f.to_user_id = fu.id
-    INNER JOIN vw_matches m
-        ON f.to_user_id = m.user_id
-            AND m.match_status = 'ongoing';
+    m.id            AS match_id,
+    u1.username     AS player_one,
+    u2.username     AS player_two
+FROM matches m
+    INNER JOIN users u1
+        ON m.player_one = u1.id
+    INNER JOIN users u2
+        ON m.player_two = u2.id;
 
 
 /*
