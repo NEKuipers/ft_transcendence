@@ -9,7 +9,6 @@ import ChatView from '@/views/ChatView.vue'
 import AboutView from '@/views/AboutView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 import MyProfileView from '@/views/MyProfileView.vue'
-import EditProfileView from '@/views/EditProfileView.vue'
 import LeaderboardView from '@/views/LeaderboardView.vue'
 import GameSelectView from '@/views/GameSelectView.vue'
 
@@ -32,11 +31,7 @@ const routes: Array<RouteRecordRaw> = [
     name: 'myprofile',
     component: MyProfileView,
   },
-  {
-    path: '/myprofile-edit',
-    name: 'myprofile-edit',
-    component: EditProfileView,
-  },
+
   {
     path: '/pong/:mode',
     name: 'pong',

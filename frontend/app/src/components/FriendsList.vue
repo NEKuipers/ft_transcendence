@@ -48,4 +48,13 @@ export default defineComponent({
 	text-decoration: none;
 	padding-left: 30px;
 }
+
+a:visited {
+  color: #2c3e50;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
 </style>

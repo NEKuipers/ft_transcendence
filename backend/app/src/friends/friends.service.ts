@@ -28,6 +28,7 @@ export class FriendsService {
 			send_time: "2022-06-16 17:00:00",
 			response_time: "2022-06-17 17:00:00",
 		},
+
 	];
 	friendrequests: FriendRequest[] = [];
 
