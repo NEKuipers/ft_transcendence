@@ -147,7 +147,7 @@ class Match {
 		// TODO: Maybe not allow the match to start in case this call fails
 		make_request(DATABASE_PORT, "/matches", "POST", {
 			"player_one": this.p1.data.userid,
-			"player_two": this.p2.data.userid,
+			"player_two": this.p2.data.userid + 1,
 			"winner_id": this.p1.data.userid,	// IDK
 			"start_time": new Date(this.start_time).toISOString(),
 			"end_time": new Date(this.start_time).toISOString(),	// IDK
@@ -155,8 +155,7 @@ class Match {
 			"p2_points": 0,	// IDK
 			"status": "ongoing",
 			"reason": "out-of-time",	// IDK
-			"meta": "",
-			"options": "",
+			"mode": this.gamemode_name,
 		}, data => {
 			this.match_id = data[0].id;
 			console.log("Got match id: ", this.match_id);
