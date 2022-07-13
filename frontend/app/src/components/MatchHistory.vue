@@ -40,7 +40,6 @@ export default defineComponent({
 .matchhistorylist {
 	height:30px;
 	margin: 0;
-	margin-top: 200px;
 	margin-bottom: 400px;
 	clear: both;
 	width:100%;

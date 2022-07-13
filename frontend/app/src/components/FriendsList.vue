@@ -1,11 +1,12 @@
 <template>
 	<div class ="friendlist">
+      <h3>Friends</h3>
 		<div v-if="friends">
 		<!-- Need to figure out how to filter only friends of logged in user! -->
 			<div v-for="friend in friends" :key="friend.id">
 				<section class="listed-friend">
-					<a class="friend" v-bind:href="'http://localhost:8080/profile/' + friend.to_user_id">{{friend.to_username}}</a>
 					<SmallButton text="Remove"/>
+					<a class="friend" v-bind:href="'http://localhost:8080/profile/' + friend.to_user_id">{{friend.to_username}}</a>
 				</section>
 			</div>
 		</div>
@@ -45,5 +46,6 @@ export default defineComponent({
 	font-size: 26pt;
 	font-weight: bold;
 	text-decoration: none;
+	padding-left: 30px;
 }
 </style>

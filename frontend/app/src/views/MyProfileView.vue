@@ -9,32 +9,30 @@
     <br>
     <br>
     <div class="row">
-    <div class="column">
-      <h3>Achievements</h3>
+      <AchievementsList class="column"/>
+      <FriendsList class="column"/>
+      <div class="column">
+        <h3>Blocked Users</h3>
+      </div>
     </div>
-    <div class="column">
-      <h3>Friends</h3>
-      <FriendsList/>
+    <div class="matchHistory">
+      <MatchHistory />
     </div>
-    <div class="column">
-      <h3>Blocked Users</h3>
-    </div>
-    </div>
-    <AchievementsList class="column"/>
-  </div>
-  <div class="matchHistory">
-    <MatchHistory />
   </div>
 </template>
 
 <style scoped>
 
 .column {
-  float: left;
-  width: 33%;
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0; 
+	float:left;
+	width:33.3%;
+	padding:10px;
+	box-sizing: border-box; /*this adds the border+padding into the width. can also look at flexbox*/	
+}
+
+.row {
+  
+	border:1px solid #ccc;
 }
 
 .row:after {

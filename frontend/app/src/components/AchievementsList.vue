@@ -1,5 +1,6 @@
 <template>
     <div class="userachievement">
+      <h3>Achievements</h3>
         <ul  v-for="item in items" :key="item.message">
             <img class="trophy" src="../assets/scudetto.png"> 
             <div class="achievementbox">
