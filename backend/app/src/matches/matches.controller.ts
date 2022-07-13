@@ -1,15 +1,20 @@
 import { Controller, Get, Post, Patch, Delete, Body, Param } from '@nestjs/common';
 import { MatchesService } from './matches.service';
-import { OngoingMatch, Match } from './matches.interface';
+import { OngoingMatch, Match, CompletedMatch } from './matches.interface';
 
 @Controller('matches')
 export class MatchesController {
 	constructor(private readonly matchesService: MatchesService) {}
 	
 	@Get()
-	findAll(): OngoingMatch[] {
-		return this.matchesService.findAll();
+	findAllCompleted(): CompletedMatch[] {
+		return this.matchesService.findAllCompleted();
 	}
+
+	@Get('/ongoing')
+	findAllOngoing(): OngoingMatch[] {
+		return this.matchesService.findAllOngoing();
+	}	
 
 	//idk if we even need this but I'm adding it just in case
 	@Get(':id')

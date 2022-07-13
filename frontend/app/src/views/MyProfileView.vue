@@ -10,16 +10,19 @@
     <br>
     <div class="row">
     <div class="column">
-      Achievements
+      <h3>Achievements</h3>
     </div>
     <div class="column">
-      Friends
+      <h3>Friends</h3>
     </div>
     <div class="column">
-      Blocked Users
+      <h3>Blocked Users</h3>
     </div>
     </div>
     <AchievementsList class="column"/>
+  </div>
+  <div class="matchHistory">
+    <MatchHistory />
   </div>
 </template>
 
@@ -75,6 +78,7 @@ import { defineComponent } from 'vue';
 import  UserProfile from '../components/UserProfile.vue';
 import AchievementsList from '../components/AchievementsList.vue';
 import { loginStatusStore } from '../stores/profileData';
+import MatchHistory from '@/components/MatchHistory.vue';
 
 export default defineComponent({
   name: 'MyProfileView',
@@ -106,6 +110,7 @@ export default defineComponent({
   components: {
     UserProfile,
     AchievementsList,
+    MatchHistory,
   },
 });
 

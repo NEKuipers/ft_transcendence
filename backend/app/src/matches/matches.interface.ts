@@ -16,3 +16,13 @@ export interface OngoingMatch {
 	player_two: string;
 	mode: string;	
 }
+
+//For GET requests -> match history
+export interface CompletedMatch {
+	readonly match_id: number;
+	player_one: string;
+	player_two: string;
+	mode: string;
+	player_one_score: number;
+	player_two_score: number;
+}
