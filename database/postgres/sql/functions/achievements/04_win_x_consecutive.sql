@@ -13,10 +13,7 @@ AS
     /* get all games as player 1 */
     SELECT
         m.winner_id,
-        TO_TIMESTAMP(
-            m.meta->'start_time',
-            'YYYY-MM-DD HH24:MI:SS'
-        ) AS start_time
+        m.start_time
     FROM users u
         INNER JOIN matches m
             ON u.id = m.player_one
@@ -27,10 +24,7 @@ AS
     /* get all games as player 2 */
     SELECT
         m.winner_id,
-        TO_TIMESTAMP(
-            m.meta->'start_time',
-            'YYYY-MM-DD HH24:MI:SS'
-        ) AS start_time
+        m.start_time
     FROM users u
         INNER JOIN matches m
             ON u.id = m.player_two
