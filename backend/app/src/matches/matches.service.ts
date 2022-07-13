@@ -78,8 +78,9 @@ export class MatchesService {
 			}, res => {
 				//console.log("Got res: ", res);
 	
-				if (res.statusCode != 200) {	// 201 created
+				if (res.statusCode != 200) {
 					console.log(`Got statusCode: ${res.statusCode} (${res.statusMessage}): ${JSON.stringify(res.headers, null, 4)}`)
+					reject(res);
 					return;
 				}
 	

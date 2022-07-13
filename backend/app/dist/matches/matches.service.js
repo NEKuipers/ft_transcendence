@@ -84,6 +84,7 @@ let MatchesService = class MatchesService {
             }, res => {
                 if (res.statusCode != 200) {
                     console.log(`Got statusCode: ${res.statusCode} (${res.statusMessage}): ${JSON.stringify(res.headers, null, 4)}`);
+                    reject(res);
                     return;
                 }
                 res = res.setEncoding('utf8');
