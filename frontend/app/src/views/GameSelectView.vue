@@ -83,7 +83,7 @@ export default defineComponent({
 		}
 	},
 	mounted() {
-		fetch('api/matches/')
+		fetch('api/matches/ongoing')
 		.then(res => res.json())
 		.then(data => this.matches = data.sort((a:Match ,b:Match) => a.match_id - b.match_id))
 		.catch(err => console.log(err))
