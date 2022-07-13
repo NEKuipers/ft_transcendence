@@ -77,7 +77,8 @@ AS
 SELECT
     m.id            AS match_id,
     u1.username     AS player_one,
-    u2.username     AS player_two
+    u2.username     AS player_two,
+    m.mode          AS game_mode
 FROM matches m
     INNER JOIN users u1
         ON m.player_one = u1.id
