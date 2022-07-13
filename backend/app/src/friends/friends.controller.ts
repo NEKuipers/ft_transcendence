@@ -30,5 +30,4 @@ export class FriendsController {
 	unfriend(@Param('id') id: number): string {
 		return this.friendsService.deleteFriend(id);
 	}
-
 }

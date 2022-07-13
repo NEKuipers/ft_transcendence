@@ -16,7 +16,7 @@ export interface FriendRequest {
 	send_time: string;
 }
 
-//This is for POST and PATCH requests only, this is a one on one representation of how the data is stored in the DB table
+//This is for POST, DELETE and PATCH requests only, this is a one on one representation of how the data is stored in the DB table
 enum friend_status {
 	sent,
 	declined,
