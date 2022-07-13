@@ -14,7 +14,12 @@ AS
         m.winner_id,
         m.id,
         m.status,
-        m.meta
+        start_time,
+        end_time,
+        p1_points,
+        p2_points,
+        reason,
+        mode
     FROM users u
         INNER JOIN matches m
             ON u.id = m.player_one
@@ -29,7 +34,12 @@ AS
         m.winner_id,
         m.id,
         m.status,
-        m.meta
+        start_time,
+        end_time,
+        p1_points,
+        p2_points,
+        reason,
+        mode
     FROM users u
         INNER JOIN matches m
             ON u.id = m.player_two
@@ -41,7 +51,12 @@ SELECT
     w.username  AS winner,
     mh.id       AS match_id,
     mh.status   AS match_status,
-    mh.meta     AS meta
+    start_time  AS start_time,
+    end_time    AS end_time,
+    p1_points   AS p1_points,
+    p2_points   AS p2_points,
+    reason      AS loose_reason,
+    mode        AS game_mode
 FROM match_history mh
     INNER JOIN users u
         ON mh.user_id = u.id
@@ -60,9 +75,6 @@ FROM match_history mh
 CREATE OR REPLACE VIEW vw_spectate
 AS
 SELECT
-    u.id            AS user_id,
-    f.to_user_id    AS friend_id,
-    fu.username     AS friend_username,
     m.match_id      AS match_id,
     m.player_one    AS player_one,
     m.player_two    AS player_two
@@ -135,7 +147,7 @@ FROM users u
 
 
 /*
-** Displays the leader board based using the matches.meta field
+** Displays the leader board based using the matches meta fields
 */
 CREATE OR REPLACE VIEW public.vw_ladder
 AS
@@ -149,10 +161,16 @@ AS
         m.player_one,
         m.player_two,
         m.winner_id,
-        m.meta
+        start_time,
+        end_time,
+        p1_points,
+        p2_points,
+        reason,
+        mode
     FROM users u
         INNER JOIN matches m
             ON u.id = m.player_one
+    WHERE m.status = 'finished'
 
     UNION ALL
 
@@ -163,10 +181,16 @@ AS
         m.player_one,
         m.player_two,
         m.winner_id,
-        m.meta
+        start_time,
+        end_time,
+        p1_points,
+        p2_points,
+        reason,
+        mode
     FROM users u
         INNER JOIN matches m
             ON u.id = m.player_two
+    WHERE m.status = 'finished'
 )
 SELECT
     mh.id       AS user_id,
