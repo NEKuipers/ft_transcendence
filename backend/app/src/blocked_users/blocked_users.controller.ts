@@ -8,7 +8,6 @@ export class BlockedUsersController {
 
 	@Get(':id')
 	findAllForUser(@Param('id') id: number): BlockedUserVW[] {
-		console.log(id);
 		return  this.blockedUsersService.findAllForUser(id);
 	}
 	

@@ -30,7 +30,15 @@ export class FriendsService {
 		},
 
 	];
-	friendrequests: FriendRequest[] = [];
+	friendrequests: FriendRequest[] = [
+		{
+			user_id: 3,
+			username: "nkuipers", 
+			from_user_id: 5,
+			from_username: "a-user",
+			send_time: "2022-06-16 17:00:00",
+		},
+	];
 
 	findAll(): Friend[] {
 		//get request to db here
