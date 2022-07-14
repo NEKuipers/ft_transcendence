@@ -124,6 +124,7 @@ export class MatchesService {
 	}
 
 	findAllCompleted(): CompletedMatch[] {
+		// make request with limit:30 as parameter
 		return this.matches;
 	}
 

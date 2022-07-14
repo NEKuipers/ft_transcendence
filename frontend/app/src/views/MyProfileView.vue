@@ -1,15 +1,18 @@
 <template>
   <div>
-    <div v-if="user">
-      <UserProfile :user="user"></UserProfile>
-    </div>
-    <div v-else>
-      <h2>User not found</h2>
-    </div> <!-- TODO add loading for user -->
+    <div class="row">
+      <div class="top-column" v-if="user">
+        <UserProfile :user="user"></UserProfile>
+      </div>
+      <div class="top-column" v-else>
+        <h2>User not found</h2>
+      </div> <!-- TODO add loading for user -->
+      <AchievementsList class="top-column"/>
+    </div> 
     <br>
     <br>
     <div class="row">
-      <AchievementsList class="column"/>
+      <FriendRequests class="column"/>
       <FriendsList class="column"/>
       <div class="column">
         <h3>Blocked Users</h3>
@@ -28,6 +31,12 @@
 	width:33.3%;
 	padding:10px;
 	box-sizing: border-box; /*this adds the border+padding into the width. can also look at flexbox*/	
+}
+
+.top-column {
+  float: left;
+  width: 50%;
+  box-sizing: border-box;
 }
 
 .row {
@@ -81,6 +90,7 @@ import AchievementsList from '../components/AchievementsList.vue';
 import { loginStatusStore } from '../stores/profileData';
 import MatchHistory from '../components/MatchHistory.vue';
 import FriendsList from '../components/FriendsList.vue';
+import FriendRequests from '../components/FriendRequests.vue'
 
 export default defineComponent({
   name: 'MyProfileView',
@@ -114,6 +124,7 @@ export default defineComponent({
     AchievementsList,
     MatchHistory,
     FriendsList,
+    FriendRequests,
   },
 });
 
