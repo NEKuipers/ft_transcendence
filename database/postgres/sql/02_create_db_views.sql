@@ -46,8 +46,8 @@ AS
 )
 SELECT
     mh.user_id  AS user_id,
-    p1.username AS player_one,
-    p2.username AS player_two,
+    p1.username AS p1_name,
+    p2.username AS p2_name,
     w.username  AS winner,
     mh.id       AS match_id,
     mh.status   AS match_status,
