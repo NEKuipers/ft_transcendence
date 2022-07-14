@@ -4,8 +4,7 @@
 		<div v-if="matches">
 			<div v-for="match in matches" :key="match.id">
 				<section class="listed-match">
-				<!-- ONLY MATCHES OF USER: <section v-if="match.player_one == user.userName || match.player_two == user.userName" class="listed-match"> -->
-					<h1>{{match.player_one}} vs {{match.player_two}} | Gamemode: {{match.mode}} | Final score: {{match.player_one_score}} - {{match.player_two_score}}</h1>
+					<h1>{{match.p1_name}} vs {{match.p2_name}} | Gamemode: {{match.game_mode}} | Final score: {{match.p1_points}} - {{match.p2_points}}</h1>
 				</section>
 			</div>
 		</div>
@@ -20,18 +19,32 @@ import { defineComponent } from 'vue'
 
 export default defineComponent({
 	name: 'MatchHistory',
-	props: {},
+	props: {
+		// Who to view the history of?
+		user: {
+			type: Number
+		},
+	},
 	data () {
 		return {
 			matches: null,
 		}
 	},
-	mounted() {
-		fetch('/api/matches/')
-		.then(res => res.json())
-		.then(data => this.matches = data)
-		.catch(err => console.log(err)); 
-	},	
+
+	// Setup a watch to run whenever the user property changes, so we can re-fetch the data
+	watch: {
+		user: {
+			handler(newValue) {
+				if (!newValue) { return; }	// It can be undefined at the start
+
+				fetch('/api/matches/last/' + this.user)
+					.then(res => res.json())
+					.then(data => this.matches = data)
+					.catch(err => console.log(err));
+			},
+			immediate: true
+		}
+	}
 })
 
 </script>
