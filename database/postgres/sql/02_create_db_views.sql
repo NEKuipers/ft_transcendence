@@ -76,8 +76,8 @@ CREATE OR REPLACE VIEW vw_spectate
 AS
 SELECT
     m.id            AS match_id,
-    u1.username     AS player_one,
-    u2.username     AS player_two,
+    u1.username     AS p1_name,
+    u2.username     AS p2_name,
     m.game_mode     AS game_mode
 FROM matches m
     INNER JOIN users u1
