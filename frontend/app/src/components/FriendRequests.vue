@@ -1,13 +1,14 @@
 <template>
-	<div class ="friendlist">
-      <h3>Friends</h3>
-		<div v-if="friends">
+	<div class ="friend-requests">
+      <h3>Friend Requests</h3>
+		<div v-if="friendRequests">
 		<!-- Need to figure out how to filter only friends of logged in user! -->
-			<div v-for="friend in friends" :key="friend?.id">
+			<div v-for="request in friendRequests" :key="request?.id">
 				<section class="listed-friend">
-					<SmallButton v-if="user?.id != loginStatusStore.loggedInStatus?.userID" text="Remove"/>
+					<SmallButton class="requestbutton" text="Accept"/>
+					<SmallButton class="requestbutton" text="Decline"/>
 					<!-- TODO THIS BUTTON STORE THING DOESNT WORK -->
-					<a class="friend" v-bind:href="'http://localhost:8080/profile/' + friend.to_user_id">{{friend.to_username}}</a>
+					<a class="friend" v-bind:href="'http://localhost:8080/profile/' + request.from_user_id">{{request.from_username}}</a>
 				</section>
 			</div>
 		</div>
@@ -28,14 +29,14 @@ export default defineComponent({
 	props: {},
 	data () {
 		return {
-			friends: null,
+			friendRequests: null,
 			loginStatusStore: loginStatusStore()
 		}
 	},
 	async mounted() {
-	fetch('/api/friends/')
+	fetch('/api/friends/requests')
 		.then(res => res.json())
-		.then(data => this.friends = data)
+		.then(data => this.friendRequests = data)
 		.catch(err => console.log(err));
 	},
 	components: {
@@ -51,6 +52,10 @@ export default defineComponent({
 	font-weight: bold;
 	text-decoration: none;
 	padding-left: 30px;
+}
+
+.requestbutton {
+	margin: 10px;
 }
 
 a:visited {

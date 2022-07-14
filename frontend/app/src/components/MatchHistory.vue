@@ -2,9 +2,9 @@
 	<div class ="matchhistorylist">
 		<h3>Match History</h3>
 		<div v-if="matches">
-		<!-- Need to figure out how to filter only matches of logged in user! -->
 			<div v-for="match in matches" :key="match.id">
 				<section class="listed-match">
+				<!-- ONLY MATCHES OF USER: <section v-if="match.player_one == user.userName || match.player_two == user.userName" class="listed-match"> -->
 					<h1>{{match.player_one}} vs {{match.player_two}} | Gamemode: {{match.mode}} | Final score: {{match.player_one_score}} - {{match.player_two_score}}</h1>
 				</section>
 			</div>
@@ -27,10 +27,10 @@ export default defineComponent({
 		}
 	},
 	mounted() {
-	fetch('api/matches/')
-	.then(res => res.json())
-	.then(data => this.matches = data)
-	.catch(err => console.log(err));    
+		fetch('/api/matches/')
+		.then(res => res.json())
+		.then(data => this.matches = data)
+		.catch(err => console.log(err)); 
 	},	
 })
 
