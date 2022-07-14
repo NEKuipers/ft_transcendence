@@ -8,7 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MatchesService = void 0;
 const common_1 = require("@nestjs/common");
-const http_1 = require("http");
+const axios_1 = require("axios");
 let MatchesService = class MatchesService {
     constructor() {
         this.ongoing_matches = [
@@ -76,40 +76,28 @@ let MatchesService = class MatchesService {
     }
     updateOngoingMatchesFromDataBase() {
         return new Promise((accept, reject) => {
-            let req = (0, http_1.request)({
-                hostname: 'localhost',
-                port: +process.env.PGREST_PORT,
-                path: "/vw_spectate",
-                method: "GET",
-            }, res => {
-                if (res.statusCode != 200) {
-                    console.log(`Got statusCode: ${res.statusCode} (${res.statusMessage}): ${JSON.stringify(res.headers, null, 4)}`);
-                    reject(res);
+            axios_1.default.get(`http://localhost:${process.env.PGREST_PORT}/vw_spectate`)
+                .then((response) => {
+                if (response.status != 200) {
+                    console.log(`Got statusCode: ${response.status} (${response.statusText}): ${JSON.stringify(response.headers, null, 4)}`);
+                    reject(response);
                     return;
                 }
-                res = res.setEncoding('utf8');
-                let combined = "";
-                res.on("data", chunk => {
-                    combined += chunk;
-                });
-                res.on("end", () => {
-                    let json = JSON.parse(combined);
-                    let new_matches = [];
-                    for (let match of json) {
-                        new_matches.push({
-                            match_id: match.match_id,
-                            player_one: match.player_one,
-                            player_two: match.player_two,
-                            mode: match.game_mode,
-                        });
-                    }
-                    accept(new_matches);
-                });
-            });
-            req.on("error", error => {
+                let json = response.data;
+                let new_matches = [];
+                for (let match of json) {
+                    new_matches.push({
+                        match_id: match.match_id,
+                        player_one: match.player_one,
+                        player_two: match.player_two,
+                        mode: match.game_mode,
+                    });
+                }
+                accept(new_matches);
+            }).catch((error) => {
+                console.log(`Got error: ${error}`);
                 reject(error);
             });
-            req.end();
         });
     }
     findAllCompleted() {

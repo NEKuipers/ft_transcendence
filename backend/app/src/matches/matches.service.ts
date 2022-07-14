@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { Match, OngoingMatch, CompletedMatch } from './matches.interface';
 import { request, createServer, IncomingMessage } from "http";
 
+import axios from 'axios';
+
 @Injectable()
 export class MatchesService {
 	ongoing_matches: OngoingMatch[] =  [
@@ -70,33 +72,17 @@ export class MatchesService {
 
 	updateOngoingMatchesFromDataBase(): Promise<OngoingMatch[]> {
 		return new Promise((accept, reject) => {
-			let req = request({
-				hostname: 'localhost',
-				port: +process.env.PGREST_PORT,
-				path: "/vw_spectate",
-				method: "GET",
-			}, res => {
-				//console.log("Got res: ", res);
-	
-				if (res.statusCode != 200) {
-					console.log(`Got statusCode: ${res.statusCode} (${res.statusMessage}): ${JSON.stringify(res.headers, null, 4)}`)
-					reject(res);
-					return;
-				}
-	
-				res = res.setEncoding('utf8');
-	
-				let combined = "";
-				res.on("data", chunk => {
-					//console.log("Got chunk:", chunk)
-					combined += chunk;
-				})
-				res.on("end", () => {
-					//console.log("End of transmission")
-					let json = JSON.parse(combined);
-	
-					//console.log(`Its ret is: ${JSON.stringify(json, null, 4)}`);
-	
+			axios.get(`http://localhost:${process.env.PGREST_PORT}/vw_spectate`)
+				.then((response) => {
+					if (response.status != 200) {
+						console.log(`Got statusCode: ${response.status} (${response.statusText}): ${JSON.stringify(response.headers, null, 4)}`)
+						reject(response);
+						return;
+					}
+
+					//let json = JSON.parse(response.data);
+					let json = response.data;
+
 					let new_matches = [];
 					for (let match of json) {
 						new_matches.push(
@@ -110,17 +96,11 @@ export class MatchesService {
 					}
 
 					accept(new_matches);
-				})
-			});
-		
-			req.on("error", error => {
-				//console.error(`Got error doing request: ${error}`);
-				reject(error);
-			})
-	
-			req.end();
-		})
-
+				}).catch((error) => {
+					console.log(`Got error: ${error}`)
+					reject(error);
+				});
+		});
 	}
 
 	findAllCompleted(): CompletedMatch[] {
