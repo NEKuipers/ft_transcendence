@@ -1,7 +1,10 @@
 <template>
 	<div class ="matchhistorylist">
 		<h3>Match History</h3>
-		<div v-if="matches">
+		<div v-if="!matches">
+			<h3>Match history failed to load</h3>
+		</div>
+		<div v-else-if="matches?.length">
 			<div v-for="match in matches" :key="match.id">
 				<section class="listed-match">
 					<h1>{{match.p1_name}} vs {{match.p2_name}} | Gamemode: {{match.game_mode}} | Final score: {{match.p1_points}} - {{match.p2_points}}</h1>
@@ -9,7 +12,7 @@
 			</div>
 		</div>
 		<div v-else>
-			<h3>No match history found</h3>
+			<h3>No games played yet</h3>
 		</div>
 	</div>
 </template>
@@ -40,7 +43,8 @@ export default defineComponent({
 				fetch('/api/matches/last/' + this.user)
 					.then(res => res.json())
 					.then(data => this.matches = data)
-					.catch(err => console.log(err));
+					.catch(err => {this.matches = null; console.log(err);
+					});
 			},
 			immediate: true
 		}

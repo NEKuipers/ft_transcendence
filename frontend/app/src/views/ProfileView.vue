@@ -17,7 +17,7 @@
       </div>
     </div>
     <div class="matchHistory">
-      <MatchHistory />
+      <MatchHistory :user="user?.id"/>
     </div>
   </div>
 </template>
