@@ -16,7 +16,7 @@
       </div>
     </div>
     <div class="matchHistory">
-      <MatchHistory />
+      <MatchHistory :user="user.id"/>	<!-- Show the match history of the user with the id "user.id"-->
     </div>
   </div>
 </template>
@@ -97,7 +97,7 @@ export default defineComponent({
   data () {
     return {
       selectedFile: null,
-      user: null,
+      user: {},
     }
   },
   async mounted() {
