@@ -213,7 +213,7 @@ CREATE TABLE public.matches
     p2_points   INTEGER,
     status      MATCH_STATUS,
     reason      LOOSE_REASON,
-    mode        MATCH_MODE
+    game_mode   MATCH_MODE
 );
 
 /*

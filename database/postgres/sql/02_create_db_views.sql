@@ -19,7 +19,7 @@ AS
         p1_points,
         p2_points,
         reason,
-        mode
+        game_mode
     FROM users u
         INNER JOIN matches m
             ON u.id = m.player_one
@@ -39,7 +39,7 @@ AS
         p1_points,
         p2_points,
         reason,
-        mode
+        game_mode
     FROM users u
         INNER JOIN matches m
             ON u.id = m.player_two
@@ -56,7 +56,7 @@ SELECT
     p1_points   AS p1_points,
     p2_points   AS p2_points,
     reason      AS loose_reason,
-    mode        AS game_mode
+    game_mode   AS game_mode
 FROM match_history mh
     INNER JOIN users u
         ON mh.user_id = u.id
@@ -78,7 +78,7 @@ SELECT
     m.id            AS match_id,
     u1.username     AS player_one,
     u2.username     AS player_two,
-    m.mode          AS game_mode
+    m.game_mode     AS game_mode
 FROM matches m
     INNER JOIN users u1
         ON m.player_one = u1.id
@@ -164,7 +164,7 @@ AS
         p1_points,
         p2_points,
         reason,
-        mode
+        game_mode
     FROM users u
         INNER JOIN matches m
             ON u.id = m.player_one
@@ -184,7 +184,7 @@ AS
         p1_points,
         p2_points,
         reason,
-        mode
+        game_mode
     FROM users u
         INNER JOIN matches m
             ON u.id = m.player_two
