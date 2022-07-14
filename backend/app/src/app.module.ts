@@ -1,7 +1,5 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { MatchesModule } from './matches/matches.module';
 import { MessagesModule } from './messages/messages.module';
@@ -19,7 +17,7 @@ import { LadderModule } from './ladder/ladder.module';
   imports: [ConfigModule.forRoot({
     envFilePath: '../../.env',
   }), UsersModule, MatchesModule, MessagesModule, ParticipantsModule, TwoFactorAuthModule, ChannelsModule, UserAchievementsModule, AchievementsModule, BlockedUsersModule, AvatarsModule, FriendsModule, LadderModule],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}

@@ -1,11 +1,10 @@
 import { request, createServer, IncomingMessage } from "http";
-import { Namespace, Server, Socket } from "socket.io";
+import { Server, Socket } from "socket.io";
 import jwt from "jsonwebtoken";
 
 import { EventEmitter } from 'events';
 
 import { settings as pong_settings } from './pong';
-import { HttpService } from "@nestjs/axios";
 
 const SECRET_AUTH = process.env.JSON_WEB_TOKEN_SECRET;
 const DATABASE_PORT = +process.env.PGREST_PORT;
