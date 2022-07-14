@@ -39,10 +39,10 @@ export default defineComponent({
 <style scoped>
 .matchhistorylist {
 	height:30px;
-	margin: 0;
-	margin-top: 200px;
+	margin-top: 50px;
 	margin-bottom: 400px;
 	clear: both;
 	width:100%;
 }
+
 </style>
