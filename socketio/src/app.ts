@@ -154,7 +154,7 @@ class Match {
 			"p2_points": 0,	// IDK
 			"status": "ongoing",
 			"reason": "out-of-time",	// IDK
-			"mode": this.gamemode_name,
+			"game_mode": this.gamemode_name,
 		}, data => {
 			this.match_id = data[0].id;
 			console.log("Got match id: ", this.match_id);

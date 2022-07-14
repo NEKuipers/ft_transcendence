@@ -79,23 +79,7 @@ export class MatchesService {
 						reject(response);
 						return;
 					}
-
-					//let json = JSON.parse(response.data);
-					let json = response.data;
-
-					let new_matches = [];
-					for (let match of json) {
-						new_matches.push(
-							{
-								match_id: match.match_id as number,
-								player_one: match.player_one as string,
-								player_two: match.player_two as string,
-								mode: match.game_mode as string,
-							}
-						)
-					}
-
-					accept(new_matches);
+					accept(response.data);
 				}).catch((error) => {
 					console.log(`Got error: ${error}`)
 					reject(error);
