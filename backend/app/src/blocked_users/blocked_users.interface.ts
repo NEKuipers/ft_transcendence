@@ -3,3 +3,9 @@ export interface BlockedUser {
 	blocked_by_id: number;
 	blocked_user_id: number;
 }
+
+export interface BlockedUserVW {
+	user_id: number;
+	blocked_user_id: number;
+	blocked_user_name: string
+}
