@@ -26,7 +26,9 @@ import { loginStatusStore } from '../stores/profileData';
 
 export default defineComponent({
 	name: 'BlockedUsers',
-	props: {},
+	props: {
+		user_id: Number,
+	},
 	methods: {
 		async loadUserData(id: number) {
 			fetch('/api/blocked_users/' + id)

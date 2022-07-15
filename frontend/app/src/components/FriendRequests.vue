@@ -4,7 +4,7 @@
 		<div v-if="!friendRequests">
 			<h3>Friend requests failed to load</h3>			
 		</div>
-		<div v-else-if="friendRequests">
+		<div v-else-if="friendRequests.length">
 		<!-- Need to figure out how to filter only friends of logged in user! -->
 			<div v-for="request in friendRequests" :key="request?.id">
 				<section class="listed-friend">
@@ -16,7 +16,7 @@
 			</div>
 		</div>
 		<div v-else>
-			<h3>No friend requests</h3>
+			<h3>No new friend requests</h3>
 		</div>
 	</div>
 </template>
@@ -26,21 +26,32 @@ import { defineComponent } from 'vue'
 import SmallButton from '../components/SmallButton.vue'
 import { loginStatusStore } from '../stores/profileData';
 
-
 export default defineComponent({
 	name: 'FriendsList',
-	props: {},
+	props: {
+		user: {
+			type: Number,
+		},
+	},
 	data () {
 		return {
-			friendRequests: [],
+			friendRequests: null,
 			loginStatusStore: loginStatusStore()
 		}
 	},
-	async mounted() {
-	fetch('/api/friends/requests')
-		.then(res => res.json())
-		.then(data => this.friendRequests = data)
-		.catch(err => console.log(err));
+	watch: {
+
+		user: {
+			handler(newValue) {
+				if (!newValue) { return; }	// It can be undefined at the start
+				fetch('/api/friends/requests/' + this.user)
+					.then(res => res.json())
+					.then(data => this.friendRequests = data)
+					.catch(err => {this.friendRequests = null; console.log(err);
+					});
+			},
+			immediate: true
+		}
 	},
 	components: {
 		SmallButton,

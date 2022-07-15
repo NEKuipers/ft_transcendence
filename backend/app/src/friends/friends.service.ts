@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Friend, FriendRequest, FriendTable } from './friends.interface';
+import axios from 'axios';
+import { request, createServer, IncomingMessage } from "http";
+
 
 @Injectable()
 export class FriendsService {
@@ -36,9 +39,21 @@ export class FriendsService {
 		return this.friends;
 	}
 
-	findAllRequests(): FriendRequest[] {
-		//get request to db here
-		return this.friendrequests;
+	findAllRequestsForUser(id: number) : Promise<FriendRequest[]> {
+		return new Promise((accept, reject) => {
+			axios.get(`http://localhost:${process.env.PGREST_PORT}/vw_friend_requests?user_id=eq.${id}`)
+				.then((response) => {
+					if (response.status != 200) {
+						console.log(`Got statusCode: ${response.status} (${response.statusText}): ${JSON.stringify(response.headers, null, 4)}`)
+						reject(response);
+						return;
+					}
+					accept(response.data);
+				}).catch((error) => {
+					console.log(`Got error: ${error}`)
+					reject(error);
+				});
+		});
 	}
 
 	createFriend(friend: FriendTable): string {

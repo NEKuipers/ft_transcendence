@@ -18,9 +18,10 @@
 	<br>
 	<br>
 	<div class="row">
-		<FriendRequests class="column"/>
-		<FriendsList class="column"/>
-		<BlockedUsers class="column" />
+		<!-- TODO get correct user id in each of these -->
+		<FriendRequests :user="user?.id" class="column"/> 
+		<FriendsList :user="user?.id" class="column"/>
+		<BlockedUsers :user="user?.id" class="column" />
 	</div>
 	<div class="matchHistory">
 		<MatchHistory :user="user?.id"/>	<!-- Show the match history of the user with the id "user.id"-->
@@ -103,41 +104,41 @@ import BlockedUsers from '../components/BlockedUsers.vue';
 import SmallButton from '../components/SmallButton.vue';
 
 export default defineComponent({
-  name: 'MyProfileView',
-  props: {
-    },
-  methods: {
-    async loadUserData(id: number) {
-      fetch('/api/users/' + id)
-      .then(res => res.json())
-      .then(data => this.user = data)
-      .catch(err => console.log(err));
-    }
-  },
-  data () {
-    return {
-      selectedFile: null,
-      user: null,
-    }
-  },
-  async mounted() {
+	name: 'MyProfileView',
+	props: {
+	},
+	methods: {
+	async loadUserData(id: number) {
+		fetch('/api/users/' + id)
+		.then(res => res.json())
+		.then(data => this.user = data)
+		.catch(err => console.log(err));
+	}
+	},
+	data () {
+	return {
+		selectedFile: null,
+		user: null,
+	}
+	},
+	async mounted() {
 	let login = loginStatusStore();
-    if (login.loggedInStatus) {
-      await this.loadUserData(login.loggedInStatus.userID); //TODO this still works kind of weird, make sure page reloads
-    } else {
-      // We are not logged in, The router SHOULD prevent us from going here, yet we still got here
-      console.error("Loading MyProfileView while not logged in!")
-    }
-  },
-  components: {
-    UserProfile,
-    AchievementsList,
-    MatchHistory,
-    FriendsList,
-    FriendRequests,
-    BlockedUsers,
-    SmallButton,
-},
+	if (login.loggedInStatus) {
+		await this.loadUserData(login.loggedInStatus.userID); //TODO this still works kind of weird, make sure page reloads
+	} else {
+		// We are not logged in, The router SHOULD prevent us from going here, yet we still got here
+		console.error("Loading MyProfileView while not logged in!")
+	}
+	},
+	components: {
+		UserProfile,
+		AchievementsList,
+		MatchHistory,
+		FriendsList,
+		FriendRequests,
+		BlockedUsers,
+		SmallButton,
+	},
 });
 
 

@@ -11,9 +11,10 @@ export class FriendsController {
 		return this.friendsService.findAll();
 	}
 
-	@Get('/requests')
-	findAllRequests(): FriendRequest[] { 
-		return this.friendsService.findAllRequests();
+	@Get('/requests/:id')
+	findAllRequestsForUser(@Param('id') id: number): Promise<FriendRequest[]> {		
+		// console.log(id);
+		return this.friendsService.findAllRequestsForUser(id);
 	} 
 
 	@Post()

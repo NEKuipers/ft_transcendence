@@ -29,7 +29,9 @@ import { loginStatusStore } from '../stores/profileData';
 
 export default defineComponent({
 	name: 'FriendsList',
-	props: {},
+	props: {
+		user_id: Number,
+	},
 	data () {
 		return {
 			friends: null,
@@ -50,7 +52,7 @@ export default defineComponent({
 			const requestOptions = {
 				method: "DELETE",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({from_user_id: 3, //TODO get correct id after login
+				body: JSON.stringify({from_user_id: this.user_id, //TODO get correct id after login
 				to_user_id: to_user_id}) 
 			};
 			fetch('/api/friends', requestOptions)

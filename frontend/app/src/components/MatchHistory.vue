@@ -39,7 +39,6 @@ export default defineComponent({
 		user: {
 			handler(newValue) {
 				if (!newValue) { return; }	// It can be undefined at the start
-
 				fetch('/api/matches/last/' + this.user)
 					.then(res => res.json())
 					.then(data => this.matches = data)

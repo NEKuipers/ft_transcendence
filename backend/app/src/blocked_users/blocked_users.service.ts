@@ -24,12 +24,13 @@ export class BlockedUsersService {
 	}
 
 	blockUser(blockedUser: BlockedUser) : string {
-		axios.post(`http://localhost:${process.env.PGREST_PORT}/blocked_users`, {
-			//TODO ask jesse how to do this properly
-			"blocked_by_id": blockedUser.blocked_by_id,
-			"blocked_user_id": blockedUser.blocked_user_id,})
-				.then(res => console.log(res))
-				.catch(err => console.log(err));
+		// axios.post(`http://localhost:${process.env.PGREST_PORT}/blocked_users`, {
+		// 	//TODO ask jesse how to do this properly
+		// 	"blocked_by_id": blockedUser.blocked_by_id,
+		// 	"blocked_user_id": blockedUser.blocked_user_id,})
+		// 		.then(res => console.log(res))
+		// 		.catch(err => err);
+		console.log(`user ${blockedUser.blocked_user_id} blocked by ${blockedUser.blocked_by_id}`);
 		return "success";
 	}
 
@@ -39,7 +40,8 @@ export class BlockedUsersService {
 		// 	"blocked_by_id": blockedUser.blocked_by_id,
 		// 	"blocked_user_id": blockedUser.blocked_user_id,})
 		// 		.then(res => console.log(res))
-		// 		.catch(err => console.log(err));
+		// 		.catch(err => console.log(err));\
+		console.log(`user ${blockedUser.blocked_by_id} unblocked user ${blockedUser.blocked_user_id}`)
 		return "success";
 
 	}
