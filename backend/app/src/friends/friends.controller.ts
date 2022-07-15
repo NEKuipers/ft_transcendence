@@ -6,17 +6,16 @@ import { Friend, FriendRequest, FriendTable } from './friends.interface';
 export class FriendsController {
 	constructor(private readonly friendsService: FriendsService) {}
 
-	@Get()
-	findAll(): Friend[] {
-		return this.friendsService.findAll();
+	@Get('/:id')
+	findAllForUser(@Param('id') id: number): Promise<Friend[]> {
+		return this.friendsService.findAllForUser(id);
 	}
 
 	@Get('/requests/:id')
 	findAllRequestsForUser(@Param('id') id: number): Promise<FriendRequest[]> {		
-		// console.log(id);
 		return this.friendsService.findAllRequestsForUser(id);
 	} 
-
+	
 	@Post()
 	create(@Body() friend: FriendTable): string {
 		return this.friendsService.createFriend(friend);

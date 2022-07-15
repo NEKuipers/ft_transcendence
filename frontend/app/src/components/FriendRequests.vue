@@ -40,10 +40,9 @@ export default defineComponent({
 		}
 	},
 	watch: {
-
 		user: {
 			handler(newValue) {
-				if (!newValue) { return; }	// It can be undefined at the start
+				if (!newValue) { return; }
 				fetch('/api/friends/requests/' + this.user)
 					.then(res => res.json())
 					.then(data => this.friendRequests = data)

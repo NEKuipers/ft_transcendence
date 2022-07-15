@@ -27,7 +27,9 @@ import { loginStatusStore } from '../stores/profileData';
 export default defineComponent({
 	name: 'BlockedUsers',
 	props: {
-		user_id: Number,
+		user: {
+			type: Number
+		},
 	},
 	methods: {
 		async loadUserData(id: number) {
@@ -35,13 +37,12 @@ export default defineComponent({
 			.then(res => res.json())
 			.then(data => this.blockedUsers = data)
 			.catch(err => console.log(err));
-			// console.log(this.blockedUsers);
 		},
 		async unblockUser(bid: number) {
 			const requestOptions = {
 				method: "DELETE",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({	blocked_by_id: 3,//TODO get correct id after login
+				body: JSON.stringify({	blocked_by_id: this?.user,//TODO get correct id after login
 										blocked_user_id: bid}) 
 			};
 			fetch('/api/blocked_users', requestOptions)

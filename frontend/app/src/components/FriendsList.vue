@@ -4,7 +4,7 @@
 		<div v-if="!friends">
 			<h3>Friend list failed to load</h3>
 		</div>
-		<div v-else-if="friends">
+		<div v-else-if="friends.length">
 		<!-- Need to figure out how to filter only friends of logged in user! -->
 			<div v-for="friend in friends" :key="friend?.id">
 				<section class="listed-friend">
@@ -33,7 +33,9 @@ import { loginStatusStore } from '../stores/profileData';
 export default defineComponent({
 	name: 'FriendsList',
 	props: {
-		user_id: Number,
+		user: {
+			type: Number
+		},
 	},
 	data () {
 		return {
@@ -41,11 +43,18 @@ export default defineComponent({
 			loginStatusStore: loginStatusStore()
 		}
 	},
-	async mounted() {
-		fetch('/api/friends/')
-			.then(res => res.json())
-			.then(data => this.friends = data)
-			.catch(err => console.log(err));
+	watch: {
+		user: {
+			handler(newValue) {
+				if (!newValue) { return; }
+				fetch('/api/friends/' + this.user)
+					.then(res => res.json())
+					.then(data => this.friends = data)
+					.catch(err => {this.friends = null; console.log(err);
+					});
+			},
+			immediate: true
+		}
 	},
 	components: {
 		SmallButton,
@@ -55,7 +64,7 @@ export default defineComponent({
 			const requestOptions = {
 				method: "DELETE",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({from_user_id: this.user_id, //TODO get correct id after login
+				body: JSON.stringify({from_user_id: this.user, //TODO get correct id after login
 				to_user_id: to_user_id}) 
 			};
 			fetch('/api/friends', requestOptions)
