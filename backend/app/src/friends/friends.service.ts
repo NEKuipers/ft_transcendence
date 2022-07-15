@@ -1,5 +1,67 @@
 import { Injectable } from '@nestjs/common';
-import { Friend } from './friends.interface';
+import { Friend, FriendRequest, FriendTable } from './friends.interface';
 
 @Injectable()
-export class FriendsService {}
+export class FriendsService {
+	friends: Friend[] = [
+		{
+			user_id: 3,
+			username: "nkuipers",
+			to_user_id: 1,
+			to_username: "jevan-de",
+			send_time: "2022-06-16 17:00:00",
+			response_time: "2022-06-17 17:00:00",
+		},
+		{
+			user_id: 3,
+			username: "nkuipers",
+			to_user_id: 4,
+			to_username: "jsimonis",
+			send_time: "2022-06-16 17:00:00",
+			response_time: "2022-06-17 17:00:00",
+		},
+		{
+			user_id: 2,
+			username: "tmullan",
+			to_user_id: 1,
+			to_username: "jevan-de",
+			send_time: "2022-06-16 17:00:00",
+			response_time: "2022-06-17 17:00:00",
+		},
+
+	];
+	friendrequests: FriendRequest[] = [
+		{
+			user_id: 3,
+			username: "nkuipers", 
+			from_user_id: 5,
+			from_username: "a-user",
+			send_time: "2022-06-16 17:00:00",
+		},
+	];
+
+	findAll(): Friend[] {
+		//get request to db here
+		return this.friends;
+	}
+
+	findAllRequests(): FriendRequest[] {
+		//get request to db here
+		return this.friendrequests;
+	}
+
+	createFriend(friendtable: FriendTable): string {
+		//add friend to db via post request here
+		return "Friend request added to database";
+	}
+
+	updateFriend(id: number, friendtable: FriendTable) : string { 
+		//update friend request when person who received the request responds
+		return "Friend request updated";
+	}
+
+	deleteFriend(id: number) : string {
+		//remove friend with id of number from friend table
+		return "Friend deleted"
+	}
+}

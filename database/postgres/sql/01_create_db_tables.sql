@@ -12,6 +12,19 @@ CREATE TYPE user_status AS ENUM
     'ingame'
 );
 
+DROP TYPE IF EXISTS match_mode CASCADE;
+
+CREATE TYPE match_mode AS ENUM
+(
+    'classic',
+    'speedup',
+    'rush',
+    'expert',
+    'tiny',
+    'big',
+    'speed'
+);
+
 DROP TYPE IF EXISTS match_status CASCADE;
 
 CREATE TYPE match_status AS ENUM
@@ -185,19 +198,6 @@ CREATE TABLE public.blocked_users
 
 /*
 ** The matches table ...
-**
-** meta example:
-** '
-**  "start_time"  => datetime
-**  "end_time"    => datetime
-**  "p1_points"   => int
-**  "p2_points"   => int
-** '
-**
-** options example:
-** '
-** ??
-** '
 */
 DROP TABLE IF EXISTS public.matches;
 
@@ -213,8 +213,7 @@ CREATE TABLE public.matches
     p2_points   INTEGER,
     status      MATCH_STATUS,
     reason      LOOSE_REASON,
-    meta        HSTORE,
-    options     HSTORE
+    game_mode   MATCH_MODE
 );
 
 /*

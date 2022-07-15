@@ -1,8 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+<<<<<<< HEAD
 // import { HttpModule, HttpService } from '@nestjs/axios';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+=======
+>>>>>>> ec1c7e910452b878e9e37bff058201b801891b29
 import { UsersModule } from './users/users.module';
 import { MatchesModule } from './matches/matches.module';
 import { MessagesModule } from './messages/messages.module';
@@ -21,6 +24,7 @@ import { LadderModule } from './ladder/ladder.module';
 @Module({
   imports: [ConfigModule.forRoot({
     envFilePath: '../../.env',
+<<<<<<< HEAD
   }),
   PassportModule.register({ session: true}),
   UsersModule, MatchesModule, MessagesModule,
@@ -28,5 +32,10 @@ import { LadderModule } from './ladder/ladder.module';
   AvatarsModule, FriendsModule, LoginModule, LadderModule],
   controllers: [AppController],
   providers: [AppService],
+=======
+  }), UsersModule, MatchesModule, MessagesModule, ParticipantsModule, TwoFactorAuthModule, ChannelsModule, UserAchievementsModule, AchievementsModule, BlockedUsersModule, AvatarsModule, FriendsModule, LadderModule],
+  controllers: [],
+  providers: [],
+>>>>>>> ec1c7e910452b878e9e37bff058201b801891b29
 })
 export class AppModule {}

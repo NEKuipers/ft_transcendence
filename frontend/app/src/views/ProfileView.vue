@@ -1,6 +1,9 @@
 <template>
   <div>
-    <div v-if="user">
+    <div v-if="!user">
+      <h2>User profile failed to load</h2>
+    </div>
+    <div v-else-if="user?.length">
       <UserProfile :user="user"></UserProfile>
     </div>
     <div v-else>
@@ -9,13 +12,15 @@
     <br>
     <br>
     <div class="row">
-    <div class="column">
-      Friends
+      <div class="column">
+        <FriendsList/>
+      </div>
+      <div class="column">
+        <AchievementsList/>
+      </div>
     </div>
-    <div class="column">
-      Achievements
-      <AchievementsList/>
-    </div>
+    <div class="matchHistory">
+      <MatchHistory :user="user?.id"/>
     </div>
   </div>
 </template>
@@ -32,6 +37,10 @@
   content:"";
   display: table;
   clear:both;
+}
+.row {
+  
+	border:1px solid #ccc;
 }
 
 
@@ -73,6 +82,8 @@ import { defineComponent } from 'vue';
 import { useLoginStatusStore } from '../stores/profileData'
 import  UserProfile from '../components/UserProfile.vue';
 import AchievementsList from '../components/AchievementsList.vue'
+import FriendsList from '../components/FriendsList.vue';
+import MatchHistory from '../components/MatchHistory.vue';
 
 
 export default defineComponent({
@@ -101,7 +112,9 @@ export default defineComponent({
   components: {
     UserProfile,
     AchievementsList,
-  },
+    FriendsList,
+    MatchHistory
+},
 });
 
 </script>

@@ -9,16 +9,15 @@ import ChatView from '@/views/ChatView.vue'
 import AboutView from '@/views/AboutView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 import MyProfileView from '@/views/MyProfileView.vue'
-import EditProfileView from '@/views/EditProfileView.vue'
 import LeaderboardView from '@/views/LeaderboardView.vue'
 import GameSelectView from '@/views/GameSelectView.vue'
-
+import TwoFactorAuthenticationView from '@/views/TwoFactorAuthenticationView.vue'
 
 
 
 const routes: Array<RouteRecordRaw> = [
   {
-    path: '/',
+    path: '/',	
     name: 'home',
     component: HomeView,
   },
@@ -33,12 +32,12 @@ const routes: Array<RouteRecordRaw> = [
     component: MyProfileView,
   },
   {
-    path: '/myprofile-edit',
-    name: 'myprofile-edit',
-    component: EditProfileView,
+    path: '/two-factor-authentication',
+    name: 'two-factor-authentication',
+    component: TwoFactorAuthenticationView,
   },
   {
-    path: '/pong',
+    path: '/pong/:mode',
     name: 'pong',
     component: PongView,
   },
