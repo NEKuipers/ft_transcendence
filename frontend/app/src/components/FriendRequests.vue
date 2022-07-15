@@ -8,8 +8,8 @@
 		<!-- Need to figure out how to filter only friends of logged in user! -->
 			<div v-for="request in friendRequests" :key="request?.id">
 				<section class="listed-friend">
-					<SmallButton class="requestbutton" text="Accept"/>
-					<SmallButton class="requestbutton" text="Decline"/>
+					<SmallButton class="requestbutton" text="Accept" @click="acceptRequest"/>
+					<SmallButton class="requestbutton" text="Decline" @click="declineRequest"/>
 					<!-- TODO THIS BUTTON STORE THING DOESNT WORK -->
 					<a class="friend" v-bind:href="'http://localhost:8080/profile/' + request.from_user_id">{{request.from_username}}</a>
 				</section>
@@ -44,7 +44,17 @@ export default defineComponent({
 	},
 	components: {
 		SmallButton,
-	}
+	},
+	methods: {
+		acceptRequest() {
+			console.log('accept request');
+			
+		},
+		declineRequest() {
+			console.log('decline request');
+			
+		},
+	},
 })
 
 </script>

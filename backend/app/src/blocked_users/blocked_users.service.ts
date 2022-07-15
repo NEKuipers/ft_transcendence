@@ -7,7 +7,6 @@ import { request, createServer, IncomingMessage } from "http";
 export class BlockedUsersService {
 
 	findAllForUser(id: number) : Promise<BlockedUserVW[]> {
-
 		return new Promise((accept, reject) => {
 			axios.get(`http://localhost:${process.env.PGREST_PORT}/vw_blocked_users?user_id=eq.${id}`)
 				.then((response) => {
@@ -25,20 +24,23 @@ export class BlockedUsersService {
 	}
 
 	blockUser(blockedUser: BlockedUser) : string {
-		// console.log(`making POST request to http://localhost:${process.env.PGREST_PORT}/blocked_users with data: `);
-		
-		// axios.post(`http://localhost:${process.env.PGREST_PORT}/blocked_users`, {
-		// 	"id": 1,
-		// 	"blocked_by_id": from_id,
-		// 	"blocked_user_id": to_id,
-		// })
-
-
-
+		axios.post(`http://localhost:${process.env.PGREST_PORT}/blocked_users`, {
+			//TODO ask jesse how to do this properly
+			"blocked_by_id": blockedUser.blocked_by_id,
+			"blocked_user_id": blockedUser.blocked_user_id,})
+				.then(res => console.log(res))
+				.catch(err => console.log(err));
 		return "success";
 	}
 
-	// unblockUser(id: number): BlockedUser {
-// 
-	// }
+	unblockUser(blockedUser: BlockedUser): string {
+		// axios.delete(`http://localhost:${process.env.PGREST_PORT}/blocked_users`, {
+		// 	//TODO ask jesse how to do this properly
+		// 	"blocked_by_id": blockedUser.blocked_by_id,
+		// 	"blocked_user_id": blockedUser.blocked_user_id,})
+		// 		.then(res => console.log(res))
+		// 		.catch(err => console.log(err));
+		return "success";
+
+	}
 }

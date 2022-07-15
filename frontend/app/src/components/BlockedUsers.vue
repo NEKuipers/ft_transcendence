@@ -6,8 +6,8 @@
 		</div>
 		<div v-else-if="blockedUsers">
 			<div v-for="block in blockedUsers" :key="block?.id">
-				<section class="listed-friend">
-					<SmallButton class="requestbutton" text="Unfriend"/>
+				<section class="listed-blocked">
+					<SmallButton class="unblockbutton" @click="unblockUser(block.blocked_user_id)" text="Unblock"/>
 					<a class="blocked-user" v-bind:href="'http://localhost:8080/profile/' + block.blocked_user_id">{{block.blocked_user_name}}</a>
 				</section>
 			</div>
@@ -25,15 +25,26 @@ import { loginStatusStore } from '../stores/profileData';
 
 
 export default defineComponent({
-	name: 'FriendsList',
+	name: 'BlockedUsers',
 	props: {},
 	methods: {
 		async loadUserData(id: number) {
-			fetch('/api/blocked-users/' + id)
+			fetch('/api/blocked_users/' + id)
 			.then(res => res.json())
 			.then(data => this.blockedUsers = data)
 			.catch(err => console.log(err));
-			console.log(this.blockedUsers);
+			// console.log(this.blockedUsers);
+		},
+		async unblockUser(bid: number) {
+			const requestOptions = {
+				method: "DELETE",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({	blocked_by_id: 3,//TODO get correct id after login
+										blocked_user_id: bid}) 
+			};
+			fetch('/api/blocked_users', requestOptions)
+				.then(response => console.log(response.status))
+				.catch(err => console.log(err));
 		},
 	},
 	data () {
@@ -67,7 +78,7 @@ export default defineComponent({
 	padding-left: 30px;
 }
 
-.unfriendbutton {
+.unblockbutton {
 	margin: 10px;
 }
 

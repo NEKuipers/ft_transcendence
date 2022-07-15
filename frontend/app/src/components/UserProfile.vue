@@ -16,8 +16,8 @@
         <h4>Overall ranking:  #{{user?.leaderboardPosition}}</h4>
     </section>
     <div v-if="user?.id == loginStatusStore.loggedInStatus?.userID">
-      <SmallButton class="user-btn" text="Change avatar"></SmallButton>
-      <SmallButton class="user-btn" text="Change username"></SmallButton>
+      <SmallButton class="user-btn" text="Change avatar" @click="changeAvatar"></SmallButton>
+      <SmallButton class="user-btn" text="Change username" @click="changeUsername"></SmallButton>
     </div>
 	<div v-if="user?.id != loginStatusStore.loggedInStatus?.userID">
 		<SmallButton class="user-btn" text="Message" @click="directMessage"></SmallButton>
@@ -49,31 +49,40 @@ export default defineComponent({
 		SmallButton,
 	},
 	methods: {
+		changeAvatar() {
+			console.log('change avatar');
+		},
+		changeUsername() {
+			console.log('change username');
+		},
 		directMessage() {
 			console.log('direct message');
 		},
 		inviteToGame() {
 			console.log('invite to game');
 		},
-		addFriend() {
+		async addFriend() {
 			const requestOptions = {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({	from_user_id: 3,  //TODO get correct id after login
-										to_user_id: this.user?.id})
-			}
-			console.log(requestOptions);
+										to_user_id: this.user?.id})};
+			fetch('/api/friends', requestOptions)
+				.then(res => console.log(res.status))
+				.catch(err => console.log(err));			
 		},
-		blockUser() {
+		async blockUser() {
 			const requestOptions = {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({	blocked_by_id: 3,//TODO get correct id after login
 										blocked_user_id: this.user?.id}) 
-			}
-			console.log(requestOptions);
+			};
+			fetch('/api/blocked_users', requestOptions)
+				.then(response => console.log(response.status))
+				.catch(err => console.log(err));
 		},
-	}
+	},
 });
 </script>
 

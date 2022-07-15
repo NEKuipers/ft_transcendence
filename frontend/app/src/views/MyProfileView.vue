@@ -136,7 +136,7 @@ export default defineComponent({
     FriendsList,
     FriendRequests,
     BlockedUsers,
-    SmallButton
+    SmallButton,
 },
 });
 

@@ -26,8 +26,9 @@ export class FriendsController {
 		return this.friendsService.updateFriend(id, friendtable);
 	}
 
-	@Delete(':id')
-	unfriend(@Param('id') id: number): string {
-		return this.friendsService.deleteFriend(id);
+	@Delete()
+	unfriend(@Body() friend: FriendTable): string {
+		console.log(friend);
+		return this.friendsService.deleteFriend(friend);
 	}
 }

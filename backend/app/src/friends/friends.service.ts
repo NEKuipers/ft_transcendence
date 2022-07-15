@@ -20,15 +20,6 @@ export class FriendsService {
 			send_time: "2022-06-16 17:00:00",
 			response_time: "2022-06-17 17:00:00",
 		},
-		{
-			user_id: 2,
-			username: "tmullan",
-			to_user_id: 1,
-			to_username: "jevan-de",
-			send_time: "2022-06-16 17:00:00",
-			response_time: "2022-06-17 17:00:00",
-		},
-
 	];
 	friendrequests: FriendRequest[] = [
 		{
@@ -60,8 +51,8 @@ export class FriendsService {
 		return "Friend request updated";
 	}
 
-	deleteFriend(id: number) : string {
-		//remove friend with id of number from friend table
+	deleteFriend(friend: FriendTable) : string {
+		//TODO make delete request to DB
 		return "Friend deleted"
 	}
 }
