@@ -17,13 +17,13 @@ export class FriendsController {
 	} 
 
 	@Post()
-	create(@Body() friendtable: FriendTable): string {
-		return this.friendsService.createFriend(friendtable);
+	create(@Body() friend: FriendTable): string {
+		return this.friendsService.createFriend(friend);
 	}
 
-	@Patch(':id')
-	update(@Param('id') id: number, @Body() friendtable: FriendTable) : string {
-		return this.friendsService.updateFriend(id, friendtable);
+	@Patch()
+	update(@Body() friend: FriendTable): string {
+		return this.friendsService.updateFriend(friend);
 	}
 
 	@Delete()

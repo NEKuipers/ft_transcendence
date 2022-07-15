@@ -10,7 +10,6 @@
 				<section class="listed-friend">
 					<!-- <SmallButton v-if="user?.id != loginStatusStore.loggedInStatus?.userID" @click="unfriend" text="Remove"/> This gives an error until we get OAuth working-->
 					<SmallButton @click="unfriend(friend['to_user_id'])" text="Remove"/> 
-					<!-- TODO THIS BUTTON STORE THING DOESNT WORK -->
 					<a class="friend" v-bind:href="'http://localhost:8080/profile/' + friend.to_user_id">{{friend.to_username}}</a>
 					<!-- TODO add online status and possible avatar here -->
 				</section>

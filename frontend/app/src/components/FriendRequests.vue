@@ -8,8 +8,8 @@
 		<!-- Need to figure out how to filter only friends of logged in user! -->
 			<div v-for="request in friendRequests" :key="request?.id">
 				<section class="listed-friend">
-					<SmallButton class="requestbutton" text="Accept" @click="acceptRequest"/>
-					<SmallButton class="requestbutton" text="Decline" @click="declineRequest"/>
+					<SmallButton class="requestbutton" text="Accept" @click="acceptRequest(request.from_user_id)"/>
+					<SmallButton class="requestbutton" text="Decline" @click="declineRequest(request.from_user_id)"/>
 					<!-- TODO THIS BUTTON STORE THING DOESNT WORK -->
 					<a class="friend" v-bind:href="'http://localhost:8080/profile/' + request.from_user_id">{{request.from_username}}</a>
 				</section>
@@ -32,7 +32,7 @@ export default defineComponent({
 	props: {},
 	data () {
 		return {
-			friendRequests: null,
+			friendRequests: [],
 			loginStatusStore: loginStatusStore()
 		}
 	},
@@ -46,13 +46,29 @@ export default defineComponent({
 		SmallButton,
 	},
 	methods: {
-		acceptRequest() {
-			console.log('accept request');
-			
+		async acceptRequest(from_user_id: number) {
+			const requestOptions = {
+				method: "PATCH",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({to_user_id: 3, //TODO get correct id after login
+				from_user_id: from_user_id,
+				status: 2}) 
+			};
+			fetch('/api/friends', requestOptions)
+				.then(response => console.log(response.status))
+				.catch(err => console.log(err));
 		},
-		declineRequest() {
-			console.log('decline request');
-			
+		async declineRequest(from_user_id: number) {
+			const requestOptions = {
+				method: "PATCH",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({to_user_id: 3, //TODO get correct id after login
+				from_user_id: from_user_id,
+				status: 1}) 
+			};
+			fetch('/api/friends', requestOptions)
+				.then(response => console.log(response.status))
+				.catch(err => console.log(err));
 		},
 	},
 })

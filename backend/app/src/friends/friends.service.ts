@@ -41,13 +41,15 @@ export class FriendsService {
 		return this.friendrequests;
 	}
 
-	createFriend(friendtable: FriendTable): string {
+	createFriend(friend: FriendTable): string {
 		//add friend to db via post request here
 		return "Friend request added to database";
 	}
 
-	updateFriend(id: number, friendtable: FriendTable) : string { 
+	updateFriend(friend: FriendTable) : string { 
 		//update friend request when person who received the request responds
+		console.log(friend);
+		
 		return "Friend request updated";
 	}
 
