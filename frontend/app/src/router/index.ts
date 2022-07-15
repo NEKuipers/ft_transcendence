@@ -11,13 +11,13 @@ import NotFoundView from '@/views/NotFoundView.vue'
 import MyProfileView from '@/views/MyProfileView.vue'
 import LeaderboardView from '@/views/LeaderboardView.vue'
 import GameSelectView from '@/views/GameSelectView.vue'
-
+import TwoFactorAuthenticationView from '@/views/TwoFactorAuthenticationView.vue'
 
 
 
 const routes: Array<RouteRecordRaw> = [
   {
-    path: '/',
+    path: '/',	
     name: 'home',
     component: HomeView,
   },
@@ -31,7 +31,11 @@ const routes: Array<RouteRecordRaw> = [
     name: 'myprofile',
     component: MyProfileView,
   },
-
+  {
+    path: '/two-factor-authentication',
+    name: 'two-factor-authentication',
+    component: TwoFactorAuthenticationView,
+  },
   {
     path: '/pong/:mode',
     name: 'pong',

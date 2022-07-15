@@ -1,31 +1,31 @@
 <template>
-  <div>
-    <div class="row">
-      <div class="top-column" v-if="!user">
-        <h2>User profile failed to load</h2>
-      </div>
-      <div class="top-column" v-else-if="user">
-        <UserProfile :user="user"></UserProfile>
-        <SmallButton class="tfa-btn" text="Set two factor authentication"/>
-      </div>
-      <div class="top-column" v-else>
-        <h2>User not found</h2>
-      </div> <!-- TODO add loading for user -->
-      <AchievementsList class="top-column"/>
-    </div> 
-    <br>
-    <br>
-    <div class="row">
-      <FriendRequests class="column"/>
-      <FriendsList class="column"/>
-      <div class="column">
-        <BlockedUsers />
-      </div>
-    </div>
-    <div class="matchHistory">
-      <MatchHistory :user="user?.id"/>	<!-- Show the match history of the user with the id "user.id"-->
-    </div>
-  </div>
+	<div>
+	<div class="row">
+		<div class="top-column" v-if="!user">
+			<h2>User profile failed to load</h2>
+		</div>
+		<div class="top-column" v-else-if="user">
+			<UserProfile :user="user"></UserProfile>
+			<router-link to="/two-factor-authentication">
+				<SmallButton class="tfa-btn" text="Set two factor authentication"/>
+			</router-link>
+		</div>
+		<div class="top-column" v-else>
+			<h2>User not found</h2>
+		</div> <!-- TODO add loading for user -->
+		<AchievementsList class="top-column"/>
+	</div> 
+	<br>
+	<br>
+	<div class="row">
+		<FriendRequests class="column"/>
+		<FriendsList class="column"/>
+		<BlockedUsers class="column" />
+	</div>
+	<div class="matchHistory">
+		<MatchHistory :user="user?.id"/>	<!-- Show the match history of the user with the id "user.id"-->
+	</div>
+	</div>
 </template>
 
 <style scoped>
