@@ -20,12 +20,12 @@
       <SmallButton class="user-btn" text="Change username"></SmallButton>
     </div>
 	<div v-if="user?.id != loginStatusStore.loggedInStatus?.userID">
-		<SmallButton class="user-btn" text="Message"></SmallButton>
-		<SmallButton class="user-btn" text="Invite to game"></SmallButton>
+		<SmallButton class="user-btn" text="Message" @click="directMessage"></SmallButton>
+		<SmallButton class="user-btn" text="Invite to game" @click="inviteToGame"></SmallButton>
     <br>
     <br>
-		<SmallButton class="user-btn" text="Add Friend"></SmallButton>
-		<SmallButton class="user-btn" text="Block User"></SmallButton>
+		<SmallButton class="user-btn" text="Add Friend" @click="addFriend"></SmallButton>
+		<SmallButton class="user-btn" text="Block User" @click="blockUser"></SmallButton>
 	</div>
   </div>
 </template>
@@ -47,6 +47,32 @@ export default defineComponent({
 	},
 	components: {
 		SmallButton,
+	},
+	methods: {
+		directMessage() {
+			console.log('direct message');
+		},
+		inviteToGame() {
+			console.log('invite to game');
+		},
+		addFriend() {
+			const requestOptions = {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({	from_user_id: 3,  //TODO get correct id after login
+										to_user_id: this.user?.id})
+			}
+			console.log(requestOptions);
+		},
+		blockUser() {
+			const requestOptions = {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({	blocked_by_id: 3,//TODO get correct id after login
+										blocked_user_id: this.user?.id}) 
+			}
+			console.log(requestOptions);
+		},
 	}
 });
 </script>

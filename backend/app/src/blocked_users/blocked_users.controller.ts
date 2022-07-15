@@ -7,8 +7,18 @@ export class BlockedUsersController {
 	constructor(private readonly blockedUsersService: BlockedUsersService) {}
 
 	@Get(':id')
-	findAllForUser(@Param('id') id: number): BlockedUserVW[] {
+	findAllForUser(@Param('id') id: number): Promise<BlockedUserVW[]> {
 		return  this.blockedUsersService.findAllForUser(id);
 	}
-	
+
+	@Post()
+	blockUser(@Body() blockedUser: BlockedUser): string {
+		console.log(blockedUser);
+		return this.blockedUsersService.blockUser(blockedUser);
+	}
+
+	// @Delete(':id')
+	// unblockUser(@Param('id') id: number): BlockedUser {
+	// 	return this.blockedUsersService.unblockUser(id);
+	// }
 }
