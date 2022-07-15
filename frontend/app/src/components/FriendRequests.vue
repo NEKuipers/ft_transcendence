@@ -1,7 +1,10 @@
 <template>
 	<div class ="friend-requests">
       <h3>Friend Requests</h3>
-		<div v-if="friendRequests">
+		<div v-if="!friendRequests">
+			<h3>Friend requests failed to load</h3>			
+		</div>
+		<div v-else-if="friendRequests">
 		<!-- Need to figure out how to filter only friends of logged in user! -->
 			<div v-for="request in friendRequests" :key="request?.id">
 				<section class="listed-friend">
@@ -13,7 +16,7 @@
 			</div>
 		</div>
 		<div v-else>
-			<h3>No friends yet</h3>
+			<h3>No friend requests</h3>
 		</div>
 	</div>
 </template>

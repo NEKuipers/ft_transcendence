@@ -1,6 +1,9 @@
 <template>
   <div>
-    <div v-if="user">
+    <div v-if="!user">
+      <h2>User profile failed to load</h2>
+    </div>
+    <div v-else-if="user?.length">
       <UserProfile :user="user"></UserProfile>
     </div>
     <div v-else>

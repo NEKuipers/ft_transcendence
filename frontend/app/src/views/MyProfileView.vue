@@ -1,7 +1,10 @@
 <template>
   <div>
     <div class="row">
-      <div class="top-column" v-if="user">
+      <div class="top-column" v-if="!user">
+        <h2>User profile failed to load</h2>
+      </div>
+      <div class="top-column" v-else-if="user">
         <UserProfile :user="user"></UserProfile>
       </div>
       <div class="top-column" v-else>

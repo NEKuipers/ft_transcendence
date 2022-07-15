@@ -1,8 +1,10 @@
 <template>
 	<div class ="blocked-users">
       <h3>Blocked Users</h3>
-		<div v-if="blockedUsers">
-		<!-- Need to figure out how to filter only friends of logged in user! -->
+		<div v-if="!blockedUsers">
+			<h3>Blocked users failed to load</h3>
+		</div>
+		<div v-else-if="blockedUsers">
 			<div v-for="block in blockedUsers" :key="block?.id">
 				<section class="listed-friend">
 					<SmallButton class="requestbutton" text="Unfriend"/>
@@ -11,7 +13,7 @@
 			</div>
 		</div>
 		<div v-else>
-			<h3>No friends yet</h3>
+			<h3>None</h3>
 		</div>
 	</div>
 </template>
