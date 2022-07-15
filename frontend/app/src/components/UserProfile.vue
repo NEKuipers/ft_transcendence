@@ -4,10 +4,8 @@
     <br>
     <section class="names">
       <h1 class="username"><a v-bind:href="'http://localhost:8080/profile/' + user?.id">{{user?.userName}}</a></h1>
-      <div v-if="user?.isLoggedIn === true">
-        <h4 id="online-status">Online</h4>
-      </div>
-      <h5 v-else>Offline</h5>
+		<h4 v-if="user?.isLoggedIn === true" id="online-status">Online</h4>
+		<h5 v-else>Offline</h5>
     </section>
     <section class="game-stats">
       <h4>Games played: {{user?.gamesPlayed}}</h4>

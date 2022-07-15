@@ -8,10 +8,13 @@
 		<!-- Need to figure out how to filter only friends of logged in user! -->
 			<div v-for="friend in friends" :key="friend?.id">
 				<section class="listed-friend">
-					<!-- <SmallButton v-if="user?.id != loginStatusStore.loggedInStatus?.userID" @click="unfriend" text="Remove"/> This gives an error until we get OAuth working-->
-					<SmallButton @click="unfriend(friend['to_user_id'])" text="Remove"/> 
+
+					<img class="profilePictureThumbnail" width="50" height="50" src="../assets/Profile-picture-default.png"/>
 					<a class="friend" v-bind:href="'http://localhost:8080/profile/' + friend.to_user_id">{{friend.to_username}}</a>
-					<!-- TODO add online status and possible avatar here -->
+					<SmallButton class="unfriend-btn" @click="unfriend(friend.to_user_id)" text="Remove"/> 
+					<h4 v-if="user?.isLoggedIn === true" id="online-status">Online</h4>
+					<h5 v-else id="online-status">Offline</h5>
+					<!-- TODO change statuses to logged in/out/ingame -->
 				</section>
 			</div>
 		</div>
@@ -80,5 +83,25 @@ a:visited {
 a:hover {
 	text-decoration: underline;
 }
+.unfriend-btn {
+	margin-top: 25px;
+	margin-left: 20px;
+	float:right;
+}
+
+#online-status {
+	float: right;
+	margin: 10px;
+	padding-top: 25px;
+}
+.listed-friend {
+	display: inline-block;
+}
+
+.profilePictureThumbnail {
+	margin-left: 20px;
+	padding-top: 0px;
+}
+
 
 </style>

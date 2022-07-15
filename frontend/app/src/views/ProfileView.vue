@@ -12,16 +12,10 @@
     <br>
     <br>
     <div class="row">
-      <div class="column">
-        <FriendsList/>
-      </div>
-      <div class="column">
-        <AchievementsList/>
-      </div>
+        <FriendsList class="column" :user="user?.id"/>
+        <AchievementsList class="column" :user="user?.id"/>
     </div>
-    <div class="matchHistory">
-      <MatchHistory :user="user?.id"/>
-    </div>
+      <MatchHistory class="matchHistory" :user="user?.id"/>
   </div>
 </template>
 
