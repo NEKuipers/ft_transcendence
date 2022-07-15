@@ -3,7 +3,7 @@
     <div v-if="!user">
       <h2>User profile failed to load</h2>
     </div>
-    <div v-else-if="user?.length">
+    <div v-else-if="user.userName.length">
       <UserProfile :user="user"></UserProfile>
     </div>
     <div v-else>
@@ -92,7 +92,7 @@ export default defineComponent({
     },
     methods: {
       async loadUserData(id: string) {
-        fetch('/api/users/' + id)
+        fetch('/api/users/' + id +'/')
         .then(res => res.json())
         .then(data => this.user = data)
         .catch(err => console.log(err));
@@ -108,6 +108,7 @@ export default defineComponent({
   async mounted() {
     await this.loadUserData(this.$route.params.id[0]);     
     this.login = loginStatusStore();
+	
   },
   components: {
     UserProfile,
