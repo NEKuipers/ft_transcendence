@@ -6,6 +6,7 @@
       </div>
       <div class="top-column" v-else-if="user">
         <UserProfile :user="user"></UserProfile>
+        <SmallButton class="tfa-btn" text="Set two factor authentication"/>
       </div>
       <div class="top-column" v-else>
         <h2>User not found</h2>
@@ -34,6 +35,10 @@
 	width:33.3%;
 	padding:10px;
 	box-sizing: border-box; /*this adds the border+padding into the width. can also look at flexbox*/	
+}
+
+.tfa-btn {
+  margin-top: 10px;
 }
 
 .top-column {
@@ -95,6 +100,7 @@ import MatchHistory from '../components/MatchHistory.vue';
 import FriendsList from '../components/FriendsList.vue';
 import FriendRequests from '../components/FriendRequests.vue'
 import BlockedUsers from '../components/BlockedUsers.vue';
+import SmallButton from '../components/SmallButton.vue';
 
 export default defineComponent({
   name: 'MyProfileView',
@@ -130,7 +136,8 @@ export default defineComponent({
     FriendsList,
     FriendRequests,
     BlockedUsers,
-  },
+    SmallButton
+},
 });
 
 
