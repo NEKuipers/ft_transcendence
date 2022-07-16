@@ -28,7 +28,7 @@ let UsersController = class UsersController {
         const user = await this.usersService.findOne(id);
         return user;
     }
-    create(CreateUserDto) {
+    create(createUserDto) {
         return 'User created';
     }
     delete(id) {

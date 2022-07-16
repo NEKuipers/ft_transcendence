@@ -9,7 +9,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { useLoginStatusStore } from '../stores/profileData'
+import { loginStatusStore } from '../stores/profileData'
 import { storeToRefs } from 'pinia'
 
 export default defineComponent({
@@ -19,9 +19,9 @@ export default defineComponent({
   methods: {
     OAuthLogin(e: Event) {
       window.location.href = '/api/login'
-      const store = useLoginStatusStore()
-      const { getLoginStatus: status } = storeToRefs(store) 
-      store.logIn()
+      const store = loginStatusStore()
+      // const { getLoginStatus: status } = storeToRefs(store) 
+      // store.logIn()
       
       // fetch('/api/login', {
       //   // headers: {
