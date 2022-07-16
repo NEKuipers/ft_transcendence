@@ -3,7 +3,7 @@
     <div v-if="!user">
       <h2>User profile failed to load</h2>
     </div>
-    <div v-else-if="user?.length">
+    <div v-else-if="user.userName.length">
       <UserProfile :user="user"></UserProfile>
     </div>
     <div v-else>
@@ -12,16 +12,10 @@
     <br>
     <br>
     <div class="row">
-      <div class="column">
-        <FriendsList/>
-      </div>
-      <div class="column">
-        <AchievementsList/>
-      </div>
+        <FriendsList class="column" :user="user?.id"/>
+        <AchievementsList class="column" :user="user?.id"/>
     </div>
-    <div class="matchHistory">
-      <MatchHistory :user="user?.id"/>
-    </div>
+      <MatchHistory class="matchHistory" :user="user?.id"/>
   </div>
 </template>
 
@@ -106,7 +100,7 @@ export default defineComponent({
     }
   },
   async mounted() {
-    await this.loadUserData(this.$route.params.id[0]);     
+    await this.loadUserData(this.$route.params.id[0]);
     this.login = useLoginStatusStore();
   },
   components: {

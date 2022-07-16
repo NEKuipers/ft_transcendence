@@ -2,13 +2,22 @@ import { Controller, Get, Post, Patch, Delete, Body, Param } from '@nestjs/commo
 import { BlockedUsersService } from './blocked_users.service';
 import { BlockedUser, BlockedUserVW } from './blocked_users.interface';
 
-@Controller('blocked-users')
+@Controller('blocked_users')
 export class BlockedUsersController {
 	constructor(private readonly blockedUsersService: BlockedUsersService) {}
 
 	@Get(':id')
-	findAllForUser(@Param('id') id: number): BlockedUserVW[] {
-		return  this.blockedUsersService.findAllForUser(id);
+	findAllForUser(@Param('id') id: number): Promise<BlockedUserVW[]> {
+		return this.blockedUsersService.findAllForUser(id);
 	}
-	
+
+	@Post()
+	blockUser(@Body() blockedUser: BlockedUser): string {		
+		return this.blockedUsersService.blockUser(blockedUser);
+	}
+
+	@Delete()
+	unblockUser(@Body() blockedUser: BlockedUser): string {
+		return this.blockedUsersService.unblockUser(blockedUser);
+	}
 }

@@ -6,28 +6,29 @@ import { Friend, FriendRequest, FriendTable } from './friends.interface';
 export class FriendsController {
 	constructor(private readonly friendsService: FriendsService) {}
 
-	@Get()
-	findAll(): Friend[] {
-		return this.friendsService.findAll();
+	@Get('/:id')
+	findAllForUser(@Param('id') id: number): Promise<Friend[]> {
+		return this.friendsService.findAllForUser(id);
 	}
 
-	@Get('/requests')
-	findAllRequests(): FriendRequest[] { 
-		return this.friendsService.findAllRequests();
+	@Get('/requests/:id')
+	findAllRequestsForUser(@Param('id') id: number): Promise<FriendRequest[]> {		
+		return this.friendsService.findAllRequestsForUser(id);
 	} 
-
+	
 	@Post()
-	create(@Body() friendtable: FriendTable): string {
-		return this.friendsService.createFriend(friendtable);
+	create(@Body() friend: FriendTable): string {
+		return this.friendsService.createFriend(friend);
 	}
 
-	@Patch(':id')
-	update(@Param('id') id: number, @Body() friendtable: FriendTable) : string {
-		return this.friendsService.updateFriend(id, friendtable);
+	@Patch()
+	update(@Body() friend: FriendTable): string {
+		return this.friendsService.updateFriend(friend);
 	}
 
-	@Delete(':id')
-	unfriend(@Param('id') id: number): string {
-		return this.friendsService.deleteFriend(id);
+	@Delete()
+	unfriend(@Body() friend: FriendTable): string {
+		console.log(friend);
+		return this.friendsService.deleteFriend(friend);
 	}
 }
