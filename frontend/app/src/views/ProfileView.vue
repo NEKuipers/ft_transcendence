@@ -73,7 +73,7 @@
     
   */
 import { defineComponent } from 'vue';
-import { loginStatusStore } from '../stores/profileData'
+import { useLoginStatusStore } from '../stores/profileData'
 import  UserProfile from '../components/UserProfile.vue';
 import AchievementsList from '../components/AchievementsList.vue'
 import FriendsList from '../components/FriendsList.vue';
@@ -89,7 +89,7 @@ export default defineComponent({
         fetch('/api/users/' + id)
         .then(res => res.json())
         .then(data => this.user = data)
-        .catch(err => console.log(err));
+        .catch(err => console.log('What is: ' + err));
       }
     },
   data () {
@@ -100,9 +100,8 @@ export default defineComponent({
     }
   },
   async mounted() {
-    await this.loadUserData(this.$route.params.id[0]);     
-    this.login = loginStatusStore();
-	
+    await this.loadUserData(this.$route.params.id[0]);
+    this.login = useLoginStatusStore();
   },
   components: {
     UserProfile,

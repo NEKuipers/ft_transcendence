@@ -9,25 +9,32 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { useLoginStatusStore } from '../stores/profileData'
+import { storeToRefs } from 'pinia'
 
 export default defineComponent({
   name: 'HomeView',
   components: {
   },
   methods: {
-    OAuthLogin() {
-      console.log("Attempt to login")
-      // fetch("https://api.intra.42.fr/oauth/authorize", {
-      //   method: 'GET',
-      //   body: JSON.stringify({
-      //     'client_id': 1323232,
-      //     'redirect_uri': 'http://localhost:8080/',
-      //     'scope': 'public',
-      //     'state': 'true',
-      //     'response_type': 'code'
-      //   })
+    OAuthLogin(e: Event) {
+      window.location.href = '/api/login'
+      const store = useLoginStatusStore()
+      const { getLoginStatus: status } = storeToRefs(store) 
+      store.logIn()
+      
+      // fetch('/api/login', {
+      //   // headers: {
+      //   //   'Access-Control-Allow-Origin': 'https://intra.42.fr'
+      //   // }
+      // })
+      // .then(res => res.text())
+      // .then(data => {console.log('Come on man');})
+      // .catch(error => {
+      //   console.log(error)
+      //   bruh = 'https://boia.de'
       // })
     }
-  }
+  },
 });
 </script>

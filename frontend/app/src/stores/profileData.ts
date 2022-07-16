@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { storeToRefs } from 'pinia'
 
 // interface login {
 //     loggedIn: boolean,
@@ -19,9 +20,27 @@ class LoginData {
 }
 
 
-export const loginStatusStore = defineStore ({
-	id: 'login',
+export const useLoginStatusStore = defineStore ('login', {
+    state: () => ({
+        loggedInStatus: false, // This should default to false but is true for testing.
+        diocane: 0
+    }),
+    actions: {
+        logIn() {
+            this.loggedInStatus = true
+            this.diocane++
+            console.log('So I have logged in', this.loggedInStatus)
+        },
+        logOut() {
+            this.loggedInStatus = false
+        }
+    },
+    getters: {
+        getLoginStatus: (state) => state.loggedInStatus
+    }
 
+<<<<<<< HEAD
+=======
 	state: () => ({
 		// All these defaults shuold be changed, but currently set to these for testing.
 
@@ -36,4 +55,5 @@ export const loginStatusStore = defineStore ({
 			this.loggedInStatus = undefined
 		}
 	}
+>>>>>>> ec1c7e910452b878e9e37bff058201b801891b29
 })

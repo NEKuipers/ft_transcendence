@@ -3,15 +3,24 @@
     <img class="profilePicture" src="../assets/Profile-picture-default.png">
     <br>
     <section class="names">
+<<<<<<< HEAD
+      <h1 class="username"><a v-bind:href="'http://localhost:8080/profile/' + user?.id">{{user?.username}}</a></h1>
+      <h5 v-if="user?.is_logged_in === true">Online</h5>
+      <h5 v-else>Offline</h5>
+    </section>
+    <section class="game-stats">
+        <!-- <h4>Games played: {{user?.gamesPlayed}}</h4>
+=======
       <h1 class="username"><a v-bind:href="'http://localhost:8080/profile/' + user?.id">{{user?.userName}}</a></h1>
 		<h4 v-if="user?.isLoggedIn === true" id="online-status">Online</h4>
 		<h5 v-else>Offline</h5>
     </section>
     <section class="game-stats">
       <h4>Games played: {{user?.gamesPlayed}}</h4>
+>>>>>>> ec1c7e910452b878e9e37bff058201b801891b29
         <h4>Games won: {{user?.gamesWon}}</h4>
         <h4>Games lost: {{user?.gamesLost}}</h4>
-        <h4>Overall ranking:  #{{user?.leaderboardPosition}}</h4>
+        <h4>Overall ranking:  #{{user?.leaderboardPosition}}</h4> -->
     </section>
     <div v-if="user?.id == loginStatusStore.loggedInStatus?.userID">
       <SmallButton class="user-btn" text="Change avatar" @click="changeAvatar"></SmallButton>

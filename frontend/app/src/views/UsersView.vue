@@ -40,7 +40,7 @@ export default defineComponent({
     }
   },
   mounted() {
-    fetch('api/users/')
+    fetch('/api/users/')
     .then(res => res.json())
     .then(data => this.users = data)
     .catch(err => console.log(err));    

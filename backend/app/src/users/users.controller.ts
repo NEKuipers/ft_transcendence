@@ -8,14 +8,24 @@ export class UsersController {
 	constructor(private readonly usersService: UsersService) {}
 
 	@Get()
-	findAll(): User[] {
-		return this.usersService.findAll();
+	async findAll(): Promise<User[]> {
+		const users = await this.usersService.findAll()
+		// console.log('Diocane',users)
+		return users
 	}
 
 	@Get(':id')
-	findOne(@Param('id') id: number): User { 
-		return this.usersService.findOne(id);
+	async findOne(@Param('id') id: number): Promise<User> {
+		const user = await this.usersService.findOne(id)
+		return user;
 	}
+
+	/* Not entirely sure this route is necessary */
+	// @Get(':userName')
+	// async findOneByName(@Param('userName') userName: string): Promise<User> {
+	// 	const user = await this.usersService.findOneByName(userName)
+	// 	return user;
+	// }
 
 	@Post()
 	create(@Body() createUserDto: CreateUserDto): string {
@@ -34,3 +44,5 @@ export class UsersController {
 		//return (`Update ${id} - Username ${updateUserDto.userName}`);
 	}
 }
+
+
