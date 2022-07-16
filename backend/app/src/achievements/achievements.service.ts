@@ -15,7 +15,8 @@ export class AchievementsService {
 		// {id: 5, name: "senior", description: "win 20 games", function: {}},
 		// {id: 6, name: "turkey", description: "win 3 consecutive games", function: {}},
 
-	] //TODO collect from DB instead
+	]
+	achievement: Achievement
 
 	async findAll(): Promise<Achievement[]> {
 		//http request -> postgress/achievemnents
@@ -27,7 +28,17 @@ export class AchievementsService {
 		return this.achievements
 	}
 
-	findOne(id: number): Achievement {
-		return this.achievements.find(achievement => achievement.id == id);
+	async findUserAchievements(id: number): Promise<Achievement[]> {
+		// return this.achievements.find(achievement => achievement.id == id);
+		const ret = await this.httpService.get('http://localhost:3000/user_achievements', {
+			params: {
+				user_id: 'eq.' + id
+			}
+		})
+		await ret.forEach(element => {
+			this.achievements = element.data
+			console.log(this.achievements)
+		})
+		return this.achievements
 	}
 }
