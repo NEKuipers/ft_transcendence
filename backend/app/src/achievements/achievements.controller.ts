@@ -7,8 +7,8 @@ export class AchievementsController {
 	constructor(private readonly achievementsService: AchievementsService) {}
 
 	@Get()
-	findAll(): Achievement[] {
-		return this.achievementsService.findAll();
+	async findAll(): Promise<Achievement[]> {
+		return await this.achievementsService.findAll();
 	}
 
 	@Get('id')

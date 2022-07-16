@@ -22,7 +22,9 @@ import { defineComponent } from 'vue'
 
 export default defineComponent ({
     name: 'AchievementsList',
-    props: {},
+    props: {
+        user: Object, // Pass in the user object
+    },
     data() { 
         return {
             items: [
@@ -40,6 +42,10 @@ export default defineComponent ({
             }
             ]
         }
+    },
+    // This will refetch the achievements as they are obtained
+    watch: {
+
     }
 })
 
