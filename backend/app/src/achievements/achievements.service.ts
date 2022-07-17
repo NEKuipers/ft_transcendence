@@ -37,7 +37,7 @@ export class AchievementsService {
 		})
 		await ret.forEach(element => {
 			this.achievements = element.data
-			console.log(this.achievements)
+			// console.log(this.achievements)
 		})
 		return this.achievements
 	}

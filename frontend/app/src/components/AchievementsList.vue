@@ -2,18 +2,21 @@
     <div class="userachievement">
       <h3>Achievements</h3>
         <ul  v-for="achievement in achievements" :key="achievement.id">
-            <img v-if="filter(achievement.id)" class="test" src="../assets/scudetto.png"> 
-            <img v-else class="trophy" src="../assets/scudetto.png">
-            <div class="achievementbox">
+            <img v-if="filter(achievement.id)" class="scudetto" src="../assets/scudetto.png"> 
+            <img v-else class="grey-scudetto" src="../assets/scudetto.png">
+            <div v-if="filter(achievement.id)" class="achieved">
+                <p> {{ achievement.id }} {{ achievement.name }}: {{ achievement.description }}</p>
+            </div>
+            <div v-else  class="notachieved">
                 <p> {{ achievement.id }} {{ achievement.name }}: {{ achievement.description }}</p>
             </div>
         </ul>
-        <ul>
+        <!-- <ul>
             <img class="test" src="../assets/scudetto.png">
             <div class="tester">
                 <h4>Extra Champion: win 10 games in a row</h4>
             </div>
-        </ul>
+        </ul> -->
        
     </div>
 </template>
@@ -85,14 +88,14 @@ export default defineComponent ({
     display: table;
 }
 
-.trophy {
+.grey-scudetto {
     width: 60px;
     height: 80px;
     border-radius: 10px;
     filter: grayscale(100%);
 }
 
-.achievementbox {
+.notachieved {
     border: 2px solid grey;
     border-radius: 10px;
     text-align: center;
@@ -107,13 +110,13 @@ export default defineComponent ({
     color: whitesmoke;
 }
 
-.test {
+.scudetto {
     width: 60px;
     height: 80px;
     border-radius: 10px;
 }
 
-.tester {
+.achieved {
     border: 2px solid grey;
     border-radius: 10px;
     text-align: center;
