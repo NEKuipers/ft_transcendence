@@ -56,9 +56,9 @@ export default defineComponent ({
                             this.obtained = elem.achievement_id
                         else
                             this.obtained.push(elem.achievement_id);
-                        console.log('The id', elem.achievement_id)
+                        // console.log('The id', elem.achievement_id)
                     }
-                    console.log('Well then:', this.obtained)
+                    // console.log('Well then:', this.obtained)
                 })
                 .catch(err => { console.log(err)})
             },

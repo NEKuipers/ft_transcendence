@@ -16,6 +16,7 @@
     <div v-if="user?.id == loginStatusStore.loggedInStatus?.userID">
       <SmallButton class="user-btn" text="Change avatar" @click="changeAvatar"></SmallButton>
       <SmallButton class="user-btn" text="Change username" @click="changeUsername"></SmallButton>
+		<!-- Something here will have to work as the popup -->
     </div>
 	<div v-if="user?.id != loginStatusStore.loggedInStatus?.userID">
 		<SmallButton class="user-btn" text="Message" @click="directMessage"></SmallButton>
@@ -46,11 +47,12 @@ export default defineComponent({
 	components: {
 		SmallButton,
 	},
+	setup () {},
 	methods: {
 		changeAvatar() {
 			console.log('change avatar');
 		},
-		changeUsername() {
+		async changeUsername() {
 			console.log('change username');
 		},
 		directMessage() {
