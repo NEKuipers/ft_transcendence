@@ -11,6 +11,7 @@ import NotFoundView from '@/views/NotFoundView.vue'
 import MyProfileView from '@/views/MyProfileView.vue'
 import LeaderboardView from '@/views/LeaderboardView.vue'
 import GameSelectView from '@/views/GameSelectView.vue'
+import TFAView from '@/views/TFAView.vue'
 
 
 
@@ -71,6 +72,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/login',
     name: 'login',
     component: LoginView,
+  },
+  {
+    path: '/tfa',
+    name: 'tfa',
+    component: TFAView,
   }
 ]
 
