@@ -7,14 +7,13 @@ import axios, { AxiosError } from 'axios';
 
 @Injectable()
 export class TwoFactorAuthService {
-
 	// The secret is stored in the session while it is not yet validated
 	// One you have validated that you are logged in will it be removed from the session and be put in the database
 	// This function will return [validated, token]
 	async get_secret(userId: number, session: any): Promise<[boolean, string]> {
 		// Logic:
 		//	Get secret from database, if it exists, return [true, token]
-		//	Otherwise get it from the session, if it does not exist generate a new one
+		//	Otherwise get it from the session, if it does not exist generate a new one and return [false, token]
 
 		let ret = await axios.get(`http://localhost:${process.env.PGREST_PORT}/two_factor_auth?user_id=eq.${userId}`)
 
@@ -25,7 +24,7 @@ export class TwoFactorAuthService {
 		}
 
 		if (!session.tfa_token) {
-			session.tfa_token = authenticator.generateSecret(); // "FMJFKJTIGAKGGUIE"
+			session.tfa_token = authenticator.generateSecret();
 			console.log("Generated session token: ", session.tfa_token)
 		}
 		return [false, session.tfa_token as string]

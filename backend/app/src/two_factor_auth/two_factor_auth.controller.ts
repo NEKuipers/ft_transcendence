@@ -37,12 +37,10 @@ export class TwoFactorAuthController {
 		
 		throw new HttpException("You do not have 2fa enabled!", 403);
 	}
-
-	/*
+	
 	@Get("test")
 	@UseGuards(TFAGuard)
 	only_when_logged_in() : string {
 		return "You are logged in!";
 	}
-	*/
 }
