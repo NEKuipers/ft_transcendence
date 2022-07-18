@@ -1,11 +1,7 @@
 import { Strategy } from 'passport-42'
 import { PassportStrategy } from '@nestjs/passport'
-import { Inject, Injectable } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config';
-import { profile } from 'console'
-import { Config } from 'prettier';
+import { Injectable } from '@nestjs/common'
 import { LoginService } from '../login.service'
-import { callbackify } from 'util';
 
 @Injectable()
 export class intraStrategy extends PassportStrategy(Strategy) {

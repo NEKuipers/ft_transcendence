@@ -1,5 +1,5 @@
-import { Controller, Get, Res, UseGuards } from '@nestjs/common';
-import { Response } from 'express'
+import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
+import { Request, Response } from 'express'
 import { AuthenticatedGuard, IntraAuthGuard } from './guards';
 
 @Controller('login')
@@ -20,8 +20,9 @@ export class LoginController {
     */
     @Get('callback')
     @UseGuards(IntraAuthGuard) // for some reason the first time, it isn't authenticated yet
-    callback(@Res() res: Response) {
+    callback(@Req() req: Request, @Res() res: Response) {
 
+        // console.log('Cookies?', req.cookies["connect.sid"])
         res.redirect('http://localhost:8081/')
     }
 

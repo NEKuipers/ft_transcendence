@@ -17,15 +17,12 @@ export default defineComponent({
   },
   methods: {
     OAuthLogin(e: Event) {
-      window.location.href = '/api/login'
-      // fetch('/api/login', {
-      //   method: "GET",
-      //   mode: 'cors'
-      // })
-      // .then(res => res.json())
-      // .then(data => console.log(data))
+      // window.location.href = '/api/login'
+      fetch('/api/login')
+      .then(res => res.json())
+      .then(data => console.log(data))
       const store = loginStatusStore()
-      
+
     }
   },
 });
