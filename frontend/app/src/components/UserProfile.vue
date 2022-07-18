@@ -16,6 +16,7 @@
     <div v-if="user?.id == loginStatusStore.loggedInStatus?.userID">
       <SmallButton class="user-btn" text="Change avatar" @click="changeAvatar"></SmallButton>
       <SmallButton class="user-btn" text="Change username" @click="changeUsername"></SmallButton>
+		<DialogueBox :show="showDialogue" @close-dialogue="hideDialogue" @new-name="saveUsername"/>
 		<!-- Something here will have to work as the popup -->
     </div>
 	<div v-if="user?.id != loginStatusStore.loggedInStatus?.userID">
@@ -33,6 +34,7 @@
 import { defineComponent } from 'vue'
 import SmallButton from '../components/SmallButton.vue'
 import { loginStatusStore } from '../stores/profileData';
+import DialogueBox from './DialogueBox.vue'
 
 export default defineComponent({
 	name: 'UserProfile',
@@ -41,25 +43,41 @@ export default defineComponent({
 	},
 	data () {
 		return {
-			loginStatusStore: loginStatusStore()
+			loginStatusStore: loginStatusStore(),
+			showDialogue: false
 		}
 	},
 	components: {
 		SmallButton,
+		DialogueBox
 	},
-	setup () {},
+	// setup () {},
 	methods: {
 		changeAvatar() {
 			console.log('change avatar');
 		},
 		async changeUsername() {
-			console.log('change username');
+			this.showDialogue = true;
 		},
 		directMessage() {
 			console.log('direct message');
 		},
 		inviteToGame() {
 			console.log('invite to game');
+		},
+		hideDialogue() {
+			console.log('Should be triggered by x button')
+			this.showDialogue = false;
+		},
+		saveUsername(newname: string) {
+			console.log('New name is:', newname)
+			// Here should make a patch request to change the name (Make sure that it is unique) TODO
+			// And then give user a confirmation of sorts.
+
+			// If successful close window
+			this.hideDialogue();
+			// Else
+			// alert('That name is not unique/is taken')
 		},
 		async addFriend() {
 			const requestOptions = {
