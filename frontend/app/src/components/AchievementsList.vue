@@ -5,10 +5,10 @@
             <img v-if="filter(achievement.id)" class="scudetto" src="../assets/scudetto.png"> 
             <img v-else class="grey-scudetto" src="../assets/scudetto.png">
             <div v-if="filter(achievement.id)" class="achieved">
-                <p> {{ achievement.id }} {{ achievement.name }}: {{ achievement.description }}</p>
+                <p> {{ achievement.name }}: {{ achievement.description }}</p>
             </div>
             <div v-else  class="notachieved">
-                <p> {{ achievement.id }} {{ achievement.name }}: {{ achievement.description }}</p>
+                <p> {{ achievement.name }}: {{ achievement.description }}</p>
             </div>
         </ul>
         <!-- <ul>
@@ -40,7 +40,7 @@ export default defineComponent ({
     mounted() {
         fetch('/api/achievements')
         .then(res => res.json())
-        .then(data => {this.achievements = data; console.log(this.achievements)})
+        .then(data => {this.achievements = data;})
         .catch(err => { this.achievements = null; console.log(err)})
     },
     // This will refetch the achievements as they are obtained
@@ -67,8 +67,8 @@ export default defineComponent ({
     },
     methods: {
         filter(achiev_id: number): boolean {
-            console.log('Number checked is', achiev_id)
-            console.log('The obtained achievements by id', this.obtained)
+            // console.log('Number checked is', achiev_id)
+            // console.log('The obtained achievements by id', this.obtained)
             // return this.obtained.find(achiev_id) === true ? true : false
             // for (const num in this.obtained) {
             //     if (achiev_id === num)

@@ -17,7 +17,6 @@
       <SmallButton class="user-btn" text="Change avatar" @click="changeAvatar"></SmallButton>
       <SmallButton class="user-btn" text="Change username" @click="changeUsername"></SmallButton>
 		<DialogueBox :show="showDialogue" @close-dialogue="hideDialogue" @new-name="saveUsername"/>
-		<!-- Something here will have to work as the popup -->
     </div>
 	<div v-if="user?.id != loginStatusStore.loggedInStatus?.userID">
 		<SmallButton class="user-btn" text="Message" @click="directMessage"></SmallButton>
@@ -66,13 +65,28 @@ export default defineComponent({
 			console.log('invite to game');
 		},
 		hideDialogue() {
-			console.log('Should be triggered by x button')
+			// console.log('Should be triggered by x button')
 			this.showDialogue = false;
 		},
 		saveUsername(newname: string) {
 			console.log('New name is:', newname)
 			// Here should make a patch request to change the name (Make sure that it is unique) TODO
 			// And then give user a confirmation of sorts.
+			const id = this.loginStatusStore.loggedInStatus?.userID
+			// console.log('Logged user', username)
+			if (id != undefined) {
+				fetch('/api/users/' + id, {
+					method: "PATCH",
+					body: JSON.stringify({
+						"username": newname,
+					}),
+					headers: {
+						'Content-type': 'application/json; charset=UTF-8'
+					}
+				})
+				.then(response => console.log(response))
+				.catch(err => console.log(err))
+			}
 
 			// If successful close window
 			this.hideDialogue();

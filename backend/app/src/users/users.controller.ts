@@ -30,6 +30,7 @@ export class UsersController {
 	}
 	@Patch(':id')
 	update(@Body() updateUserDto: CreateUserDto, @Param('id') id: number): string {
+		console.log('bleas')
 		return 'User edit not yet implemented';
 		//return (`Update ${id} - Username ${updateUserDto.userName}`);
 	}

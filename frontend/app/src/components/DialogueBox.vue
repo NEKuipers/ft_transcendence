@@ -23,7 +23,7 @@ export default defineComponent({
         }
     },
     methods: {
-        onSubmit(e) {
+        onSubmit(e: any) {
             e.preventDefault()
             if (!this.text)
                 alert('Give us a name')
