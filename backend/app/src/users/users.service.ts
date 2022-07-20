@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { User } from './user.interface'
 import { HttpService } from '@nestjs/axios'
-import axios from 'axios';
 import { CreateUserDto } from './create-user.dto';
-import { json } from 'stream/consumers';
 
 @Injectable()
 export class UsersService {

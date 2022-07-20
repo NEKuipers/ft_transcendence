@@ -10,6 +10,7 @@
 					<router-link to="/leaderboard">Leaderboard</router-link>
 					<router-link to="/about">About</router-link>
 					<h1 class="title">ft_transcendence</h1>
+					
 				</nav>
 			</div>
 		<router-view/>

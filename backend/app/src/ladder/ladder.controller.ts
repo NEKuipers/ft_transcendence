@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { Ladder } from './ladder.interface';
 import { LadderService } from './ladder.service';
 
@@ -12,7 +12,7 @@ export class LadderController {
 	}
 
 	@Get(':id')
-	findOne(@Param('id') id: number): Ladder { 
+	async findOne(@Param('id') id: number): Promise<Ladder> { 
 		return this.ladderService.findOne(id);
 	}
 }

@@ -18,7 +18,7 @@
 		<h4>Games played: {{user?.gamesPlayed}}</h4>
 		<h4>Games won: {{user?.gamesWon}}</h4>
 		<h4>Games lost: {{user?.gamesLost}}</h4>
-		<h4>Overall ranking:  #{{user?.leaderboardPosition}}</h4>
+		<h4>Overall ranking:  #{{user?.ladder_position}}</h4>
 	</section>
 	<div v-if="user?.id == loginStatusStore.loggedInStatus?.userID">
 		<SmallButton class="user-btn" text="Change avatar" @click="changeAvatar"/>

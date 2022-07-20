@@ -4,4 +4,5 @@ export interface Ladder {
 	games_played: number;
 	wins: number;
 	losses: number;
+	ladder_position: number;
 }
