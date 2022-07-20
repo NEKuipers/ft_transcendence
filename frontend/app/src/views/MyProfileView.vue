@@ -3,9 +3,6 @@
     <div class="row">
       <div class="top-column" v-if="user">
         <UserProfile :user="user"></UserProfile>
-		<div v-if="!user.TFAEnabled">
-			<router-link to="/tfa">Setup TFA</router-link>
-		</div>
       </div>
       <div class="top-column" v-else>
         <h2>User not found</h2>
