@@ -98,7 +98,8 @@ SELECT
     u.username      AS username,
     f.to_user_id    AS to_user_id,
     fu.username     AS to_username,
-    f.status        AS status,
+    fu.status       AS friend_status,
+    f.status        AS request_status,
     f.send_time     AS send_time,
     f.response_time AS response_time
 FROM users u

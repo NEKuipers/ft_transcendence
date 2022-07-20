@@ -81,8 +81,6 @@ CREATE TABLE public.avatars
 (
   id      BIGINT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   img     BYTEA,
-  width   INT,
-  height  INT,
   name    VARCHAR(256),
   format  AVATAR_FORMAT
 );
@@ -100,7 +98,8 @@ CREATE TABLE public.users
     avatar_id                       BIGINT REFERENCES public.avatars(id) DEFAULT 1,
     oauth_refresh_token             VARCHAR(1024),
     oauth_token_expiration_time     TIMESTAMP,
-    is_logged_in                    BOOL
+    is_logged_in                    BOOL,
+    CONSTRAINT unique_username UNIQUE (username)
 );
 
 /*
