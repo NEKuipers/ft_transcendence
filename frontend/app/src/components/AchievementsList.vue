@@ -22,7 +22,11 @@ import { defineComponent } from 'vue'
 
 export default defineComponent ({
     name: 'AchievementsList',
-    props: {},
+    props: {
+		user: {
+			type: Number //You can use this.user to make requests to the db for this user. this.user is the db user id
+		},
+	},
     data() { 
         return {
             items: [

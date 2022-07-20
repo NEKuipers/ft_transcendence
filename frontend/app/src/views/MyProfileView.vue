@@ -7,7 +7,7 @@
       <div class="top-column" v-else>
         <h2>User not found</h2>
       </div> <!-- TODO add loading for user -->
-      <AchievementsList class="top-column"/>
+      <AchievementsList :user="user?.id" class="top-column"/>
     </div> 
     <br>
     <br>
