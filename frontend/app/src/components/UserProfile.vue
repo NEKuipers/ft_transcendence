@@ -3,7 +3,7 @@
     <img class="profilePicture" src="../assets/Profile-picture-default.png">
     <br>
     <section class="names">
-      <h1 class="username"><a v-bind:href="'http://localhost:8080/profile/' + user?.id">{{user?.userName}}</a></h1>
+      <h1 class="username"><a v-bind:href="'http://localhost:8080/profile/' + user?.id">{{user?.username}}</a></h1>
 		<h4 v-if="user?.isLoggedIn === true" id="online-status">Online</h4>
 		<h5 v-else>Offline</h5>
     </section>

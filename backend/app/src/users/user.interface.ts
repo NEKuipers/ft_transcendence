@@ -6,7 +6,7 @@ enum user_status {
 
 export interface User {
 	readonly id: number;
-	userName: string;
+	username: string;
 	status: user_status;
 	oauth_refresh_token: string;
 	oauth_token_expiration_timestamp: string; //TODO ask jesse if this is the correct format -> TIMESTAMP '2004-10-19 10:23:54'
