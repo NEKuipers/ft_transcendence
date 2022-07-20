@@ -8,7 +8,6 @@
 		<!-- Need to figure out how to filter only friends of logged in user! -->
 			<div v-for="friend in friends" :key="friend?.id">
 				<section class="listed-friend">
-
 					<img class="profilePictureThumbnail" width="50" height="50" src="../assets/Profile-picture-default.png"/>
 					<a class="friend" v-bind:href="'http://localhost:8080/profile/' + friend.to_user_id">{{friend.to_username}}</a>
 					<SmallButton class="unfriend-btn" @click="unfriend(friend.to_user_id)" text="Remove"/>

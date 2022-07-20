@@ -3,7 +3,12 @@
 	<img class="profilePicture" src="../assets/Profile-picture-default.png">
 	<br>
 	<section class="names">
-		<h1 class="username"><a v-bind:href="'http://localhost:8080/profile/' + user?.id">{{user?.username}}</a></h1>
+		<div v-if="user?.id == loginStatusStore.loggedInStatus?.userID">
+			<h1 class="username">{{user?.username}}</h1>
+		</div>
+		<div v-else>
+			<h1 class="username"><a v-bind:href="'http://localhost:8080/profile/' + user?.id">{{user?.username}}</a></h1>
+		</div>
 		<div v-if="user?.is_logged_in === true">
 			<h5 class="online">Online</h5>
 		</div>
