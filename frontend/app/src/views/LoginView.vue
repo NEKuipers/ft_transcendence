@@ -9,25 +9,21 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { loginStatusStore } from '../stores/profileData'
 
 export default defineComponent({
   name: 'HomeView',
   components: {
   },
   methods: {
-    OAuthLogin() {
-      console.log("Attempt to login")
-      // fetch("https://api.intra.42.fr/oauth/authorize", {
-      //   method: 'GET',
-      //   body: JSON.stringify({
-      //     'client_id': 1323232,
-      //     'redirect_uri': 'http://localhost:8080/',
-      //     'scope': 'public',
-      //     'state': 'true',
-      //     'response_type': 'code'
-      //   })
-      // })
+    OAuthLogin(e: Event) {
+      window.location.href = '/api/login'
+    //   fetch('/api/login')
+    //   .then(res => res.json())
+    //   .then(data => console.log(data))
+    //   const store = loginStatusStore()
+
     }
-  }
+  },
 });
 </script>

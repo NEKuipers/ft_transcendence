@@ -17,7 +17,7 @@ services:
   #   volumes:
   #     - ./frontend/app:/app
   #   ports:
-  #     - 8080:8080
+  #     - 8008:8008
   #   restart: on-failure
   #   networks:
   #     - appNetwork

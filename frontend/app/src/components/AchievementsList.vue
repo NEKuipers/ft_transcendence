@@ -27,10 +27,10 @@ import { defineComponent } from 'vue'
 export default defineComponent ({
     name: 'AchievementsList',
     props: {
-        user: {
-            type: Number
-        }, // Pass in the user object for whom to light up the correct achievements
-    },
+		user: {
+			type: Number //You can use this.user to make requests to the db for this user. this.user is the db user id
+		},
+	},
     data() { 
         return {
             achievements: null,

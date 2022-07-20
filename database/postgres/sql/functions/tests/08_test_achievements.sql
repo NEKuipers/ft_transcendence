@@ -6,9 +6,9 @@
 */
 TRUNCATE TABLE public.avatars RESTART IDENTITY CASCADE;
 
-INSERT INTO public.avatars(img, width, height, name, format)
+INSERT INTO public.avatars(img, name, format)
 VALUES
-('\xDEADBEEF', 0, 0, 'default', 'img/png');
+('\xDEADBEEF', 'default', 'img/png');
 
 TRUNCATE TABLE public.users RESTART IDENTITY CASCADE;
 

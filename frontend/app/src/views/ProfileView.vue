@@ -89,7 +89,7 @@ export default defineComponent({
         fetch('/api/users/' + id)
         .then(res => res.json())
         .then(data => this.user = data)
-        .catch(err => console.log(err));
+        .catch(err => console.log('What is: ' + err));
       }
     },
   data () {
@@ -100,9 +100,8 @@ export default defineComponent({
     }
   },
   async mounted() {
-    await this.loadUserData(this.$route.params.id[0]);     
+    await this.loadUserData(this.$route.params.id[0]);
     this.login = loginStatusStore();
-	
   },
   components: {
     UserProfile,

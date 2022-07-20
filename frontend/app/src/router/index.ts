@@ -11,7 +11,8 @@ import NotFoundView from '@/views/NotFoundView.vue'
 import MyProfileView from '@/views/MyProfileView.vue'
 import LeaderboardView from '@/views/LeaderboardView.vue'
 import GameSelectView from '@/views/GameSelectView.vue'
-import TwoFactorAuthenticationView from '@/views/TwoFactorAuthenticationView.vue'
+import TFAView from '@/views/TFAView.vue'
+
 
 
 
@@ -30,11 +31,6 @@ const routes: Array<RouteRecordRaw> = [
     path: '/myprofile',
     name: 'myprofile',
     component: MyProfileView,
-  },
-  {
-    path: '/two-factor-authentication',
-    name: 'two-factor-authentication',
-    component: TwoFactorAuthenticationView,
   },
   {
     path: '/pong/:mode',
@@ -75,6 +71,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/login',
     name: 'login',
     component: LoginView,
+  },
+  {
+    path: '/tfa',
+    name: 'tfa',
+    component: TFAView,
   }
 ]
 
@@ -84,14 +85,20 @@ const router = createRouter({
 })
 
 router.beforeEach((to) => {
-	const loggedIn = loginStatusStore();
+  // const { getLoginStatus: loggedIn } = useLoginStatusStore()
+  const store = loginStatusStore()
 
-	if (to.name !== 'login' && loggedIn.loggedInStatus === undefined) {
-		return('/login')
-	}
-	if (to.name === 'login' && loggedIn.loggedInStatus !== undefined) {
-		return('/')
-	}
+  const loggedIn = store.loggedInStatus
+  // console.log('Ma perché', store.$state.loggedInStatus)
+  // console.log('E', store.$state.diocane)
+  
+  if (to.name !== 'login' && !loggedIn) {
+    return('/login')
+  }
+  // if (to.name === 'login' && loggedIn.loggedInStatus) {
+  //   return('/')
+  // }
+
 })
 
 

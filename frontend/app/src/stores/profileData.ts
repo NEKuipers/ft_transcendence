@@ -7,25 +7,25 @@ import { defineStore } from 'pinia'
 class LoginData {
 	userID: number;
 	userName: string;
+	TFAEnabled: boolean;
 
 	authString: string;	// Not %100 sure this is the correct place for this
 
-	constructor(userID: number, userName: string, authString: string) {
+	constructor(userID: number, userName: string, TFAEnabled: boolean, authString: string) {
 		this.userID = userID;
 		this.userName = userName;
+		this.TFAEnabled = TFAEnabled;
 
 		this.authString = authString;
 	}
 }
 
 
-export const loginStatusStore = defineStore ({
-	id: 'login',
-
+export const loginStatusStore = defineStore ('login', {
 	state: () => ({
-		// All these defaults shuold be changed, but currently set to these for testing.
+		// All these defaults should be changed, but currently set to these for testing.
 
-		loggedInStatus: new LoginData(3, "nkuipers", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOjMsInVzZXJuYW1lIjoibmt1aXBlcnMifQ.h3HAJiIKBKXJgx8f3fOKVl7ssz0BLMwfx0eD_BjmJzs") as undefined | LoginData
+		loggedInStatus: new LoginData(1, "nkuipers", false, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOjEsInVzZXJuYW1lIjoibmt1aXBlcnMifQ.5P5h3p-V1fwh0h61Hd_MFzbsaglRBdE2hME6ew112y0") as undefined | LoginData
 	}),
 	getters: {},
 	actions: {
