@@ -12,7 +12,7 @@ export class TFAGuard extends AuthenticatedGuard {
 		if (!await super.canActivate(context)) {
 			return false;
 		}
-		
+
 		const request = context.switchToHttp().getRequest();
 
 		let userId = request.user.id;

@@ -8,13 +8,14 @@
 		<!-- Need to figure out how to filter only friends of logged in user! -->
 			<div v-for="friend in friends" :key="friend?.id">
 				<section class="listed-friend">
-
 					<img class="profilePictureThumbnail" width="50" height="50" src="../assets/Profile-picture-default.png"/>
 					<a class="friend" v-bind:href="'http://localhost:8080/profile/' + friend.to_user_id">{{friend.to_username}}</a>
-					<SmallButton class="unfriend-btn" @click="unfriend(friend.to_user_id)" text="Remove"/> 
-					<h4 v-if="user?.isLoggedIn === true" id="online-status">Online</h4>
-					<h5 v-else id="online-status">Offline</h5>
-					<!-- TODO change statuses to logged in/out/ingame -->
+					<SmallButton class="unfriend-btn" @click="unfriend(friend.to_user_id)" text="Remove"/>
+					<div class="online-status">
+						<h4 v-if="friend?.friend_status == 'online'" id="online">Online</h4>
+						<h4 v-if="friend?.friend_status == 'ingame'" id="ingame">In game</h4>
+						<h5 v-else>Offline</h5>
+					</div>
 				</section>
 			</div>
 		</div>
@@ -105,6 +106,16 @@ a:hover {
 }
 .listed-friend {
 	display: inline-block;
+}
+
+#online {
+  color: #42b983;
+
+}
+
+#ingame {
+  color: #42b983;
+
 }
 
 .profilePictureThumbnail {

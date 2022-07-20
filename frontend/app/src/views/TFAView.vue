@@ -45,7 +45,9 @@ export default defineComponent({
 				}
 			})
 			.then(uri => this.value = uri)
-			.catch(_ => this.value = undefined)
+			.catch(err => {
+				console.log(err);
+				this.value = undefined})
 	},
 	methods: {
 		login() {
