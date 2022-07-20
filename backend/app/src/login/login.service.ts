@@ -8,15 +8,14 @@ export class LoginService {
     constructor(private readonly userService: UsersService) {}
 
     async validateUser(details: UserDetails) {
-        const userName = details.username
-        const userDb = await this.userService.findOneByName(userName) // This probably should be changed to ID
+        const userDb = await this.findUser(details.id)
         if (userDb) {
             console.log('Found user', userDb.username)
             return userDb
         }
         else {
             /* There has got be a better place to do this, right? Or perhaps not */
-            const username = userName
+            const username = details.username
             const status = 'online'
             const avatar_id = 1
             const oauth_refresh_token = 'Chill'
@@ -27,8 +26,8 @@ export class LoginService {
         }
     }
 
-    async findUser(username: string): Promise<User | undefined> {
-        return await this.userService.findOneByName(username)
+    async findUser(id: number): Promise<User | undefined> {
+        return await this.userService.findOne(id)
     }
 
 }
