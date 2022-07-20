@@ -23,7 +23,7 @@ export class LoginController {
     callback(@Req() req: Request, @Res() res: Response) {
 
         // console.log('Cookies?', req.cookies["connect.sid"])
-        res.redirect('http://localhost:8081/')
+        res.redirect('http://localhost:8080/')
     }
 
     @Get('status')
