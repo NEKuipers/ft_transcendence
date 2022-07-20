@@ -11,7 +11,7 @@ export class TFAGuard implements CanActivate {
 		const request = context.switchToHttp().getRequest();
 
 		// TODO: Get userId from oauth
-		let userId = 3;
+		let userId = 1;
 
 		let needs_tfa = await this.twoFactorAuthService.is_tfa_setup(userId, request.session);
 		if (needs_tfa) {
