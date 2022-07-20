@@ -4,7 +4,9 @@
 	<br>
 	<section class="names">
 		<h1 class="username"><a v-bind:href="'http://localhost:8080/profile/' + user?.id">{{user?.username}}</a></h1>
-		<h5 v-if="user?.is_logged_in === true">Online</h5>
+		<div v-if="user?.is_logged_in === true">
+			<h5 class="online">Online</h5>
+		</div>
 		<h5 v-else>Offline</h5>
 	</section>
 	<section class="game-stats">
@@ -69,7 +71,7 @@ export default defineComponent({
 			const requestOptions = {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({	from_user_id: 3,  //TODO get correct id after login
+				body: JSON.stringify({	from_user_id: 1,  //TODO get correct id after login
 										to_user_id: this.user?.id})};
 			fetch('/api/friends', requestOptions)
 				.then(res => console.log(res.status))
@@ -79,7 +81,7 @@ export default defineComponent({
 			const requestOptions = {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({	blocked_by_id: 3,//TODO get correct id after login
+				body: JSON.stringify({	blocked_by_id: 1,//TODO get correct id after login
 										blocked_user_id: this.user?.id}) 
 			};
 			fetch('/api/blocked_users', requestOptions)
@@ -127,6 +129,10 @@ a:visited {
 .game-stats h4 {
   padding: 0px;
   margin: 5px;
+}
+
+.online {
+	color: #42b983;
 }
 
 .user-btn {

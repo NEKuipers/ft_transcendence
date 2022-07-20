@@ -12,8 +12,8 @@
     <br>
     <br>
     <div class="row">
-      <FriendRequests class="column"/>
-      <FriendsList class="column"/>
+      <FriendRequests :user="user?.id" class="column"/>
+      <FriendsList :user="user?.id" class="column"/>
       <div class="column">
         <BlockedUsers />
       </div>

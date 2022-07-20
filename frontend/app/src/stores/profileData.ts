@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { storeToRefs } from 'pinia'
 
 // interface login {
 //     loggedIn: boolean,
