@@ -1,32 +1,30 @@
 <template>
-	<div>
-	<div class="row">
-		<div class="top-column" v-if="!user">
-			<h2>User profile failed to load</h2>
+  <div>
+    <div class="row">
+      <div class="top-column" v-if="user">
+        <UserProfile :user="user"></UserProfile>
+		<div v-if="!user.TFAEnabled">
+			<router-link to="/tfa">Setup TFA</router-link>
 		</div>
-		<div class="top-column" v-else-if="user">
-			<UserProfile :user="user"></UserProfile>
-			<router-link to="/two-factor-authentication">
-				<SmallButton class="tfa-btn" text="Set two factor authentication"/>
-			</router-link>
-		</div>
-		<div class="top-column" v-else>
-			<h2>User not found</h2>
-		</div> <!-- TODO add loading for user -->
-		<AchievementsList :user="user?.id" class="top-column"/>
-	</div> 
-	<br>
-	<br>
-	<div class="row">
-		<!-- TODO get correct user id in each of these -->
-		<FriendRequests :user="user?.id" class="column"/> 
-		<FriendsList :user="user?.id" class="column"/>
-		<BlockedUsers :user="user?.id" class="column" />
-	</div>
-	<div class="matchHistory">
-		<MatchHistory :user="user?.id"/>	<!-- Show the match history of the user with the id "user.id"-->
-	</div>
-	</div>
+      </div>
+      <div class="top-column" v-else>
+        <h2>User not found</h2>
+      </div> <!-- TODO add loading for user -->
+      <AchievementsList class="top-column"/>
+    </div> 
+    <br>
+    <br>
+    <div class="row">
+      <FriendRequests class="column"/>
+      <FriendsList class="column"/>
+      <div class="column">
+        <BlockedUsers />
+      </div>
+    </div>
+    <div class="matchHistory">
+      <MatchHistory :user="user?.id"/>	<!-- Show the match history of the user with the id "user.id"-->
+    </div>
+  </div>
 </template>
 
 <style scoped>
@@ -101,27 +99,26 @@ import MatchHistory from '../components/MatchHistory.vue';
 import FriendsList from '../components/FriendsList.vue';
 import FriendRequests from '../components/FriendRequests.vue'
 import BlockedUsers from '../components/BlockedUsers.vue';
-import SmallButton from '../components/SmallButton.vue';
 
 export default defineComponent({
-	name: 'MyProfileView',
-	props: {
-	},
-	methods: {
-	async loadUserData(id: number) {
-		fetch('/api/users/' + id)
-		.then(res => res.json())
-		.then(data => this.user = data)
-		.catch(err => console.log(err));
-	}
-	},
-	data () {
-	return {
-		selectedFile: null,
-		user: null,
-	}
-	},
-	async mounted() {
+  name: 'MyProfileView',
+  props: {
+    },
+  methods: {
+    async loadUserData(id: number) {
+      fetch('/api/users/' + id)
+      .then(res => res.json())
+      .then(data => this.user = data)
+      .catch(err => console.log(err));
+    }
+  },
+  data () {
+    return {
+      selectedFile: null,
+      user: null as null | any,
+    }
+  },
+  async mounted() {
 	let login = loginStatusStore();
 	if (login.loggedInStatus) {
 		await this.loadUserData(login.loggedInStatus.userID); //TODO this still works kind of weird, make sure page reloads
@@ -137,7 +134,6 @@ export default defineComponent({
 		FriendsList,
 		FriendRequests,
 		BlockedUsers,
-		SmallButton,
 	},
 });
 

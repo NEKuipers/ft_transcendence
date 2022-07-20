@@ -10,7 +10,7 @@ async function bootstrap() {
     cookie: {
       maxAge: 60000 * 60 * 24,
     },
-    secret: 'diorandagio',
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     // store: new RedisStore({client})
