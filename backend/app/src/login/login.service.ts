@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { UserDetails } from './login.types'
+import { IntraUserDetails, UserDetails } from './login.types'
 import { UsersService } from '../users/users.service';
 import { User } from '../users/user.interface'
 
@@ -7,10 +7,13 @@ import { User } from '../users/user.interface'
 export class LoginService {
     constructor(private readonly userService: UsersService) {}
 
-    async validateUser(details: UserDetails) {
-        const userDb = await this.findUser(details.id)
+    async validateUser(details: IntraUserDetails): Promise<User> {
+		// console.log("Validating user: ", details);
+        
+		// TODO: Find by intra id, This is currently searching for a user by the intra-username, even though you can change your username
+		const userDb = await await this.userService.findOneByName(details.username)
         if (userDb) {
-            console.log('Found user', userDb.username)
+            // console.log('Found user', userDb.username, details.intraId)
             return userDb
         }
         else {
@@ -25,9 +28,4 @@ export class LoginService {
             return await this.userService.createUser(CreateUserDto)
         }
     }
-
-    async findUser(id: number): Promise<User | undefined> {
-        return await this.userService.findOne(id)
-    }
-
 }

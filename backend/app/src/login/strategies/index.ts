@@ -7,7 +7,7 @@ import { LoginService } from '../login.service'
 export class intraStrategy extends PassportStrategy(Strategy) {
     constructor(
         // private readonly configService: ConfigServicew
-        private readonly loginService: LoginService
+        private readonly loginService: LoginService,
     ) {
         super({
             clientID: process.env.CLIENT_ID,
@@ -25,10 +25,13 @@ export class intraStrategy extends PassportStrategy(Strategy) {
     async validate(accessToken: string, refreshToken: string, 
         userProfile: any, callback: (error: any, user: any) => void) {
         const { id, username } = userProfile;
-        console.log('Diogane sono io:', username)
-        const details = { id, username }
+        // console.log("got profile: ", userProfile);
+
+        const details = { intraId: id, username }
+		// console.log("validating user: ", username);
         const user = await this.loginService.validateUser(details)
-        console.log('access token', accessToken, 'refresh token', refreshToken)
-        callback(null, { id: user.id } )
+        // console.log('access token', accessToken, 'refresh token', refreshToken)
+
+        callback(null, user)
     }
 }

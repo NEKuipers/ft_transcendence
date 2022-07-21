@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { TwoFactorAuth } from './two_factor_auth.interface';
 
 import { authenticator } from '@otplib/preset-default';
@@ -54,7 +54,7 @@ export class TwoFactorAuthService {
 		let username = ret.data[0]?.username;
 
 		if (username === undefined) {
-			throw new HttpException("Failed to fetch username from user id!", 500);
+			throw new HttpException("Failed to fetch username from user id!", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 		return authenticator.keyuri(username, "ft_transcendence", secret[1]);
@@ -80,7 +80,7 @@ export class TwoFactorAuthService {
 
 			axios.post(`http://localhost:${process.env.PGREST_PORT}/two_factor_auth`, {"user_id": userId, "seed": secret[1]})
 				.then((response) => {
-					if (response.status != 201) {
+					if (response.status != HttpStatus.CREATED) {
 						console.log(`Got statusCode: ${response.status} (${response.statusText}): ${JSON.stringify(response.headers, null, 4)}`);
 					}
 				})
