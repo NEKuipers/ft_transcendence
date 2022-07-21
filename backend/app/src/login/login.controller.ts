@@ -1,10 +1,13 @@
 import { Controller, Get, Req, Res, Session, UseGuards } from '@nestjs/common';
 import { Request, Response } from 'express'
+import { TFAGuard } from 'src/two_factor_auth/tfa.guard';
+import { TwoFactorAuthService } from 'src/two_factor_auth/two_factor_auth.service';
 import { AuthenticatedGuard, IntraAuthGuard } from './guards';
 
 @Controller('login')
 export class LoginController {
     // constructor(private readonly loginService: LoginService) {}
+	constructor(private readonly twoFactorAuthService: TwoFactorAuthService) {}
 
     /* 
         This is the route for intra authentication
@@ -20,14 +23,35 @@ export class LoginController {
     */
     @Get('callback')
     @UseGuards(IntraAuthGuard)
-    callback(@Req() req: any, @Res() res: Response) {
-
+    async callback(@Req() req: any, @Session() session: any, @Res() res: Response) {
         console.log('Holy fuckin shit', req.user)
-        res.redirect('http://localhost:8080/')
+
+		if (await this.twoFactorAuthService.is_tfa_setup(req.user.id, session)) {
+			res.redirect('http://localhost:8080/tfa')	// Ya gotta login here too!
+		} else {
+			res.redirect('http://localhost:8080/')
+		}
     }
 
+	@Get('/logout')
+	@UseGuards(AuthenticatedGuard)
+	async logout(@Req() req: any, @Session() session: any): Promise<string> {
+		return new Promise((resolve, reject) => {
+			this.twoFactorAuthService.logout(session);
+
+			req.logout((err: any) => {
+				if (err) {
+					console.error("got err: ", err)
+					reject(err)
+				} else {
+					resolve("Logout success!");
+				}
+			});
+		})
+	}
+
     @Get('status')
-    @UseGuards(AuthenticatedGuard)
+    @UseGuards(TFAGuard)	// TFA guard includes AuthenticatedGuard
     status() {
         return 'ok'
     }
