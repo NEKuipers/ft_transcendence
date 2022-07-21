@@ -3,11 +3,13 @@ import { Request, Response } from 'express'
 import { TFAGuard } from 'src/two_factor_auth/tfa.guard';
 import { TwoFactorAuthService } from 'src/two_factor_auth/two_factor_auth.service';
 import { AuthenticatedGuard, IntraAuthGuard } from './guards';
+import { UsersService } from 'src/users/users.service';
+import * as jwt from "jsonwebtoken";
 
 @Controller('login')
 export class LoginController {
     // constructor(private readonly loginService: LoginService) {}
-	constructor(private readonly twoFactorAuthService: TwoFactorAuthService) {}
+	constructor(private readonly twoFactorAuthService: TwoFactorAuthService, private readonly usersService: UsersService) {}
 
     /* 
         This is the route for intra authentication
@@ -48,6 +50,23 @@ export class LoginController {
 				}
 			});
 		})
+	}
+
+	@Get('/jwt')
+	@UseGuards(TFAGuard)
+	async jwt(@Req() req: any): Promise<string> {
+		let user = await this.usersService.findOne(req.user.id);
+
+		return jwt.sign(
+			{
+				userid: req.user.id,
+				username: user.username,
+			},
+			process.env.JSON_WEB_TOKEN_SECRET,
+			{
+				expiresIn: "10h",
+			}
+		)
 	}
 
     @Get('status')
