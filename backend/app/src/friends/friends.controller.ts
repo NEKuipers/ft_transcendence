@@ -7,7 +7,7 @@ export class FriendsController {
 	constructor(private readonly friendsService: FriendsService) {}
 
 	@Get('/:id')
-	async findAllForUser(@Param('id') id: number): Promise<Friend[]> {
+	async findAllForUser(@Param('id') id: number): Promise<Friend[]> {		
 		return this.friendsService.findAllForUser(id);
 	}
 
@@ -17,18 +17,22 @@ export class FriendsController {
 	} 
 	
 	@Post()
-	create(@Body() friend: FriendTable): string {
+	async create(@Body() friend: FriendTable): Promise<string> {
 		return this.friendsService.createFriend(friend);
 	}
 
-	@Patch()
-	update(@Body() friend: FriendTable): string {
-		return this.friendsService.updateFriend(friend);
+	@Patch('/decline')
+	async declineRequest(@Body() friend: FriendTable): Promise<string> {
+		return this.friendsService.declineRequest(friend);
+	}
+
+	@Patch('/accept')
+	async acceptRequest(@Body() friend: FriendTable): Promise<string> {
+		return this.friendsService.acceptRequest(friend);
 	}
 
 	@Delete()
-	unfriend(@Body() friend: FriendTable): string {
-		console.log(friend);
+	async unfriend(@Body() friend: FriendTable): Promise<string> {
 		return this.friendsService.deleteFriend(friend);
 	}
 }
