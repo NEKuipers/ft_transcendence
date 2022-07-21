@@ -79,8 +79,53 @@ export default defineComponent({
 	mounted() {
 		this.getInitialData();
 	},
-	methods: {
-
+	watch: {
+        profile: {
+            handler(newValue) {
+                if (!newValue) { return; }
+                fetch(`/api/profile/` + this.loginStatusStore.loggedInStatus?.userID)
+					.then(res => res.json())
+					.then(data => this.profile = data[0])
+					.catch(err => console.log(err));
+			},
+			immediate: true
+		},
+		hasBlockedYou : {
+            handler(newValue) {
+                if (!newValue) { return; }
+				let haveBlockedYou;
+				fetch(`/api/blocked_users/blocked_by_them/` + this.loginStatusStore.loggedInStatus?.userID)
+				.then(res => res.json())
+				.then(data => {
+					haveBlockedYou = data; 
+					for (let i = 0; i < haveBlockedYou.length; i++) {
+						if (haveBlockedYou[i].blocked_by_id == this.user?.id)
+							this.hasBlockedYou = true;
+					}
+				})
+				.catch(err => console.log('What is: ' + err));
+				},
+			immediate: true
+		},
+		youHaveBlocked: {
+            handler(newValue) {
+                if (!newValue) { return; }
+				let usersBlockedByYou;
+				fetch(`/api/blocked_users/blocked_by_you/` + this.loginStatusStore.loggedInStatus?.userID)
+				.then(res => res.json())
+				.then(data => {
+					usersBlockedByYou = data; 
+					for (let i = 0; i < usersBlockedByYou.length; i++) {
+						if (usersBlockedByYou[i].blocked_user_id == this.user?.id)
+							this.youHaveBlocked = true;
+					}
+				})
+				.catch(err => console.log('What is: ' + err));
+				},
+			immediate: true
+		},
+	},
+		methods: {
 		getInitialData() {
 			let haveBlockedYou;
 			fetch(`/api/blocked_users/blocked_by_them/` + this.loginStatusStore.loggedInStatus?.userID)
