@@ -23,15 +23,18 @@ export class UsersService {
 	}
 
 	async createUser(CreateUserDto: CreateUserDto): Promise<User | undefined> {
-		await axios.post('http://localhost:${process.env.PGREST_PORT}/users', {
+		await axios.post(`http://localhost:${process.env.PGREST_PORT}/users`, {
 			username: CreateUserDto.username,
 			status: CreateUserDto.status,
 			avatar_id: CreateUserDto.avatar_id,
+			intra_id: CreateUserDto.intra_id,
 			oauth_refresh_token: CreateUserDto.oauth_refresh_token,
 			oauth_token_expiration_time: CreateUserDto.oauth_token_expiration_time,
 			is_logged_in: CreateUserDto.is_logged_in
 		}).then((res) => {
 			console.log('Creation request outcome:', res.statusText)
+		}).catch((err) => {
+			console.error(err);
 		});
 
 		return this.findOneByName(CreateUserDto.username)
