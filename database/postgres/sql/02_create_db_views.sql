@@ -215,6 +215,71 @@ FROM match_history mh
 GROUP BY mh.id, mh.username;
 
 /*
+** Displays the user's profile information including
+** match wins, losses en leaderboard position.
+*/
+CREATE OR REPLACE VIEW public.vw_profile
+AS
+SELECT
+	summary.user_id		                        AS user_id,
+	summary.username	                        AS username,
+	summary.avatar_id	                        AS avatar_id,
+	summary.games_won	                        AS games_won,
+	summary.games_lost	                        AS games_lost,
+	DENSE_RANK() OVER (ORDER BY games_won DESC) AS ranking
+FROM
+(
+WITH match_history
+AS
+(
+    /* get all games as player 1 */
+    SELECT
+        u.id        AS user_id,
+        m.winner_id
+    FROM users u
+        INNER JOIN matches m
+            ON u.id = m.player_one
+
+    UNION ALL
+
+    /* get all games as player 2 */
+    SELECT
+        u.id        AS user_id,
+        m.winner_id
+    FROM users u
+        INNER JOIN matches m
+            ON u.id = m.player_two
+)
+SELECT
+	u.id		AS user_id,
+	u.username	AS username,
+	u.avatar_id	AS avatar_id,
+    SUM
+    (
+      CASE
+        WHEN u.id = m.winner_id
+		THEN 1
+		ELSE 0
+	  END
+    )			AS games_won,
+	SUM
+	(
+	  CASE
+		WHEN u.id != m.winner_id
+		THEN 1
+		ELSE 0
+	  END
+	)			AS games_lost
+FROM users u
+    LEFT JOIN match_history m
+        ON u.id = m.user_id
+GROUP BY
+	u.id,
+	u.username,
+	u.avatar_id
+) AS summary;
+
+/*
 ** Displays the achievements for all users
 */
 CREATE OR REPLACE VIEW public.vw_achievements

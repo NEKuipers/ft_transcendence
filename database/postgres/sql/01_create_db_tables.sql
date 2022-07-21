@@ -85,6 +85,9 @@ CREATE TABLE public.avatars
   format  AVATAR_FORMAT
 );
 
+INSERT INTO public.avatars(img, name, format)
+SELECT pg_read_binary_file('/docker-entrypoint-initdb.d/default_avatar.png'), 'default', 'img/png';
+
 /*
 ** The users table ...
 */

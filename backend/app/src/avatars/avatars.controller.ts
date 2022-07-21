@@ -10,12 +10,11 @@ export class AvatarsController {
 	@Get(':id')
 	async findOne(@Param('id') id: number, @Res() res: Response) {
 		const { data, headers } = await this.avatarsService.findOne(id)
-		let bytes = atob(data)
 		res.writeHead(200, {
 			'Content-Type': headers['content-type'],
 			'Content-Disposition': 'inline; filename="filename.jpg"',
-			'Content-Length': bytes.length
+			'Content-Length': data.length
 		})
-		return res.end(Buffer.from(bytes, 'binary'))
+		return res.end(Buffer.from(data, 'binary'))
 	}
 }
