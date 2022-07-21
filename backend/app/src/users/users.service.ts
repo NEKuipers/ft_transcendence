@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { User } from './user.interface'
 import { HttpService } from '@nestjs/axios'
 import { CreateUserDto } from './create-user.dto';
+import axios from 'axios';
 
 @Injectable()
 export class UsersService {
@@ -89,5 +90,22 @@ export class UsersService {
 		}
 
 		return this.findOneByName(CreateUserDto.username)
+	}
+
+	async changeUsername(id: number, newUsername: string) : Promise<string> {
+		let users: User[];
+		await axios.get(`http://localhost:${process.env.PGREST_PORT}/users`)
+			.then(res => users = res.data)
+			.catch(err => console.log(err))
+		for (let i = 0; i < users.length; i++) {
+			if (users[i].username === newUsername)
+				return "taken";
+		}
+
+		axios.patch(`http://localhost:${process.env.PGREST_PORT}/users?id=eq.${id}`, {
+			username: newUsername})
+				.then(res => res)
+				.catch(err => console.log(err));
+		return "success";
 	}
 }

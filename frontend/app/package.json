@@ -16,7 +16,8 @@
     "vue": "^3.2.13",
     "vue-advanced-chat": "https://github.com/antoine92190/vue-advanced-chat/tarball/next",
     "vue-router": "^4.0.3",
-    "vue-socket.io": "^3.0.10"
+    "vue-socket.io": "^3.0.10",
+    "vue3-promise-dialog": "^0.3.4"
   },
   "devDependencies": {
     "@types/socket.io": "^3.0.2",

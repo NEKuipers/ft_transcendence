@@ -98,31 +98,44 @@ import FriendRequests from '../components/FriendRequests.vue'
 import BlockedUsers from '../components/BlockedUsers.vue';
 
 export default defineComponent({
-  name: 'MyProfileView',
-  props: {
-    },
-  methods: {
-    async loadUserData(id: number) {
-      fetch('/api/users/' + id)
-      .then(res => res.json())
-      .then(data => this.user = data)
-      .catch(err => console.log(err));
-    }
-  },
-  data () {
-    return {
-      selectedFile: null,
-      user: null as null | any,
-    }
-  },
-  async mounted() {
-	let login = loginStatusStore();
-	if (login.loggedInStatus) {
-		await this.loadUserData(login.loggedInStatus.userID); //TODO this still works kind of weird, make sure page reloads
-	} else {
-		// We are not logged in, The router SHOULD prevent us from going here, yet we still got here
-		console.error("Loading MyProfileView while not logged in!")
-	}
+	name: 'MyProfileView',
+	props: {},
+	methods: {
+		async loadUserData(id: number) {
+			fetch('/api/users/' + id)
+			.then(res => res.json())
+			.then(data => this.user = data)
+			.catch(err => console.log(err));
+		}
+	},
+
+	watch: {
+		user: {
+			handler(newValue) {
+				if (!newValue) { return; }	// It can be undefined at the start
+				fetch('/api/users/' + this.user.id)
+					.then(res => res.json())
+					.then(data => this.user = data)
+					.catch(err => {this.user = null; console.log(err);
+					});
+			},
+			immediate: true
+		}
+	},
+	data () {
+	return {
+			selectedFile: null,
+			user: null as null | any,
+		}
+	},
+	async mounted() {
+		let login = loginStatusStore();
+		if (login.loggedInStatus) {
+			await this.loadUserData(login.loggedInStatus.userID); //TODO this still works kind of weird, make sure page reloads
+		} else {
+			// We are not logged in, The router SHOULD prevent us from going here, yet we still got here
+			console.error("Loading MyProfileView while not logged in!")
+		}
 	},
 	components: {
 		UserProfile,

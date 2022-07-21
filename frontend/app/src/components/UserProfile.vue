@@ -25,7 +25,7 @@
 		<SmallButton class="user-btn" text="Change username" @click="changeUsername"/>
     <DialogueBox :show="showDialogue" @close-dialogue="hideDialogue" @new-name="saveUsername"/>
 		<br>
-		<div v-if="!user.TFAEnabled">
+		<div v-if="!user?.TFAEnabled">
 			<router-link to="/tfa">
 				<SmallButton class="user-btn" text="Setup two-factor authentication"/>
 			</router-link>
@@ -81,14 +81,11 @@ export default defineComponent({
 			// console.log('Should be triggered by x button')
 			this.showDialogue = false;
 		},
-		saveUsername(newname: string) {
-			console.log('New name is:', newname)
-			// Here should make a patch request to change the name (Make sure that it is unique) TODO
-			// And then give user a confirmation of sorts.
+		async saveUsername(newname: string) {
 			const id = this.loginStatusStore.loggedInStatus?.userID
-			// console.log('Logged user', username)
+			let result;
 			if (id != undefined) {
-				fetch('/api/users/' + id, {
+				await fetch('/api/users/' + id, {
 					method: "PATCH",
 					body: JSON.stringify({
 						"username": newname,
@@ -97,14 +94,15 @@ export default defineComponent({
 						'Content-type': 'application/json; charset=UTF-8'
 					}
 				})
-				.then(response => console.log(response))
-				.catch(err => console.log(err))
+				.then(res => res.text())
+				.then(data => {
+					if (data === 'taken')
+						alert('That username is already taken.')
+					else
+						this.hideDialogue();
+				})
+				.catch(err => console.log(err));
 			}
-
-			// If successful close window
-			this.hideDialogue();
-			// Else
-			// alert('That name is not unique/is taken')
 		},
 		async addFriend() {
 			const requestOptions = {
