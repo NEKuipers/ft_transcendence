@@ -7,7 +7,7 @@
 		<div v-else-if="friendRequests.length">
 		<!-- Need to figure out how to filter only friends of logged in user! -->
 			<div v-for="request in friendRequests" :key="request?.id">
-				<section class="listed-friend">
+				<section v-if="request.status='send'" class="listed-friend">
 					<SmallButton class="requestbutton" text="Accept" @click="acceptRequest(request.from_user_id)"/>
 					<SmallButton class="requestbutton" text="Decline" @click="declineRequest(request.from_user_id)"/>
 					<!-- TODO THIS BUTTON STORE THING DOESNT WORK -->
@@ -60,11 +60,11 @@ export default defineComponent({
 			const requestOptions = {
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({to_user_id: 3, //TODO get correct id after login
+				body: JSON.stringify({to_user_id: this.user, //TODO get correct id after login
 				from_user_id: from_user_id,
-				status: 2}) 
+				status: "accepted"}) 
 			};
-			fetch('/api/friends', requestOptions)
+			fetch('/api/friends/accept', requestOptions)
 				.then(response => console.log(response.status))
 				.catch(err => console.log(err));
 		},
@@ -72,11 +72,11 @@ export default defineComponent({
 			const requestOptions = {
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({to_user_id: 3, //TODO get correct id after login
+				body: JSON.stringify({to_user_id: this.user, //TODO get correct id after login
 				from_user_id: from_user_id,
-				status: 1}) 
+				status: "declined"}) 
 			};
-			fetch('/api/friends', requestOptions)
+			fetch('/api/friends/decline', requestOptions)
 				.then(response => console.log(response.status))
 				.catch(err => console.log(err));
 		},

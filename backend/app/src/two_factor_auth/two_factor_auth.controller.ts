@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, UseGuards, Session, Response, Request, HttpException, Req } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, UseGuards, Session, Response, Request, HttpException, Req, Res } from '@nestjs/common';
 import { TwoFactorAuthService } from './two_factor_auth.service';
 import { TwoFactorAuth } from './two_factor_auth.interface';
 import { TFAGuard } from './tfa.guard';
@@ -28,16 +28,6 @@ export class TwoFactorAuthController {
 		} else {
 			throw new HttpException("Invalid token", 401);
 		}
-	}
-
-	@Get('/logout')
-	@UseGuards(TFAGuard)
-	logout(@Session() session: any): string {
-		if (this.twoFactorAuthService.logout(session)) {
-			return "Logout success"
-		}
-		
-		throw new HttpException("You do not have 2fa enabled!", 403);
 	}
 	
 	@Get("test")

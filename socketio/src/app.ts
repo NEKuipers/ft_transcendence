@@ -1,6 +1,6 @@
 import { request, createServer, IncomingMessage } from "http";
 import { Server, Socket } from "socket.io";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 import { EventEmitter } from 'events';
 
@@ -90,7 +90,7 @@ function make_request(port: number, path: string, method: string, data: object, 
 make_request(DATABASE_PORT, `/matches?status=eq.ongoing`, "DELETE", {});
 
 io.use((socket, next) => {
-	let data = jwt.verify(socket.handshake.auth.token, SECRET_AUTH);
+	let data = jwt.verify(socket.handshake.auth.token, SECRET_AUTH) as JwtPayload;
 	if (data === undefined) {
 		const err = new Error("Bad auth token!");
 		err.stack = null;
@@ -104,7 +104,7 @@ io.use((socket, next) => {
 		next(err);
 		return;
 	}
-	
+
 	socket.data.userid = data.userid;
 	socket.data.username = data.username;
 	next();

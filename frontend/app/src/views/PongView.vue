@@ -271,72 +271,71 @@ export default defineComponent({
 
 	mounted() {
 		let connection = (this.$refs.connection as typeof SocketIoConnection);
-		connection.connect({});
+		connection.connect({}, (socket: Socket) => {
+			this.socket = socket;
+			
+			socket.on("connect", () => {
+				this.join(this.$route.params.mode as string);
+			})
+			socket.on("disconnect", (reason, description) => {
+				this.stop();
+				this.clear_canvas();
+				this.draw_center_text("Disconnected", 100)
 
-		let socket = connection.socket as Socket;
-		this.socket = socket;
-		
-		socket.on("connect", () => {
-			this.join(this.$route.params.mode as string);
-		})
-		socket.on("disconnect", (reason, description) => {
-			this.stop();
-			this.clear_canvas();
-			this.draw_center_text("Disconnected", 100)
+				console.error("Disconnect reason:", reason, description)
 
-			console.error("Disconnect reason:", reason, description)
+				// The socketIO server has purposefully disconnected us, lets not retry
+				if (reason == "io server disconnect") {
+					this.$router.push('/select-game');
+				}
+			})
+			socket.on("match_start", (player: number, settings: settings, player_1_name: string, player_2_name: string) => {
+				this.settings = settings;
 
-			// The socketIO server has purposefully disconnected us, lets not retry
-			if (reason == "io server disconnect") {
-				this.$router.push('/select-game');
-			}
-		})
-		socket.on("match_start", (player: number, settings: settings, player_1_name: string, player_2_name: string) => {
-			this.settings = settings;
+				let canvas =  this.canvas as HTMLCanvasElement;
+				canvas.width = settings.width;
+				canvas.height = settings.height;
 
-			let canvas =  this.canvas as HTMLCanvasElement;
-			canvas.width = settings.width;
-			canvas.height = settings.height;
+				this.game = new rect(settings.border_size - settings.ball_size, settings.border_size, canvas.width - (settings.border_size - settings.ball_size) * 2, canvas.height - settings.border_size * 2);
+				this.start(player, player_1_name, player_2_name);
+			})
+			socket.on("match_winner", (player: number) => {
+				if (player === 1) {
+					(this.p1 as player).score += 1;
+				} else if (player === 2) {
+					(this.p2 as player).score += 1;
+				}
 
-			this.game = new rect(settings.border_size - settings.ball_size, settings.border_size, canvas.width - (settings.border_size - settings.ball_size) * 2, canvas.height - settings.border_size * 2);
-			this.start(player, player_1_name, player_2_name);
-		})
-		socket.on("match_winner", (player: number) => {
-			if (player === 1) {
-				(this.p1 as player).score += 1;
-			} else if (player === 2) {
-				(this.p2 as player).score += 1;
-			}
+				this.has_lost = false;
+			})
+			socket.on("match_stop", (winner: number) => {
+				this.draw_game();	// Draw the last score update too
+				this.stop();
 
-			this.has_lost = false;
-		})
-		socket.on("match_stop", (winner: number) => {
-			this.draw_game();	// Draw the last score update too
-			this.stop();
-
-			if (winner === 0) {
-				this.draw_center_text("Its a tie!", 100);
-			} else {
-				if (this.player !== 0) {
-					if (this.player == winner) {
-						this.draw_center_text("You won!", 100);
-					} else {
-						this.draw_center_text("You lost!", 100);
-					}
+				if (winner === 0) {
+					this.draw_center_text("Its a tie!", 100);
 				} else {
-					if (winner === 0) {
-						this.draw_center_text((this.p1 as player).name + " won!", 100);
+					if (this.player !== 0) {
+						if (this.player == winner) {
+							this.draw_center_text("You won!", 100);
+						} else {
+							this.draw_center_text("You lost!", 100);
+						}
 					} else {
-						this.draw_center_text((this.p2 as player).name + " won!", 100);
+						if (winner === 0) {
+							this.draw_center_text((this.p1 as player).name + " won!", 100);
+						} else {
+							this.draw_center_text((this.p2 as player).name + " won!", 100);
+						}
 					}
 				}
-			}
 
-			// After 2.5 seconds, join the queue again
-			setTimeout(() => {
-				this.join(this.$route.params.mode as string);	// Note: In case of spectating, this may cause us to be disconnected from a invalid request
-			}, 2500);
-		})
+				// After 2.5 seconds, join the queue again
+				setTimeout(() => {
+					this.join(this.$route.params.mode as string);	// Note: In case of spectating, this may cause us to be disconnected from a invalid request
+				}, 2500);
+			})
+		});
 
 		let canvas =  this.$refs.canvas as HTMLCanvasElement;
 		this.canvas = canvas;

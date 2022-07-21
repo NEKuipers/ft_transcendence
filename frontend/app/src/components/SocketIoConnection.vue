@@ -9,7 +9,6 @@
 <script lang = "ts">
 import { io, Socket, ManagerOptions, SocketOptions } from "socket.io-client";
 import { defineComponent } from 'vue'
-import { loginStatusStore } from '../stores/profileData';
 
 export default defineComponent({
 	props: {
@@ -25,6 +24,7 @@ export default defineComponent({
 
 	data() {
 		return {
+			connecting: false,
 			socket: null as Socket | null,
 			isConnected: false,
 			connection_error: null as string | null,
@@ -36,28 +36,53 @@ export default defineComponent({
 	},
 
 	methods: {
-		connect(options: object) {
+		connect(options: object, callback: (socket: Socket) => void) {
 			this.disconnect();
-			
-			(options as ManagerOptions & SocketOptions).auth = { token: loginStatusStore().loggedInStatus?.authString };
 
-			this.socket = io(this.uri as unknown as string, options);
+			fetch("/api/login/jwt/")
+				.then((data) => {
+					if (data.ok) {
+						return data.text()
+					} else {
+						throw data.text()
+					}
+				})
+				.then((token) => {
+					this.connecting = true;
 
-			this.socket.on("connect", () => {
-				this.isConnected = true;
-				this.connection_error = null;
-			});
-			this.socket.on("connect_error", (err) => {
-				this.isConnected = false;
-				this.connection_error = err.message;
-			});
-			this.socket.on("disconnect", () => {
-				this.isConnected = false;
+					(options as ManagerOptions & SocketOptions).auth = { token: token };
+		
+					this.socket = io(this.uri as unknown as string, options);
+		
+					this.socket.on("connect", () => {
+						this.isConnected = true;
+						this.connection_error = null;
+						this.connecting = false;
+					});
+					this.socket.on("connect_error", (err) => {
+						this.isConnected = false;
+						this.connecting = false;
+						this.connection_error = err.message;
+					});
+					this.socket.on("disconnect", () => {
+						this.isConnected = false;
+					});
+
+					callback(this.socket as Socket);
+
+				})
+			.catch((err) => {
+				this.connection_error = "Failed to fetch token"
+				console.error(err)
+			})
+			.catch((err) => {
+				console.log("err", err)
 			});
 		},
 		disconnect() {
 			if (this.socket) {
 				this.socket.disconnect();
+				this.connecting = false;
 				this.socket = null;
 			}
 		}
