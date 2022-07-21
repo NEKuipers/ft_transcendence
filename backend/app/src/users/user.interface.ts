@@ -16,3 +16,7 @@ export interface User {
 	isLoggedIn: boolean;
 	leaderboardPosition?: number;
 }
+
+export interface newUsername {
+	username: string;
+}

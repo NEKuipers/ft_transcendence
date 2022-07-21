@@ -1,4 +1,4 @@
-import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Req, Res, Session, UseGuards } from '@nestjs/common';
 import { Request, Response } from 'express'
 import { AuthenticatedGuard, IntraAuthGuard } from './guards';
 
@@ -19,10 +19,10 @@ export class LoginController {
         This is the redirect URL the OAuth2 Provider will call
     */
     @Get('callback')
-    @UseGuards(IntraAuthGuard) // for some reason the first time, it isn't authenticated yet
-    callback(@Req() req: Request, @Res() res: Response) {
+    @UseGuards(IntraAuthGuard)
+    callback(@Req() req: any, @Res() res: Response) {
 
-        // console.log('Cookies?', req.cookies["connect.sid"])
+        console.log('Holy fuckin shit', req.user)
         res.redirect('http://localhost:8080/')
     }
 

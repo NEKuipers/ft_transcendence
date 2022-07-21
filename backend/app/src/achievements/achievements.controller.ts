@@ -7,13 +7,13 @@ export class AchievementsController {
 	constructor(private readonly achievementsService: AchievementsService) {}
 
 	@Get()
-	findAll(): Achievement[] {
-		return this.achievementsService.findAll();
+	async findAll(): Promise<Achievement[]> {
+		return await this.achievementsService.findAll();
 	}
 
-	@Get('id')
-	findOne(@Param('id') id: number): Achievement {
-		return this.achievementsService.findOne(id);
+	@Get('/user/:id')
+	async findUserAchievements(@Param('id') id: number): Promise<Achievement[]> {
+		return await this.achievementsService.findUserAchievements(id);
 	}
 
 }

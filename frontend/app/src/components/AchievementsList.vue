@@ -1,18 +1,22 @@
 <template>
     <div class="userachievement">
       <h3>Achievements</h3>
-        <ul  v-for="item in items" :key="item.message">
-            <img class="trophy" src="../assets/scudetto.png"> 
-            <div class="achievementbox">
-                <p>{{ item.message }}</p>
+        <ul  v-for="achievement in achievements" :key="achievement.id">
+            <img v-if="filter(achievement.id)" class="scudetto" src="../assets/scudetto.png"> 
+            <img v-else class="grey-scudetto" src="../assets/scudetto.png">
+            <div v-if="filter(achievement.id)" class="achieved">
+                <p> {{ achievement.name }}: {{ achievement.description }}</p>
+            </div>
+            <div v-else  class="notachieved">
+                <p> {{ achievement.name }}: {{ achievement.description }}</p>
             </div>
         </ul>
-        <ul>
+        <!-- <ul>
             <img class="test" src="../assets/scudetto.png">
             <div class="tester">
                 <h4>Extra Champion: win 10 games in a row</h4>
             </div>
-        </ul>
+        </ul> -->
        
     </div>
 </template>
@@ -22,23 +26,56 @@ import { defineComponent } from 'vue'
 
 export default defineComponent ({
     name: 'AchievementsList',
-    props: {},
+    props: {
+		user: {
+			type: Number //You can use this.user to make requests to the db for this user. this.user is the db user id
+		},
+	},
     data() { 
         return {
-            items: [
-            {
-                message: "CleanSheet: Win a game conceding no points"
+            achievements: null,
+            obtained: [] as Array<any>
+        }
+    },
+    mounted() {
+        fetch('/api/achievements')
+        .then(res => res.json())
+        .then(data => {this.achievements = data;})
+        .catch(err => { this.achievements = null; console.log(err)})
+    },
+    // This will refetch the achievements as they are obtained
+    watch: {
+        user: {
+            handler(newValue) {
+                if (!newValue) { return; }
+                fetch('/api/achievements/user/' + this.user)
+                .then(res => res.json())
+                .then(data => {
+                    for (let elem of data) {
+                        if (this.obtained === null)
+                            this.obtained = elem.achievement_id
+                        else
+                            this.obtained.push(elem.achievement_id);
+                        // console.log('The id', elem.achievement_id)
+                    }
+                    // console.log('Well then:', this.obtained)
+                })
+                .catch(err => { console.log(err)})
             },
-            {
-                message: "Noob: Win a game"
-            },
-            {
-                message: "Getting there: Win 10 games"
-            },
-            {
-                message: "CHAD: Win 69 games"
-            }
-            ]
+            immediate: true
+        }
+    },
+    methods: {
+        filter(achiev_id: number): boolean {
+            // console.log('Number checked is', achiev_id)
+            // console.log('The obtained achievements by id', this.obtained)
+            // return this.obtained.find(achiev_id) === true ? true : false
+            // for (const num in this.obtained) {
+            //     if (achiev_id === num)
+            //         return true
+            // }
+            // return false
+            return this.obtained.includes(achiev_id)
         }
     }
 })
@@ -51,14 +88,14 @@ export default defineComponent ({
     display: table;
 }
 
-.trophy {
+.grey-scudetto {
     width: 60px;
     height: 80px;
     border-radius: 10px;
     filter: grayscale(100%);
 }
 
-.achievementbox {
+.notachieved {
     border: 2px solid grey;
     border-radius: 10px;
     text-align: center;
@@ -73,13 +110,13 @@ export default defineComponent ({
     color: whitesmoke;
 }
 
-.test {
+.scudetto {
     width: 60px;
     height: 80px;
     border-radius: 10px;
 }
 
-.tester {
+.achieved {
     border: 2px solid grey;
     border-radius: 10px;
     text-align: center;

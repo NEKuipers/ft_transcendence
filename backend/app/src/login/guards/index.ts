@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport';
 import { getgroups } from 'process';
-import { Observable } from 'rxjs';
+import { endWith, Observable } from 'rxjs';
 
 @Injectable()
 export class IntraAuthGuard extends AuthGuard('42') {
@@ -18,7 +18,7 @@ export class IntraAuthGuard extends AuthGuard('42') {
 export class AuthenticatedGuard implements CanActivate {
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const req = context.switchToHttp().getRequest()
-        console.log(req.isAuthenticated())
+        console.log("authenticated:", req.isAuthenticated())
         return req.isAuthenticated()
     }
 }

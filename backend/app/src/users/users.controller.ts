@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Patch, Delete, Body, Param } from '@nestjs/common';
 import { CreateUserDto } from './create-user.dto';
 import { UsersService } from './users.service';
-import { User } from './user.interface';
+import { User, newUsername } from './user.interface';
 
 @Controller('users')
 export class UsersController {
@@ -33,16 +33,17 @@ export class UsersController {
 		return 'User created';
 	}
 
+	@Patch(':id')
+	async editUsername(@Body() newname: newUsername, @Param('id') id: number): Promise<string> {
+		return this.usersService.changeUsername(id, newname.username);
+	}
+
 	@Delete(':id')
 	delete(@Param('id') id) : string {
 		//Delete user
 		return `Deleted user ${id}`;
 	}
-	@Patch(':id')
-	update(@Body() updateUserDto: CreateUserDto, @Param('id') id: number): string {
-		return 'User edit not yet implemented';
-		//return (`Update ${id} - Username ${updateUserDto.userName}`);
-	}
+
 }
 
 

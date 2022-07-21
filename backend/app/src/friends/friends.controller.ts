@@ -7,12 +7,12 @@ export class FriendsController {
 	constructor(private readonly friendsService: FriendsService) {}
 
 	@Get('/:id')
-	findAllForUser(@Param('id') id: number): Promise<Friend[]> {
+	async findAllForUser(@Param('id') id: number): Promise<Friend[]> {
 		return this.friendsService.findAllForUser(id);
 	}
 
 	@Get('/requests/:id')
-	findAllRequestsForUser(@Param('id') id: number): Promise<FriendRequest[]> {		
+	async findAllRequestsForUser(@Param('id') id: number): Promise<FriendRequest[]> {		
 		return this.friendsService.findAllRequestsForUser(id);
 	} 
 	

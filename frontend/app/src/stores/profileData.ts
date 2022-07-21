@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { storeToRefs } from 'pinia'
 
 // interface login {
 //     loggedIn: boolean,
@@ -24,7 +23,7 @@ class LoginData {
 
 export const loginStatusStore = defineStore ('login', {
 	state: () => ({
-		// All these defaults shuold be changed, but currently set to these for testing.
+		// All these defaults should be changed, but currently set to these for testing.
 
 		loggedInStatus: new LoginData(1, "nkuipers", false, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOjEsInVzZXJuYW1lIjoibmt1aXBlcnMifQ.5P5h3p-V1fwh0h61Hd_MFzbsaglRBdE2hME6ew112y0") as undefined | LoginData
 	}),

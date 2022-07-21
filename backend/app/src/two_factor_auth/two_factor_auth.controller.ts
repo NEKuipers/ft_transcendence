@@ -1,23 +1,25 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, UseGuards, Session, Response, Request, HttpException } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, UseGuards, Session, Response, Request, HttpException, Req } from '@nestjs/common';
 import { TwoFactorAuthService } from './two_factor_auth.service';
 import { TwoFactorAuth } from './two_factor_auth.interface';
 import { TFAGuard } from './tfa.guard';
+import { AuthenticatedGuard } from 'src/login/guards';
 
 @Controller('two-factor-auth')
 export class TwoFactorAuthController {
 	constructor(private readonly twoFactorAuthService: TwoFactorAuthService) {}
 
 	@Get('/keyuri')
-	get_key_uri(@Session() session: any): Promise<string> {
-		// TODO: Get userId from oauth
-		let userId = 3;
+	@UseGuards(AuthenticatedGuard)
+	get_key_uri(@Req() req: any, @Session() session: any): Promise<string> {
+		let userId = req.user.id;
+
 		return this.twoFactorAuthService.get_keyuri(userId, session);
 	}
 
+	@UseGuards(AuthenticatedGuard)
 	@Get('/login/:token')	// Is this really how i want to send the token?
-	async login(@Param('token') token: string, @Session() session: any): Promise<string> {
-		// TODO: Get userId from oauth
-		let userId = 3;
+	async login(@Req() req: any, @Param('token') token: string, @Session() session: any): Promise<string> {
+		let userId = req.user.id;
 
 		let login_status = await this.twoFactorAuthService.login(userId, token, session);
 

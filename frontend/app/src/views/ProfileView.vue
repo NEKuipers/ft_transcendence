@@ -3,12 +3,9 @@
     <div v-if="!user">
       <h2>User profile failed to load</h2>
     </div>
-    <div v-else-if="user.userName.length">
+    <div v-else>
       <UserProfile :user="user"></UserProfile>
     </div>
-    <div v-else>
-      <h2>User not found</h2>
-    </div> <!-- TODO add loading for user -->
     <br>
     <br>
     <div class="row">
@@ -18,7 +15,6 @@
       <MatchHistory class="matchHistory" :user="user?.id"/>
   </div>
 </template>
-
 <style scoped>
 
 .column {
