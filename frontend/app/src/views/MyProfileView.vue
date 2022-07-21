@@ -12,8 +12,8 @@
     <br>
     <br>
     <div class="row">
-      <FriendRequests :user="user?.id" class="column"/>
-      <FriendsList :user="user?.id" class="column"/>
+      <FriendRequests  :user="user?.id" class="column"/>
+      <FriendsList :own="true" :user="user?.id" class="column"/>
       <div class="column">
         <BlockedUsers />
       </div>
@@ -109,19 +109,19 @@ export default defineComponent({
 		}
 	},
 
-	watch: {
-		user: {
-			handler(newValue) {
-				if (!newValue) { return; }	// It can be undefined at the start
-				fetch('/api/users/' + this.user.id)
-					.then(res => res.json())
-					.then(data => this.user = data)
-					.catch(err => {this.user = null; console.log(err);
-					});
-			},
-			immediate: true
-		}
-	},
+	// watch: {
+	// 	user: {
+	// 		handler(newValue) {
+	// 			if (!newValue) { return; }	// It can be undefined at the start
+	// 			fetch('/api/users/' + this.user.id)
+	// 				.then(res => res.json())
+	// 				.then(data => this.user = data)
+	// 				.catch(err => {this.user = null; console.log(err);
+	// 				});
+	// 		},	
+	// 		immediate: true
+	// 	}
+	// },
 	data () {
 	return {
 			selectedFile: null,

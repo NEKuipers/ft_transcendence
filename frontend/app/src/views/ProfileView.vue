@@ -9,7 +9,7 @@
     <br>
     <br>
     <div class="row">
-        <FriendsList class="column" :user="user?.id"/>
+        <FriendsList class="column" :own="false" :user="user?.id"/>
         <AchievementsList class="column" :user="user?.id"/>
     </div>
       <MatchHistory class="matchHistory" :user="user?.id"/>
