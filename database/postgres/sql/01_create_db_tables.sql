@@ -85,6 +85,9 @@ CREATE TABLE public.avatars
   format  AVATAR_FORMAT
 );
 
+INSERT INTO public.avatars(img, name, format)
+SELECT pg_read_binary_file('/docker-entrypoint-initdb.d/default_avatar.png'), 'default', 'img/png';
+
 /*
 ** The users table ...
 */
@@ -96,6 +99,7 @@ CREATE TABLE public.users
     username                        VARCHAR(256),
     status                          USER_STATUS,
     avatar_id                       BIGINT REFERENCES public.avatars(id) DEFAULT 1,
+    intra_id                        BIGINT DEFAULT 0,
     oauth_refresh_token             VARCHAR(1024),
     oauth_token_expiration_time     TIMESTAMP,
     is_logged_in                    BOOL,
