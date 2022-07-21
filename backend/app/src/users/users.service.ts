@@ -98,7 +98,7 @@ export class UsersService {
 			.then(res => users = res.data)
 			.catch(err => console.log(err))
 		for (let i = 0; i < users.length; i++) {
-			if (users[i].username === newUsername)
+			if (users[i].username === newUsername && users[i].id != id)
 				return "taken";
 		}
 
