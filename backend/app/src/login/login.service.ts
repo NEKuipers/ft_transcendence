@@ -10,8 +10,7 @@ export class LoginService {
     async validateUser(details: IntraUserDetails): Promise<User> {
 		// console.log("Validating user: ", details);
         
-		// TODO: Find by intra id, This is currently searching for a user by the intra-username, even though you can change your username
-		const userDb = await await this.userService.findOneByName(details.username)
+		const userDb = await await this.userService.findOneIntra(details.intraId)
         if (userDb) {
             // console.log('Found user', userDb.username, details.intraId)
             return userDb

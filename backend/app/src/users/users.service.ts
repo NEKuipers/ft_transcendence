@@ -15,7 +15,10 @@ export class UsersService {
 		return res.data[0];
 	}
 
-	// TODO: FindOneByIntra -> Finds a user by intra id, required for oauth, currently it searches by username, so if you change your name it will create a new account
+	async findOneIntra(intra_id: number): Promise<User | undefined> {
+		let res = await axios.get(`http://localhost:${process.env.PGREST_PORT}/users?intra_id=eq.${intra_id}`)
+		return res.data[0];
+	}
 
 	async findOneByName(userName: string): Promise<User | undefined> {
 		let res = await axios.get(`http://localhost:${process.env.PGREST_PORT}/users?username=eq.${userName}`)
