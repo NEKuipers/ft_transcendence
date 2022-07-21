@@ -4,6 +4,8 @@ import { User } from '../users/user.interface'
 export type IntraUserDetails = {
     intraId: number
     username: string
+	oauth_refresh_token: string,
+	oauth_token_expiration_time: string,
 }
 
 // This is what should be put in the res.user variable
