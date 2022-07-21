@@ -17,10 +17,10 @@
 		</div>
 	</section>
 	<section v-if="this?.blocked==false" class="game-stats">
-		<h4>Games played: {{user?.gamesPlayed}}</h4>
-		<h4>Games won: {{user?.gamesWon}}</h4>
-		<h4>Games lost: {{user?.gamesLost}}</h4>
-		<h4>Overall ranking:  #{{user?.ladder_position}}</h4>
+		<h4>Games played: {{profile.games_won + profile.games_lost}}</h4>
+		<h4>Games won: {{profile?.games_won}}</h4>
+		<h4>Games lost: {{profile?.games_lost}}</h4>
+		<h4>Overall ranking:  #{{profile.ranking}}</h4>
 	</section>
 	<section v-else>
 		<h5 id="blocked-you">User has blocked you</h5>
@@ -63,6 +63,7 @@ export default defineComponent({
 			loginStatusStore: loginStatusStore(),
 			showDialogue: false,
 			blocked: false,
+			profile: Object,
 		}
 	},
 	components: {
@@ -82,6 +83,11 @@ export default defineComponent({
 		})
         .catch(err => console.log('What is: ' + err));
 		
+		fetch(`/api/profile/` + this.loginStatusStore.loggedInStatus?.userID)
+		.then(res => res.json())
+        .then(data => {this.profile = data[0]; console.log(data);
+		})
+        .catch(err => console.log('What is: ' + err));
 	},
 	methods: {
 		changeAvatar() {

@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { Ladder } from './ladder.interface';
+import { Profile } from './profile.interface'
 import axios from 'axios';
 
 @Injectable()
-export class LadderService {
+export class ProfileService {
 
-	findOne(id:number): Promise<Ladder> {
+	getAllProfiles() : Promise<Profile[]> {
 		return new Promise((accept, reject) => {
-			axios.get(`http://localhost:${process.env.PGREST_PORT}/vw_ladder?user_id=eq.${id}`)
+			axios.get(`http://localhost:${process.env.PGREST_PORT}/vw_profile`)
 				.then((response) => {
 					if (response.status != 200) {
 						console.log(`Got statusCode: ${response.status} (${response.statusText}): ${JSON.stringify(response.headers, null, 4)}`)
@@ -18,24 +18,25 @@ export class LadderService {
 				}).catch((error) => {
 					console.log(`Got error: ${error}`)
 					reject(error);
-				});				
+				});
 		});
 	}
 
-	findAll(): Promise<Ladder[]> {
+	getOneProfile(user_id: number) : Promise<Profile> {
 		return new Promise((accept, reject) => {
-			axios.get(`http://localhost:${process.env.PGREST_PORT}/vw_ladder`)
-				.then((response) => {
-					if (response.status != 200) {
-						console.log(`Got statusCode: ${response.status} (${response.statusText}): ${JSON.stringify(response.headers, null, 4)}`)
-						reject(response);
-						return;
-					}
-					accept(response.data);
+			
+			axios.get(`http://localhost:${process.env.PGREST_PORT}/vw_profile?user_id=eq.${user_id}`)
+			.then((response) => {
+				if (response.status != 200) {
+					console.log(`Got statusCode: ${response.status} (${response.statusText}): ${JSON.stringify(response.headers, null, 4)}`)
+					reject(response);
+					return;
+				}
+				accept(response.data);
 				}).catch((error) => {
 					console.log(`Got error: ${error}`)
 					reject(error);
-				});				
+				});
 		});
 	}
 }
