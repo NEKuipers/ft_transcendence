@@ -1,23 +1,32 @@
 import { Injectable } from '@nestjs/common';
-import { Avatar } from './avatars.interface';
+import { AvatarReponse } from './avatars.interface';
+import axios from 'axios'
 
 @Injectable()
 export class AvatarsService {
-	avatars: Avatar[] = [];
 
-	returnDefault(): string {
-		return `http://localhost:3030/avatars/assets/default.png`
-	}
-
-	setAvatar(file: Express.Multer.File) {
-		this.avatars.push({id: this.avatars.length + 1, file: file});
-	}
-
-	findAll(): Avatar[] {
-		return this.avatars;
-	}
-
-	findOne(id: number): Avatar {
-		return this.avatars.find(avatar => avatar.id == id);
+	async findOne(id: number): Promise<AvatarReponse|null> {
+		try {
+			const response = await axios.post(
+				`http://localhost:${process.env.PGREST_PORT}/rpc/fnc_get_avatar`,
+				{ id: id},
+				{
+					responseType: 'arraybuffer',
+					headers: {
+						'Content-Type': 'application/json',
+						'Accept': 'application/octet-stream',
+					},
+				},
+			);
+			return {data: response.data, headers: response.headers};
+		} catch (error) {
+			if (axios.isAxiosError(error)) {
+				console.log('error message: ', error.message);
+				return null
+			} else {
+				console.log('unexpected error: ', error);
+				return null
+			}
+		}
 	}
 }
