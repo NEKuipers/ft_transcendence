@@ -1,4 +1,4 @@
-import { Injectable, CanActivate, ExecutionContext, HttpException } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, HttpException, HttpStatus } from '@nestjs/common';
 import { Observable } from 'rxjs';
 
 import { TwoFactorAuthService } from './two_factor_auth.service';
@@ -19,7 +19,7 @@ export class TFAGuard extends AuthenticatedGuard {
 
 		// Sanity check
 		if (userId === undefined) {
-			throw new HttpException("Cannot use TFA guard while not using OAuth", 500);
+			throw new HttpException("Cannot use TFA guard while not using OAuth", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 		let needs_tfa = await this.twoFactorAuthService.is_tfa_setup(userId, request.session);

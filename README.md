@@ -29,13 +29,13 @@ The `docker-compose.yaml` file will require some environment variables. Make sur
 a file located next to the docker compose file with the name `.env`. Then add the below variables
 with corresponding values to it. For the ports I've already added the defaults.
 ```bash
-POSTGRES_USER=
-POSTGRES_PASSWORD=
-POSTGRES_DB=
+POSTGRES_USER=pgadmin
+POSTGRES_PASSWORD=password
+POSTGRES_DB=transcendence
 POSTGRES_PORT=5432
 
-PGADMIN_DEFAULT_EMAIL=
-PGADMIN_DEFAULT_PASSWORD=
+PGADMIN_DEFAULT_EMAIL=email@email.nl
+PGADMIN_DEFAULT_PASSWORD=password
 PGADMIN_PORT=5050
 
 PGREST_PORT=3000
@@ -45,6 +45,11 @@ SWAGGER_UI_PORT=8081
 NESTJS_PORT=3030
 
 JSON_WEB_TOKEN_SECRET=my_secret_key
+SESSION_SECRET=session_secret
+
+CLIENT_ID=my_id
+CLIENT_SECRET=client_secret
+CALLBACK_URL=http://localhost:3030/login/callback
 ```
 
 #### pre-commit

@@ -6,6 +6,7 @@ export class CreateUserDto {
 	oauth_refresh_token: string;
 	oauth_token_expiration_time: string;
 	gamesPlayed?: number;
+	intra_id: number;
 	gamesWon?: number;
 	gamesLost?: number;
 	is_logged_in: boolean;
