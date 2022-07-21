@@ -9,14 +9,14 @@
 		<div v-else>
 			<h1 class="username"><a v-bind:href="'http://localhost:8080/profile/' + user?.id">{{user?.username}}</a></h1>
 		</div>
-		<div v-if="this?.blocked==false">
+		<div v-if="this?.hasBlockedYou==false">
 			<div v-if="user?.is_logged_in === true">
 				<h5 class="online">Online</h5>
 			</div>
 			<h5 v-else>Offline</h5>
 		</div>
 	</section>
-	<section v-if="this?.blocked==false" class="game-stats">
+	<section v-if="this?.hasBlockedYou==false" class="game-stats">
 		<h4>Games played: {{profile.games_won + profile.games_lost}}</h4>
 		<h4>Games won: {{profile?.games_won}}</h4>
 		<h4>Games lost: {{profile?.games_lost}}</h4>
@@ -36,13 +36,18 @@
 			</router-link>
 		</div>
 	</div>
-	<div v-if="user?.id != loginStatusStore.loggedInStatus?.userID && this?.blocked==false">
-		<SmallButton class="user-btn" text="Message" @click="directMessage"></SmallButton>
-		<SmallButton class="user-btn" text="Invite to game" @click="inviteToGame"></SmallButton>
-		<br>
-		<br>
-		<SmallButton class="user-btn" text="Add Friend" @click="addFriend"></SmallButton>
-		<SmallButton class="user-btn" text="Block User" @click="blockUser"></SmallButton>
+	<div v-if="user?.id != loginStatusStore.loggedInStatus?.userID && this?.hasBlockedYou==false">
+		<div v-if="this.youHaveBlocked==true">
+			<SmallButton class="user-btn" text="Unblock User" @click="unblockUser"></SmallButton>
+		</div>
+		<div v-else>
+			<SmallButton class="user-btn" text="Message" @click="directMessage"></SmallButton>
+			<SmallButton class="user-btn" text="Invite to game" @click="inviteToGame"></SmallButton>
+			<br>
+			<br>
+			<SmallButton class="user-btn" text="Add Friend" @click="addFriend"></SmallButton>
+			<SmallButton class="user-btn" text="Block User" @click="blockUser"></SmallButton>
+		</div>
 	</div>
 	</div>
 </template>
@@ -62,7 +67,8 @@ export default defineComponent({
 		return {
 			loginStatusStore: loginStatusStore(),
 			showDialogue: false,
-			blocked: false,
+			hasBlockedYou: false,
+			youHaveBlocked: false,
 			profile: Object,
 		}
 	},
@@ -71,25 +77,40 @@ export default defineComponent({
 		DialogueBox
 	},
 	mounted() {
-		let blocked_users;
-		fetch(`/api/blocked_users/blocked_by/` + this.loginStatusStore.loggedInStatus?.userID)
-		.then(res => res.json())
-        .then(data => {
-			blocked_users = data; 
-			for (let i = 0; i < blocked_users.length; i++) {
-				if (blocked_users[i].blocked_by_id == this.user?.id)
-					this.blocked = true;
-			}
-		})
-        .catch(err => console.log('What is: ' + err));
-		
-		fetch(`/api/profile/` + this.loginStatusStore.loggedInStatus?.userID)
-		.then(res => res.json())
-        .then(data => {this.profile = data[0]; console.log(data);
-		})
-        .catch(err => console.log('What is: ' + err));
+		this.getInitialData();
 	},
 	methods: {
+
+		getInitialData() {
+			let haveBlockedYou;
+			fetch(`/api/blocked_users/blocked_by_them/` + this.loginStatusStore.loggedInStatus?.userID)
+			.then(res => res.json())
+			.then(data => {
+				haveBlockedYou = data; 
+				for (let i = 0; i < haveBlockedYou.length; i++) {
+					if (haveBlockedYou[i].blocked_by_id == this.user?.id)
+						this.hasBlockedYou = true;
+				}
+			})
+			.catch(err => console.log('What is: ' + err));
+
+			let usersBlockedByYou;
+			fetch(`/api/blocked_users/blocked_by_you/` + this.loginStatusStore.loggedInStatus?.userID)
+			.then(res => res.json())
+			.then(data => {
+				usersBlockedByYou = data; 
+				for (let i = 0; i < usersBlockedByYou.length; i++) {
+					if (usersBlockedByYou[i].blocked_user_id == this.user?.id)
+						this.youHaveBlocked = true;
+				}
+			})
+			.catch(err => console.log('What is: ' + err));
+			
+			fetch(`/api/profile/` + this.loginStatusStore.loggedInStatus?.userID)
+			.then(res => res.json())
+			.then(data => this.profile = data[0])
+			.catch(err => console.log('What is: ' + err));
+		},
 		changeAvatar() {
 			console.log('change avatar');
 		},
@@ -133,7 +154,7 @@ export default defineComponent({
 			const requestOptions = {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({	from_user_id: 1,  //TODO get correct id after login
+				body: JSON.stringify({	from_user_id: this.loginStatusStore.loggedInStatus?.userID,
 										to_user_id: this.user?.id})};
 			fetch('/api/friends', requestOptions)
 				.then(res => console.log(res.status))
@@ -143,13 +164,27 @@ export default defineComponent({
 			const requestOptions = {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({	blocked_by_id: 1,//TODO get correct id after login
+				body: JSON.stringify({	blocked_by_id: this.loginStatusStore.loggedInStatus?.userID,
 										blocked_user_id: this.user?.id}) 
 			};
 			fetch('/api/blocked_users', requestOptions)
 				.then(response => console.log(response.status))
 				.catch(err => console.log(err));
+			this.getInitialData();
 		},
+		async unblockUser() {
+			const requestOptions = {
+				method: "DELETE",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({	blocked_by_id: this.loginStatusStore.loggedInStatus?.userID,
+										blocked_user_id: this.user?.id}) 
+			};
+			fetch('/api/blocked_users', requestOptions)
+				.then(response => console.log(response.status))
+				.catch(err => console.log(err));
+			this.getInitialData();
+			
+		}
 	},
 });
 </script>
