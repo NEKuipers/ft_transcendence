@@ -12,7 +12,7 @@ export class AvatarsController {
 		const { data, headers } = await this.avatarsService.findOne(id)
 		res.writeHead(200, {
 			'Content-Type': headers['content-type'],
-			'Content-Disposition': 'inline; filename="filename.jpg"',
+			'Content-Disposition': headers['content-disposition'],
 			'Content-Length': data.length
 		})
 		return res.end(Buffer.from(data, 'binary'))

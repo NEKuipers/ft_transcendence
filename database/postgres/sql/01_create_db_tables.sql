@@ -99,6 +99,7 @@ CREATE TABLE public.users
     username                        VARCHAR(256),
     status                          USER_STATUS,
     avatar_id                       BIGINT REFERENCES public.avatars(id) DEFAULT 1,
+    intra_id                        BIGINT DEFAULT 0,
     oauth_refresh_token             VARCHAR(1024),
     oauth_token_expiration_time     TIMESTAMP,
     is_logged_in                    BOOL,
