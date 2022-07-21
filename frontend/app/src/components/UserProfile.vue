@@ -9,16 +9,21 @@
 		<div v-else>
 			<h1 class="username"><a v-bind:href="'http://localhost:8080/profile/' + user?.id">{{user?.username}}</a></h1>
 		</div>
-		<div v-if="user?.is_logged_in === true">
-			<h5 class="online">Online</h5>
+		<div v-if="this?.blocked==false">
+			<div v-if="user?.is_logged_in === true">
+				<h5 class="online">Online</h5>
+			</div>
+			<h5 v-else>Offline</h5>
 		</div>
-		<h5 v-else>Offline</h5>
 	</section>
-	<section class="game-stats">
+	<section v-if="this?.blocked==false" class="game-stats">
 		<h4>Games played: {{user?.gamesPlayed}}</h4>
 		<h4>Games won: {{user?.gamesWon}}</h4>
 		<h4>Games lost: {{user?.gamesLost}}</h4>
 		<h4>Overall ranking:  #{{user?.ladder_position}}</h4>
+	</section>
+	<section v-else>
+		<h5 id="blocked-you">User has blocked you</h5>
 	</section>
 	<div v-if="user?.id == loginStatusStore.loggedInStatus?.userID">
 		<SmallButton class="user-btn" text="Change avatar" @click="changeAvatar"/>
@@ -31,11 +36,11 @@
 			</router-link>
 		</div>
 	</div>
-	<div v-if="user?.id != loginStatusStore.loggedInStatus?.userID">
+	<div v-if="user?.id != loginStatusStore.loggedInStatus?.userID && this?.blocked==false">
 		<SmallButton class="user-btn" text="Message" @click="directMessage"></SmallButton>
 		<SmallButton class="user-btn" text="Invite to game" @click="inviteToGame"></SmallButton>
-	<br>
-	<br>
+		<br>
+		<br>
 		<SmallButton class="user-btn" text="Add Friend" @click="addFriend"></SmallButton>
 		<SmallButton class="user-btn" text="Block User" @click="blockUser"></SmallButton>
 	</div>
@@ -56,14 +61,28 @@ export default defineComponent({
 	data () {
 		return {
 			loginStatusStore: loginStatusStore(),
-			showDialogue: false
+			showDialogue: false,
+			blocked: false,
 		}
 	},
 	components: {
 		SmallButton,
 		DialogueBox
 	},
-	// setup () {},
+	mounted() {
+		let blocked_users;
+		fetch(`/api/blocked_users/blocked_by/` + this.loginStatusStore.loggedInStatus?.userID)
+		.then(res => res.json())
+        .then(data => {
+			blocked_users = data; 
+			for (let i = 0; i < blocked_users.length; i++) {
+				if (blocked_users[i].blocked_by_id == this.user?.id)
+					this.blocked = true;
+			}
+		})
+        .catch(err => console.log('What is: ' + err));
+		
+	},
 	methods: {
 		changeAvatar() {
 			console.log('change avatar');
@@ -137,6 +156,10 @@ export default defineComponent({
 
 a:link{
 	text-decoration: none;
+}
+
+#blocked-you {
+	font-size: 24px;
 }
 
 .username {
