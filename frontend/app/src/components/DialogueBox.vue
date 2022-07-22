@@ -47,7 +47,7 @@ export default defineComponent({
 
 .popup {
     transform: translate(-50%, -50%);
-    width: 50%;
+    width: 30%;
     border: 3px solid #f1f1f1;
     z-index: 9;
     background-color: rgb(8, 8, 97);
@@ -55,6 +55,7 @@ export default defineComponent({
     top:50%;
     left:50%;
     color: white;
+	height: 200px;
 
 }
 

@@ -125,7 +125,7 @@ export default defineComponent({
 	data () {
 	return {
 			selectedFile: null,
-			user: null as null | any,
+			user: null,
 		}
 	},
 	async mounted() {

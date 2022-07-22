@@ -76,9 +76,7 @@ export default defineComponent({
 		SmallButton,
 		DialogueBox
 	},
-	mounted() {
-		this.getInitialData();
-	},
+
 	watch: {
         profile: {
             handler(newValue) {
@@ -88,7 +86,9 @@ export default defineComponent({
 					.then(data => this.profile = data[0])
 					.catch(err => console.log(err));
 			},
-			immediate: true
+			immediate: true,
+			deep: true
+
 		},
 		hasBlockedYou : {
             handler(newValue) {
@@ -105,7 +105,8 @@ export default defineComponent({
 				})
 				.catch(err => console.log('What is: ' + err));
 				},
-			immediate: true
+			immediate: true,
+			deep: true
 		},
 		youHaveBlocked: {
             handler(newValue) {
@@ -122,40 +123,11 @@ export default defineComponent({
 				})
 				.catch(err => console.log('What is: ' + err));
 				},
-			immediate: true
+			immediate: true,
+			deep: true
 		},
 	},
-		methods: {
-		getInitialData() {
-			let haveBlockedYou;
-			fetch(`/api/blocked_users/blocked_by_them/` + this.loginStatusStore.loggedInStatus?.userID)
-			.then(res => res.json())
-			.then(data => {
-				haveBlockedYou = data; 
-				for (let i = 0; i < haveBlockedYou.length; i++) {
-					if (haveBlockedYou[i].blocked_by_id == this.user?.id)
-						this.hasBlockedYou = true;
-				}
-			})
-			.catch(err => console.log('What is: ' + err));
-
-			let usersBlockedByYou;
-			fetch(`/api/blocked_users/blocked_by_you/` + this.loginStatusStore.loggedInStatus?.userID)
-			.then(res => res.json())
-			.then(data => {
-				usersBlockedByYou = data; 
-				for (let i = 0; i < usersBlockedByYou.length; i++) {
-					if (usersBlockedByYou[i].blocked_user_id == this.user?.id)
-						this.youHaveBlocked = true;
-				}
-			})
-			.catch(err => console.log('What is: ' + err));
-			
-			fetch(`/api/profile/` + this.loginStatusStore.loggedInStatus?.userID)
-			.then(res => res.json())
-			.then(data => this.profile = data[0])
-			.catch(err => console.log('What is: ' + err));
-		},
+	methods: {
 		changeAvatar() {
 			console.log('change avatar');
 		},
@@ -215,7 +187,6 @@ export default defineComponent({
 			fetch('/api/blocked_users', requestOptions)
 				.then(response => console.log(response.status))
 				.catch(err => console.log(err));
-			this.getInitialData();
 		},
 		async unblockUser() {
 			const requestOptions = {
@@ -227,7 +198,6 @@ export default defineComponent({
 			fetch('/api/blocked_users', requestOptions)
 				.then(response => console.log(response.status))
 				.catch(err => console.log(err));
-			this.getInitialData();
 			
 		}
 	},

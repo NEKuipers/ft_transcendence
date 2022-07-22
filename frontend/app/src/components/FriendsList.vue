@@ -5,7 +5,6 @@
 			<h3>Friend list failed to load</h3>
 		</div>
 		<div v-else-if="friends.length">
-		<!-- Need to figure out how to filter only friends of logged in user! -->
 			<div v-for="friend in friends" :key="friend?.id">
 				<section class="listed-friend">
 					<div v-if="own === true">
@@ -41,6 +40,12 @@ export default defineComponent({
 			type: Boolean
 		},
 	},
+	mounted() {
+		fetch('/api/friends/' + this.user)
+			.then(res => res.json())
+			.then(data => this.friends = data)
+			.catch(err => console.log(err));
+	},
 	data () {
 		return {
 			friends: null,
@@ -48,16 +53,16 @@ export default defineComponent({
 		}
 	},
 	watch: {
-		user: {
+		friends: {
 			handler(newValue) {
 				if (!newValue) { return; }
 				fetch('/api/friends/' + this.user)
 					.then(res => res.json())
 					.then(data => this.friends = data)
-					.catch(err => {this.friends = null; console.log(err);
-					});
+					.catch(err => console.log(err));
 			},
-			immediate: true
+			immediate: true,
+			deep: true
 		}
 	},
 	components: {
@@ -74,11 +79,6 @@ export default defineComponent({
 			fetch('/api/friends', requestOptions)
 				.then(response => console.log(response.status))
 				.catch(err => console.log(err));
-			fetch('/api/friends/' + this.user)
-				.then(res => res.json())
-				.then(data => this.friends = data)
-				.catch(err => {this.friends = null; console.log(err);
-				});
 		},
 	}
 })
