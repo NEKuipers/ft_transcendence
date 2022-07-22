@@ -26,16 +26,14 @@ export default defineComponent({
 	components: {
 		QrcodeVue
 	},
-	data: function() {
+	data() {
 		return {
 			value: undefined as string | undefined,
 			size: 300,
 			code: ""
 		};
 	},
-	mounted: function() {
-		fetch(`/api/two-factor-auth/logout`);	// Logout once this screen opens
-
+	async mounted() {
 		fetch("/api/two-factor-auth/keyuri")
 			.then(res => {
 				if (res.ok) {
@@ -51,22 +49,17 @@ export default defineComponent({
 	},
 	methods: {
 		login() {
-			let code = this.code;
-			let login = loginStatusStore();
-			if (!login.loggedInStatus) {
-				return;
-			}
-			
-			//console.log(`using code: ${code}`);
-
-			fetch(`/api/two-factor-auth/login/${code}`)
+			fetch(`/api/two-factor-auth/login/${this.code}`)
 				.then(res => {
 					console.log("res: ", res)
 					if (res.ok) {
 						console.log("Login success!")
+
+						let login = loginStatusStore();
 						if (login.loggedInStatus) {
 							login.loggedInStatus.TFAEnabled = true;
 						}
+						
 						this.$router.push('/');
 					} else {
 						console.log("Login failure!")

@@ -53,8 +53,6 @@ export default defineComponent({
 	data () {
 		return {
 			blockedUsers: null,
-			loginStatusStore: loginStatusStore(),
-
 		}
 	},
   async mounted() {

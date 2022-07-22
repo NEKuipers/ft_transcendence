@@ -123,7 +123,7 @@ export default defineComponent({
 	// 	}
 	// },
 	data () {
-	return {
+		return {
 			selectedFile: null,
 			user: null as null | any,
 		}

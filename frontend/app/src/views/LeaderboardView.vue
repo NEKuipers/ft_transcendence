@@ -1,8 +1,8 @@
 <template>
-	<div v-if="users">
-		<ul v-for="user, ranking in users" :key="user.id">
+	<div v-if="profiles">
+		<ul v-for="profile, ranking in profiles" :key="profile.user_id">
 			<section class="leaderboardList">
-				<ListedUser class="leaderboardUser" :user="user" :ranking="ranking"></ListedUser>
+				<ListedUser class="leaderboardUser" :profile="profile" :ranking="ranking+1"></ListedUser>
 			</section>
 		</ul>
 	</div>
@@ -29,6 +29,8 @@
 import { defineComponent } from 'vue';
 import  ListedUser from '../components/ListedUser.vue';
 import { User } from '../types/UserType'
+import { Profile } from '../types/ProfileType'
+
 
 export default defineComponent({
 	name: 'ProfileView',
@@ -38,12 +40,13 @@ export default defineComponent({
 		return {
 			selectedFile: null,
 			users: Object as () => User,
+			profiles: Object as () => Profile
 		}
 	},
 	mounted() {
-		fetch(`api/users/`)
+		fetch(`api/profile/`)
 		.then(res => res.json())
-		.then(data => this.users = data.sort((a:User ,b:User) => b.gamesWon - a.gamesWon))
+		.then(data => this.profiles = data.sort((a:Profile ,b:Profile) => b.games_won - a.games_won))
 		.catch(err => console.log(err));    
 	},
 	components: {

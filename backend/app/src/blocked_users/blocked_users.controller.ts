@@ -11,9 +11,15 @@ export class BlockedUsersController {
 		return this.blockedUsersService.findAllForUser(id);
 	}
 
-	@Get('/blocked_by/:id')
+	@Get('/blocked_by_them/:id')
 	findAllWhoBlockedUser(@Param('id') id: number) : Promise<BlockedUser[]> {
 		return this.blockedUsersService.findAllWhoBlockedUser(id);
+	}
+
+
+	@Get('/blocked_by_you/:id')
+	findAllUsersYouBlocked(@Param('id') id: number) : Promise<BlockedUser[]> {
+		return this.blockedUsersService.findAllUsersYouBlocked(id);
 	}
 
 	@Post()

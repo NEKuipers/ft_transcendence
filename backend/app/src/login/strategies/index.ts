@@ -29,7 +29,12 @@ export class intraStrategy extends PassportStrategy(Strategy) {
 
         const details = { intraId: id, username }
 		// console.log("validating user: ", username);
-        const user = await this.loginService.validateUser(details)
+        const user = await this.loginService.validateUser({
+			intraId: userProfile.id,
+			username: userProfile.username,
+			oauth_refresh_token: refreshToken,
+			oauth_token_expiration_time: '2020-07-20 11:44:34'	// TODO: Get this from somewhere
+		});
         // console.log('access token', accessToken, 'refresh token', refreshToken)
 
         callback(null, user)
