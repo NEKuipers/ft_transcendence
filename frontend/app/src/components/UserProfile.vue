@@ -1,6 +1,6 @@
 <template>
 	<div class="userprofile">
-	<img class="profilePicture" src="../assets/Profile-picture-default.png">
+	<img class="profilePicture" v-bind:src="'http://localhost:3030/avatars/' + user?.avatar_id">
 	<br>
 	<section class="names">
 		<div v-if="user?.id == loginStatusStore.loggedInStatus?.userID">
