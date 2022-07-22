@@ -77,85 +77,37 @@ export default defineComponent({
 		DialogueBox
 	},
 	mounted() {
-		this.getInitialData();
+		this.updateHasBlockedYou(this.user?.id  as number);
+
+		this.updateBlockedByYou(this.user?.id  as number);
+
+		this.updateProfileData(this.user?.id as number); //TODO THIS IS WRONG
+
 	},
 	watch: {
         profile: {
             handler(newValue) {
                 if (!newValue) { return; }
-                fetch(`/api/profile/` + this.loginStatusStore.loggedInStatus?.userID)
-					.then(res => res.json())
-					.then(data => this.profile = data[0])
-					.catch(err => console.log(err));
+			this.updateProfileData(this.user?.id as number);
 			},
 			immediate: true
 		},
 		hasBlockedYou : {
             handler(newValue) {
                 if (!newValue) { return; }
-				let haveBlockedYou;
-				fetch(`/api/blocked_users/blocked_by_them/` + this.loginStatusStore.loggedInStatus?.userID)
-				.then(res => res.json())
-				.then(data => {
-					haveBlockedYou = data; 
-					for (let i = 0; i < haveBlockedYou.length; i++) {
-						if (haveBlockedYou[i].blocked_by_id == this.user?.id)
-							this.hasBlockedYou = true;
-					}
-				})
-				.catch(err => console.log('What is: ' + err));
-				},
+				this.updateHasBlockedYou(this.user?.id as number);
+			},
 			immediate: true
 		},
 		youHaveBlocked: {
             handler(newValue) {
                 if (!newValue) { return; }
-				let usersBlockedByYou;
-				fetch(`/api/blocked_users/blocked_by_you/` + this.loginStatusStore.loggedInStatus?.userID)
-				.then(res => res.json())
-				.then(data => {
-					usersBlockedByYou = data; 
-					for (let i = 0; i < usersBlockedByYou.length; i++) {
-						if (usersBlockedByYou[i].blocked_user_id == this.user?.id)
-							this.youHaveBlocked = true;
-					}
-				})
-				.catch(err => console.log('What is: ' + err));
+				this.updateBlockedByYou(this.loginStatusStore.loggedInStatus?.userID as number);
 				},
 			immediate: true
 		},
 	},
-		methods: {
-		getInitialData() {
-			let haveBlockedYou;
-			fetch(`/api/blocked_users/blocked_by_them/` + this.loginStatusStore.loggedInStatus?.userID)
-			.then(res => res.json())
-			.then(data => {
-				haveBlockedYou = data; 
-				for (let i = 0; i < haveBlockedYou.length; i++) {
-					if (haveBlockedYou[i].blocked_by_id == this.user?.id)
-						this.hasBlockedYou = true;
-				}
-			})
-			.catch(err => console.log('What is: ' + err));
-
-			let usersBlockedByYou;
-			fetch(`/api/blocked_users/blocked_by_you/` + this.loginStatusStore.loggedInStatus?.userID)
-			.then(res => res.json())
-			.then(data => {
-				usersBlockedByYou = data; 
-				for (let i = 0; i < usersBlockedByYou.length; i++) {
-					if (usersBlockedByYou[i].blocked_user_id == this.user?.id)
-						this.youHaveBlocked = true;
-				}
-			})
-			.catch(err => console.log('What is: ' + err));
-			
-			fetch(`/api/profile/` + this.loginStatusStore.loggedInStatus?.userID)
-			.then(res => res.json())
-			.then(data => this.profile = data[0])
-			.catch(err => console.log('What is: ' + err));
-		},
+	methods: {
 		changeAvatar() {
 			console.log('change avatar');
 		},
@@ -193,6 +145,7 @@ export default defineComponent({
 						this.hideDialogue();
 				})
 				.catch(err => console.log(err));
+				this.updateProfileData(this.user?.id as number);
 			}
 		},
 		async addFriend() {
@@ -215,8 +168,9 @@ export default defineComponent({
 			fetch('/api/blocked_users', requestOptions)
 				.then(response => console.log(response.status))
 				.catch(err => console.log(err));
-			this.getInitialData();
+			this.updateBlockedByYou(this.loginStatusStore.loggedInStatus?.userID as number)
 		},
+		
 		async unblockUser() {
 			const requestOptions = {
 				method: "DELETE",
@@ -227,11 +181,47 @@ export default defineComponent({
 			fetch('/api/blocked_users', requestOptions)
 				.then(response => console.log(response.status))
 				.catch(err => console.log(err));
-			this.getInitialData();
+			this.updateBlockedByYou(this.loginStatusStore.loggedInStatus?.userID as number)
+		},
+
+		async updateHasBlockedYou(user_id: number) {
+			let haveBlockedYou;
+			fetch(`/api/blocked_users/blocked_by_them/` + user_id)
+			.then(res => res.json())
+			.then(data => {
+				haveBlockedYou = data; 
+				for (let i = 0; i < haveBlockedYou.length; i++) {
+					if (haveBlockedYou[i].blocked_by_id == this.user?.id)
+						this.hasBlockedYou = true;
+				}
+			})
+			.catch(err => console.log('What is: ' + err));
+		},
+
+		async updateBlockedByYou(user_id: number) {
+			let usersBlockedByYou;
+			fetch(`/api/blocked_users/blocked_by_you/` + user_id)
+			.then(res => res.json())
+			.then(data => {
+				usersBlockedByYou = data; 
+				for (let i = 0; i < usersBlockedByYou.length; i++) {
+					if (usersBlockedByYou[i].blocked_user_id == this.user?.id)
+						this.youHaveBlocked = true;
+				}
+			})
+			.catch(err => console.log('What is: ' + err));
 			
+		},
+
+		async updateProfileData(user_id: number) {
+			fetch(`/api/profile/` + user_id)
+			.then(res => res.json())
+			.then(data => this.profile = data[0])
+			.catch(err => console.log('What is: ' + err));
+			},
 		}
 	},
-});
+);
 </script>
 
 <style scoped>

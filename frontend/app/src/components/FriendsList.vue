@@ -5,7 +5,6 @@
 			<h3>Friend list failed to load</h3>
 		</div>
 		<div v-else-if="friends.length">
-		<!-- Need to figure out how to filter only friends of logged in user! -->
 			<div v-for="friend in friends" :key="friend?.id">
 				<section class="listed-friend">
 					<div v-if="own === true">
@@ -48,13 +47,9 @@ export default defineComponent({
 	},
 	watch: {
 		user: {
-			handler(newValue) {
+			handler(newValue) {				
 				if (!newValue) { return; }
-				fetch('/api/friends/' + this.user)
-					.then(res => res.json())
-					.then(data => this.friends = data)
-					.catch(err => {this.friends = null; console.log(err);
-					});
+				this.updateFriendList(newValue)
 			},
 			immediate: true
 		}
@@ -67,18 +62,20 @@ export default defineComponent({
 			const requestOptions = {
 				method: "DELETE",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({from_user_id: this.user, //TODO get correct id after login
+				body: JSON.stringify({from_user_id: this.user,
 				to_user_id: to_user_id}) 
 			};
 			fetch('/api/friends', requestOptions)
 				.then(response => console.log(response.status))
 				.catch(err => console.log(err));
-			fetch('/api/friends/' + this.user)
+			this.updateFriendList(this.user as number);
+		},
+		async updateFriendList(user_id: number) {
+			fetch('/api/friends/' + user_id)
 				.then(res => res.json())
 				.then(data => this.friends = data)
-				.catch(err => {this.friends = null; console.log(err);
-				});
-		},
+				.catch(err => console.log(err));
+		}
 	}
 })
 
