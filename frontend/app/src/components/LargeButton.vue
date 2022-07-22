@@ -21,11 +21,10 @@ export default {
 .large-button{
 	background-color: rgb(16, 25, 70);
 	color:#fff;
-	padding: 10px 15px;
 	border:none;
-	margin:60px;
-	font-size: 42px;
+	font-size: 26px;
 	border-radius: 16px;
+	padding:5px;
 
 }
 

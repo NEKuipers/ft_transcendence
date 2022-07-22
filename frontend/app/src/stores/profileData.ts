@@ -53,6 +53,7 @@ export const loginStatusStore = defineStore ('login', {
 				.then((data) => {
 					if (data.ok) {
 						this.loggedInStatus = undefined
+						
 					} else {
 						console.error("Failed to logout!", data.statusText)
 					}

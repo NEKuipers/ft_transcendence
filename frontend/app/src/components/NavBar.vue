@@ -10,7 +10,11 @@
 					<router-link to="/leaderboard">Leaderboard</router-link>
 					<router-link to="/about">About</router-link>
 					<h1 class="title">ft_transcendence</h1>
-					
+					<div v-if="loginStatusStore.loggedInStatus">
+						<router-link to="/login">
+							<LargeButton @click="logout" class="logout" text="Log out"/>
+						</router-link>
+					</div>
 				</nav>
 			</div>
 		<router-view/>
@@ -19,9 +23,23 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import LargeButton from './LargeButton.vue'
+import { loginStatusStore } from '../stores/profileData'
 
 export default defineComponent({
-	name: 'NavBar',
+    name: "NavBar",
+    methods: {
+			logout() {
+			const store = loginStatusStore()
+			store.logOut()
+			}
+    },
+    components: { LargeButton },
+	data () {
+		return {
+			loginStatusStore: loginStatusStore(),
+		}
+	},
 });
 </script>
 
@@ -46,6 +64,11 @@ export default defineComponent({
 
 nav a.router-link-exact-active {
   color: #42b983;
+}
+
+.logout	{
+	margin-bottom: 40px;
+	float:right;
 }
 
 </style>
