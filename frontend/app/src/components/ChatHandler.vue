@@ -80,6 +80,11 @@ export default defineComponent({
 	},
 
 	methods: {
+		// TODO: Events for receiving a message, joining a room, leaving a room
+		// TODO: Methods for joining a room, leaving a room
+		// TODO: Methods for kicking / banning / muting other users
+		// TODO: Events for connecting / disconnecting
+
 		async create_room(name: string, type: string): Promise<number> {
 			return new Promise((resolve, reject) => {
 				if (this.socket) {
