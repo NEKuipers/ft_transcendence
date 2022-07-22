@@ -15,23 +15,7 @@ export class MatchesService {
 						reject(response);
 						return;
 					}
-
-					// Trim to only the data that was requested
-					let ret = []
-					for (let elem of response.data) {
-						ret.push(
-							{
-								"match_id": elem.match_id,
-								"p1_name": elem.player_one,
-								"p2_name": elem.player_two,
-								"game_mode": elem.game_mode,
-								"p1_points": elem.p1_points,
-								"p2_points": elem.p2_points,
-							}
-						)
-					}
-
-					accept(ret);
+					accept(response.data);
 				}).catch((error) => {
 					console.log(`Got error: ${error}`)
 					reject(error);
