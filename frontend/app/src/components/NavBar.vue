@@ -11,9 +11,7 @@
 					<router-link to="/about">About</router-link>
 					<h1 class="title">ft_transcendence</h1>
 					<div v-if="loginStatusStore.loggedInStatus">
-						<router-link to="/login">
-							<LargeButton @click="logout" class="logout" text="Log out"/>
-						</router-link>
+					<LargeButton @click="logout" class="logout" text="Log out"></LargeButton>
 					</div>
 				</nav>
 			</div>
@@ -29,10 +27,11 @@ import { loginStatusStore } from '../stores/profileData'
 export default defineComponent({
     name: "NavBar",
     methods: {
-			logout() {
+		async logout() {
 			const store = loginStatusStore()
-			store.logOut()
-			}
+			await store.logOut();
+			this.$router.push('/login');
+		}
     },
     components: { LargeButton },
 	data () {
@@ -60,6 +59,7 @@ export default defineComponent({
 	float:left;
 	font-size: 26px;
 	text-decoration: none;
+	display: inline-block;
 }
 
 nav a.router-link-exact-active {
@@ -67,8 +67,14 @@ nav a.router-link-exact-active {
 }
 
 .logout	{
-	margin-bottom: 40px;
-	float:right;
+	font-family: Avenir, Helvetica, Arial, sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	font-weight: bold;
+	float:top;
+	position: absolute;
+	top: 60px;
+	right: 30px;
 }
 
 </style>

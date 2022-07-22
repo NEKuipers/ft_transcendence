@@ -48,8 +48,8 @@ export const loginStatusStore = defineStore ('login', {
 					})
 			})
 		},
-		logOut(): void {
-			fetch("/api/login/logout")
+		async logOut(): Promise<void> {
+			return fetch("/api/login/logout")
 				.then((data) => {
 					if (data.ok) {
 						this.loggedInStatus = undefined
