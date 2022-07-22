@@ -51,7 +51,6 @@ export default defineComponent({
 		login() {
 			fetch(`/api/two-factor-auth/login/${this.code}`)
 				.then(res => {
-					console.log("res: ", res)
 					if (res.ok) {
 						console.log("Login success!")
 

@@ -52,7 +52,7 @@ export default defineComponent({
 
 					(options as ManagerOptions & SocketOptions).auth = { token: token };
 		
-					this.socket = io(this.uri as unknown as string, options);
+					this.socket = io(this.uri, options);
 		
 					this.socket.on("connect", () => {
 						this.isConnected = true;

@@ -1,5 +1,8 @@
 <template>
 	<div>
+		<ChatHandler ref="ChatHandler" uri=":4114" server_name="chat server"/>
+		<SmallButton class="send_message" text="Send a test message" @click="test"/>
+
 		<h1>Chat</h1>
 		<div class="row">
 		<div class="column" id="rooms">
@@ -16,6 +19,7 @@
 			TOOLS
 		</div>
 		</div>
+
 	</div>
 </template>
 
@@ -70,15 +74,41 @@
     - Participants
 
   */
-	export default {
+
+import { defineComponent } from '@vue/runtime-core';
+import SmallButton from '../components/SmallButton.vue'
+import { Socket } from 'socket.io-client';
+import ChatHandler from '../components/ChatHandler.vue';
+
+
+
+export default defineComponent({
 	components: {
+		ChatHandler,
+		SmallButton
 	},
+
 	data() {
 		return {
-		
+			chatHandler: undefined as unknown as typeof ChatHandler,
+		}
+	},
+
+	mounted() {
+		this.chatHandler = (this.$refs.ChatHandler as typeof ChatHandler);
+	},
+
+	methods: {
+		async test() {
+			let success = await this.chatHandler.send_message(1, "Hello, this is a test message!");
+			if (success) {
+				console.log("Message sent!");
+			} else {
+				console.log("Message failed to be sent!");
+			}
 		}
 	}
-	}
+})
 </script>
 
 <style scoped>
