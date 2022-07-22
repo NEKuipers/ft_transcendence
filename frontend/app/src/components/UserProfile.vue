@@ -30,7 +30,7 @@
 		<SmallButton class="user-btn" text="Change username" @click="changeUsername"/>
     <DialogueBox :show="showDialogue" @close-dialogue="hideDialogue" @new-name="saveUsername"/>
 		<br>
-		<div v-if="!user?.TFAEnabled">
+		<div v-if="loginStatusStore.loggedInStatus && !loginStatusStore.loggedInStatus.TFAEnabled">
 			<router-link to="/tfa">
 				<SmallButton class="user-btn" text="Setup two-factor authentication"/>
 			</router-link>

@@ -85,20 +85,17 @@ const router = createRouter({
 })
 
 router.beforeEach((to) => {
-  // const { getLoginStatus: loggedIn } = useLoginStatusStore()
-  const store = loginStatusStore()
+	const store = loginStatusStore()
 
-  const loggedIn = store.loggedInStatus
-  // console.log('Ma perché', store.$state.loggedInStatus)
-  // console.log('E', store.$state.diocane)
-  
-  if (to.name !== 'login' && !loggedIn) {
-    return('/login')
-  }
-  // if (to.name === 'login' && loggedIn.loggedInStatus) {
-  //   return('/')
-  // }
+	const loggedIn = store.loggedInStatus
+	// console.log("loggedIn: ", loggedIn)
 
+	if (to.name !== 'login' && !loggedIn) {
+		return('/login')
+	}
+	// if ((to.name === 'login' || to.name == 'tfa') && loggedIn) {
+	// 	return('/')
+	// }
 })
 
 

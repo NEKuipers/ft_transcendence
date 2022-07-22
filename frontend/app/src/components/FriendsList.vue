@@ -44,7 +44,6 @@ export default defineComponent({
 	data () {
 		return {
 			friends: null,
-			loginStatusStore: loginStatusStore()
 		}
 	},
 	watch: {

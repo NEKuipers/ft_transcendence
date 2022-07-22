@@ -53,19 +53,26 @@ export class LoginController {
 	@Get('/jwt')
 	@UseGuards(TFAGuard)
 	async jwt(@Req() req: any): Promise<string> {
-		let user = await this.usersService.findOne(req.user.id);
-		console.log("Got user: ", req.user)
-
 		return jwt.sign(
 			{
 				userid: req.user.id,
-				username: user.username,
+				username: req.user.username,
 			},
 			process.env.JSON_WEB_TOKEN_SECRET,
 			{
 				expiresIn: "10h",
 			}
 		)
+	}
+
+	@Get('/whoami')
+	@UseGuards(TFAGuard)
+	async whoami(@Req() req: any, @Session() session): Promise<Object> {
+		return {
+			userID: req.user.id,
+			userName: req.user.username,
+			TFAEnabled: await this.twoFactorAuthService.is_tfa_setup(req.user.id, session)
+		};
 	}
 
     @Get('status')

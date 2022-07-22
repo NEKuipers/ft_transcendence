@@ -12,18 +12,18 @@ import { defineComponent } from 'vue';
 import { loginStatusStore } from '../stores/profileData'
 
 export default defineComponent({
-  name: 'HomeView',
-  components: {
-  },
-  methods: {
-    OAuthLogin(e: Event) {
-      window.location.href = '/api/login'
-    //   fetch('/api/login')
-    //   .then(res => res.json())
-    //   .then(data => console.log(data))
-    //   const store = loginStatusStore()
-
-    }
-  },
+	name: 'LoginView',
+	async mounted() {
+		// Redirect to home screen if already logged in
+		let status = loginStatusStore();
+		if (await status.logIn()) {
+			this.$router.push('/');
+		}
+	},
+	methods: {
+		OAuthLogin(e: Event) {
+			window.location.href = '/api/login'
+		}
+	},
 });
 </script>

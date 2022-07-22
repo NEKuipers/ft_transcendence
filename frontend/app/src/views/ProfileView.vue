@@ -97,7 +97,7 @@ export default defineComponent({
   },
   async mounted() {
     await this.loadUserData(this.$route.params.id[0]);
-    this.login = loginStatusStore();
+	console.log(this.login)
   },
   components: {
     UserProfile,

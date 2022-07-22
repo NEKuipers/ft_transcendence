@@ -36,7 +36,6 @@ export default defineComponent({
 	data () {
 		return {
 			friendRequests: null,
-			loginStatusStore: loginStatusStore()
 		}
 	},
 	watch: {
