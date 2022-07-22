@@ -40,12 +40,6 @@ export default defineComponent({
 			type: Boolean
 		},
 	},
-	mounted() {
-		fetch('/api/friends/' + this.user)
-			.then(res => res.json())
-			.then(data => this.friends = data)
-			.catch(err => console.log(err));
-	},
 	data () {
 		return {
 			friends: null,
@@ -53,16 +47,12 @@ export default defineComponent({
 		}
 	},
 	watch: {
-		friends: {
-			handler(newValue) {
+		user: {
+			handler(newValue) {				
 				if (!newValue) { return; }
-				fetch('/api/friends/' + this.user)
-					.then(res => res.json())
-					.then(data => this.friends = data)
-					.catch(err => console.log(err));
+				this.updateFriendList(newValue)
 			},
-			immediate: true,
-			deep: true
+			immediate: true
 		}
 	},
 	components: {
@@ -73,13 +63,20 @@ export default defineComponent({
 			const requestOptions = {
 				method: "DELETE",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({from_user_id: this.user, //TODO get correct id after login
+				body: JSON.stringify({from_user_id: this.user,
 				to_user_id: to_user_id}) 
 			};
 			fetch('/api/friends', requestOptions)
 				.then(response => console.log(response.status))
 				.catch(err => console.log(err));
+			this.updateFriendList(this.user as number);
 		},
+		async updateFriendList(user_id: number) {
+			fetch('/api/friends/' + user_id)
+				.then(res => res.json())
+				.then(data => this.friends = data)
+				.catch(err => console.log(err));
+		}
 	}
 })
 

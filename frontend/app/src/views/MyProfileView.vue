@@ -15,7 +15,7 @@
       <FriendRequests  :user="user?.id" class="column"/>
       <FriendsList :own="true" :user="user?.id" class="column"/>
       <div class="column">
-        <BlockedUsers />
+        <BlockedUsers :user="user?.id" />
       </div>
     </div>
     <div class="matchHistory">

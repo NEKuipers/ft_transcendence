@@ -31,41 +31,41 @@ export default defineComponent({
 			type: Number
 		},
 	},
+	data () {
+		return {
+			blockedUsers: null,
+			loginStatusStore: loginStatusStore(),
+		}
+	},
+	watch: {
+		user: {
+			handler(newValue) {				
+				if (!newValue) { return; }
+				this.updateBlockedUsers(newValue);
+			},
+			immediate: true
+		}
+	},
 	methods: {
-		async loadUserData(id: number) {
-			fetch('/api/blocked_users/' + id)
-			.then(res => res.json())
-			.then(data => this.blockedUsers = data)
-			.catch(err => console.log(err));
-		},
 		async unblockUser(bid: number) {
 			const requestOptions = {
 				method: "DELETE",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({	blocked_by_id: this?.user,//TODO get correct id after login
+				body: JSON.stringify({	blocked_by_id: this?.user,
 										blocked_user_id: bid}) 
 			};
 			fetch('/api/blocked_users', requestOptions)
 				.then(response => console.log(response.status))
 				.catch(err => console.log(err));
+			this.updateBlockedUsers(this.user as number);
+		},
+		async updateBlockedUsers(user_id: number) {
+			fetch('/api/blocked_users/' + user_id)
+			.then(res => res.json())
+			.then(data => this.blockedUsers = data)
+			.catch(err => console.log(err));
 		},
 	},
-	data () {
-		return {
-			blockedUsers: null,
-			loginStatusStore: loginStatusStore(),
-
-		}
-	},
-  async mounted() {
-	let login = loginStatusStore();
-    if (login.loggedInStatus) {
-      await this.loadUserData(login.loggedInStatus.userID); //TODO this still works kind of weird, make sure page reloads
-    } else {
-      // We are not logged in, The router SHOULD prevent us from going here, yet we still got here
-      console.error("Loading MyProfileView while not logged in!")
-    }
-  },
 	components: {
 		SmallButton,
 	}

@@ -43,11 +43,7 @@ export default defineComponent({
 		user: {
 			handler(newValue) {
 				if (!newValue) { return; }
-				fetch('/api/friends/requests/' + this.user)
-					.then(res => res.json())
-					.then(data => this.friendRequests = data)
-					.catch(err => {this.friendRequests = null; console.log(err);
-					});
+				this.updateFriendRequests(newValue);
 			},
 			immediate: true
 		}
@@ -67,6 +63,7 @@ export default defineComponent({
 			fetch('/api/friends/accept', requestOptions)
 				.then(response => console.log(response.status))
 				.catch(err => console.log(err));
+			this.updateFriendRequests(this.user as number);
 		},
 		async declineRequest(from_user_id: number) {
 			const requestOptions = {
@@ -79,7 +76,14 @@ export default defineComponent({
 			fetch('/api/friends/decline', requestOptions)
 				.then(response => console.log(response.status))
 				.catch(err => console.log(err));
+			this.updateFriendRequests(this.user as number);
 		},
+		updateFriendRequests(user_id: number) {
+			fetch('/api/friends/requests/' + user_id)
+				.then(res => res.json())
+				.then(data => this.friendRequests = data)
+				.catch(err =>  console.log(err));
+		}
 	},
 })
 
