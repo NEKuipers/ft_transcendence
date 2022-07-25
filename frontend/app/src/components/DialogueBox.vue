@@ -46,6 +46,14 @@ export default defineComponent({
         },
         onFileSelected(event: any) {
             this.selectedFile = event.target.files[0]
+        },
+        onUpload() {
+            if (!this.selectedFile)
+                alert('Ye have tae load a file, son')
+            else {
+                console.log('Good job for now', this.selectedFile)
+                // Here we post the file to the backend (Check with Jesse) TODO
+            }
         }
     },
     emits: ['close-dialogue', 'new-name']
