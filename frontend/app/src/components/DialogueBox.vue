@@ -10,7 +10,9 @@
             </form>
         </div>
         <div v-else-if="type === 'avatar'">
-            <p>sup blud</p>
+            <h2>Upload a new Profile Picture</h2>
+            <input type="file" @change="onFileSelected">
+            <button @click="onUpload">Upload</button>
             <button @click="onClick" type="button" class="close"> X </button>
         </div>
     </div>
@@ -25,7 +27,8 @@ export default defineComponent({
     props: ['show', 'type'],
     data() {
         return {
-            text: ''
+            text: '',
+            selectedFile: null
         }
     },
     methods: {
@@ -40,8 +43,10 @@ export default defineComponent({
         },
         onClick() {
             this.$emit('close-dialogue')
+        },
+        onFileSelected(event: any) {
+            this.selectedFile = event.target.files[0]
         }
-
     },
     emits: ['close-dialogue', 'new-name']
 })
@@ -67,6 +72,7 @@ export default defineComponent({
 
 .close {
     color: red;
-    /* margin-left: 50px; */
+    margin-left: 270px;
+    margin-top: 5px;
 }
 </style>
