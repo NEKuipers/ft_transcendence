@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { HttpModule } from '@nestjs/axios';
 import { LoginController } from './login.controller';
 import { LoginService } from './login.service';
 import { intraStrategy } from './strategies';
@@ -10,7 +9,7 @@ import { SessionSerialiser } from './utils/Serialiser';
 import { TwoFactorAuthService } from 'src/two_factor_auth/two_factor_auth.service';
 
 @Module({
-  imports: [HttpModule, UsersModule],
+  imports: [UsersModule],
   controllers: [LoginController],
   providers: [LoginService, SessionSerialiser, intraStrategy, UsersService, ConfigService, TwoFactorAuthService]
 })
