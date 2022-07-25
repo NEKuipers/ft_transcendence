@@ -1,12 +1,18 @@
 <template>
     <div v-show="show" class="popup">
-        <form @submit="onSubmit">
-        <h2> My brethren, what new username would you like? </h2>
-        <input type="text" v-model="text" name="text" placeholder="Saul Goodman" />
-        <br>
-        <input type="submit" value="Save Change" />
-        <button @click="onClick" type="button" class="close"> X </button>
-        </form>
+        <div v-if="type === 'namechange'">
+            <form @submit="onSubmit">
+            <h2> My brethren, what new username would you like? </h2>
+            <input type="text" v-model="text" name="text" placeholder="Saul Goodman" />
+            <br>
+            <input type="submit" value="Save Change" />
+            <button @click="onClick" type="button" class="close"> X </button>
+            </form>
+        </div>
+        <div v-else-if="type === 'avatar'">
+            <p>sup blud</p>
+            <button @click="onClick" type="button" class="close"> X </button>
+        </div>
     </div>
 </template>
 
@@ -16,7 +22,7 @@ import { defineComponent } from "@vue/runtime-core";
 
 export default defineComponent({
     name: 'DialogueBox',
-    props: ['show'],
+    props: ['show', 'type'],
     data() {
         return {
             text: ''

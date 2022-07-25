@@ -28,7 +28,7 @@
 	<div v-if="user?.id == loginStatusStore.loggedInStatus?.userID">
 		<SmallButton class="user-btn" text="Change avatar" @click="changeAvatar"/>
 		<SmallButton class="user-btn" text="Change username" @click="changeUsername"/>
-    <DialogueBox :show="showDialogue" @close-dialogue="hideDialogue" @new-name="saveUsername"/>
+    <DialogueBox :type="boxType" :show="showDialogue" @close-dialogue="hideDialogue" @new-name="saveUsername"/>
 		<br>
 		<div v-if="loginStatusStore.loggedInStatus && !loginStatusStore.loggedInStatus.TFAEnabled">
 			<router-link to="/tfa">
@@ -67,6 +67,7 @@ export default defineComponent({
 		return {
 			loginStatusStore: loginStatusStore(),
 			showDialogue: false,
+			boxType: "",
 			hasBlockedYou: false,
 			youHaveBlocked: false,
 			profile: Object,
@@ -109,9 +110,12 @@ export default defineComponent({
 	},
 	methods: {
 		changeAvatar() {
+			this.boxType = "avatar";
+			this.showDialogue = true;
 			console.log('change avatar');
 		},
 		async changeUsername() {
+			this.boxType = "namechange";
 			this.showDialogue = true;
 		},
 		directMessage() {
