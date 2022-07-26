@@ -28,7 +28,10 @@
 	<div v-if="user?.id == loginStatusStore.loggedInStatus?.userID">
 		<SmallButton class="user-btn" text="Change avatar" @click="changeAvatar"/>
 		<SmallButton class="user-btn" text="Change username" @click="changeUsername"/>
-    <DialogueBox :type="boxType" :show="showDialogue" @close-dialogue="hideDialogue" @new-name="saveUsername"/>
+		<DialogueBox :type="boxType" :show="showDialogue" 
+			@close-dialogue="hideDialogue" 
+			@new-name="saveUsername"
+			@new-avatar="saveAvatar"/>
 		<br>
 		<div v-if="loginStatusStore.loggedInStatus && !loginStatusStore.loggedInStatus.TFAEnabled">
 			<router-link to="/tfa">
@@ -125,7 +128,6 @@ export default defineComponent({
 			console.log('invite to game');
 		},
 		hideDialogue() {
-			// console.log('Should be triggered by x button')
 			this.showDialogue = false;
 		},
 		async saveUsername(newname: string) {
@@ -151,6 +153,24 @@ export default defineComponent({
 				.catch(err => console.log(err));
 				this.updateProfileData(this.user?.id as number);
 			}
+		},
+		async saveAvatar(uploadedImg: any) {
+			console.log('Uploaded file is:', uploadedImg)
+			console.log('Name', uploadedImg.name)
+
+			await fetch('/api/avatars', {
+				method: "POST",
+				body: JSON.stringify({
+					uploadedImg
+				})
+			})
+			.then(res => console.log('res'))
+
+
+			// Will need to patch the avatar_id of the user once it is successfully uploaded
+			const id = this.loginStatusStore.loggedInStatus?.userID
+
+			this.hideDialogue()
 		},
 		async addFriend() {
 			const requestOptions = {

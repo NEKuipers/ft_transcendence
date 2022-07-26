@@ -1,5 +1,6 @@
-import { Controller, Get, Param, Res, Header } from '@nestjs/common';
+import { Controller, Get, Param, Res, Header, Post, Body } from '@nestjs/common';
 import { AvatarsService } from './avatars.service';
+import { Avatar } from './avatars.interface'
 import { Response } from 'express';
 
 
@@ -17,4 +18,10 @@ export class AvatarsController {
 		})
 		return res.end(Buffer.from(data, 'binary'))
 	}
+
+	@Post()
+	async newAvatar(@Body() image: Avatar) {
+		console.log('Image details in backend', image)
+	}
+
 }

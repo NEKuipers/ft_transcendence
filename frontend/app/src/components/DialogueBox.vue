@@ -39,7 +39,6 @@ export default defineComponent({
             else {
                 this.$emit('new-name', this.text)
             }
-            
         },
         onClick() {
             this.$emit('close-dialogue')
@@ -51,12 +50,13 @@ export default defineComponent({
             if (!this.selectedFile)
                 alert('Ye have tae load a file, son')
             else {
-                console.log('Good job for now', this.selectedFile)
+                // console.log('Good job for now', this.selectedFile)
+                this.$emit('new-avatar', this.selectedFile)
                 // Here we post the file to the backend (Check with Jesse) TODO
             }
         }
     },
-    emits: ['close-dialogue', 'new-name']
+    emits: ['close-dialogue', 'new-name', 'new-avatar']
 })
 
 </script>
@@ -80,7 +80,7 @@ export default defineComponent({
 
 .close {
     color: red;
-    margin-left: 270px;
-    margin-top: 5px;
+    /* margin-left: 270px;
+    margin-top: 5px; */
 }
 </style>
