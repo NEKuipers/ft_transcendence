@@ -10,7 +10,7 @@
             </form>
         </div>
         <div v-else-if="type === 'avatar'">
-            <form @submit="onUpload">
+            <form @submit.prevent="onUpload">
             <label for="file">Upload a new Profile Picture</label>
             <input 
             type="file" 
@@ -61,15 +61,17 @@ export default defineComponent({
                 const formData = new FormData()
                 formData.append('file', this.selectedFile)
 
+                console.log('formData is: ', formData.get('file'))
+
                 await fetch('/api/avatars', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'multipart/form-data',
+                        // 'Content-Type': 'multipart/form-data',
                         'Accept': 'application/json'
                     },
                     body: formData
                 })
-                .then (res => console.log('Whaaa', res))
+                .then(res => console.log(res))
                 .catch(err => console.log(err))
                 
                 // If successful, then emit that userProfile has to patch avatar_id for user
