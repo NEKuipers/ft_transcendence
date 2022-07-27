@@ -156,13 +156,21 @@ export default defineComponent({
 		},
 		async saveAvatar(uploadedImg: any) {
 			console.log('Uploaded file is:', uploadedImg)
-			console.log('Name', uploadedImg.name)
+			// console.log('Name', uploadedImg.name)
+
+			let formData = new FormData()
+
+
+			formData.append('data', uploadedImg)
+
 
 			await fetch('/api/avatars', {
 				method: "POST",
-				body: JSON.stringify({
-					uploadedImg
-				})
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'multipart/form-encoded'
+				},
+				body: formData
 			})
 			.then(res => console.log('res'))
 

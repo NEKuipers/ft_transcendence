@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Res, Header, Post, Body } from '@nestjs/common';
+import { Controller, Get, Param, Res, Req, Post, Body } from '@nestjs/common';
 import { AvatarsService } from './avatars.service';
 import { Avatar } from './avatars.interface'
 import { Response } from 'express';
@@ -20,8 +20,9 @@ export class AvatarsController {
 	}
 
 	@Post()
-	async newAvatar(@Body() image: Avatar) {
+	async newAvatar(@Req() req: any, @Body() image: any) {
 		console.log('Image details in backend', image)
+		console.log('Request itself:', req.body)
 	}
 
 }

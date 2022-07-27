@@ -10,10 +10,15 @@
             </form>
         </div>
         <div v-else-if="type === 'avatar'">
-            <h2>Upload a new Profile Picture</h2>
-            <input type="file" @change="onFileSelected">
-            <button @click="onUpload">Upload</button>
+            <form @submit="onUpload">
+            <label for="file">Upload a new Profile Picture</label>
+            <input 
+            type="file" 
+            ref="file" 
+            @change="onFileSelected">
+            <button>Upload</button>
             <button @click="onClick" type="button" class="close"> X </button>
+            </form>
         </div>
     </div>
 </template>
@@ -44,15 +49,31 @@ export default defineComponent({
             this.$emit('close-dialogue')
         },
         onFileSelected(event: any) {
+            // this.selectedFile = this.$refs.avatar.files[0]
             this.selectedFile = event.target.files[0]
         },
-        onUpload() {
+        async onUpload() {
             if (!this.selectedFile)
                 alert('Ye have tae load a file, son')
             else {
-                // console.log('Good job for now', this.selectedFile)
+                console.log('Good job for now', this.selectedFile)
+                
+                const formData = new FormData()
+                formData.append('file', this.selectedFile)
+
+                await fetch('/api/avatars', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                })
+                .then (res => console.log('Whaaa', res))
+                .catch(err => console.log(err))
+                
+                // If successful, then emit that userProfile has to patch avatar_id for user
                 this.$emit('new-avatar', this.selectedFile)
-                // Here we post the file to the backend (Check with Jesse) TODO
             }
         }
     },
