@@ -4,7 +4,7 @@
 	<br>
 	<section class="names">
 		<div v-if="user?.id == loginStatusStore.loggedInStatus?.userID">
-			<h1 class="username">{{user?.username}}</h1>
+			<h1 class="username">{{profile?.username}}</h1>
 		</div>
 		<div v-else>
 			<h1 class="username"><a v-bind:href="'http://localhost:8080/profile/' + user?.id">{{user?.username}}</a></h1>
