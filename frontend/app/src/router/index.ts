@@ -94,9 +94,7 @@ router.beforeEach((to) => {
 	if ((to.name !== 'login' && to.name !== 'tfa') && !loggedIn) {
 		return('/login')
 	}
-	// if ((to.name === 'login' || to.name == 'tfa') && loggedIn) {
-	// 	return('/')
-	// }
+
 })
 
 

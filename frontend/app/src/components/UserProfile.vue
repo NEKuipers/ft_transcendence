@@ -130,7 +130,6 @@ export default defineComponent({
 		},
 		async saveUsername(newname: string) {
 			const id = this.loginStatusStore.loggedInStatus?.userID
-			let result;
 			if (id != undefined) {
 				await fetch('/api/users/' + id, {
 					method: "PATCH",

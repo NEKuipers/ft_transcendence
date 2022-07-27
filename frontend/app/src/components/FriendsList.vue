@@ -27,7 +27,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import SmallButton from '../components/SmallButton.vue'
-import { loginStatusStore } from '../stores/profileData';
 
 
 export default defineComponent({
