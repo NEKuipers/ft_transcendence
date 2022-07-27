@@ -88,7 +88,8 @@ router.beforeEach((to) => {
 	const store = loginStatusStore()
 
 	const loggedIn = store.loggedInStatus
-	// console.log("loggedIn: ", loggedIn)
+	console.log("loggedIn: ", loggedIn)
+	//THIS CAUSES THE REDIRECT ISSUE, LOGGEDIN ALWAYS EVALUATES AS FALSE
 
 	if ((to.name !== 'login' && to.name !== 'tfa') && !loggedIn) {
 		return('/login')
