@@ -82,7 +82,7 @@ export default defineComponent({
 
 		this.updateBlockedByYou(this.user?.id  as number);
 
-		this.updateProfileData(this.user?.id as number); //TODO THIS IS WRONG
+		this.updateProfileData(this.user?.id as number);
 
 	},
 	watch: {
@@ -214,6 +214,7 @@ export default defineComponent({
 				}
 			})
 			.catch(err => console.log('What is: ' + err));
+			
 			
 		},
 
