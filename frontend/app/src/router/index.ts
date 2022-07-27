@@ -80,16 +80,17 @@ const routes: Array<RouteRecordRaw> = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
-  routes,
+	history: createWebHistory(process.env.BASE_URL),
+	routes,
 })
 
-router.beforeEach((to) => {
-	const store = loginStatusStore()
+router.beforeEach(async (to) => {
+	const store = await loginStatusStore()
 
 	const loggedIn = store.loggedInStatus
-	console.log("loggedIn: ", loggedIn)
-	//THIS CAUSES THE REDIRECT ISSUE, LOGGEDIN ALWAYS EVALUATES AS FALSE
+	
+	// console.log("loggedIn: ", loggedIn)
+	//THIS CAUSES THE REDIRECT ISSUE, LOGGEDIN ALWAYS EVALUATES AS FALSE (BC IT IS NOT ASYNC?)
 
 	if ((to.name !== 'login' && to.name !== 'tfa') && !loggedIn) {
 		return('/login')
