@@ -69,7 +69,6 @@
     
   */
 import { defineComponent } from 'vue';
-import { loginStatusStore } from '../stores/profileData'
 import  UserProfile from '../components/UserProfile.vue';
 import AchievementsList from '../components/AchievementsList.vue'
 import FriendsList from '../components/FriendsList.vue';

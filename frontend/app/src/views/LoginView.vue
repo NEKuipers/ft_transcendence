@@ -21,7 +21,7 @@ export default defineComponent({
 		}
 	},
 	methods: {
-		OAuthLogin(e: Event) {
+		OAuthLogin() {
 			window.location.href = '/api/login'
 		}
 	},

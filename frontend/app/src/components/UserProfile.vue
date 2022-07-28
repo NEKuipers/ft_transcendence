@@ -4,7 +4,7 @@
 	<br>
 	<section class="names">
 		<div v-if="user?.id == loginStatusStore.loggedInStatus?.userID">
-			<h1 class="username">{{user?.username}}</h1>
+			<h1 class="username">{{profile?.username}}</h1>
 		</div>
 		<div v-else>
 			<h1 class="username"><a v-bind:href="'http://localhost:8080/profile/' + user?.id">{{user?.username}}</a></h1>
@@ -82,7 +82,7 @@ export default defineComponent({
 
 		this.updateBlockedByYou(this.user?.id  as number);
 
-		this.updateProfileData(this.user?.id as number); //TODO THIS IS WRONG
+		this.updateProfileData(this.user?.id as number);
 
 	},
 	watch: {
@@ -130,7 +130,6 @@ export default defineComponent({
 		},
 		async saveUsername(newname: string) {
 			const id = this.loginStatusStore.loggedInStatus?.userID
-			let result;
 			if (id != undefined) {
 				await fetch('/api/users/' + id, {
 					method: "PATCH",
@@ -214,6 +213,7 @@ export default defineComponent({
 				}
 			})
 			.catch(err => console.log('What is: ' + err));
+			
 			
 		},
 
