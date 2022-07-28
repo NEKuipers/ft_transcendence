@@ -8,6 +8,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@vueuse/core": "^9.0.0",
     "core-js": "^3.8.3",
     "json-server": "^0.17.0",
     "pinia": "^2.0.17",

@@ -221,7 +221,7 @@ export default defineComponent({
 			fetch(`/api/profile/` + user_id)
 			.then(res => res.json())
 			.then(data => this.profile = data[0])
-			.catch(err => console.log('What is: ' + err));
+			.catch(err => console.log('Error in updateProfileData: ' + err));
 			},
 		}
 	},

@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { useStorage } from '@vueuse/core'
 
 class LoginData {
 	userID: number;
@@ -19,7 +20,7 @@ export const loginStatusStore = defineStore ('login', {
 
 		return {
 			//loggedInStatus: new LoginData(1, "nkuipers", false) as undefined | LoginData
-			loggedInStatus: undefined as undefined | LoginData
+			loggedInStatus: useStorage('loggedInStatus', undefined as undefined | LoginData)
 		}
 	},
 	getters: {},
