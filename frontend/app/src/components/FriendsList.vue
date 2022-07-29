@@ -43,7 +43,6 @@ export default defineComponent({
 	data () {
 		return {
 			friends: null,
-			users: null,
 		}
 	},
 	watch: {
@@ -58,7 +57,6 @@ export default defineComponent({
 	components: {
 		SmallButton,
 	},
-	//for i in friends[i].to_user_id
 	methods: {
 		async unfriend(to_user_id: number) { 
 			const requestOptions = {
@@ -78,16 +76,9 @@ export default defineComponent({
 				.then(res => res.json())
 				.then(data => this.friends = data)
 				.catch(err => console.log(err));
-			this.getFriendAvatars();
-		},
-		async getFriendAvatars() {
-			fetch('/api/users/')
-				.then(res => res.json())
-				.then(data => {this.users = data;console.log(this.users)})
-				.catch(err => console.log(err));
 		},
 		findFriendAvatar(friend_id: number): number {
-			
+			// 
 			return 1;
 		}
 	}
