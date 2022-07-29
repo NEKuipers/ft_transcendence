@@ -93,7 +93,7 @@
 	float:left;
 	padding:10px;
 	box-sizing: border-box; /*this adds the border+padding into the width. can also look at flexbox*/
-	height: 700px;
+	height: 1000px;
 }
 
 #rooms {
@@ -108,10 +108,11 @@
 
 #messages {
 	padding-bottom: 100px;
+	height: 850px;
 }
 
 #chat-column {
-	height: 700px;
+	height: 1000px;
 	margin-left: 20px;
 	overflow: auto;
 	float: left;

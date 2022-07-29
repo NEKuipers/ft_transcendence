@@ -68,6 +68,7 @@ export default defineComponent({
 				.then(response => console.log(response.status))
 				.catch(err => console.log(err));
 			this.updateFriendList(this.user as number);
+			this.updateFriendList(this.user as number);
 		},
 		async updateFriendList(user_id: number) {
 			fetch('/api/friends/' + user_id)

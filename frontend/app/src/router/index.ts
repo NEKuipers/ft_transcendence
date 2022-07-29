@@ -89,7 +89,6 @@ router.beforeEach((to) => {
 
 	// const loggedIn = store.loggedInStatus
   const loggedIn = loginStatusStore().loggedInStatus
-	console.log("loggedIn: ", loggedIn)
 
 	if ((to.name !== 'login' && to.name !== 'tfa') && !loggedIn) {
 		return('/login')

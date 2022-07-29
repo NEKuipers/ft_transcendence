@@ -58,6 +58,7 @@ export default defineComponent({
 				.then(response => console.log(response.status))
 				.catch(err => console.log(err));
 			this.updateBlockedUsers(this.user as number);
+			this.updateBlockedUsers(this.user as number);
 		},
 		async updateBlockedUsers(user_id: number) {
 			fetch('/api/blocked_users/' + user_id)
