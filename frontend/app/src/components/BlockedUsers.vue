@@ -55,7 +55,7 @@ export default defineComponent({
 										blocked_user_id: bid}) 
 			};
 			fetch('/api/blocked_users', requestOptions)
-				.then(response => console.log(response.status))
+				.then(response => response)
 				.catch(err => console.log(err));
 			this.updateBlockedUsers(this.user as number);
 			this.updateBlockedUsers(this.user as number);

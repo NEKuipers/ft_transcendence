@@ -10,7 +10,8 @@
 					<div v-if="own === true">
 						<SmallButton class="unfriend-btn" @click="unfriend(friend.to_user_id)" text="Remove"/>
 					</div>
-					<img class="profilePictureThumbnail" width="50" height="50" src="../assets/Profile-picture-default.png"/>
+					<img class="profilePictureThumbnail" width="50" height="50" v-bind:src="'http://localhost:3030/avatars/' + findFriendAvatar(friend.to_user_id)"/> 
+					<!-- src="findFriendAvatar(friend.to_user_id)" -->
 					<a class="friend" v-bind:href="'http://localhost:8080/profile/' + friend.to_user_id">{{friend.to_username}}</a>
 					<h4 class="online-status" v-if="friend?.friend_status == 'online'" id="online">Online</h4>
 					<h4 class="online-status"  v-else-if="friend?.friend_status == 'ingame'" id="ingame">In game</h4>
@@ -42,6 +43,7 @@ export default defineComponent({
 	data () {
 		return {
 			friends: null,
+			users: null,
 		}
 	},
 	watch: {
@@ -56,6 +58,7 @@ export default defineComponent({
 	components: {
 		SmallButton,
 	},
+	//for i in friends[i].to_user_id
 	methods: {
 		async unfriend(to_user_id: number) { 
 			const requestOptions = {
@@ -75,6 +78,17 @@ export default defineComponent({
 				.then(res => res.json())
 				.then(data => this.friends = data)
 				.catch(err => console.log(err));
+			this.getFriendAvatars();
+		},
+		async getFriendAvatars() {
+			fetch('/api/users/')
+				.then(res => res.json())
+				.then(data => {this.users = data;console.log(this.users)})
+				.catch(err => console.log(err));
+		},
+		findFriendAvatar(friend_id: number): number {
+			
+			return 1;
 		}
 	}
 })
