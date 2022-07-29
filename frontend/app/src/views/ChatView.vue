@@ -2,12 +2,25 @@
 	<div>
 		<!-- <h1>Chat</h1> -->
 		<div class="container">
-			<div class="column" id="rooms">
-				ROOM 1
-				<br>
-				ROOM 2
-				<br>
-				ROOM 3
+			<div class="column" id="left-column">
+				<div id="rooms">
+					<ul>
+						ROOM 1 <button type="button"/>
+						<br>
+						ROOM 2
+						<br>
+						ROOM 3
+					</ul>
+				</div>
+				<div id="friends">
+					<ul>
+						Friend 1
+						<br>
+						Friend 2
+						<br>
+						Friend 3
+					</ul>
+				</div>
 			</div>
 			<div class="column" id="center_column">
 				<div> 
@@ -60,6 +73,13 @@
 	height: 850px;
 }
 
+#left-column {
+	display: flex;
+	gap: 10px;
+	width: 20%;
+	background-color: white;
+}
+
 #center_column {
 	width: 65%;
 	background-color: #f4f4f4;
@@ -73,8 +93,24 @@
 }
 
 #rooms {
+	display: flex;
 	font-size: 30px;
-	width: 20%;
+	height: 50%;
+	row-gap: 10px;
+	border: 5px solid white;
+	border-radius: 5px;
+	background-color: #f4f4f4;
+	/* width: 20%; */
+}
+
+#friends {
+	display: flex;
+	font-size: 20px;
+	background-color: #f4f4f4;
+	border: 5px solid white;
+	border-radius: 5px;
+	height: 50%;
+	/* width: 20%; */
 }
 
 #tools {
