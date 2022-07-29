@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<h1>Chat</h1>
+		<!-- <h1>Chat</h1> -->
 		<div class="container">
 			<div class="column" id="rooms">
 				ROOM 1
@@ -57,11 +57,12 @@
 	float:left;
 	padding:10px;
 	box-sizing: border-box; /*this adds the border+padding into the width. can also look at flexbox*/
-	height: 1000px;
+	height: 850px;
 }
 
 #center_column {
 	width: 65%;
+	background-color: #f4f4f4;
 }
 
 #input-box {
@@ -84,6 +85,8 @@
 #messages {
 	padding-bottom: 100px;
 	height: 850px;
+	margin-left: 20px;
+	margin-right: 20px;
 }
 
 #chat-column {
@@ -95,6 +98,8 @@
 	justify-content: center;
 	width: 95%;
 	font-size: 14pt;
+	background-color: white;
+
 	/* flex: 1 0; */
 	/* flex-wrap: wrap; */
 }
