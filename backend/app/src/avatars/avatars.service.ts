@@ -29,4 +29,27 @@ export class AvatarsService {
 			}
 		}
 	}
+
+	async uploadAvatar(file: Express.Multer.File) {
+		console.log('Service can see the file:', file)
+
+		const response = await axios.post(
+			`http://localhost:${process.env.PGREST_PORT}/avatars`,
+			{
+				img: file.buffer,
+				name: file.originalname,
+				// format: file.mimetype
+				format: 'img/png'
+			},
+			// {
+			// 	responseType: 'arraybuffer',
+			// 	headers: {
+			// 		'Content-Type': 'application/json',
+			// 		'Accept': 'application/octet-stream',
+			// 	}
+			// },
+		)
+		.then(res => console.log(res.data))
+		.catch(err => console.log(err))
+	}
 }

@@ -56,22 +56,19 @@ export default defineComponent({
             if (!this.selectedFile)
                 alert('Ye have tae load a file, son')
             else {
-                console.log('Good job for now', this.selectedFile)
                 
                 const formData = new FormData()
                 formData.append('file', this.selectedFile)
 
-                console.log('formData is: ', formData.get('file'))
 
                 await fetch('/api/avatars', {
                     method: 'POST',
                     headers: {
-                        // 'Content-Type': 'multipart/form-data',
                         'Accept': 'application/json'
                     },
                     body: formData
                 })
-                .then(res => console.log(res))
+                .then() // Make it return success or something
                 .catch(err => console.log(err))
                 
                 // If successful, then emit that userProfile has to patch avatar_id for user

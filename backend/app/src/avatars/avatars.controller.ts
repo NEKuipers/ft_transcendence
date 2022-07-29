@@ -1,6 +1,5 @@
 import { Controller, Get, Param, Res, Req, Post, Body, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { AvatarsService } from './avatars.service';
-import { Avatar } from './avatars.interface'
 import { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 
@@ -23,9 +22,11 @@ export class AvatarsController {
 	@Post()
 	@UseInterceptors(FileInterceptor('file'))
 	async newAvatar(@Req() req: any, @Body() image: any, @UploadedFile() file: Express.Multer.File) {
-		console.log('Image details in backend', image)
-		console.log('Request itself:', req.headers)
-		console.log('Final shit:', file)
+
+		// console.log('File to be uploaded to database:', file)
+
+		this.avatarsService.uploadAvatar(file)
+		
 	}
 
 }

@@ -155,7 +155,6 @@ export default defineComponent({
 			}
 		},
 		async saveAvatar(uploadedImg: any) {
-			console.log('Uploaded file is:', uploadedImg)
 			// console.log('Name', uploadedImg.name)
 
 
