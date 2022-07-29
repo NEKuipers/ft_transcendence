@@ -74,10 +74,10 @@ export default defineComponent({
 				status: "declined"}) 
 			};
 			fetch('/api/friends/decline', requestOptions)
-				.then(response => console.log(response.status))
+				.then(response => response)
 				.catch(err => console.log(err));
 			this.updateFriendRequests(this.user as number);
-			this.updateFriendRequests(this.user as number);
+			this.updateFriendRequests(this.user as number); //jasper i'm truly sorry about this
 
 		},
 		updateFriendRequests(user_id: number) {
