@@ -1,25 +1,31 @@
 <template>
 	<div>
-		<!-- <h1>Chat</h1> -->
 		<div class="container">
 			<div class="column" id="left-column">
-				<div id="rooms">
+				<div id="channels">
+					<!-- make this a component -->
+					Your channels
 					<ul>
-						ROOM 1 <button type="button"/>
+						Channel 1
 						<br>
-						ROOM 2
+						Channel 2
 						<br>
-						ROOM 3
+						Channel 3
+					</ul>
+				</div>
+				<div id="channels">
+					Public channels
+					<ul>
+						Channel 1
+						<br>
+						Channel 2
+						<br>
+						Channel 3
 					</ul>
 				</div>
 				<div id="friends">
-					<ul>
-						Friend 1
-						<br>
-						Friend 2
-						<br>
-						Friend 3
-					</ul>
+					<FriendsList :own="true" :user="1" />
+					<!-- Maybe adjust this a bit or add a flag so remove btn becomes chat -->
 				</div>
 			</div>
 			<div class="column" id="center_column">
@@ -41,14 +47,13 @@
 </template>
 
 <script lang="ts">
+import FriendsList from "@/components/FriendsList.vue";
  
-	export default {
+export default {
 	components: {
-	},
-	data() {
-		return {}
-	}
-	}
+    FriendsList
+},
+}
 </script>
 
 <style scoped>
@@ -92,7 +97,7 @@
 	font-size: 20px;
 }
 
-#rooms {
+#channels {
 	display: flex;
 	font-size: 30px;
 	height: 50%;

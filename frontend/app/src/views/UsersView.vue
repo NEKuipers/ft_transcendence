@@ -30,27 +30,26 @@ import { defineComponent } from 'vue';
 import  UserProfile from '../components/UserProfile.vue';
 
 export default defineComponent({
-  name: 'ProfileView',
-  props: {
-    },
-  data () {
-    return {
-      selectedFile: null,
-      users: null,
-    }
-  },
-  mounted() {
-    fetch('/api/users/')
-    .then(res => res.json())
-    .then(data => this.users = data)
-    .catch(err => console.log(err));    
-  },
-  components: {
-    UserProfile
-  },
-  methods: {
+	name: 'ProfileView',
+	props: {},
+	data () {
+		return {
+			selectedFile: null,
+			users: null,
+		}
+	},
+	mounted() {
+		fetch('/api/users/')
+		.then(res => res.json())
+		.then(data => this.users = data)
+		.catch(err => console.log(err));    
+	},
+	components: {
+	UserProfile
+	},
+	methods: {
 
-  },
+	},
 });
 
 </script>

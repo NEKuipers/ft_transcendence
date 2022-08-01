@@ -80,7 +80,7 @@ export default defineComponent({
 			this.updateFriendRequests(this.user as number); //jasper i'm truly sorry about this
 
 		},
-		updateFriendRequests(user_id: number) {
+		async updateFriendRequests(user_id: number) {
 			fetch('/api/friends/requests/' + user_id)
 				.then(res => res.json())
 				.then(data => this.friendRequests = data)
