@@ -99,6 +99,7 @@ SELECT
     f.to_user_id    AS to_user_id,
     fu.username     AS to_username,
     fu.status       AS friend_status,
+	fu.avatar_id	AS friend_avatar_id,
     f.status        AS request_status,
     f.send_time     AS send_time,
     f.response_time AS response_time
