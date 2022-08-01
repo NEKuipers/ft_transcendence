@@ -33,10 +33,18 @@ export class AvatarsService {
 	async uploadAvatar(file: Express.Multer.File) {
 		console.log('Service can see the file:', file)
 
+		const buff = file.buffer
+		const fuck = buff.toString('hex')
+
+		const byteArray = new Buffer(fuck.replace(/^[\w\d;:\/]+hex\,/g, ''), 'base64')
+		
+		// console.log(fuck)
+		// fuck.replace(/\\u([0-9]|[a-fA-F])([0-9]|[a-fA-F])([0-9]|[a-fA-F])([0-9]|[a-fA-F])/g, "")
+
 		const response = await axios.post(
 			`http://localhost:${process.env.PGREST_PORT}/avatars`,
 			{
-				img: file.buffer,
+				img: byteArray,
 				name: file.originalname,
 				// format: file.mimetype
 				format: 'img/png'
