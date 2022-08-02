@@ -156,10 +156,24 @@ export default defineComponent({
 		},
 		async saveAvatar(avatar_id: number) {
 			console.log('New one is: ', avatar_id)
-
-			// now use the avatar_id to do the patch request
+			// here use the avatar_id to do the patch request
 
 			const id = this.loginStatusStore.loggedInStatus?.userID
+
+			if (id != undefined) {
+				fetch('/api/users/avatar/' + id, {
+					method: "PATCH",
+					body: JSON.stringify({
+						"avatar_id": avatar_id
+					}),
+					headers: {
+						'Content-type': 'application/json; charset=UTF-8'
+					}
+				})
+				.then(() => console.log('New avatar'))
+				.catch(err => console.log(err))
+				this.updateProfileData(this.user?.id as number)
+			}
 
 			this.hideDialogue()
 		},

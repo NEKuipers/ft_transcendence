@@ -25,8 +25,6 @@ export class AvatarsController {
 
 		const uploadSuccessful = await this.avatarsService.uploadAvatar(file)
 		
-
-		// console.log(uploadSuccessful)
 		res.send({avatar_id: uploadSuccessful})
 	}
 

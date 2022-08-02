@@ -47,7 +47,7 @@ export class AvatarsService {
 				format: 'img/png'
 			},
 		)
-		.then(res => { /* console.log(res) */; return 11 })
+		.then(res => { /* console.log(res) */; return 5 }) // TODO this is just a placeholder
 		.catch(err => { console.log(err); return 1 })
 
 		// console.log(response)

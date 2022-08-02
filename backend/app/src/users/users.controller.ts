@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Patch, Delete, Body, Param } from '@nestjs/common';
 import { CreateUserDto } from './create-user.dto';
 import { UsersService } from './users.service';
-import { User, newUsername } from './user.interface';
+import { User, newUsername, newAvatar } from './user.interface';
 
 @Controller('users')
 export class UsersController {
@@ -36,6 +36,11 @@ export class UsersController {
 	@Patch(':id')
 	async editUsername(@Body() newname: newUsername, @Param('id') id: number): Promise<string> {
 		return this.usersService.changeUsername(id, newname.username);
+	}
+
+	@Patch('/avatar/:id')
+	async updateAvatar(@Body() newavatar: newAvatar, @Param('id') id: number): Promise<string> {
+		return this.usersService.changeAvatar(id, newavatar.avatar_id);
 	}
 
 	@Delete(':id')

@@ -67,7 +67,6 @@ export default defineComponent({
                     body: formData
                 })
                 .then(res => { return res.json() })
-                .then(data => { /* console.log(data); */ return data} )
                 .catch(err => { console.log(err); return err })
 
 
