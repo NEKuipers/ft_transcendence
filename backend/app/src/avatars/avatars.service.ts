@@ -31,7 +31,7 @@ export class AvatarsService {
 	}
 
 	async uploadAvatar(file: Express.Multer.File) {
-		console.log('Service can see the file:', file)
+		// console.log('Service can see the file:', file)
 
 		const buff = file.buffer
 
@@ -44,18 +44,12 @@ export class AvatarsService {
 			{
 				img:  imgdata,
 				name: file.originalname,
-				// format: file.mimetype
 				format: 'img/png'
 			},
-			// {
-			// 	responseType: 'arraybuffer',
-			// 	headers: {
-			// 		'Content-Type': 'application/json',
-			// 		'Accept': 'application/octet-stream',
-			// 	}
-			// },
 		)
-		.then(res => console.log(res.data))
-		.catch(err => console.log(err))
+		.then(res => { console.log(res); true })
+		.catch(err => { console.log(err); false })
+
+		return response
 	}
 }

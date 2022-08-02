@@ -23,8 +23,9 @@ export class AvatarsController {
 	@UseInterceptors(FileInterceptor('file'))
 	async newAvatar(@Req() req: any, @Body() image: any, @UploadedFile() file: Express.Multer.File) {
 
-		this.avatarsService.uploadAvatar(file)
+		const uploadSuccessful = await this.avatarsService.uploadAvatar(file)
 		
+		return uploadSuccessful
 	}
 
 }
