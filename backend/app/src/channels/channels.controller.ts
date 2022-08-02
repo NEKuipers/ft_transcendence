@@ -13,7 +13,6 @@ export class ChannelsController {
 	
 	@Get('/public') //Retrieve all public channels
 	async findAllPublic(): Promise<Channel[]> {
-		console.log('dingdong');
 		return this.channelsService.findAllPublic();
 	}
 

@@ -25,33 +25,21 @@ import SmallButton from './SmallButton.vue'
 export default defineComponent({
     name: "PublicChatChannels",
     props: {
-        user: {
-            type: Number
-        },
     },
     data() {
         return {
             publicChatChannels: null,
         };
     },
-    watch: {
-        user: {
-            handler(newValue) {
-                if (!newValue) {
-                    return;
-                }
-				
-                fetch("/api/channels")
-                    .then(res => res.json())
-                    .then(data => {this.publicChatChannels = data; })
-                    .catch(err => {
-                    this.publicChatChannels = null;
-                    console.log(err);
-                });
-            },
-            immediate: true
-        }
-    },
+	mounted() { 
+		fetch("/api/channels/public")
+			.then(res => res.json())
+			.then(data => {this.publicChatChannels = data; })
+			.catch(err => {
+			this.publicChatChannels = null;
+			console.log(err);
+		});
+	},
     components: { SmallButton }
 })
 

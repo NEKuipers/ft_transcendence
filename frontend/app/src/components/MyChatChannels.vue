@@ -35,6 +35,15 @@ export default defineComponent({
             myChatChannels: null,
         };
     },
+	mounted() { 
+		fetch("/api/channels/all_for_" + this.user)
+			.then(res => res.json())
+			.then(data => { this.myChatChannels = data; })
+			.catch(err => {
+			this.myChatChannels = null;
+			console.log(err);
+		});
+	},
     watch: {
         user: {
             handler(newValue) {

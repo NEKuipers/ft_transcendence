@@ -133,5 +133,9 @@ a:hover {
 
 }
 
+.friendlist {
+	margin-left: 50px;
+}
+
 
 </style>
