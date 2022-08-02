@@ -13,6 +13,15 @@
             <p>sup blud</p>
             <button @click="onClick" type="button" class="close"> X </button>
         </div>
+		<div v-else-if="type === 'createChannel'">
+            <form @submit="onSubmit">
+            <h4> Enter channel name </h4>
+            <input type="text" v-model="text" name="text" placeholder="my channel" />
+            <br>
+            <input type="submit" value="Save Change" />
+            <button @click="onClick" type="button" class="close"> X </button>
+            </form>
+		</div>
     </div>
 </template>
 

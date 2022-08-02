@@ -28,13 +28,18 @@ export class ChannelsService {
 	}
 
 	async createChannel(channel: Channel): Promise<string> {
+		let channels = await this.findAll();
+		if (channels.find((existingChannel) => existingChannel.name == channel.name)) {
+			return "taken";
+		}
 		axios.post(`http://localhost:${process.env.PGREST_PORT}/channels`, {
 			name: channel.name,
 			type: channel.type,
 			owner_id: channel.owner_id,
 			is_closed: false
 		})
-		return "Channel created";
+		let id = channels.length + 1;
+		return id.toString();
 	}
 
 	async closeChannel(channel: Channel): Promise<string> {

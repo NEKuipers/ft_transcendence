@@ -18,7 +18,7 @@
 			<h5>You are not in any channels yet</h5>
 		</div>
 		<SmallButton text="Create new channel" @click="createChannel"/>
-		<DialogueBox :type="boxType" :show="showDialogue" @close-dialogue="hideDialogue" @new-name="createChannel"/>
+		<DialogueBox :type="boxType" :show="showDialogue" @close-dialogue="hideDialogue" @new-name="saveChannel"/>
 
 	</div>
 </template>
@@ -75,6 +75,41 @@ export default defineComponent({
 		async createChannel() {
 			this.boxType = "createChannel";
 			this.showDialogue = true;
+		},
+		async saveChannel(newname: string) {
+			const id = this.loginStatusStore.loggedInStatus?.userID
+			if (id != undefined) {
+				await fetch('/api/channels/', {
+					method: "POST",
+					body: JSON.stringify({
+						"name": newname,
+						"is_closed": false,
+						"owner_id": id,
+						"type": "public"
+					}),
+					headers: {
+						'Content-type': 'application/json; charset=UTF-8'
+					}
+				})
+				.then(res => res.text())
+				.then(data => {
+					if (data === 'taken')
+						alert('That channel name is already taken.')
+					else {
+							const requestOptions = {
+							method: "POST",
+							headers: { "Content-Type": "application/json" },
+							body: JSON.stringify({	participant_id: this.loginStatusStore.loggedInStatus?.userID,
+													channel_id: parseInt(data)}) 
+						};
+						fetch('/api/participants', requestOptions)
+							.then(response => response)
+							.catch(err => console.log(err));
+						this.hideDialogue();
+					}
+				})
+				.catch(err => console.log(err));
+			}
 		},
 		async leaveChannel(channel_id: number) {
 				const requestOptions = {
