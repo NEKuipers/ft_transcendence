@@ -7,8 +7,9 @@
 		<div v-else-if="myChatChannels?.length">
 			<div v-for="channel in myChatChannels" :key="channel.id">
 				<section class="listed-channel">
-					<h5 class="name">{{channel.name}}</h5>
-					<SmallButton  class="button" text="open"/>
+					<h5 class="name">{{channel?.name}}</h5>
+					<!-- WHY IS THE NAME NOT DISPLAYING FFS -->
+					<SmallButton  class="button" text="open" @click="loggy(channel.name)"/>
 					<SmallButton  class="button" text="leave" @click="leaveChannel(channel.id)"/>
 				</section>
 			</div>
@@ -41,13 +42,10 @@ export default defineComponent({
 	mounted() { 
 		fetch("/api/channels/all_for_" + this.user)
 			.then(res => res.json())
-			.then(data => { this.myChatChannels = data; })
+			.then(data => this.myChatChannels = data)
 			.catch(err => {
 			console.log(err);
-			
-		});
-		console.log(this.myChatChannels);
-		
+		});		
 	},
     watch: {
         user: {
@@ -79,12 +77,16 @@ export default defineComponent({
 		async updateMyChannels(user_id: number) {
                 fetch("/api/channels/all_for_" + user_id)
                     .then(res => res.json())
-                    .then(data => { this.myChatChannels = data; })
+                    .then(data => this.myChatChannels = data)
                     .catch(err => {
                     this.myChatChannels = null;
                     console.log(err);
                 });
 		},
+		loggy(name: string){
+			console.log(name);
+			
+		}
 	}
 })
 

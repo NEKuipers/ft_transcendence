@@ -9,6 +9,7 @@
 				<section class="listed-channel">
 					<h5 class="name">{{channel.name}}</h5>
 					<SmallButton class="button" text="join" @click="joinChannel(channel.id)"/>
+					<SmallButton  class="button" text="open" @click="loggy(channel.name)"/>
 				</section>
 			</div>
 		</div>
@@ -36,11 +37,12 @@ export default defineComponent({
 	mounted() { 
 		fetch("/api/channels/public")
 			.then(res => res.json())
-			.then(data => {this.publicChatChannels = data; })
+			.then(data => this.publicChatChannels = data)
 			.catch(err => {
 			this.publicChatChannels = null;
 			console.log(err);
 		});
+		
 	},
     components: { SmallButton 
 	},
