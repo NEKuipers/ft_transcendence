@@ -63,7 +63,6 @@ export class BlockedUsersService {
 			"blocked_user_id": blockedUser.blocked_user_id,})
 				.then(res => res)
 				.catch(err => console.log(err));
-		console.log(`user ${blockedUser.blocked_user_id} blocked by ${blockedUser.blocked_by_id}`);
 		return "success";
 	}
 
@@ -73,7 +72,6 @@ export class BlockedUsersService {
 			"blocked_user_id": blockedUser.blocked_user_id,} })
 				.then(res => res)
 				.catch(err => console.log(err));
-		console.log(`user ${blockedUser.blocked_by_id} unblocked user ${blockedUser.blocked_user_id}`)
 		return "success";
 	}
 }

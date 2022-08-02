@@ -4,6 +4,6 @@ export interface Participant {
 	is_admin: boolean;
 	is_muted: boolean;
 	is_banned: boolean;
-	ban_meta: Object;
+	ban_meta: string;
 	channel_id: number;
 }

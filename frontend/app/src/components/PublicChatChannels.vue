@@ -7,8 +7,8 @@
 		<div v-else-if="publicChatChannels?.length">
 			<div v-for="channel in publicChatChannels" :key="channel.id">
 				<section class="listed-channel">
-					<h5>{{channel.name}}</h5>
-					<SmallButton text="join"/>
+					<h5 class="name">{{channel.name}}</h5>
+					<SmallButton class="button" text="join" @click="joinChannel(channel.id)"/>
 				</section>
 			</div>
 		</div>
@@ -21,6 +21,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import SmallButton from './SmallButton.vue'
+import { loginStatusStore } from '../stores/profileData';
 
 export default defineComponent({
     name: "PublicChatChannels",
@@ -28,6 +29,7 @@ export default defineComponent({
     },
     data() {
         return {
+			loginStatusStore: loginStatusStore(),
             publicChatChannels: null,
         };
     },
@@ -40,7 +42,21 @@ export default defineComponent({
 			console.log(err);
 		});
 	},
-    components: { SmallButton }
+    components: { SmallButton 
+	},
+	methods: {
+		async joinChannel(channel_id: number) {
+				const requestOptions = {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({	participant_id: this.loginStatusStore.loggedInStatus?.userID,
+										channel_id: channel_id}) 
+			};
+			fetch('/api/participants', requestOptions)
+				.then(response => response)
+				.catch(err => console.log(err));
+		}
+	}
 })
 
 </script>
@@ -48,6 +64,20 @@ export default defineComponent({
 <style scoped>
 .publicchatchannels {
 	margin-left: 50px;
+}
+
+.listed-channel{
+	float: left;
+	display: inline-block;
+}
+
+.button {
+	float: left;
+	margin-left:8px;
+}
+.name {
+	margin-top: -4px;
+	float: left;
 }
 
 </style>
