@@ -7,9 +7,9 @@
 		<div v-else-if="myChatChannels?.length">
 			<div v-for="channel in myChatChannels" :key="channel.id">
 				<section class="listed-channel">
-					<h5 class="name">{{channel?.name}}</h5>
+					<h5 class="name">{{channel.name}}</h5>
 					<!-- WHY IS THE NAME NOT DISPLAYING FFS -->
-					<SmallButton  class="button" text="open" @click="loggy(channel.name)"/>
+					<SmallButton  class="button" text="open"/>
 					<SmallButton  class="button" text="leave" @click="leaveChannel(channel.id)"/>
 				</section>
 			</div>
@@ -17,7 +17,9 @@
 		<div v-else>
 			<h5>You are not in any channels yet</h5>
 		</div>
-		<SmallButton text="Create new channel"/>
+		<SmallButton text="Create new channel" @click="createChannel"/>
+		<DialogueBox :type="boxType" :show="showDialogue" @close-dialogue="hideDialogue" @new-name="createChannel"/>
+
 	</div>
 </template>
 
@@ -25,6 +27,8 @@
 import { defineComponent } from 'vue'
 import SmallButton from './SmallButton.vue'
 import { loginStatusStore } from '../stores/profileData';
+import DialogueBox from './DialogueBox.vue'
+
 
 export default defineComponent({
     name: "MyChatChannels",
@@ -35,6 +39,8 @@ export default defineComponent({
     },
     data() {
         return {
+			showDialogue: false,
+			boxType: "",
             myChatChannels: null,
 			loginStatusStore: loginStatusStore(),
         };
@@ -58,9 +64,18 @@ export default defineComponent({
             immediate: true
         }
     },
-    components: { SmallButton 
+    components: { 
+		SmallButton,
+		DialogueBox,
 	},
 	methods: {
+		hideDialogue() {
+			this.showDialogue = false;
+		},
+		async createChannel() {
+			this.boxType = "createChannel";
+			this.showDialogue = true;
+		},
 		async leaveChannel(channel_id: number) {
 				const requestOptions = {
 				method: "DELETE",
@@ -83,10 +98,6 @@ export default defineComponent({
                     console.log(err);
                 });
 		},
-		loggy(name: string){
-			console.log(name);
-			
-		}
 	}
 })
 
