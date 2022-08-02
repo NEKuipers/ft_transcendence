@@ -28,7 +28,10 @@
 	<div v-if="user?.id == loginStatusStore.loggedInStatus?.userID">
 		<SmallButton class="user-btn" text="Change avatar" @click="changeAvatar"/>
 		<SmallButton class="user-btn" text="Change username" @click="changeUsername"/>
-    <DialogueBox :type="boxType" :show="showDialogue" @close-dialogue="hideDialogue" @new-name="saveUsername"/>
+		<DialogueBox :type="boxType" :show="showDialogue" 
+			@close-dialogue="hideDialogue" 
+			@new-name="saveUsername"
+			@new-avatar="saveAvatar"/>
 		<br>
 		<div v-if="loginStatusStore.loggedInStatus && !loginStatusStore.loggedInStatus.TFAEnabled">
 			<router-link to="/tfa">
@@ -112,7 +115,7 @@ export default defineComponent({
 		changeAvatar() {
 			this.boxType = "avatar";
 			this.showDialogue = true;
-			console.log('change avatar');
+			// console.log('change avatar');
 		},
 		async changeUsername() {
 			this.boxType = "namechange";
@@ -125,7 +128,6 @@ export default defineComponent({
 			console.log('invite to game');
 		},
 		hideDialogue() {
-			// console.log('Should be triggered by x button')
 			this.showDialogue = false;
 		},
 		async saveUsername(newname: string) {
@@ -150,6 +152,29 @@ export default defineComponent({
 				.catch(err => console.log(err));
 				this.updateProfileData(this.user?.id as number);
 			}
+		},
+		async saveAvatar(avatar_id: number) {
+			console.log('New one is: ', avatar_id)
+			// here use the avatar_id to do the patch request
+
+			const id = this.loginStatusStore.loggedInStatus?.userID
+
+			if (id != undefined) {
+				fetch('/api/users/avatar/' + id, {
+					method: "PATCH",
+					body: JSON.stringify({
+						"avatar_id": avatar_id
+					}),
+					headers: {
+						'Content-type': 'application/json; charset=UTF-8'
+					}
+				})
+				.then(() => console.log('New avatar'))
+				.catch(err => console.log(err))
+				this.updateProfileData(this.user?.id as number)
+			}
+
+			this.hideDialogue()
 		},
 		async addFriend() {
 			const requestOptions = {
@@ -198,7 +223,7 @@ export default defineComponent({
 						this.hasBlockedYou = true;
 				}
 			})
-			.catch(err => console.log('What is: ' + err));
+			.catch(err => console.log('Error in updateHasBlockedYou: ' + err));
 		},
 
 		async updateBlockedByYou(user_id: number) {
@@ -212,7 +237,7 @@ export default defineComponent({
 						this.youHaveBlocked = true;
 				}
 			})
-			.catch(err => console.log('What is: ' + err));
+			.catch(err => console.log('Error in updateBlockedByYou: ' + err));
 			
 			
 		},

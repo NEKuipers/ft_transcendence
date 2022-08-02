@@ -10,8 +10,15 @@
             </form>
         </div>
         <div v-else-if="type === 'avatar'">
-            <p>sup blud</p>
+            <form @submit.prevent="onUpload">
+            <label for="file">Upload a new Profile Picture</label>
+            <input 
+            type="file" 
+            ref="file" 
+            @change="onFileSelected">
+            <button>Upload</button>
             <button @click="onClick" type="button" class="close"> X </button>
+            </form>
         </div>
 		<div v-else-if="type === 'createChannel'">
             <form @submit="onSubmit">
@@ -34,7 +41,8 @@ export default defineComponent({
     props: ['show', 'type'],
     data() {
         return {
-            text: ''
+            text: '',
+            selectedFile: null
         }
     },
     methods: {
@@ -45,14 +53,39 @@ export default defineComponent({
             else {
                 this.$emit('new-name', this.text)
             }
-            
         },
         onClick() {
             this.$emit('close-dialogue')
-        }
+        },
+        onFileSelected(event: any) {
+            // this.selectedFile = this.$refs.avatar.files[0]
+            this.selectedFile = event.target.files[0]
+        },
+        async onUpload() {
+            if (!this.selectedFile)
+                alert('Ye have tae load a file, son')
+            else {
+                
+                const formData = new FormData()
+                formData.append('file', this.selectedFile)
+                const newAvatarId = await fetch('/api/avatars', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                })
+                .then(res => { return res.json() })
+                .catch(err => { console.log(err); return err })
 
+
+                // If successful, then emit that userProfile has to patch avatar_id for user
+                // console.log('New avatar_id is', newAvatarId.avatar_id)
+                this.$emit('new-avatar', newAvatarId.avatar_id)
+            }
+        }
     },
-    emits: ['close-dialogue', 'new-name']
+    emits: ['close-dialogue', 'new-name', 'new-avatar']
 })
 
 </script>
@@ -76,6 +109,7 @@ export default defineComponent({
 
 .close {
     color: red;
-    /* margin-left: 50px; */
+    /* margin-left: 270px;
+    margin-top: 5px; */
 }
 </style>

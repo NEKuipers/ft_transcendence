@@ -54,4 +54,10 @@ export class UsersService {
 			username: newUsername})
 		return "success";
 	}
+
+	async changeAvatar(id: number, newavatar: number) {
+		await axios.patch(`http://localhost:${process.env.PGREST_PORT}/users?id=eq.${id}`, {
+			avatar_id: newavatar})
+		return "success";
+	}
 }
