@@ -3,29 +3,13 @@
 		<div class="container">
 			<div class="column" id="left-column">
 				<div id="channels">
-					<!-- make this a component -->
-					Your channels
-					<ul>
-						Channel 1
-						<br>
-						Channel 2
-						<br>
-						Channel 3
-					</ul>
+					<MyChatChannels  :user="1" />
 				</div>
 				<div id="channels">
-					Public channels
-					<ul>
-						Channel 1
-						<br>
-						Channel 2
-						<br>
-						Channel 3
-					</ul>
+					<PublicChatChannels/>
 				</div>
 				<div id="friends">
-					<FriendsList :own="true" :user="1" />
-					<!-- Maybe adjust this a bit or add a flag so remove btn becomes chat -->
+					<ChatFriendsList :user="1" />
 				</div>
 			</div>
 			<div class="column" id="center_column">
@@ -47,13 +31,21 @@
 </template>
 
 <script lang="ts">
-import FriendsList from "@/components/FriendsList.vue";
+import { defineComponent } from "@vue/runtime-core";
+import ChatFriendsList from "../components/ChatFriendsList.vue";
+import PublicChatChannels from "../components/PublicChatChannels.vue";
+import MyChatChannels from "../components/MyChatChannels.vue";
  
-export default {
+export default defineComponent({
 	components: {
-    FriendsList
-},
-}
+		ChatFriendsList,
+		PublicChatChannels,
+		MyChatChannels,
+	},
+
+
+
+})
 </script>
 
 <style scoped>
