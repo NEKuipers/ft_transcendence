@@ -59,20 +59,21 @@ export default defineComponent({
                 
                 const formData = new FormData()
                 formData.append('file', this.selectedFile)
-
-
-                await fetch('/api/avatars', {
+                const newAvatarId = await fetch('/api/avatars', {
                     method: 'POST',
                     headers: {
                         'Accept': 'application/json'
                     },
                     body: formData
                 })
-                .then() // Make it return success or something
-                .catch(err => console.log(err))
-                
+                .then(res => { return res.json() })
+                .then(data => { /* console.log(data); */ return data} )
+                .catch(err => { console.log(err); return err })
+
+
                 // If successful, then emit that userProfile has to patch avatar_id for user
-                this.$emit('new-avatar', this.selectedFile)
+                // console.log('New avatar_id is', newAvatarId.avatar_id)
+                this.$emit('new-avatar', newAvatarId.avatar_id)
             }
         }
     },

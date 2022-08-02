@@ -21,11 +21,13 @@ export class AvatarsController {
 
 	@Post()
 	@UseInterceptors(FileInterceptor('file'))
-	async newAvatar(@Req() req: any, @Body() image: any, @UploadedFile() file: Express.Multer.File) {
+	async newAvatar(@Res() res: Response, @Req() req: any, @Body() image: any, @UploadedFile() file: Express.Multer.File) {
 
 		const uploadSuccessful = await this.avatarsService.uploadAvatar(file)
 		
-		return uploadSuccessful
+
+		// console.log(uploadSuccessful)
+		res.send({avatar_id: uploadSuccessful})
 	}
 
 }

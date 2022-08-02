@@ -47,9 +47,11 @@ export class AvatarsService {
 				format: 'img/png'
 			},
 		)
-		.then(res => { console.log(res); true })
-		.catch(err => { console.log(err); false })
+		.then(res => { /* console.log(res) */; return 11 })
+		.catch(err => { console.log(err); return 1 })
 
+		// console.log(response)
+		// Make this return the new avatar_id if successful, otherwise a 1 
 		return response
 	}
 }

@@ -115,7 +115,7 @@ export default defineComponent({
 		changeAvatar() {
 			this.boxType = "avatar";
 			this.showDialogue = true;
-			console.log('change avatar');
+			// console.log('change avatar');
 		},
 		async changeUsername() {
 			this.boxType = "namechange";
@@ -154,12 +154,11 @@ export default defineComponent({
 				this.updateProfileData(this.user?.id as number);
 			}
 		},
-		async saveAvatar(uploadedImg: any) {
-			// console.log('Name', uploadedImg.name)
+		async saveAvatar(avatar_id: number) {
+			console.log('New one is: ', avatar_id)
 
+			// now use the avatar_id to do the patch request
 
-
-			// Will need to patch the avatar_id of the user once it is successfully uploaded
 			const id = this.loginStatusStore.loggedInStatus?.userID
 
 			this.hideDialogue()
