@@ -27,6 +27,7 @@ import { loginStatusStore } from '../stores/profileData';
 export default defineComponent({
     name: "PublicChatChannels",
     props: {
+		user: Object
     },
     data() {
         return {
@@ -70,7 +71,7 @@ export default defineComponent({
 
 .listed-channel{
 	float: left;
-	display: inline-block;
+	/* display: inline-block; */
 }
 
 .button {

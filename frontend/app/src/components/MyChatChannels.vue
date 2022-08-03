@@ -1,13 +1,13 @@
 <template>
 	<div class ="mychatchannels">
 		<h3>Your Channels</h3>
-		<div v-if="!myChatChannels">
+		<div v-if="!myChannels">
 			<h5>Channels failed to load</h5>
 		</div>
-		<div v-else-if="myChatChannels?.length">
-			<div v-for="channel in myChatChannels" :key="channel.id">
+		<div v-else-if="myChannels?.length">
+			<div v-for="channel in myChannels" :key="channel.id">
 				<section class="listed-channel">
-					<h5 class="name">{{channel.name}}</h5>
+					<h5 class="name">{{ channel[0].name }}</h5>
 					<!-- WHY IS THE NAME NOT DISPLAYING FFS -->
 					<SmallButton  class="button" text="open"/>
 					<SmallButton  class="button" text="leave" @click="leaveChannel(channel.id)"/>
@@ -41,17 +41,18 @@ export default defineComponent({
         return {
 			showDialogue: false,
 			boxType: "",
-            myChatChannels: null,
+            myChannels: null,
 			loginStatusStore: loginStatusStore(),
         };
     },
 	mounted() { 
 		fetch("/api/channels/all_for_" + this.user)
 			.then(res => res.json())
-			.then(data => this.myChatChannels = data)
+			.then(data => this.myChannels = data )
 			.catch(err => {
 			console.log(err);
-		});		
+		});	
+		// console.log('Vuota la ', this.myChannels)	
 	},
     watch: {
         user: {
@@ -127,9 +128,9 @@ export default defineComponent({
 		async updateMyChannels(user_id: number) {
                 fetch("/api/channels/all_for_" + user_id)
                     .then(res => res.json())
-                    .then(data => this.myChatChannels = data)
+                    .then(data => this.myChannels = data)
                     .catch(err => {
-                    this.myChatChannels = null;
+                    this.myChannels = null;
                     console.log(err);
                 });
 		},
@@ -145,7 +146,7 @@ export default defineComponent({
 
 .listed-channel{
 	float: left;
-	display: inline-block;
+	/* display: inline-block; */
 }
 
 .button {
