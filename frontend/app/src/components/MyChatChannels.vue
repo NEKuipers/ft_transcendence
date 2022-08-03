@@ -10,7 +10,7 @@
 					<h5 class="name">{{ channel[0].name }}</h5>
 					<!-- WHY IS THE NAME NOT DISPLAYING FFS -->
 					<SmallButton  class="button" text="open"/>
-					<SmallButton  class="button" text="leave" @click="leaveChannel(channel.id)"/>
+					<SmallButton  class="button" text="leave" @click="leaveChannel(channel[0].id)"/>
 				</section>
 			</div>
 		</div>
@@ -113,17 +113,19 @@ export default defineComponent({
 			}
 		},
 		async leaveChannel(channel_id: number) {
-				const requestOptions = {
+			console.log('Channel id:', channel_id)
+			const requestOptions = {
 				method: "DELETE",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({	participant_id: this.loginStatusStore.loggedInStatus?.userID,
-										channel_id: channel_id}) 
+									channel_id: channel_id}) 
 			};
 			fetch('/api/participants', requestOptions)
 				.then(response => response)
 				.catch(err => console.log(err));
+			console.log('channels', this.myChannels)
 			this.updateMyChannels(this.user as number)
-			this.updateMyChannels(this.user as number)
+			// this.updateMyChannels(this.user as number)
 		},
 		async updateMyChannels(user_id: number) {
                 fetch("/api/channels/all_for_" + user_id)
