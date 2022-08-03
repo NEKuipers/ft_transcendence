@@ -67,9 +67,7 @@ export class BlockedUsersService {
 	}
 
 	unblockUser(blockedUser: BlockedUser): string {
-		axios.delete(`http://localhost:${process.env.PGREST_PORT}/blocked_users`, { data: {
-			"blocked_by_id": blockedUser.blocked_by_id,
-			"blocked_user_id": blockedUser.blocked_user_id,} })
+		axios.delete(`http://localhost:${process.env.PGREST_PORT}/blocked_users?blocked_by_id=eq.${blockedUser.blocked_by_id}&blocked_user_id=eq.${blockedUser.blocked_user_id}`)
 				.then(res => res)
 				.catch(err => console.log(err));
 		return "success";
