@@ -2,7 +2,7 @@
   <div>
     <div class="row">
       <div class="top-column" v-if="user">
-        <UserProfile :user="user"></UserProfile>
+        <UserProfile class="user-profile" :user="user"></UserProfile>
       </div>
       <div class="top-column" v-else>
         <h2>User not found</h2>
@@ -95,6 +95,9 @@ export default defineComponent({
 	border:1px solid #ccc;
 }
 
+.user-profile{
+	margin-top: 40px;
+}
 .row:after {
   content:"";
   display: table;
