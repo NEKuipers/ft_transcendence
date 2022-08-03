@@ -171,6 +171,8 @@ export default defineComponent({
 				.then()
 				.catch(err => console.log(err))
 				await this.updateProfileData(this.user?.id as number)
+				await this.updateProfileData(this.user?.id as number)
+
 			}
 
 			this.hideDialogue()

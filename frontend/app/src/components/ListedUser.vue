@@ -1,8 +1,7 @@
 <template>
 	<div class="listed-user">
 		<h3 id="ranking">{{ranking}}</h3>
-		<!-- TODO add profile picture -->
-		<img class="profilePictureThumbnail" width="50" height="50" src="../assets/Profile-picture-default.png"> 
+		<img class="profilePictureThumbnail" width="50" height="50" v-bind:src="'http://localhost:3030/avatars/' + profile?.avatar_id">
 		<h3 class="username"><a v-bind:href="'http://localhost:8080/profile/' + profile?.user_id">{{profile?.username}}</a></h3>
 		<h4 class="game-stats">Games played: {{profile?.games_won + profile?.games_lost}} | Wins: {{profile?.games_won}} | Losses: {{profile?.games_lost}}</h4>
 		<img class="medal" v-if="ranking===1" height="65" width="55" src="../assets/gold.png">
@@ -47,6 +46,7 @@ export default defineComponent({
 
 
 .profilePictureThumbnail {
+	margin-top: 8px;
 	float: left;
 	margin-left: 10px;
 	display: inline-block;
