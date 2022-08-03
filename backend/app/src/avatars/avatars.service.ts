@@ -46,8 +46,13 @@ export class AvatarsService {
 				name: file.originalname,
 				format: 'img/png'
 			},
+			{
+				headers: {
+					'Prefer': "return=representation"
+				}
+			}
 		)
-		.then(res => { /* console.log(res) */; return 5 }) // TODO this is just a placeholder
+		.then(res => { /* console.log('The database returns', res.data[0].id); */ return res.data[0].id }) // TODO this is just a placeholder
 		.catch(err => { console.log(err); return 1 })
 
 		// console.log(response)

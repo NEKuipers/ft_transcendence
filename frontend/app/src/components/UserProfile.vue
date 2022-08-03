@@ -154,13 +154,12 @@ export default defineComponent({
 			}
 		},
 		async saveAvatar(avatar_id: number) {
-			console.log('New one is: ', avatar_id)
 			// here use the avatar_id to do the patch request
 
 			const id = this.loginStatusStore.loggedInStatus?.userID
 
 			if (id != undefined) {
-				fetch('/api/users/avatar/' + id, {
+				await fetch('/api/users/avatar/' + id, {
 					method: "PATCH",
 					body: JSON.stringify({
 						"avatar_id": avatar_id
@@ -169,9 +168,9 @@ export default defineComponent({
 						'Content-type': 'application/json; charset=UTF-8'
 					}
 				})
-				.then(() => console.log('New avatar'))
+				.then()
 				.catch(err => console.log(err))
-				this.updateProfileData(this.user?.id as number)
+				await this.updateProfileData(this.user?.id as number)
 			}
 
 			this.hideDialogue()

@@ -85,9 +85,6 @@ const router = createRouter({
 })
 
 router.beforeEach((to) => {
-  // const store = loginStatusStore()
-
-	// const loggedIn = store.loggedInStatus
   const loggedIn = loginStatusStore().loggedInStatus
 
 	if ((to.name !== 'login' && to.name !== 'tfa') && !loggedIn) {
