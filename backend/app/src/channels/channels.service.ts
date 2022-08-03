@@ -11,7 +11,7 @@ export class ChannelsService {
 	}
 
 	async findAllPublic(): Promise<Channel[]> {
-		let res = await axios.get(`http://localhost:${process.env.PGREST_PORT}/channels?type=eq.public`);
+		let res = await axios.get(`http://localhost:${process.env.PGREST_PORT}/channels?type=eq.public&is_closed=eq.false`);
 		return res.data;
 	}
 
@@ -27,12 +27,17 @@ export class ChannelsService {
 		return channels;
 	}
 
+	async findOne(channel_id: number) : Promise<Channel> {
+		let res = await axios.get(`http://localhost:${process.env.PGREST_PORT}/channels?id=eq.${channel_id}`)
+		return res.data;
+	}
+
 	async createChannel(channel: Channel): Promise<string> {
 		let channels = await this.findAll();
 		if (channels.find((existingChannel) => existingChannel.name == channel.name)) {
 			return "taken";
 		}
-		axios.post(`http://localhost:${process.env.PGREST_PORT}/channels`, {
+		await axios.post(`http://localhost:${process.env.PGREST_PORT}/channels`, {
 			name: channel.name,
 			type: channel.type,
 			owner_id: channel.owner_id,
@@ -43,9 +48,11 @@ export class ChannelsService {
 	}
 
 	async closeChannel(channel: Channel): Promise<string> {
-		axios.patch(`http://localhost:${process.env.PGREST_PORT}/channels?id=eq.${channel.id}`, {
+		//this doesn't seem to work
+		await axios.patch(`http://localhost:${process.env.PGREST_PORT}/channels?id=eq.${channel.id}`, {
 			is_closed: true
 		})
+		console.log(channel);
 		return "Channel closed";
 	}
 
