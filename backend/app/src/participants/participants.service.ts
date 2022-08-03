@@ -47,11 +47,7 @@ export class ParticipantsService {
 	}
 	
 	async removeUserFromChannel(participant: Participant): Promise<string> {
-		axios.delete(`http://localhost:${process.env.PGREST_PORT}/participants`, { data: {
-			"participant_id": participant.participant_id,
-			"channel_id": participant.channel_id,} })
-				.then(res => res)
-				.catch(err => console.log(err));
+		axios.delete(`http://localhost:${process.env.PGREST_PORT}/participants?channel_id=eq.${participant.channel_id}&participant_id=eq.${participant.participant_id}`);
 		return "User removed from channel";
 	}
 
