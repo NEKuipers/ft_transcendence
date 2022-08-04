@@ -1,5 +1,5 @@
 <template>
-    <div v-if="channel!=null">
+    <div v-if="channel!=null" class="column">
         <div> 
             <h2>{{channel.name}}</h2>
         </div>
@@ -31,13 +31,14 @@ export default defineComponent({
     data() {
         return {
             channel: null,
+            messages: null, // Retrieve these from channel ID
             text: ''
         }
     },
     mounted() {
         fetch('/api/channels/' + this.channel_id)
         .then(res => res.json())
-        .then(data => { console.log('This should be the appropriate channel', data); this.channel = data[0] })
+        .then(data => { this.channel = data[0] })
         .catch(err => console.log('Error retrieving channel', err))
     }
 })
@@ -45,6 +46,16 @@ export default defineComponent({
 </script>
 
 <style scoped>
+
+.column {
+	background-color: #f4f4f4;
+	display: flex;
+	flex-direction:column;
+	float:left;
+	padding:10px;
+	box-sizing: border-box; /*this adds the border+padding into the width. can also look at flexbox*/
+	height: 850px;
+}
 
 #input-box {
 	margin-top: 20px;
