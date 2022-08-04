@@ -10,24 +10,22 @@ export class ChannelsController {
 	async findAll(): Promise<Channel[]> {
 		return this.channelsService.findAll();
 	}
-
+	
+	@Get('/public') //Retrieve all public channels
+	async findAllPublic(): Promise<Channel[]> {
+		return this.channelsService.findAllPublic();
+	}
+	
+	@Get('/all_for_:id') //Retrieve all channels a user is in?
+	async findAllForUser(@Param('id') id: number): Promise<Channel[]> {
+		return await this.channelsService.findAllForUser(id);
+	}
+	
 	@Get(':id')
 	async findById(@Param('id') id: number): Promise<Channel> {
 		return this.channelsService.findOne(id);
 	}
 	
-	@Get('/public') //Retrieve all public channels
-	async findAllPublic(): Promise<Channel[]> {
-		console.log("What is happening")
-		return this.channelsService.findAllPublic();
-	}
-
-	@Get('/all_for_:id') //Retrieve all channels a user is in?
-	async findAllForUser(@Param('id') id: number): Promise<Channel[]> {
-		console.log("Yo what's wrong", id)
-		return this.channelsService.findAllForUser(id);
-	}
-
 	@Post()
 	async createChannel(@Body() channel: Channel): Promise<string> {
 		return this.channelsService.createChannel(channel);
