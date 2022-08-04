@@ -28,8 +28,8 @@
 					</form>
 				</div> -->
 			</div>
-			<div class="column" id="tools">
-				TOOLS
+			<div class="column" id="channel-overview">
+				Channel overview
 			</div>
 		</div>
 	</div>
@@ -70,10 +70,8 @@ export default defineComponent({
 		MyChatChannels,
 		ChatBox
 	},
-
-
-
 })
+
 </script>
 
 <style scoped>
@@ -138,7 +136,7 @@ export default defineComponent({
 	/* width: 20%; */
 }
 
-#tools {
+#channel-overview {
 	font-size: 30px;
 	width: 20%;
 }
