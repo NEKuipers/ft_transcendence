@@ -13,7 +13,10 @@
 				</div>
 			</div>
 			<div class="column" id="center_column">
-				<div> 
+				<div>
+					<ChatBox />
+				</div>
+				<!-- <div> 
 					<h2>Room Name</h2>
 				</div>
 				<div id="chat-column">
@@ -23,7 +26,7 @@
 					<form>
 						<input @submit="sendMsg" id="input-box" type="text" v-model="text" placeholder="Message"/>
 					</form>
-				</div>
+				</div> -->
 			</div>
 			<div class="column" id="tools">
 				TOOLS
@@ -38,6 +41,7 @@ import ChatFriendsList from "../components/ChatFriendsList.vue";
 import PublicChatChannels from "../components/PublicChatChannels.vue";
 import MyChatChannels from "../components/MyChatChannels.vue";
 import { loginStatusStore } from "../stores/profileData";
+import ChatBox from '../components/ChatBox.vue'
  
 export default defineComponent({
 	name: 'ChatView',
@@ -64,6 +68,7 @@ export default defineComponent({
 		ChatFriendsList,
 		PublicChatChannels,
 		MyChatChannels,
+		ChatBox
 	},
 
 
