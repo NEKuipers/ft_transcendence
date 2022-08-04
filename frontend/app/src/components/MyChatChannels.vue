@@ -46,13 +46,12 @@ export default defineComponent({
         };
     },
 	mounted() { 
+		console.log('Is there a user', this.user)
 		fetch("/api/channels/all_for_" + this.user)
 			.then(res => res.json())
-			.then(data => this.myChannels = data )
-			.catch(err => {
-			console.log(err);
-		});	
-		// console.log('Vuota la ', this.myChannels)	
+			.then(data => { console.log('Yo wtf', data) ; this.myChannels = data })
+			.catch(err => console.log('Error fetching channels for user ', err))
+		console.log('Vuota la ', this.myChannels)	
 	},
     watch: {
         user: {
