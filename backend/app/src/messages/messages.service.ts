@@ -16,4 +16,14 @@ export class MessagesService {
         // console.log('Nah huh?')
         return res.data
     }
+
+    async saveMessage(msg: Message) {
+        await axios.post(`http://localhost:${process.env.PGREST_PORT}/messages`, {
+            channel_id: msg.channel_id,
+            user_id: msg.user_id,
+            message: msg.message
+        })
+        .then()
+        .catch(err => console.log(err))
+    }
 }

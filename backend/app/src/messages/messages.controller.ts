@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { MessagesService } from './messages.service';
 import { Message } from './messages.interface';
 
@@ -15,5 +15,10 @@ export class MessagesController {
 	async findByChannel(@Param('id') id: number): Promise<Message[]> {
 		// console.log("What is up here")
 		return this.messagesService.findByChannel(id);
+	}
+
+	@Post()
+	sendMessage(@Body() msg: Message) {
+		this.messagesService.saveMessage(msg)
 	}
 }
