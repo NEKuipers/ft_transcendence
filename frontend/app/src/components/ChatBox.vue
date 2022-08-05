@@ -26,7 +26,9 @@ import { defineComponent } from 'vue'
 export default defineComponent({
     name: 'ChatBox',
     props: {
-        channel_id: Number,
+        channel_id: {
+            type: Number
+        }
     },
     data() {
         return {
@@ -35,12 +37,24 @@ export default defineComponent({
             text: ''
         }
     },
-    mounted() {
-        fetch('/api/channels/' + this.channel_id)
-        .then(res => res.json())
-        .then(data => { this.channel = data[0] })
-        .catch(err => console.log('Error retrieving channel', err))
-    }
+    watch: {
+        channel_id: {
+            handler(newValue) {
+                if (!newValue) { return; }
+                fetch('/api/channels/' + this.channel_id)
+                .then(res => res.json())
+                .then(data => { this.channel = data[0] })
+                .catch(err => console.log('Error retrieving channel', err))
+            }
+        }
+    },
+    // mounted() {
+    //     console.log('Aoooo', this.channel_id)
+    //     fetch('/api/channels/' + this.channel_id)
+    //     .then(res => res.json())
+    //     .then(data => { this.channel = data[0] })
+    //     .catch(err => console.log('Error retrieving channel', err))
+    // }
 })
 
 </script>

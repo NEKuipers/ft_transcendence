@@ -3,7 +3,7 @@
 		<div class="container">
 			<div class="column" id="left-column">
 				<div id="channels">
-					<MyChatChannels  :user="1" />
+					<MyChatChannels @open-chat="openChat"  :user="1" />
 				</div>
 				<div id="channels">
 					<PublicChatChannels/>
@@ -14,7 +14,7 @@
 			</div>
 			<div class="column" id="center_column">
 				<div>
-					<ChatBox :channel_id="1" />
+					<ChatBox :channel_id="currentChannel" />
 				</div>
 			</div>
 			<div class="column" id="tools">
@@ -37,7 +37,8 @@ export default defineComponent({
 	data() {
 		return {
 			text: '',
-			user: null
+			user: null,
+			currentChannel: 0
 		}
 	},
 	methods: {
@@ -46,6 +47,9 @@ export default defineComponent({
 			.then(res => res.json())
 			.then(data => this.user = data)
 			.catch(err => console.log('What is: ' + err));
+		},
+		openChat(channel_id: number) {
+			this.currentChannel = channel_id
 		}
 	},
 	async mounted() {

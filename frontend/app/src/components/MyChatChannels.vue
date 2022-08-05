@@ -9,7 +9,7 @@
 				<section class="listed-channel">
 					<h5 class="name">{{ channel[0].name }}</h5>
 					<!-- WHY IS THE NAME NOT DISPLAYING FFS -->
-					<SmallButton  class="button" text="open"/>
+					<SmallButton  class="button" text="open" @click="openChat(channel[0].id)"/>
 					<SmallButton  class="button" text="leave" @click="leaveChannel(channel[0].id)"/>
 				</section>
 			</div>
@@ -46,12 +46,10 @@ export default defineComponent({
         };
     },
 	mounted() { 
-		// console.log('Is there a user', this.user)
 		fetch("/api/channels/all_for_" + this.user)
 			.then(res => res.json())
 			.then(data => { console.log('Yo wtf', data) ; this.myChannels = data })
 			.catch(err => console.log('Error fetching channels for user ', err))
-		// console.log('Vuota la ', this.myChannels)
 	},
     watch: {
         user: {
@@ -135,7 +133,12 @@ export default defineComponent({
                     console.log(err);
                 });
 		},
-	}
+		openChat(channel_id: number) {
+			// console.log('Opening chat', channel_id)
+			this.$emit('open-chat', channel_id)
+		}
+	},
+	emits: ['open-chat']
 })
 
 </script>
