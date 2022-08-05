@@ -129,6 +129,7 @@ export default defineComponent({
   /* border: 1px solid #e5e5ea;
   border-radius: 0.25rem; */
   width: 800px;
+  min-height: 100px;
   display: flex;
   flex-direction: column;
   font-family: "SanFrancisco";
@@ -138,7 +139,7 @@ export default defineComponent({
   max-width: 800px;
   overflow: auto;
   padding: 0.5rem 1.5rem;
-  box-sizing: border-box;
+  /* box-sizing: border-box; */
   justify-content: space-between;
 }
 
