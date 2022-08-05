@@ -38,7 +38,7 @@ export default defineComponent({
 	mounted() { 
 		fetch("/api/channels/public")
 			.then(res => res.json())
-			.then(data => { console.log('Public channels', data); this.publicChatChannels = data })
+			.then(data => this.publicChatChannels = data)
 			.catch(err => {
 			this.publicChatChannels = null;
 			console.log(err);
