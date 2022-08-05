@@ -15,12 +15,17 @@ export class ChannelsController {
 	async findAllPublic(): Promise<Channel[]> {
 		return this.channelsService.findAllPublic();
 	}
-
+	
 	@Get('/all_for_:id') //Retrieve all channels a user is in?
 	async findAllForUser(@Param('id') id: number): Promise<Channel[]> {
-		return this.channelsService.findAllForUser(id);
+		return await this.channelsService.findAllForUser(id);
 	}
-
+	
+	@Get(':id')
+	async findById(@Param('id') id: number): Promise<Channel> {
+		return this.channelsService.findOne(id);
+	}
+	
 	@Post()
 	async createChannel(@Body() channel: Channel): Promise<string> {
 		return this.channelsService.createChannel(channel);
