@@ -172,7 +172,7 @@ p.from-them::after {
 } */
 
 #chat-column {
-	height: 1000px;
+	height: 680px;
 	margin-left: 20px;
 	margin-right: 20px;
 	overflow: auto;
