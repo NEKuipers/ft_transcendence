@@ -70,6 +70,10 @@ export default defineComponent({
 
 <style scoped>
 
+* {
+	box-sizing: border-box;
+}
+
 .container {
 	display: flex;
 	gap: 20px;
@@ -122,11 +126,13 @@ export default defineComponent({
 
 #friends {
 	display: flex;
-	font-size: 20px;
+	box-sizing: border-box;
+	font-size: 15px;
 	background-color: #f4f4f4;
 	border: 5px solid white;
 	border-radius: 5px;
 	height: 50%;
+	justify-content: left;
 	/* width: 20%; */
 }
 

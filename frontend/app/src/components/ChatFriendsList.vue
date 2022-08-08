@@ -7,14 +7,18 @@
 		<div v-else-if="friends.length">
 			<div v-for="friend in friends" :key="friend?.id">
 				<section class="listed-friend">
-					<SmallButton class="invite-btn" text="Invite to game"/>
-					<SmallButton class="dm-btn" text="Direct message"/>
-					<img class="profilePictureThumbnail" width="50" height="50" v-bind:src="'http://localhost:3030/avatars/' + friend.friend_avatar_id"/> 
-					<!-- src="findFriendAvatar(friend.to_user_id)" -->
-					<a class="friend" v-bind:href="'http://localhost:8080/profile/' + friend.to_user_id">{{friend.to_username}}</a>
-					<h4 class="online-status" v-if="friend?.friend_status == 'online'" id="online">Online</h4>
-					<h4 class="online-status"  v-else-if="friend?.friend_status == 'ingame'" id="ingame">In game</h4>
-					<h4 class="online-status" v-else>Offline</h4>
+					<div id="name-image">
+						<img class="profilePictureThumbnail" width="50" height="50" v-bind:src="'http://localhost:3030/avatars/' + friend.friend_avatar_id"/> 
+						<!-- src="findFriendAvatar(friend.to_user_id)" -->
+						<a class="friend" v-bind:href="'http://localhost:8080/profile/' + friend.to_user_id">{{friend.to_username}}</a>
+					</div>
+					<div id="friend-buttons">
+						<h4 class="online-status" v-if="friend?.friend_status == 'online'" id="online">Online</h4>
+						<h4 class="online-status"  v-else-if="friend?.friend_status == 'ingame'" id="ingame">In game</h4>
+						<h4 class="online-status" v-else>Offline</h4>
+						<SmallButton class="invite-btn" text="Invite to game"/>
+						<SmallButton class="dm-btn" text="Direct message"/>
+					</div>
 				</section>
 			</div>
 		</div>
@@ -80,12 +84,15 @@ export default defineComponent({
 </script>
 
 <style scoped>
+
+
+
 .friend {
 	margin-top: 5px;
-	font-size: 26pt;
+	font-size: 15pt;
 	font-weight: bold;
 	text-decoration: none;
-	padding-left: 30px;
+	/* padding-left: 5px; */
 	float: left;
 
 }
@@ -103,16 +110,20 @@ a:hover {
 	/* padding-top: 25px; */
 }
 
+/* #friendlist {
+	flex-direction: column;
+} */
+
 .unfriend-btn {
-	margin-top: 20px;
-	margin-left: 20px;
+	/* margin-top: 5px;
+	margin-left: 5px; */
 	float:left;
 }
 
 .listed-friend {
-	display: inline-block;
-	/* overflow: auto; */
-	width: 500px;
+	display: flex;
+	overflow: auto;
+	/* width: 200px; */
 }
 
 #online {
@@ -126,6 +137,14 @@ a:hover {
 
 }
 
+#name-image {
+	margin-top: 10px;
+}
+
+#friend-buttons {
+	margin-bottom: 10px;
+}
+
 .profilePictureThumbnail {
 	margin-left: 20px;
 	padding-top: 0px;
@@ -134,7 +153,9 @@ a:hover {
 }
 
 .friendlist {
-	margin-left: 50px;
+	flex-direction: column;
+	/* margin-left: 20px;
+	display: flex; */
 }
 
 

@@ -1,6 +1,6 @@
 <template>
 	<div class ="mychatchannels">
-		<h3>Your Channels</h3>
+		<h5>Your Channels</h5>
 		<div v-if="!myChannels">
 			<h5>Channels failed to load</h5>
 		</div>
