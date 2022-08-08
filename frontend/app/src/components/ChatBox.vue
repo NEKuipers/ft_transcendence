@@ -104,26 +104,6 @@ export default defineComponent({
 
 <style scoped>
 
-/* .column {
-	background-color: #f4f4f4;
-	display: flex;
-	flex-direction:column;
-	float:left;
-	padding:10px;
-	box-sizing: border-box; /*this adds the border+padding into the width. can also look at flexbox*/
-	/* height: 850px; */
-/* }
-
-/* .msg {
-    background-color: teal;
-    border: 2px solid teal;
-    border-radius: 10px;
-    text-align:left;
-    font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    height: 40px;
-    width: 200px;
-} */
-
 .messages {
   background-color: #fff;
   /* border: 1px solid #e5e5ea;
