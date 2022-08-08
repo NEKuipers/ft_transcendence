@@ -3,13 +3,13 @@
 		<div class="container">
 			<div class="column" id="left-column">
 				<div id="channels">
-					<MyChatChannels @open-chat="openChat"  :user="1" />
+					<MyChatChannels @open-chat="openChat"  :user="loginStatusStore.loggedInStatus?.userID" />
 				</div>
 				<div id="channels">
 					<PublicChatChannels/>
 				</div>
 				<div id="friends">
-					<ChatFriendsList :user="1" />
+					<ChatFriendsList :user="loginStatusStore.loggedInStatus?.userID" />
 				</div>
 			</div>
 			<div class="column" id="center_column">
@@ -36,6 +36,7 @@ export default defineComponent({
 	name: 'ChatView',
 	data() {
 		return {
+			loginStatusStore: loginStatusStore(),
 			text: '',
 			user: null,
 			currentChannel: 0
