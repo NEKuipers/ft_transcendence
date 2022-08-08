@@ -1,6 +1,6 @@
 <template>
 	<div class ="friendlist">
-	<h3>Friends</h3>
+		<h3>Friends</h3>
 		<div v-if="!friends">
 			<h3>Friend list failed to load</h3>
 		</div>
@@ -86,6 +86,11 @@ export default defineComponent({
 <style scoped>
 
 
+.friendlist {
+	flex-direction: column;
+	/* margin-left: 20px;
+	display: flex; */
+}
 
 .friend {
 	margin-top: 5px;
@@ -122,7 +127,7 @@ a:hover {
 
 .listed-friend {
 	display: flex;
-	overflow: auto;
+	overflow-y: auto;
 	/* width: 200px; */
 }
 
@@ -152,11 +157,6 @@ a:hover {
 
 }
 
-.friendlist {
-	flex-direction: column;
-	/* margin-left: 20px;
-	display: flex; */
-}
 
 
 </style>

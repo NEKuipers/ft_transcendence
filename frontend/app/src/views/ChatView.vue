@@ -115,6 +115,7 @@ export default defineComponent({
 
 #channels {
 	display: flex;
+	justify-content: left;
 	font-size: 30px;
 	height: 50%;
 	row-gap: 10px;
