@@ -6,12 +6,15 @@
 		</div>
 		<div v-else-if="myChannels?.length">
 			<div v-for="channel in myChannels" :key="channel.id">
-				<section class="listed-channel">
-					<h5 class="name">{{ channel[0].name }}</h5>
-					<!-- WHY IS THE NAME NOT DISPLAYING FFS -->
-					<SmallButton  class="button" text="open" @click="openChat(channel[0].id)"/>
-					<SmallButton  class="button" text="leave" @click="leaveChannel(channel[0].id)"/>
-				</section>
+				<div class="listed-channel">
+					<div id="channel-name">
+						<h5 class="name">{{ channel[0].name }}</h5>
+					</div>
+					<div id="channel-buttons">
+						<SmallButton  class="button" text="open" @click="openChat(channel[0].id)"/>
+						<SmallButton  class="button" text="leave" @click="leaveChannel(channel[0].id)"/>
+					</div>
+				</div>
 			</div>
 		</div>
 		<div v-else>
@@ -145,11 +148,20 @@ export default defineComponent({
 
 <style scoped>
 .mychatchannels {
-	margin-left: 50px;
+	margin-left: 20px;
+	flex-direction: column;
+	justify-content: space-between;
+	
+	/* max-height: 300px; */
 }
 
 .listed-channel{
 	float: left;
+	overflow-y: auto;
+	max-height: 150px;
+	box-sizing: border-box;
+	justify-content: space-between;
+	/* overflow-x: hidden; */
 	/* display: inline-block; */
 }
 
@@ -157,9 +169,13 @@ export default defineComponent({
 	float: left;
 	margin-left:8px;
 }
-.name {
-	margin-top: -4px;
-	float: left;
+
+#channel-name {
+	justify-content: left;
+}
+
+#channel-buttons {
+	justify-content: left;
 }
 
 </style>
