@@ -226,7 +226,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-
 .names {
   margin-top: 0px;
 }
@@ -277,6 +276,4 @@ a:visited {
 	margin-left: 5px;
 	margin-right: 5px;
 }
-
-
 </style>

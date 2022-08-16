@@ -88,7 +88,6 @@ export default defineComponent({
 		}
 	},
 })
-
 </script>
 
 <style scoped>
@@ -110,5 +109,4 @@ a:visited {
 a:hover {
 	text-decoration: underline;
 }
-
 </style>

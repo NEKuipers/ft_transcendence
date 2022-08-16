@@ -12,20 +12,6 @@
 </template>
 
 <script lang="ts">
-  /*
-  list of data requirements (fetch() calls) for this view:
-  GET:
-    - Users
-		* id
-		* username
-		* status
-		* match history created via a database view
-	- Avatars
-		* id
-		* user_id
-		* img
-	
-  */
 import { defineComponent } from 'vue';
 import  ListedUser from '../components/ListedUser.vue';
 import { User } from '../types/UserType'
@@ -55,11 +41,9 @@ export default defineComponent({
 	methods: {
 	},
 });
-
 </script>
 
 <style scoped>
-
 .leaderboardUser {
 	border-style:solid;
 	border-top-width: 1px;
@@ -74,5 +58,4 @@ export default defineComponent({
 	margin: 0 auto 0 auto;
 	width:80%;
 }
-
 </style>

@@ -99,11 +99,9 @@ export default defineComponent({
         }
     }
 })
-
 </script>
 
 <style scoped>
-
 .messages {
   background-color: #fff;
   /* border: 1px solid #e5e5ea;
@@ -269,5 +267,4 @@ p[class^="from-"].emoji::before {
 	/* flex: 1 0; */
 	/* flex-wrap: wrap; */
 }
-
 </style>

@@ -51,7 +51,6 @@ export default defineComponent({
 		}
 	}
 })
-
 </script>
 
 <style scoped>
@@ -62,5 +61,4 @@ export default defineComponent({
 	clear: both;
 	width:100%;
 }
-
 </style>

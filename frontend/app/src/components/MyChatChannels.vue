@@ -32,7 +32,6 @@ import SmallButton from './SmallButton.vue'
 import { loginStatusStore } from '../stores/profileData';
 import DialogueBox from './DialogueBox.vue'
 
-
 export default defineComponent({
     name: "MyChatChannels",
     props: {
@@ -181,5 +180,4 @@ export default defineComponent({
 #channel-buttons {
 	justify-content: left;
 }
-
 </style>

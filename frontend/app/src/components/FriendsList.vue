@@ -29,7 +29,6 @@
 import { defineComponent } from 'vue'
 import SmallButton from '../components/SmallButton.vue'
 
-
 export default defineComponent({
 	name: 'FriendsList',
 	props: {
@@ -79,7 +78,6 @@ export default defineComponent({
 		}
 	}
 })
-
 </script>
 
 <style scoped>
@@ -135,6 +133,4 @@ a:hover {
 	float: left;
 
 }
-
-
 </style>

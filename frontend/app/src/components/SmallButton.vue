@@ -32,6 +32,4 @@ export default defineComponent({
 	color:#fff;
 	cursor: pointer;
 }
-
-
 </style>

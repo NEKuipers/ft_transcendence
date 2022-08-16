@@ -81,5 +81,4 @@ export default defineComponent({
 	margin-top: -4px;
 	float: left;
 }
-
 </style>

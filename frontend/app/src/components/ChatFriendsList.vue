@@ -32,7 +32,6 @@
 import { defineComponent } from 'vue'
 import SmallButton from './SmallButton.vue'
 
-
 export default defineComponent({
 	name: 'ChatFriendsList',
 	props: {
@@ -80,12 +79,9 @@ export default defineComponent({
 		}
 	}
 })
-
 </script>
 
 <style scoped>
-
-
 .friendlist {
 	flex-direction: column;
 	/* margin-left: 20px;
@@ -156,7 +152,4 @@ a:hover {
 	float: left;
 
 }
-
-
-
 </style>

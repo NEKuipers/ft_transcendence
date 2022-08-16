@@ -23,7 +23,6 @@ import { defineComponent } from 'vue'
 import SmallButton from '../components/SmallButton.vue'
 import { loginStatusStore } from '../stores/profileData';
 
-
 export default defineComponent({
 	name: 'BlockedUsers',
 	props: {
@@ -70,7 +69,6 @@ export default defineComponent({
 		SmallButton,
 	}
 })
-
 </script>
 
 <style scoped>
@@ -92,5 +90,4 @@ a:visited {
 a:hover {
 	text-decoration: underline;
 }
-
 </style>

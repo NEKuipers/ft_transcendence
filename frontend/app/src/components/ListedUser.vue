@@ -27,7 +27,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-
 #ranking {
 	float: left;
 	margin-left:10px;
@@ -40,8 +39,6 @@ export default defineComponent({
 .listed-user {
 	background-color: #f3f3f3;
 }
-
-
 
 .profilePictureThumbnail {
 	margin-top: 8px;
@@ -61,5 +58,4 @@ export default defineComponent({
 
 	float:center;
 }
-
 </style>

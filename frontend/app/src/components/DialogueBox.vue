@@ -35,7 +35,6 @@
 <script lang="ts">
 import { defineComponent } from "@vue/runtime-core";
 
-
 export default defineComponent({
     name: 'DialogueBox',
     props: ['show', 'type'],
@@ -78,7 +77,6 @@ export default defineComponent({
                 .then(res => { return res.json() })
                 .catch(err => { console.log(err); return err })
 
-
                 // If successful, then emit that userProfile has to patch avatar_id for user
                 // console.log('New avatar_id is', newAvatarId.avatar_id)
                 this.$emit('new-avatar', newAvatarId.avatar_id)
@@ -87,12 +85,10 @@ export default defineComponent({
     },
     emits: ['close-dialogue', 'new-name', 'new-avatar']
 })
-
 </script>
 
 
 <style scoped>
-
 .popup {
     transform: translate(-50%, -50%);
     width: 30%;

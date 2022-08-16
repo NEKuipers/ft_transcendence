@@ -68,11 +68,9 @@ export default defineComponent({
     ChannelOverview
 },
 })
-
 </script>
 
 <style scoped>
-
 * {
 	box-sizing: border-box;
 }

@@ -82,11 +82,9 @@ export default defineComponent ({
         }
     }
 })
-
 </script>
 
 <style scoped>
-
 .userachievement {
     display: table;
 }
@@ -133,6 +131,4 @@ export default defineComponent ({
     vertical-align: top;
     color: white;
 }
-
-
 </style>

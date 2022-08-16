@@ -43,8 +43,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-
-
 .navbar{
 	background-color: rgb(16, 25, 70);
 	overflow: hidden;
@@ -75,5 +73,4 @@ nav a.router-link-exact-active {
 	top: 60px;
 	right: 30px;
 }
-
 </style>
