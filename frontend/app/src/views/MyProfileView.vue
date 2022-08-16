@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="row">
-      <UserProfile class="user-profile" :user="user?.id"></UserProfile>
+      <UserProfile class="top-column" :user="user?.id"></UserProfile>
       <AchievementsList :user="user?.id" class="top-column"/>
     </div> 
     <br>
