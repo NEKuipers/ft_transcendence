@@ -1,12 +1,7 @@
 <template>
   <div>
     <div class="row">
-      <div class="top-column" v-if="user">
-        <UserProfile class="user-profile" :user="user"></UserProfile>
-      </div>
-      <div class="top-column" v-else>
-        <h2>User not found</h2>
-      </div> <!-- TODO add loading for user -->
+      <UserProfile class="user-profile" :user="user?.id"></UserProfile>
       <AchievementsList :user="user?.id" class="top-column"/>
     </div> 
     <br>
@@ -42,15 +37,14 @@ export default defineComponent({
 	methods: {
 		async loadUserData(id: number) {
 			fetch('/api/users/' + id)
-			.then(res => res.json())
-			.then(data => this.user = data)
-			.catch(err => console.log(err));
+				.then(res => res.json())
+				.then(data => this.user = data)
+				.catch(err => console.log(err));
 		}
 	},
 	data () {
 		return {
-			selectedFile: null,
-			user: null,
+			user: null as any,
 		}
 	},
 	async mounted() {

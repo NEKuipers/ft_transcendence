@@ -2,7 +2,7 @@
   <div v-if="users">
     <div v-for="user in users" :key="user.id">
       <section class="profileContainer">
-        <UserProfile :user="user"></UserProfile>
+        <UserProfile :user="user.id"></UserProfile>
       </section>
     </div>
   </div>
@@ -34,18 +34,17 @@ export default defineComponent({
 	props: {},
 	data () {
 		return {
-			selectedFile: null,
-			users: null,
+			users: null as null | any,
 		}
 	},
 	mounted() {
 		fetch('/api/users/')
-		.then(res => res.json())
-		.then(data => this.users = data)
-		.catch(err => console.log(err));    
+			.then(res => res.json())
+			.then(data => this.users = data)
+			.catch(err => console.log(err));    
 	},
 	components: {
-	UserProfile
+		UserProfile
 	},
 	methods: {
 

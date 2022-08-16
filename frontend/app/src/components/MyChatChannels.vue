@@ -44,15 +44,19 @@ export default defineComponent({
         return {
 			showDialogue: false,
 			boxType: "",
-            myChannels: null,
+            myChannels: null as any,
 			loginStatusStore: loginStatusStore(),
         };
     },
 	mounted() { // Perhaps a computed: would allow this to update immediately
+		// First of all, copy paste, this is the same as `this.updateMyChannels(this.user)`
+		// Second: the watch for user executes on mount because the "immediate: true", and that calls updateMyChannels, so this is just doing it twice
+		/*
 		fetch("/api/channels/all_for_" + this.user)
 			.then(res => res.json())
 			.then(data => this.myChannels = data )
 			.catch(err => console.log('Error fetching channels for user ', err))
+		*/
 	},
     watch: {
         user: {

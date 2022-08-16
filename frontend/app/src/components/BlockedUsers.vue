@@ -33,7 +33,7 @@ export default defineComponent({
 	},
 	data () {
 		return {
-			blockedUsers: null,
+			blockedUsers: null as null | any,
 			loginStatusStore: loginStatusStore(),
 		}
 	},
@@ -51,20 +51,19 @@ export default defineComponent({
 			const requestOptions = {
 				method: "DELETE",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({	blocked_by_id: this?.user,
+				body: JSON.stringify({	blocked_by_id: this.user,
 										blocked_user_id: bid}) 
 			};
 			fetch('/api/blocked_users', requestOptions)
 				.then(response => response)
 				.catch(err => console.log(err));
 			this.updateBlockedUsers(this.user as number);
-			this.updateBlockedUsers(this.user as number);
 		},
 		async updateBlockedUsers(user_id: number) {
 			fetch('/api/blocked_users/' + user_id)
-			.then(res => res.json())
-			.then(data => this.blockedUsers = data)
-			.catch(err => console.log(err));
+				.then(res => res.json())
+				.then(data => this.blockedUsers = data)
+				.catch(err => console.log(err));
 		},
 	},
 	components: {

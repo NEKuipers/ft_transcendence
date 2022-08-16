@@ -42,7 +42,7 @@ export default defineComponent({
 	},
 	data () {
 		return {
-			friends: null,
+			friends: null as null | Array<any>,
 		}
 	},
 	watch: {

@@ -4,7 +4,7 @@
       <h2>User profile failed to load</h2>
     </div>
     <div v-else>
-      <UserProfile :user="user"></UserProfile>
+      <UserProfile :user="user?.id"></UserProfile>
     </div>
     <br>
     <br>
@@ -76,34 +76,32 @@ import MatchHistory from '../components/MatchHistory.vue';
 
 
 export default defineComponent({
-  name: 'ProfileView',
-  props: {
-    },
-    methods: {
-      async loadUserData(id: string) {
-        fetch('/api/users/' + id)
-        .then(res => res.json())
-        .then(data => this.user = data)
-        .catch(err => console.log('What is: ' + err));
-      }
-    },
-  data () {
-    return {
-      selectedFile: null,
-      user: null,
-      login: {}
-    }
-  },
-  async mounted() {
-    await this.loadUserData(this.$route.params.id[0]);
-	console.log(this.login)
-  },
-  components: {
-    UserProfile,
-    AchievementsList,
-    FriendsList,
-    MatchHistory
-},
+	name: 'ProfileView',
+	props: {},
+	methods: {
+		async loadUserData(id: string) {
+			fetch('/api/users/' + id)
+				.then(res => res.json())
+				.then(data => this.user = data)
+				.catch(err => console.log('What is: ' + err));
+		}
+	},
+	data () {
+		return {
+			user: null as any,
+			login: {}
+		}
+	},
+	async mounted() {
+		await this.loadUserData(this.$route.params.id[0]);
+		console.log(this.login)
+	},
+	components: {
+		UserProfile,
+		AchievementsList,
+		FriendsList,
+		MatchHistory
+	},
 });
 
 </script>

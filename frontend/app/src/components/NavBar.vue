@@ -59,7 +59,6 @@ export default defineComponent({
 	float:left;
 	font-size: 26px;
 	text-decoration: none;
-	display: inline-block;
 }
 
 nav a.router-link-exact-active {

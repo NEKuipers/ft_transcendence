@@ -43,8 +43,8 @@ export default defineComponent({
     data() {
         return {
             loginStatusStore: loginStatusStore(),
-            channel: null,
-            messages: null, // Retrieve these from channel ID
+            channel: null as any,
+            messages: null as any, // Retrieve these from channel ID
             text: ''
         }
     },
@@ -53,13 +53,13 @@ export default defineComponent({
             handler(newValue) {
                 if (!newValue) { return; }
                 fetch('/api/channels/' + this.channel_id)
-                .then(res => res.json())
-                .then(data => { this.channel = data[0] })
-                .catch(err => console.log('Error retrieving channel', err))
+					.then(res => res.json())
+					.then(data => { this.channel = data[0] })
+					.catch(err => console.log('Error retrieving channel', err))
                 fetch('/api/messages/channel/' + this.channel_id)
-                .then(res => res.json())
-                .then(data => { /* console.log(data) ;*/ this.messages = data })
-                .catch(err => console.log('Error retrieving messages for channel', err))
+					.then(res => res.json())
+					.then(data => { /* console.log(data) ;*/ this.messages = data })
+					.catch(err => console.log('Error retrieving messages for channel', err))
             }
         },
         

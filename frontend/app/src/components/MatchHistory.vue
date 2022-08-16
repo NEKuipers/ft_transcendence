@@ -30,7 +30,7 @@ export default defineComponent({
 	},
 	data () {
 		return {
-			matches: null,
+			matches: null as any,
 		}
 	},
 
@@ -41,8 +41,10 @@ export default defineComponent({
 				if (!newValue) { return; }	// It can be undefined at the start
 				fetch('/api/matches/last/' + this.user)
 					.then(res => res.json())
-					.then(data => {this.matches = data})
-					.catch(err => {this.matches = null; console.log(err);
+					.then(data => this.matches = data)
+					.catch(err => {
+						this.matches = null;
+						console.log(err);
 					});
 			},
 			immediate: true

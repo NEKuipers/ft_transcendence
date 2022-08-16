@@ -31,13 +31,11 @@ export default defineComponent({
 #ranking {
 	float: left;
 	margin-left:10px;
-	display: inline-block;
 
 }
 
 .medal {
 	float:right;
-	display: inline-block;
 }
 .listed-user {
 	background-color: #f3f3f3;
@@ -49,14 +47,12 @@ export default defineComponent({
 	margin-top: 8px;
 	float: left;
 	margin-left: 10px;
-	display: inline-block;
 
 }
 
 .username {
 	float: left;
 	margin-left: 10px;
-	display: inline-block;
 
 }
 
@@ -64,7 +60,6 @@ export default defineComponent({
 	font-size: 16px;
 
 	float:center;
-	display: inline-block;
 }
 
 </style>

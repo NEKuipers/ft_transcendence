@@ -43,7 +43,7 @@ export default defineComponent({
 	},
 	data () {
 		return {
-			friends: null,
+			friends: null as any,
 		}
 	},
 	watch: {

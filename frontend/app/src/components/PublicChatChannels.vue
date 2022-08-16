@@ -31,7 +31,7 @@ export default defineComponent({
     data() {
         return {
 			loginStatusStore: loginStatusStore(),
-            publicChatChannels: null,
+            publicChatChannels: null as null | Array<any>,
         };
     },
 	mounted() { 

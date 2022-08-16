@@ -34,7 +34,7 @@ export default defineComponent({
 	},
 	data () {
 		return {
-			friendRequests: Object,
+			friendRequests: null as null | Array<any>,
 		}
 	},
 	watch: {
