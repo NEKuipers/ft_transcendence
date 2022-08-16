@@ -55,7 +55,6 @@ DROP TYPE IF EXISTS channel_type CASCADE;
 CREATE TYPE channel_type AS ENUM
 (
     'public',
-    'private',
     'protected',
     'direct'
 );
@@ -151,7 +150,7 @@ CREATE TABLE public.channels
 );
 
 /*
-** The participants table
+** The participants table`
 **
 ** ban_meta example:
 ** '
