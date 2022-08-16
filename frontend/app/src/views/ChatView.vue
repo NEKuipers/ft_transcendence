@@ -19,6 +19,7 @@
 			</div>
 			<div class="column" id="channel-overview">
 				Channel overview
+				<ChannelOverview :channel_id="currentChannel"/>
 			</div>
 		</div>
 	</div>
@@ -31,6 +32,7 @@ import PublicChatChannels from "../components/PublicChatChannels.vue";
 import MyChatChannels from "../components/MyChatChannels.vue";
 import { loginStatusStore } from "../stores/profileData";
 import ChatBox from '../components/ChatBox.vue'
+import ChannelOverview from "../components/ChannelOverview.vue";
  
 export default defineComponent({
 	name: 'ChatView',
@@ -59,11 +61,12 @@ export default defineComponent({
 			await this.loadUser(userID)
 	},
 	components: {
-		ChatFriendsList,
-		PublicChatChannels,
-		MyChatChannels,
-		ChatBox
-	},
+    ChatFriendsList,
+    PublicChatChannels,
+    MyChatChannels,
+    ChatBox,
+    ChannelOverview
+},
 })
 
 </script>
