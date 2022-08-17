@@ -5,8 +5,18 @@
         </div>
 		<div v-for="participant in channelParticipants" :key="participant?.id">
 			<section class="listed-participant">
-				<p>{{participant.participant_id}}</p> 
+				<p>{{participant.participant_id}}</p>
+                <!-- <p>{{participant_username}}</p> -->
 				<!-- this should be username, also should have some sort of denotation whether participant is owner/admin/muted -->
+                <div v-if="participant.is_admin === true">
+                    <p>Admin</p>
+                </div>
+                <div v-if="participant.is_banned === true">
+                    <p>Banned</p>
+                </div>
+                <div v-if="participant.is_muted === true">
+                    <p>Muted</p>
+                </div>
 			</section>
 		</div>
 		<!-- owner tools and admin tools, add after is_owner is added to participants -->
