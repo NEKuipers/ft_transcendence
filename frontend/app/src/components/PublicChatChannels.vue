@@ -1,16 +1,18 @@
 <template>
 	<div class ="publicchatchannels">
-		<h3>Public Channels</h3>
+		<div id="title">
+			<h5>Public Channels</h5>
+		</div>
 		<div v-if="!publicChatChannels">
 			<h5>Channels failed to load</h5>
 		</div>
-		<div v-else-if="publicChatChannels?.length">
-			<div v-for="channel in publicChatChannels" :key="channel.id">
-				<section class="listed-channel">
-					<h5 class="name">{{channel.name}}</h5>
-					<SmallButton class="button" text="join" @click="joinChannel(channel.id)"/>
-				</section>
-			</div>
+		<div id="channels" v-else-if="publicChatChannels?.length">
+			<ul class="listed-channel" v-for="channel in publicChatChannels" :key="channel.id">
+				<!-- <div class="listed-channel"> -->
+				<h5 class="name">{{channel.name}}</h5>
+				<SmallButton class="button" text="join" @click="joinChannel(channel.id)"/>
+				<!-- </div> -->
+			</ul>
 		</div>
 		<div v-else>
 			<h5>No public channels available</h5>
@@ -65,11 +67,25 @@ export default defineComponent({
 
 <style scoped>
 .publicchatchannels {
-	margin-left: 50px;
+	display: flex;
+	flex-direction: column;
+	/* flex-wrap: wrap; */
+	/* margin-left: 30px; */
+	overflow: auto;
+	align-items: flex-start;
+	
 }
 
 .listed-channel{
-	float: left;
+	display: flex;
+	/* border-style: solid; */
+	font-size:large;
+	/* border-width: 1px; */
+	/* justify-items: space-between; */
+	box-sizing: border-box;
+	align-items: flex-start;
+	/* border-color: red; */
+	/* flex-direction: column; */
 	/* display: inline-block; */
 }
 
@@ -80,5 +96,13 @@ export default defineComponent({
 .name {
 	margin-top: -4px;
 	float: left;
+}
+
+#title {
+	margin-left: 20px;
+}
+
+#channels {
+	max-height: 300px;
 }
 </style>

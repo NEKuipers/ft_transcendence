@@ -1,28 +1,33 @@
 <template>
-	<div class ="mychatchannels">
-		<h3>Your Channels</h3>
-		<div v-if="!myChannels">
-			<h5>Channels failed to load</h5>
-		</div>
-		<div v-else-if="myChannels?.length">
-			<div v-for="channel in myChannels" :key="channel.id">
-				<div class="listed-channel">
-					<div id="channel-name">
+	<div>
+		<div class ="mychatchannels">
+			<div id="title">
+				<h5>Your Channels</h5>
+			</div>
+			<!-- <div>
+				<SmallButton text="Create new channel" @click="createChannel"/>
+				<DialogueBox :type="boxType" :show="showDialogue" @close-dialogue="hideDialogue" @new-name="saveChannel"/>
+			</div> -->
+			<div v-if="!myChannels">
+				<h5>Channels failed to load</h5>
+			</div>
+			<div v-else-if="myChannels?.length">
+				<div id="channels">
+					<SmallButton text="Create new channel" @click="createChannel"/>
+					<DialogueBox :type="boxType" :show="showDialogue" @close-dialogue="hideDialogue" @new-name="saveChannel"/>
+					<ul class="listed-channel" v-for="channel in myChannels" :key="channel.id">
 						<h5 class="name">{{ channel[0].name }}</h5>
-					</div>
-					<div id="channel-buttons">
 						<SmallButton  class="button" text="open" @click="openChat(channel[0].id)"/>
 						<SmallButton  class="button" text="leave" @click="leaveChannel(channel[0].id)"/>
-					</div>
+					</ul>
 				</div>
 			</div>
+			<div v-else>
+				<h5>You are not in any channels yet</h5>
+			</div>
 		</div>
-		<div v-else>
-			<h5>You are not in any channels yet</h5>
-		</div>
-		<SmallButton text="Create new channel" @click="createChannel"/>
-		<DialogueBox :type="boxType" :show="showDialogue" @close-dialogue="hideDialogue" @new-name="saveChannel"/>
-
+		<!-- <SmallButton text="Create new channel" @click="createChannel"/> -->
+		<!-- <DialogueBox :type="boxType" :show="showDialogue" @close-dialogue="hideDialogue" @new-name="saveChannel"/> -->
 	</div>
 </template>
 
@@ -151,19 +156,22 @@ export default defineComponent({
 
 <style scoped>
 .mychatchannels {
-	margin-left: 20px;
+	display: flex;
 	flex-direction: column;
-	justify-content: space-between;
+	overflow: auto;
+	align-items: flex-start;
+	/* justify-content: space-between; */
 	
 	/* max-height: 300px; */
 }
 
 .listed-channel{
-	float: left;
-	overflow-y: auto;
-	max-height: 150px;
+	display: flex;
+	font-size: large;
+	align-items: flex-start;
+	/* overflow-y: auto; */
 	box-sizing: border-box;
-	justify-content: space-between;
+	/* justify-content: space-between; */
 	/* overflow-x: hidden; */
 	/* display: inline-block; */
 }
@@ -173,11 +181,11 @@ export default defineComponent({
 	margin-left:8px;
 }
 
-#channel-name {
-	justify-content: left;
+#title {
+	margin-left:20px;
 }
 
-#channel-buttons {
-	justify-content: left;
+#channels {
+	max-height: 300px;
 }
 </style>
