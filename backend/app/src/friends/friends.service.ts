@@ -76,14 +76,10 @@ export class FriendsService {
 	}
 
 	async deleteFriend(friend: FriendTable) : Promise<string> {
-		axios.delete(`http://localhost:${process.env.PGREST_PORT}/friends`, { data: {
-			"from_user_id": friend.from_user_id,
-			"to_user_id": friend.to_user_id,} })
+		axios.delete(`http://localhost:${process.env.PGREST_PORT}/friends?from_user_id=eq.${friend.from_user_id}&to_user_id=eq.${friend.to_user_id}`)
 				.then(res => res)
 				.catch(err => console.log(err));
-		axios.delete(`http://localhost:${process.env.PGREST_PORT}/friends`, { data: {
-			"from_user_id": friend.to_user_id,
-			"to_user_id": friend.from_user_id,} })
+		axios.delete(`http://localhost:${process.env.PGREST_PORT}/friends?from_user_id=eq.${friend.to_user_id}&to_user_id=eq.${friend.from_user_id}`)
 				.then(res => res)
 				.catch(err => console.log(err));
 		return "success";

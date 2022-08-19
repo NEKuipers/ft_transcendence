@@ -20,3 +20,7 @@ export interface User {
 export interface newUsername {
 	username: string;
 }
+
+export interface newAvatar {
+	avatar_id: number;
+}

@@ -1,6 +1,7 @@
-import { Controller, Get, Param, Res, Header } from '@nestjs/common';
+import { Controller, Get, Param, Res, Req, Post, Body, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { AvatarsService } from './avatars.service';
 import { Response } from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 
 @Controller('avatars')
@@ -17,4 +18,14 @@ export class AvatarsController {
 		})
 		return res.end(Buffer.from(data, 'binary'))
 	}
+
+	@Post()
+	@UseInterceptors(FileInterceptor('file'))
+	async newAvatar(@Res() res: Response, @Req() req: any, @Body() image: any, @UploadedFile() file: Express.Multer.File) {
+
+		const uploadSuccessful = await this.avatarsService.uploadAvatar(file)
+		
+		res.send({avatar_id: uploadSuccessful})
+	}
+
 }

@@ -45,22 +45,6 @@
 </template>
 
 <script lang="ts">
-  /*
-  list of data requirements (fetch() calls) for this view:
-  GET:
-	List of currently ongoing matches, based on/containing the following db info:
-	- Users
-		* id
-		* username
-	- Matches
-		* id
-		* player_one
-		* player_two
-		* meta (when did the game begin? only list ones without endtime. possibly add score)
-		* options (which gamemode?)
-	
-	ideally, the view contains all currently ongoing games (which ones have a meta=>start_time but no end_time? ) with match ID, player one's username, player two's username, and the gamemode. Example below.
-  */
 import { defineComponent } from 'vue'
 import LargeButton from '../components/LargeButton.vue'
 
@@ -156,5 +140,4 @@ export default defineComponent({
 .link:hover {
 	text-decoration: underline;
 }
-
 </style>

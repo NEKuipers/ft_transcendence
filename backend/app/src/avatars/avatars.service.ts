@@ -29,4 +29,34 @@ export class AvatarsService {
 			}
 		}
 	}
+
+	async uploadAvatar(file: Express.Multer.File) {
+		// console.log('Service can see the file:', file)
+
+		const buff = file.buffer
+
+
+		const imgdata = "\\x" + buff.toString("hex")
+
+
+		const response = await axios.post(
+			`http://localhost:${process.env.PGREST_PORT}/avatars`,
+			{
+				img:  imgdata,
+				name: file.originalname,
+				format: 'img/png'
+			},
+			{
+				headers: {
+					'Prefer': "return=representation"
+				}
+			}
+		)
+		.then(res => { /* console.log('The database returns', res.data[0].id); */ return res.data[0].id }) // TODO this is just a placeholder
+		.catch(err => { console.log(err); return 1 })
+
+		// console.log(response)
+		// Make this return the new avatar_id if successful, otherwise a 1 
+		return response
+	}
 }

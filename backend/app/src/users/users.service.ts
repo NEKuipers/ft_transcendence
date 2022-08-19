@@ -35,7 +35,8 @@ export class UsersService {
 			oauth_token_expiration_time: CreateUserDto.oauth_token_expiration_time,
 			is_logged_in: CreateUserDto.is_logged_in
 		}).then((res) => {
-			console.log('Creation request outcome:', res.statusText)
+			// console.log('Creation request outcome:', res.statusText)
+			res
 		}).catch((err) => {
 			console.error(err);
 		});
@@ -51,6 +52,12 @@ export class UsersService {
 
 		await axios.patch(`http://localhost:${process.env.PGREST_PORT}/users?id=eq.${id}`, {
 			username: newUsername})
+		return "success";
+	}
+
+	async changeAvatar(id: number, newavatar: number) {
+		await axios.patch(`http://localhost:${process.env.PGREST_PORT}/users?id=eq.${id}`, {
+			avatar_id: newavatar})
 		return "success";
 	}
 }

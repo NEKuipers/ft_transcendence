@@ -1,21 +1,24 @@
 <template>
 	<div class ="friendlist">
-	<h3>Friends</h3>
+		<h3>Friends</h3>
 		<div v-if="!friends">
 			<h3>Friend list failed to load</h3>
 		</div>
 		<div v-else-if="friends.length">
 			<div v-for="friend in friends" :key="friend?.id">
 				<section class="listed-friend">
-					<div v-if="own === true">
-						<SmallButton class="unfriend-btn" @click="unfriend(friend.to_user_id)" text="Remove"/>
+					<div id="name-image">
+						<img class="profilePictureThumbnail" width="50" height="50" v-bind:src="'http://localhost:3030/avatars/' + friend.friend_avatar_id"/> 
+						<!-- src="findFriendAvatar(friend.to_user_id)" -->
+						<a class="friend" v-bind:href="'http://localhost:8080/profile/' + friend.to_user_id">{{friend.to_username}}</a>
 					</div>
-					<img class="profilePictureThumbnail" width="50" height="50" v-bind:src="'http://localhost:3030/avatars/' + friend.friend_avatar_id"/> 
-					<!-- src="findFriendAvatar(friend.to_user_id)" -->
-					<a class="friend" v-bind:href="'http://localhost:8080/profile/' + friend.to_user_id">{{friend.to_username}}</a>
-					<h4 class="online-status" v-if="friend?.friend_status == 'online'" id="online">Online</h4>
-					<h4 class="online-status"  v-else-if="friend?.friend_status == 'ingame'" id="ingame">In game</h4>
-					<h4 class="online-status" v-else>Offline</h4>
+					<div id="friend-buttons">
+						<h4 class="online-status" v-if="friend?.friend_status == 'online'" id="online">Online</h4>
+						<h4 class="online-status"  v-else-if="friend?.friend_status == 'ingame'" id="ingame">In game</h4>
+						<h4 class="online-status" v-else>Offline</h4>
+						<SmallButton class="invite-btn" text="Invite to game"/>
+						<SmallButton class="dm-btn" text="Direct message"/>
+					</div>
 				</section>
 			</div>
 		</div>
@@ -27,21 +30,19 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import SmallButton from '../components/SmallButton.vue'
+import SmallButton from './SmallButton.vue'
 
 export default defineComponent({
-	name: 'FriendsList',
+	name: 'ChatFriendsList',
 	props: {
 		user: {
 			type: Number
 		},
-		own: {
-			type: Boolean
-		},
+
 	},
 	data () {
 		return {
-			friends: null as null | Array<any>,
+			friends: null as any,
 		}
 	},
 	watch: {
@@ -81,12 +82,18 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.friendlist {
+	flex-direction: column;
+	/* margin-left: 20px;
+	display: flex; */
+}
+
 .friend {
 	margin-top: 5px;
-	font-size: 26pt;
+	font-size: 15pt;
 	font-weight: bold;
 	text-decoration: none;
-	padding-left: 30px;
+	/* padding-left: 5px; */
 	float: left;
 
 }
@@ -104,16 +111,20 @@ a:hover {
 	/* padding-top: 25px; */
 }
 
+/* #friendlist {
+	flex-direction: column;
+} */
+
 .unfriend-btn {
-	margin-top: 20px;
-	margin-left: 20px;
+	/* margin-top: 5px;
+	margin-left: 5px; */
 	float:left;
 }
 
 .listed-friend {
-	display: inline-block;
-	/* overflow: auto; */
-	width: 500px;
+	display: flex;
+	overflow-y: auto;
+	/* width: 200px; */
 }
 
 #online {
@@ -125,6 +136,14 @@ a:hover {
 #ingame {
   color: #42b983;
 
+}
+
+#name-image {
+	margin-top: 10px;
+}
+
+#friend-buttons {
+	margin-bottom: 10px;
 }
 
 .profilePictureThumbnail {

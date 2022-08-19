@@ -7,7 +7,7 @@
 		<div v-else-if="friendRequests.length">
 		<!-- Need to figure out how to filter only friends of logged in user! -->
 			<div v-for="request in friendRequests" :key="request?.id">
-				<section v-if="request.status='send'" class="listed-friend">
+				<section  v-if="request.status='send'" class="listed-friend">
 					<SmallButton class="requestbutton" text="Accept" @click="acceptRequest(request.from_user_id)"/>
 					<SmallButton class="requestbutton" text="Decline" @click="declineRequest(request.from_user_id)"/>
 					<!-- TODO THIS BUTTON STORE THING DOESNT WORK -->
@@ -24,7 +24,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import SmallButton from '../components/SmallButton.vue'
-import { loginStatusStore } from '../stores/profileData';
 
 export default defineComponent({
 	name: 'FriendsList',
@@ -35,20 +34,16 @@ export default defineComponent({
 	},
 	data () {
 		return {
-			friendRequests: null,
+			friendRequests: null as null | Array<any>,
 		}
 	},
 	watch: {
 		user: {
 			handler(newValue) {
 				if (!newValue) { return; }
-				fetch('/api/friends/requests/' + this.user)
-					.then(res => res.json())
-					.then(data => this.friendRequests = data)
-					.catch(err => {this.friendRequests = null; console.log(err);
-					});
+				this.updateFriendRequests(newValue);
 			},
-			immediate: true
+			immediate: true,
 		}
 	},
 	components: {
@@ -59,29 +54,40 @@ export default defineComponent({
 			const requestOptions = {
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({to_user_id: this.user, //TODO get correct id after login
+				body: JSON.stringify({to_user_id: this.user,
 				from_user_id: from_user_id,
 				status: "accepted"}) 
 			};
 			fetch('/api/friends/accept', requestOptions)
-				.then(response => console.log(response.status))
+				.then(response => response)
 				.catch(err => console.log(err));
+			this.updateFriendRequests(this.user as number);
+			this.updateFriendRequests(this.user as number);
+
 		},
 		async declineRequest(from_user_id: number) {
 			const requestOptions = {
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({to_user_id: this.user, //TODO get correct id after login
+				body: JSON.stringify({to_user_id: this.user, 
 				from_user_id: from_user_id,
 				status: "declined"}) 
 			};
 			fetch('/api/friends/decline', requestOptions)
-				.then(response => console.log(response.status))
+				.then(response => response)
 				.catch(err => console.log(err));
+			this.updateFriendRequests(this.user as number);
+			this.updateFriendRequests(this.user as number); //jasper i'm truly sorry about this
+
 		},
+		async updateFriendRequests(user_id: number) {
+			fetch('/api/friends/requests/' + user_id)
+				.then(res => res.json())
+				.then(data => this.friendRequests = data)
+				.catch(err =>  console.log(err));
+		}
 	},
 })
-
 </script>
 
 <style scoped>
@@ -103,5 +109,4 @@ a:visited {
 a:hover {
 	text-decoration: underline;
 }
-
 </style>

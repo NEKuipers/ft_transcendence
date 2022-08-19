@@ -30,7 +30,7 @@ export default defineComponent({
 	},
 	data () {
 		return {
-			matches: null,
+			matches: null as any,
 		}
 	},
 
@@ -42,14 +42,15 @@ export default defineComponent({
 				fetch('/api/matches/last/' + this.user)
 					.then(res => res.json())
 					.then(data => this.matches = data)
-					.catch(err => {this.matches = null; console.log(err);
+					.catch(err => {
+						this.matches = null;
+						console.log(err);
 					});
 			},
 			immediate: true
 		}
 	}
 })
-
 </script>
 
 <style scoped>
@@ -60,5 +61,4 @@ export default defineComponent({
 	clear: both;
 	width:100%;
 }
-
 </style>

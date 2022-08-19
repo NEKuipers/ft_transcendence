@@ -2,8 +2,10 @@
 	<button @click="onClick()" class="large-button" >{{text}}</button>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from "@vue/runtime-core"
+
+export default defineComponent({
 	name: 'LargeButton',
 	props: {
 		text: String,
@@ -14,18 +16,17 @@ export default {
 			this.$emit('btn-click')
 		}
 	}
-}
+})
 </script>
 
 <style>
 .large-button{
 	background-color: rgb(16, 25, 70);
 	color:#fff;
-	padding: 10px 15px;
 	border:none;
-	margin:60px;
-	font-size: 42px;
+	font-size: 26px;
 	border-radius: 16px;
+	padding:5px;
 
 }
 
@@ -34,5 +35,4 @@ export default {
 	color:#fff;
 	cursor: pointer;
 }
-
 </style>

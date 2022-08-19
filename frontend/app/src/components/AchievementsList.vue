@@ -33,8 +33,8 @@ export default defineComponent ({
 	},
     data() { 
         return {
-            achievements: null,
-            obtained: [] as Array<any>
+            achievements: null as null | any,
+            obtained: null as null | Array<any>
         }
     },
     mounted() {
@@ -46,16 +46,15 @@ export default defineComponent ({
     // This will refetch the achievements as they are obtained
     watch: {
         user: {
-            handler(newValue) {
-                if (!newValue) { return; }
-                fetch('/api/achievements/user/' + this.user)
+            handler(id) {
+                if (!id) { return; }
+
+                fetch('/api/achievements/user/' + id)
                 .then(res => res.json())
                 .then(data => {
+					this.obtained = []	// Clear the obtained list, as this function can be called multiple times if the user changes, we do not want to keep the obtained values of the old user
                     for (let elem of data) {
-                        if (this.obtained === null)
-                            this.obtained = elem.achievement_id
-                        else
-                            this.obtained.push(elem.achievement_id);
+                        this.obtained.push(elem.achievement_id);
                         // console.log('The id', elem.achievement_id)
                     }
                     // console.log('Well then:', this.obtained)
@@ -75,15 +74,17 @@ export default defineComponent ({
             //         return true
             // }
             // return false
-            return this.obtained.includes(achiev_id)
+
+			if (!this.obtained) {
+				return false;
+			}
+			return this.obtained.includes(achiev_id)
         }
     }
 })
-
 </script>
 
 <style scoped>
-
 .userachievement {
     display: table;
 }
@@ -130,6 +131,4 @@ export default defineComponent ({
     vertical-align: top;
     color: white;
 }
-
-
 </style>

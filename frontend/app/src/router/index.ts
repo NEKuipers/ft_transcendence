@@ -80,22 +80,17 @@ const routes: Array<RouteRecordRaw> = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
-  routes,
+	history: createWebHistory(process.env.BASE_URL),
+	routes,
 })
 
 router.beforeEach((to) => {
-	const store = loginStatusStore()
-
-	const loggedIn = store.loggedInStatus
-	// console.log("loggedIn: ", loggedIn)
+  const loggedIn = loginStatusStore().loggedInStatus
 
 	if ((to.name !== 'login' && to.name !== 'tfa') && !loggedIn) {
 		return('/login')
 	}
-	// if ((to.name === 'login' || to.name == 'tfa') && loggedIn) {
-	// 	return('/')
-	// }
+
 })
 
 

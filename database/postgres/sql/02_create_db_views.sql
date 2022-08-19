@@ -99,6 +99,7 @@ SELECT
     f.to_user_id    AS to_user_id,
     fu.username     AS to_username,
     fu.status       AS friend_status,
+	fu.avatar_id	AS friend_avatar_id,
     f.status        AS request_status,
     f.send_time     AS send_time,
     f.response_time AS response_time
@@ -297,9 +298,31 @@ FROM users u
         ON ua.achievement_id = a.id;
 
 /*
+** Display the participants for all channels
+*/
+CREATE OR REPLACE VIEW public.vw_participants
+AS
+SELECT
+    c.id                AS channel_id,
+    c.name              AS channel_name,
+    c.type              AS channel_type,
+    c.owner_id          AS channel_owner_id,
+    c.is_closed         AS channel_is_closed,
+    p.participant_id    AS participant_id,
+    u.username          AS participant_username,
+    p.is_admin          AS participant_is_admin,
+    p.is_muted          AS participant_is_muted,
+    p.is_banned         AS participant_is_banned
+FROM channels c
+    INNER JOIN participants p
+        ON c.id = p.channel_id
+    INNER JOIN users u
+        ON p.participant_id = u.id;
+
+/*
 ** Display of all custom types
 */
-CREATE OR REPLACE VIEW vw_types
+CREATE OR REPLACE VIEW public.vw_types
 AS
 SELECT
     t.typname       AS type_name,

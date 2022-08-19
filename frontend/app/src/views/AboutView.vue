@@ -46,7 +46,6 @@
 }
 
 #about-line {
-  float:
+  float: center;
 }
-
 </style>

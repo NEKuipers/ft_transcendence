@@ -2,8 +2,10 @@
 	<button @click="onClick()"  class="small-button">{{text}}</button>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from "@vue/runtime-core"
+
+export default defineComponent({
 	name: 'SmallButton',
 	props: {
 		text: String,
@@ -14,7 +16,7 @@ export default {
 			this.$emit('btn-click')
 		}
 	}
-}
+})
 </script>
 
 <style>
@@ -30,6 +32,4 @@ export default {
 	color:#fff;
 	cursor: pointer;
 }
-
-
 </style>

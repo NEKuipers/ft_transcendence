@@ -22,6 +22,7 @@ export const loginStatusStore = defineStore ('login', {
 			loggedInStatus: undefined as undefined | LoginData
 		}
 	},
+	persist: true,
 	getters: {},
 	actions: {
 		async logIn(): Promise<undefined | LoginData> {
@@ -48,11 +49,12 @@ export const loginStatusStore = defineStore ('login', {
 					})
 			})
 		},
-		logOut(): void {
-			fetch("/api/login/logout")
+		async logOut(): Promise<void> {
+			return fetch("/api/login/logout")
 				.then((data) => {
 					if (data.ok) {
 						this.loggedInStatus = undefined
+						
 					} else {
 						console.error("Failed to logout!", data.statusText)
 					}
