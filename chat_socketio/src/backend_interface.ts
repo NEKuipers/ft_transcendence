@@ -50,7 +50,9 @@ async function make_channel(channel: CreateChannel): Promise<Channel> {
 		}
 	});
 
-	return data.data[0];
+	let result_channel = data.data[0];
+	cached_names[result_channel.id] = result_channel.name;
+	return result_channel;
 }
 async function delete_channel(channelId: number) {
 	throw "TODO: deleting channels is not yet implemented";
