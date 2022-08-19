@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<ChatHandler ref="ChatHandler" uri=":4114" server_name="chat server" @serverMessage="onMessage" @join="onJoin" @leave="onLeave"/>
+		<ChatHandler ref="ChatHandler" uri=":4114" server_name="chat server" @serverMessage="onMessage" @join="onJoin" @leave="onLeave" @clearData="clearData"/>
 		<SmallButton class="send_message" text="Send a test message" @click="test"/>
 
 		<div class="container">
@@ -125,9 +125,9 @@ export default defineComponent({
 		onMessage(channel_id: number, user: number, message: string) {
 			console.log(`Received message in channel: ${channel_id} from ${user}: ${message}`)
 		},
-		onJoin(channel_id: number) {
+		onJoin(channel_id: number, channelName: string) {
 			// Add this to an array to pass to your channels
-			console.log(`I am in channel ${channel_id}`)
+			console.log(`I am in channel ${channel_id}: ${channelName}`)
 		},
 		onLeave(channel_id: number) {
 			console.log(`I am no longer in channel ${channel_id}`)
@@ -137,12 +137,15 @@ export default defineComponent({
 		},
 		leaveChannel(channel_id: number) {
 			this.chatHandler.leave_channel(channel_id)
-		}
+		},
+		clearData() {
+			console.log(`We have just connected to the chat server, and should clear any data to its initial state`)
+		},
 	},
 	async mounted() {
 		this.chatHandler = (this.$refs.ChatHandler as typeof ChatHandler);
 
-		(window as any).chatHandler = this.chatHandler;
+		(window as any).chatHandler = this.chatHandler;	// TODO: THIS IS JUST FOR DEBUGGING, REMOVE THIS LATER
 	},
 	components: {
 		ChatFriendsList,
