@@ -1,5 +1,8 @@
 <template>
 	<div>
+		<ChatHandler ref="ChatHandler" uri=":4114" server_name="chat server"/>
+		<SmallButton class="send_message" text="Send a test message" @click="test"/>
+
 		<div class="container">
 			<div class="column" id="left-column">
 				<div id="channels">
@@ -22,18 +25,73 @@
 				<ChannelOverview :channel_id="currentChannel"/>
 			</div>
 		</div>
+
 	</div>
 </template>
 
 <script lang="ts">
+  /*
+  should probably rearrange this later in a more logical way
+  list of data requirements (fetch() calls) for this view:
+  GET:
+    - Users
+      * id
+      * username
+      * status
+      * is_logged_in
+
+    - Channels
+      * id
+      * name
+      * type
+      * owner_id
+      * is_closed
+      * 
+    - Participants
+      * id
+      * participant_id
+      * is_admin
+      * is_muted
+      * ban_meta
+      * channel_id
+
+    - Messages
+      * channel_id
+      * user_id
+      * message
+
+    - Blocked_users
+      * id
+      * blocked_by_id
+      * blocked_user_id
+  
+  POST:
+    - Channels
+    - Participants
+    - Messages
+    - Blocked_users
+
+  PATCH:
+    - Channels
+    - Participants
+
+  DELETE:
+    - Blocked_users
+    - Participants
+
+  */
+
 import { defineComponent } from "@vue/runtime-core";
 import ChatFriendsList from "../components/ChatFriendsList.vue";
+import SmallButton from "../components/SmallButton.vue";
 import PublicChatChannels from "../components/PublicChatChannels.vue";
 import MyChatChannels from "../components/MyChatChannels.vue";
 import { loginStatusStore } from "../stores/profileData";
 import ChatBox from '../components/ChatBox.vue'
 import ChannelOverview from "../components/ChannelOverview.vue";
- 
+
+import ChatHandler from '../components/ChatHandler.vue';
+
 export default defineComponent({
 	name: 'ChatView',
 	data() {
@@ -41,7 +99,8 @@ export default defineComponent({
 			loginStatusStore: loginStatusStore(),
 			text: '',
 			user: null,
-			currentChannel: 0
+			currentChannel: 0,
+			chatHandler: undefined as unknown as typeof ChatHandler,
 		}
 	},
 	methods: {
@@ -53,20 +112,28 @@ export default defineComponent({
 		},
 		openChat(channel_id: number) {
 			this.currentChannel = channel_id
+		},
+		async test() {
+			let success = await this.chatHandler.send_message(1, "Hello, this is a test message!");
+			if (success) {
+				console.log("Message sent!");
+			} else {
+				console.log("Message failed to be sent!");
+			}
 		}
 	},
 	async mounted() {
-		const userID = loginStatusStore().loggedInStatus?.userID
-		if (userID)
-			await this.loadUser(userID)
+		this.chatHandler = (this.$refs.ChatHandler as typeof ChatHandler);
 	},
 	components: {
-    ChatFriendsList,
-    PublicChatChannels,
-    MyChatChannels,
-    ChatBox,
-    ChannelOverview
-},
+		ChatFriendsList,
+		PublicChatChannels,
+		MyChatChannels,
+		ChatBox,
+		ChannelOverview,
+		SmallButton,
+		ChatHandler
+	},
 })
 </script>
 
