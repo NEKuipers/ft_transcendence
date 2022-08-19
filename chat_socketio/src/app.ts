@@ -3,7 +3,15 @@ import { Server, Socket } from "socket.io";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import * as backend from './backend_interface';
 
+// Naming:
+//	Rooms are SOCKETIO romos
+//	Channels are chat channels
+
 const SECRET_AUTH = process.env.JSON_WEB_TOKEN_SECRET;
+
+if (!SECRET_AUTH) {
+	throw "Missing JSON_WEB_TOKEN_SECRET env token!"
+}
 
 const httpServer = createServer();
 const io = new Server(httpServer, {
@@ -45,10 +53,26 @@ io.use((socket, next) => {
 	next();
 })
 
-function get_channel_name(channel_id: number): string {
+function get_room_name(channel_id: number): string {
 	return `room_${channel_id}`
 }
 
+async function join_channel(socket: Socket, channel: backend.JoinedChannelStatus) {
+	let data = socket.data as SocketData;
+
+	await backend.join_channel(channel, data.userid)
+		.then(() => {
+			console.log(`${data.username} is joining channel ${channel.channel_id}!`);
+
+			data.joined_channels.push(channel);
+			socket.join(get_room_name(channel.channel_id));
+	
+			io.to(get_room_name(channel.channel_id)).emit("server-message", channel.channel_id, "Server", `${data.username} has joined the room`);
+		})
+		.catch((err) => console.error(`Failed to join room ${channel.channel_id} for user: ${data.userid} because:`, err))
+}
+
+// Joins all the socketio-rooms this socket should be in
 async function join_rooms(socket: Socket) {
 	let data = socket.data as SocketData;
 
@@ -64,7 +88,7 @@ async function join_rooms(socket: Socket) {
 		}
 
 		socket.emit("join", channel_status.channel_id);
-		socket.join(get_channel_name(channel_status.channel_id));
+		socket.join(get_room_name(channel_status.channel_id));
 		backend.get_messages_from_channel(channel_status.channel_id)
 			.then((messages) => {
 				for (let message of messages) {
@@ -72,21 +96,6 @@ async function join_rooms(socket: Socket) {
 				}
 			});
 	}
-}
-
-async function join_channel(socket: Socket, channel: backend.JoinedChannelStatus) {
-	let data = socket.data as SocketData;
-
-	await backend.join_channel(channel, data.userid)
-		.then(() => {
-			console.log(`${data.username} is joining channel ${channel.channel_id}!`);
-
-			data.joined_channels.push(channel);
-			socket.join(get_channel_name(channel.channel_id));
-	
-			io.to(get_channel_name(channel.channel_id)).emit("server-message", channel.channel_id, "Server", `${data.username} has joined the room`);
-		})
-		.catch((err) => console.error(`Failed to join room ${channel.channel_id} for user: ${data.userid} because:`, err))
 }
 
 io.on("connection", async (socket) => {
@@ -97,7 +106,7 @@ io.on("connection", async (socket) => {
 	await join_rooms(socket)
 		.catch((err) => console.error(`Failed to update joined rooms for user: ${data.userid} because:`, err));
 
-	socket.on("create_room", (name: string, type: string, callback: (success: boolean, data: any) => void) => {
+	socket.on("create_channel", (name: string, type: string, callback: (success: boolean, data: any) => void) => {
 		backend.make_channel({
 			name: name,
 			type: type,
@@ -115,13 +124,13 @@ io.on("connection", async (socket) => {
 			}).then(() => {
 				callback(true, channel.id);
 			}).catch(() => {
-				console.error("Failed to join room")
-				callback(false, "Failed to join room")
+				console.error("Failed to join channel")
+				callback(false, "Failed to join channel")
 
 				// Try to delete it
 				backend.delete_channel(channel.id)
 					.catch((err) => {
-						console.error("Created a room, failed to join, and then failed to delete:", err);
+						console.error("Created a channel, failed to join, and then failed to delete:", err);
 					});
 			})
 
@@ -131,9 +140,9 @@ io.on("connection", async (socket) => {
 		})
 	});
 
-	socket.on("join_room", (channel_id: number) => {
+	socket.on("join_channel", (channel_id: number) => {
 		if (data.joined_channels.find((elem) => elem.channel_id == channel_id)) {
-			console.log(`User ${data.username} tried to join room ${channel_id} but was already joined (or banned)!`);
+			console.log(`User ${data.username} tried to join channel ${channel_id} but was already joined (or banned)!`);
 			return;
 		}
 
@@ -152,7 +161,8 @@ io.on("connection", async (socket) => {
 			return;
 		}
 		
-		socket.to(get_channel_name(channel_id)).emit("server-message", channel_id, data.username, message);	// Send all the other clients in the room a message on channel "server-message" with the first argument being the sender username, and the second argument their message
+		socket.to(get_room_name(channel_id)).emit("server-message", channel_id, data.username, message);	// Send all the other clients in the room a message on channel "server-message" with the first argument being the sender username, and the second argument their message
+		socket.emit("server-message", channel_id, data.username, message);	// I am lazy and do not want to add code to send text locally
 		console.log(`User ${data.username} has send the message: ${message} in room ${channel_id}!`);
 
 		backend.add_message_to_channel(channel_id, data.userid, message)
