@@ -36,7 +36,7 @@ export default defineComponent({
 	emits: {
 		"serverMessage": (_channel_id: number, _user: number, _message: string) => { return true },
 		"leave": (_channel_id: number) => { return true},
-		"join": (_channel_id: number) => { return true },
+		"join": (_channel_id: number, _channel_name: string) => { return true },
 		"clearData": () => { return true },
 	},
 
@@ -71,10 +71,10 @@ export default defineComponent({
 				this.$emit("serverMessage", channel_id, user, message);
 			})
 
-			socket.on("join", (channel_id) => {
+			socket.on("join", (channel_id, channel_name) => {
 				// console.log(`I am in channel ${channel_id}`)
 
-				this.$emit("join", channel_id);
+				this.$emit("join", channel_id, channel_name);
 			})
 
 			socket.on("leave", (channel_id) => {

@@ -58,12 +58,15 @@ function get_room_name(channel_id: number): string {
 }
 
 async function send_message_to_socket(socket: Socket, channel_id: number) {
+	socket.emit("join", channel_id, await backend.get_channel_name(channel_id));
+
 	backend.get_messages_from_channel(channel_id)
 		.then((messages) => {
 			for (let message of messages) {
 				socket.emit("server-message", channel_id, `User${message.userId}`, message.message)
 			}
 		});
+	socket.join(get_room_name(channel_id));
 }
 
 async function join_channel(socket: Socket, channel: backend.JoinedChannelStatus) {
@@ -74,9 +77,7 @@ async function join_channel(socket: Socket, channel: backend.JoinedChannelStatus
 			console.log(`${data.username} is joining channel ${channel.channel_id}!`);
 
 			data.joined_channels.push(channel);
-			socket.emit("join", channel.channel_id);
-			socket.join(get_room_name(channel.channel_id));
-	
+			
 			send_message_to_socket(socket, channel.channel_id)
 		})
 }
@@ -109,8 +110,6 @@ async function join_rooms(socket: Socket) {
 			continue;
 		}
 
-		socket.emit("join", channel_status.channel_id);
-		socket.join(get_room_name(channel_status.channel_id));
 		send_message_to_socket(socket, channel_status.channel_id)
 	}
 }

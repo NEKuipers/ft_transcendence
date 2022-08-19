@@ -125,8 +125,8 @@ export default defineComponent({
 		onMessage(channel_id: number, user: number, message: string) {
 			console.log(`Received message in channel: ${channel_id} from ${user}: ${message}`)
 		},
-		onJoin(channel_id: number) {
-			console.log(`I am in channel ${channel_id}`)
+		onJoin(channel_id: number, name: string) {
+			console.log(`I am in channel ${channel_id} aka ${name}`)
 		},
 		onLeave(channel_id: number) {
 			console.log(`I am no longer in channel ${channel_id}`)

@@ -30,6 +30,19 @@ interface Message {
 	message: string,
 };
 
+let cached_names = {}
+async function get_channel_name(channel_id: number): Promise<String> {
+	let cached = cached_names[channel_id];
+	if (cached) {
+		return cached;
+	}
+
+	let data = await axios.get(`http://localhost:${DATABASE_PORT}/channels?id=eq.${channel_id}`);
+	let name = data.data[0].name;
+	cached_names[channel_id] = name;
+	return name;
+}
+
 async function make_channel(channel: CreateChannel): Promise<Channel> {
 	let data = await axios.post(`http://localhost:${DATABASE_PORT}/channels`, channel, {
 		headers: {
@@ -98,6 +111,8 @@ export {
 
 	make_channel,
 	delete_channel,
+
+	get_channel_name,
 
 	join_channel,
 	leave_channel,
