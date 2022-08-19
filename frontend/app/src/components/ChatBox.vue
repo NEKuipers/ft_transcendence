@@ -3,7 +3,6 @@
         <div> 
             <h2>{{channel.name}}</h2>
         </div>
-        <!-- <div id="chat-column"> -->
         <div class="messages">
             <div v-for="message in messages" :key="message.id" >
                 <p v-if="message.user_id !== loginStatusStore.loggedInStatus?.userID" class="from-them">
@@ -13,7 +12,6 @@
                     {{message.message}}
                 </p>
             </div>
-        <!-- </div> -->
         </div>
         <div>
             <form ref="TextBox" @submit="sendMsg">
@@ -38,7 +36,9 @@ export default defineComponent({
     props: {
         channel_id: {
             type: Number
-        }
+		},
+		// messages: null as any // Maaaaybe could import interfaces and stuff
+		// channel_name: String // TODO
     },
     data() {
         return {
@@ -58,7 +58,7 @@ export default defineComponent({
 					.catch(err => console.log('Error retrieving channel', err))
                 fetch('/api/messages/channel/' + this.channel_id)
 					.then(res => res.json())
-					.then(data => { /* console.log(data) ;*/ this.messages = data })
+					.then(data => { this.messages = data })
 					.catch(err => console.log('Error retrieving messages for channel', err))
             }
         },
