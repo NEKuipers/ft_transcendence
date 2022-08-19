@@ -57,6 +57,15 @@ function get_room_name(channel_id: number): string {
 	return `room_${channel_id}`
 }
 
+async function send_message_to_socket(socket: Socket, channel_id: number) {
+	backend.get_messages_from_channel(channel_id)
+		.then((messages) => {
+			for (let message of messages) {
+				socket.emit("server-message", channel_id, `User${message.userId}`, message.message)
+			}
+		});
+}
+
 async function join_channel(socket: Socket, channel: backend.JoinedChannelStatus) {
 	let data = socket.data as SocketData;
 
@@ -65,11 +74,24 @@ async function join_channel(socket: Socket, channel: backend.JoinedChannelStatus
 			console.log(`${data.username} is joining channel ${channel.channel_id}!`);
 
 			data.joined_channels.push(channel);
+			socket.emit("join", channel.channel_id);
 			socket.join(get_room_name(channel.channel_id));
 	
-			io.to(get_room_name(channel.channel_id)).emit("server-message", channel.channel_id, "Server", `${data.username} has joined the room`);
+			send_message_to_socket(socket, channel.channel_id)
 		})
-		.catch((err) => console.error(`Failed to join room ${channel.channel_id} for user: ${data.userid} because:`, err))
+}
+async function leave_channel(socket: Socket, channel_status: backend.JoinedChannelStatus) {
+	let data = socket.data as SocketData;
+
+	await backend.leave_channel(channel_status.channel_id, data.userid)
+		.then(() => {
+			console.log(`${data.username} is leaving channel ${channel_status.channel_id}!`);
+			
+			socket.leave(get_room_name(channel_status.channel_id));
+			socket.emit("leave", channel_status.channel_id);
+
+			data.joined_channels = data.joined_channels.filter((elem) => elem.channel_id != channel_status.channel_id);
+		})
 }
 
 // Joins all the socketio-rooms this socket should be in
@@ -89,12 +111,7 @@ async function join_rooms(socket: Socket) {
 
 		socket.emit("join", channel_status.channel_id);
 		socket.join(get_room_name(channel_status.channel_id));
-		backend.get_messages_from_channel(channel_status.channel_id)
-			.then((messages) => {
-				for (let message of messages) {
-					socket.emit("server-message", channel_status.channel_id, `User${message.userId}`, message.message)
-				}
-			});
+		send_message_to_socket(socket, channel_status.channel_id)
 	}
 }
 
@@ -140,11 +157,19 @@ io.on("connection", async (socket) => {
 		})
 	});
 
-	socket.on("join_channel", (channel_id: number) => {
-		if (data.joined_channels.find((elem) => elem.channel_id == channel_id)) {
-			console.log(`User ${data.username} tried to join channel ${channel_id} but was already joined (or banned)!`);
+	socket.on("join_channel", (channel_id: number, get_password_func: (callback: (password: string) => void) => string, callback: (success: boolean, reason: any) => void) => {
+		let existing_status = data.joined_channels.find((elem) => elem.channel_id == channel_id);
+		if (existing_status) {
+			if (existing_status.is_banned) {
+				console.log(`User ${data.username} tried to join channel ${channel_id} but was banned!`);
+				callback(false, "You are banned!");
+			} else {
+				callback(false, "Already joined!");
+			}
 			return;
 		}
+
+		// TODO: Handle password
 
 		join_channel(socket, {
 			is_admin: false,
@@ -152,6 +177,28 @@ io.on("connection", async (socket) => {
 			is_banned: false,
 			channel_id: channel_id
 		})
+			.then(_ => callback(true, null))
+			.catch(err => callback(false, err))
+	})
+
+	socket.on("leave_channel", (channel_id: number, callback: (success: boolean, reason: any) => void) => {
+		let existing_status = data.joined_channels.find((elem) => elem.channel_id == channel_id);
+		if (!existing_status) {
+			console.log(`User ${data.username} tried to leave channel ${channel_id}, but is not in the channel!`);
+			callback(false, "You are not in the channel!");
+			return;
+		}
+
+		if (existing_status.is_banned) {
+			console.log(`User ${data.username} tried to leave channel ${channel_id}, but was banned!`);
+			callback(false, "You are banned!");
+			return;
+		}
+
+		leave_channel(socket, existing_status)
+			.then(_ => callback(true, null))
+			.catch(err => callback(false, err))
+
 	})
 
 	socket.on("client-message", (channel_id: number, message: string, callback: (success: boolean) => void) => {	// This function will get called whenever this client emits a message on channel "client-message"

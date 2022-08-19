@@ -134,6 +134,8 @@ export default defineComponent({
 	},
 	async mounted() {
 		this.chatHandler = (this.$refs.ChatHandler as typeof ChatHandler);
+
+		(window as any).chatHandler = this.chatHandler;
 	},
 	components: {
 		ChatFriendsList,

@@ -54,7 +54,8 @@ async function join_channel(channel: JoinedChannelStatus, userId: number) {
 	});
 }
 async function leave_channel(channelId: number, userId: number) {
-	throw "TODO: leaving channels is not yet implemented";
+	// TODO: Error checking
+	await axios.delete(`http://localhost:${DATABASE_PORT}/participants?channel_id=eq.${channelId}&participant_id=eq.${userId}`);
 }
 
 async function ban_user_from_room(channelId: number, userId: number) {
