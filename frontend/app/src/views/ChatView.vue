@@ -101,6 +101,8 @@ export default defineComponent({
 			user: null,
 			currentChannel: 0,
 			chatHandler: undefined as unknown as typeof ChatHandler,
+			channelNames: new Array<string>(),
+			channelIds: new Array<number>() // TODO HERE
 		}
 	},
 	methods: {
