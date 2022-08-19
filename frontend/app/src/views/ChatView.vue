@@ -6,10 +6,10 @@
 		<div class="container">
 			<div class="column" id="left-column">
 				<div id="channels">
-					<MyChatChannels @open-chat="openChat"  :user="loginStatusStore.loggedInStatus?.userID" />
+					<MyChatChannels @open-chat="openChat" @leaveChannel="leaveChannel" :user="loginStatusStore.loggedInStatus?.userID" />
 				</div>
 				<div id="channels">
-					<PublicChatChannels/>
+					<PublicChatChannels @joinChannel="joinChannel"/>
 				</div>
 				<div id="friends">
 					<ChatFriendsList :user="loginStatusStore.loggedInStatus?.userID" />
@@ -126,11 +126,18 @@ export default defineComponent({
 			console.log(`Received message in channel: ${channel_id} from ${user}: ${message}`)
 		},
 		onJoin(channel_id: number) {
+			// Add this to an array to pass to your channels
 			console.log(`I am in channel ${channel_id}`)
 		},
 		onLeave(channel_id: number) {
 			console.log(`I am no longer in channel ${channel_id}`)
 		},
+		joinChannel(channel_id: number) {
+			this.chatHandler.join_channel(channel_id)
+		},
+		leaveChannel(channel_id: number) {
+			this.chatHandler.leave_channel(channel_id)
+		}
 	},
 	async mounted() {
 		this.chatHandler = (this.$refs.ChatHandler as typeof ChatHandler);

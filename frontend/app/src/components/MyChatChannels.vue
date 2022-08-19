@@ -13,7 +13,7 @@
 						<div>
 							<h5 class="name">{{ channel[0].name }}</h5>
 							<SmallButton  class="button" text="open" @click="openChat(channel[0].id)"/>
-							<SmallButton  class="button" text="leave" @click="leaveChannel(channel[0].id)"/>
+							<SmallButton  class="button" text="leave" @click="this.$emit('leaveChannel', channel[0].id)"/>
 						</div>
 					</ul>
 				</div>
@@ -147,7 +147,7 @@ export default defineComponent({
 			this.$emit('open-chat', channel_id)
 		}
 	},
-	emits: ['open-chat']
+	emits: ['open-chat', 'leaveChannel']
 })
 
 </script>
@@ -165,11 +165,7 @@ export default defineComponent({
 	display: flex;
 	font-size: large;
 	align-items: center;
-	/* overflow-y: auto; */
 	box-sizing: border-box;
-	/* justify-content: space-between; */
-	/* overflow-x: hidden; */
-	/* display: inline-block; */
 }
 
 .button {
