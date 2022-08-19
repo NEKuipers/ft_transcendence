@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<ChatHandler ref="ChatHandler" uri=":4114" server_name="chat server" @serverMessage="onMessage" @join="onJoin" @leave="onLeave"/>
+		<ChatHandler ref="ChatHandler" uri=":4114" server_name="chat server" @serverMessage="onMessage" @join="onJoin" @leave="onLeave" @clearData="clearData"/>
 		<SmallButton class="send_message" text="Send a test message" @click="test"/>
 
 		<div class="container">
@@ -131,11 +131,14 @@ export default defineComponent({
 		onLeave(channel_id: number) {
 			console.log(`I am no longer in channel ${channel_id}`)
 		},
+		clearData() {
+			console.log(`We have just connected to the chat server, and should clear any data to its initial state`)
+		},
 	},
 	async mounted() {
 		this.chatHandler = (this.$refs.ChatHandler as typeof ChatHandler);
 
-		(window as any).chatHandler = this.chatHandler;
+		(window as any).chatHandler = this.chatHandler;	// TODO: THIS IS JUST FOR DEBUGGING, REMOVE THIS LATER
 	},
 	components: {
 		ChatFriendsList,

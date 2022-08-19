@@ -37,6 +37,7 @@ export default defineComponent({
 		"serverMessage": (_channel_id: number, _user: number, _message: string) => { return true },
 		"leave": (_channel_id: number) => { return true},
 		"join": (_channel_id: number) => { return true },
+		"clearData": () => { return true },
 	},
 
 	components: {
@@ -56,6 +57,8 @@ export default defineComponent({
 
 			socket.on("connect", async () => {
 				console.log("Connected to Chat server!");
+
+				this.$emit("clearData");
 			})
 			
 			socket.on("disconnect", (reason, description) => {
