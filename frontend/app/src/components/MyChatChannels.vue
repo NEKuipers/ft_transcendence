@@ -1,30 +1,31 @@
 <template>
-	<div>
-		<div class ="mychatchannels">
-			<div id="title">
-				<h5>Your Channels</h5>
-			</div>
-			<div v-if="!myChannels">
-				<h5>Channels failed to load</h5>
-			</div>
-			<div v-else>
-				<div v-if="myChannels?.length">
-					<div id="channels">
-						<ul class="listed-channel" v-for="channel in myChannels" :key="channel.id">
+	<div class ="mychatchannels">
+		<div id="title">
+			<h5>Your Channels</h5>
+		</div>
+		<div v-if="!myChannels">
+			<h5>Channels failed to load</h5>
+		</div>
+		<div id="channels" v-else>
+			<div v-if="myChannels?.length">
+				<div>
+					<ul class="listed-channel" v-for="channel in myChannels" :key="channel.id">
+						<div>
 							<h5 class="name">{{ channel[0].name }}</h5>
 							<SmallButton  class="button" text="open" @click="openChat(channel[0].id)"/>
 							<SmallButton  class="button" text="leave" @click="leaveChannel(channel[0].id)"/>
-						</ul>
-					</div>
+						</div>
+					</ul>
 				</div>
-				<div v-else>
-					<h5>You are not in any channels yet</h5>
-				</div>
+			</div>
+			<div v-else>
+				<h5>You are not in any channels yet</h5>
+			</div>
+			<div id="createchannel">
 				<SmallButton text="Create new channel" @click="createChannel"/>
 				<DialogueBox :type="boxType" :show="showDialogue" @close-dialogue="hideDialogue" @new-name="saveChannel"/>
 			</div>
 		</div>
-
 	</div>
 </template>
 
@@ -183,6 +184,11 @@ export default defineComponent({
 }
 
 #channels {
-	max-height: 300px;
+	max-height: 250px;
+}
+
+#createchannel {
+	display: flex;
+	flex-direction: column;
 }
 </style>
