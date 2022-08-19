@@ -158,15 +158,13 @@ export default defineComponent({
 	flex-direction: column;
 	overflow: auto;
 	align-items: flex-start;
-	/* justify-content: space-between; */
-	
-	/* max-height: 300px; */
+	width: 100%;
 }
 
 .listed-channel{
 	display: flex;
 	font-size: large;
-	align-items: flex-start;
+	align-items: center;
 	/* overflow-y: auto; */
 	box-sizing: border-box;
 	/* justify-content: space-between; */
@@ -185,6 +183,8 @@ export default defineComponent({
 
 #channels {
 	max-height: 250px;
+	align-content: center;
+
 }
 
 #createchannel {
