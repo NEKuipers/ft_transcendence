@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<ChatHandler ref="ChatHandler" uri=":4114" server_name="chat server"/>
+		<ChatHandler ref="ChatHandler" uri=":4114" server_name="chat server" @serverMessage="onMessage" @join="onJoin" @leave="onLeave"/>
 		<SmallButton class="send_message" text="Send a test message" @click="test"/>
 
 		<div class="container">
@@ -120,7 +120,17 @@ export default defineComponent({
 			} else {
 				console.log("Message failed to be sent!");
 			}
-		}
+		},
+
+		onMessage(channel_id: number, user: number, message: string) {
+			console.log(`Received message in channel: ${channel_id} from ${user}: ${message}`)
+		},
+		onJoin(channel_id: number) {
+			console.log(`I am in channel ${channel_id}`)
+		},
+		onLeave(channel_id: number) {
+			console.log(`I am no longer in channel ${channel_id}`)
+		},
 	},
 	async mounted() {
 		this.chatHandler = (this.$refs.ChatHandler as typeof ChatHandler);
