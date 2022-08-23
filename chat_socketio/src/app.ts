@@ -63,7 +63,7 @@ async function send_message_to_socket(socket: Socket, channel_id: number) {
 	backend.get_messages_from_channel(channel_id)
 		.then((messages) => {
 			for (let message of messages) {
-				socket.emit("server-message", channel_id, `User${message.userId}`, message.message)
+				socket.emit("server-message", channel_id, message.userId, message.message)
 			}
 		});
 	socket.join(get_room_name(channel_id));
@@ -213,7 +213,7 @@ io.on("connection", async (socket) => {
 			return;
 		}
 		
-		io.to(get_room_name(channel_id)).emit("server-message", channel_id, data.username, message);	// Send all the clients in the room a message on channel "server-message"
+		io.to(get_room_name(channel_id)).emit("server-message", channel_id, data.userid, message);	// Send all the clients in the room a message on channel "server-message"
 		console.log(`User ${data.username} has send the message: ${message} in room ${channel_id}!`);
 
 		backend.add_message_to_channel(channel_id, data.userid, message)

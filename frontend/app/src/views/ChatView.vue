@@ -17,7 +17,7 @@
 			</div>
 			<div class="column" id="center_column">
 				<div>
-					<ChatBox :channel_id="currentChannel" @sentMsg="sendMsg"/>
+					<ChatBox :channel_id="currentChannel" :messages="messages[currentChannel]" @sentMsg="sendMsg"/>
 				</div>
 			</div>
 			<div class="column" id="channel-overview">
@@ -101,6 +101,7 @@ export default defineComponent({
 			user: null,
 			currentChannel: 0,
 			chatHandler: undefined as unknown as typeof ChatHandler,
+			messages: new Array<any>()
 			// channels: new Map<number, string>(),
 			// channelNames: new Array<string>(),
 			// channelIds: new Array<number>() // TODO HERE
@@ -132,6 +133,12 @@ export default defineComponent({
 
 		onMessage(channel_id: number, user: number, message: string) {
 			console.log(`Received message in channel: ${channel_id} from ${user}: ${message}`)
+
+			const msgObj = {channel_id, user, message}
+			if (!this.messages[channel_id]) {
+				this.messages[channel_id] = []
+			}
+			this.messages[channel_id].push(msgObj)
 		},
 		onJoin(channel_id: number, channelName: string) {
 			// Add this to an array to pass to your channels
@@ -158,7 +165,7 @@ export default defineComponent({
 			console.log(`We have just connected to the chat server, and should clear any data to its initial state`)
 		},
 		sendMsg(channel_id: number, msg: string) {
-			console.log("Working?", channel_id, msg)
+			// console.log("Working?", channel_id, msg)
 			this.chatHandler.send_message(channel_id, msg)
 		}
 	},

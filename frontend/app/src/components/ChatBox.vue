@@ -3,9 +3,9 @@
         <div> 
             <h2>{{channel.name}}</h2>
         </div>
-        <div class="messages">
+        <div id="messages">
             <div v-for="message in messages" :key="message.id" >
-                <p v-if="message.user_id !== loginStatusStore.loggedInStatus?.userID" class="from-them">
+                <p v-if="message.user !== loginStatusStore.loggedInStatus?.userID" class="from-them">
                     {{ message.message }}
                 </p>
                 <p v-else class="from-me">
@@ -37,14 +37,13 @@ export default defineComponent({
         channel_id: {
             type: Number
 		},
-		// messages: null as any // Maaaaybe could import interfaces and stuff
+		messages: null as any // Maaaaybe could import interfaces and stuff
 		// channel_name: String // TODO
     },
     data() {
         return {
             loginStatusStore: loginStatusStore(),
             channel: null as any,
-            messages: null as any, // Retrieve these from channel ID
             text: ''
         }
     },
@@ -56,12 +55,22 @@ export default defineComponent({
 					.then(res => res.json())
 					.then(data => { this.channel = data[0] })
 					.catch(err => console.log('Error retrieving channel', err))
-                fetch('/api/messages/channel/' + this.channel_id)
-					.then(res => res.json())
-					.then(data => { this.messages = data })
-					.catch(err => console.log('Error retrieving messages for channel', err))
             }
         },
+		messages: {
+			handler(newValue) {
+				const container = this.$el.querySelector("#messages")
+				setTimeout(function() {
+					console.log("Here it arrives")
+					if (!container) {
+						return
+					}
+					container.scrollTop = container.scrollHeight
+					console.log("Not gonna seee this")
+				}, 2)
+			},
+			deep: true	
+		},
     },
     methods: {
         sendMsg(e: any) {
@@ -69,20 +78,17 @@ export default defineComponent({
 			if (this.text) {
 				this.$emit("sentMsg", this.channel_id, this.text)
 			}
+			this.text=""
+			
+			// console.log(this.messages)
         },
-        updateMessages() {
-            fetch('/api/messages/channel/' + this.channel_id)
-            .then(res => res.json())
-            .then(data => { /* console.log(data) ;*/ this.messages = data })
-            .catch(err => console.log('Error retrieving messages for channel', err))  
-        }
     },
 	emits: ['sentMsg']
 })
 </script>
 
 <style scoped>
-.messages {
+#messages {
   background-color: #fff;
   /* border: 1px solid #e5e5ea;
   border-radius: 0.25rem; */
@@ -101,7 +107,7 @@ export default defineComponent({
   justify-content: space-between;
 }
 
-.messages p {
+#messages p {
   border-radius: 1.15rem;
   line-height: 1.25;
   max-width: 75%;
