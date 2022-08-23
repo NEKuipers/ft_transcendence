@@ -29,6 +29,8 @@ interface SocketData {
 	joined_channels: backend.JoinedChannelStatus[]
 }
 
+let signedInUsers: {[key: number]: Socket} = {}
+
 io.use((socket, next) => {
 	let data = jwt.verify(socket.handshake.auth.token, SECRET_AUTH) as JwtPayload;
 	if (data === undefined) {
@@ -94,6 +96,47 @@ async function leave_channel(socket: Socket, channel_status: backend.JoinedChann
 			data.joined_channels = data.joined_channels.filter((elem) => elem.channel_id != channel_status.channel_id);
 		})
 }
+async function ban_user(user_id: number, channel_id: number) {
+	await backend.ban_user_from_room(channel_id, user_id)
+		.then(() => {
+			console.log(`user ${user_id} is banned from channel ${channel_id}!`);
+
+			let socket = signedInUsers[user_id];
+			if (socket) {
+				let data = socket.data as SocketData;
+
+				let status = data.joined_channels.find((elem) => elem.channel_id == channel_id);
+				if (!status || status.is_banned) {
+					console.error(`${data.username} was banned from channel ${channel_id}, BUT WASN'T JOINED!`);
+					return;
+				}
+				status.is_banned = true;
+
+				socket.leave(get_room_name(channel_id));
+				socket.emit("leave", channel_id);
+			}
+		})
+}
+async function unban_user(user_id: number, channel_id: number) {
+	await backend.unban_user_from_room(channel_id, user_id)
+		.then(() => {
+			console.log(`user ${user_id} is un-banned from channel ${channel_id}!`);
+			
+			let socket = signedInUsers[user_id];
+			if (socket) {
+				let data = socket.data as SocketData;
+
+				let status = data.joined_channels.find((elem) => elem.channel_id == channel_id);
+				if (!status || !status.is_banned) {
+					console.error(`${data.username} was un-banned from channel ${channel_id}, BUT WASN'T BANNED!`);
+					return;
+				}
+
+				status.is_banned = false;
+				send_message_to_socket(socket, channel_id)
+			}
+		})
+}
 
 // Joins all the socketio-rooms this socket should be in
 async function join_rooms(socket: Socket) {
@@ -116,6 +159,7 @@ async function join_rooms(socket: Socket) {
 
 io.on("connection", async (socket) => {
 	let data = socket.data as SocketData;
+	signedInUsers[data.userid] = socket;
 
 	console.log(`User ${data.username} connected!`);
 
@@ -152,7 +196,7 @@ io.on("connection", async (socket) => {
 
 		}).catch((err) => {
 			console.error(err);
-			callback(false, "Failed to create room");
+			callback(false, "Failed to create channel");
 		})
 	});
 
@@ -161,11 +205,10 @@ io.on("connection", async (socket) => {
 		if (existing_status) {
 			if (existing_status.is_banned) {
 				console.log(`User ${data.username} tried to join channel ${channel_id} but was banned!`);
-				callback(false, "You are banned!");
+				return callback(false, "You are banned!");
 			} else {
-				callback(false, "Already joined!");
+				return callback(false, "Already joined!");
 			}
-			return;
 		}
 
 		// console.log(`Got password: ${password}`)
@@ -190,40 +233,79 @@ io.on("connection", async (socket) => {
 		let existing_status = data.joined_channels.find((elem) => elem.channel_id == channel_id);
 		if (!existing_status) {
 			console.log(`User ${data.username} tried to leave channel ${channel_id}, but is not in the channel!`);
-			callback(false, "You are not in the channel!");
-			return;
+			return callback(false, "You are not in the channel!");
 		}
-
 		if (existing_status.is_banned) {
 			console.log(`User ${data.username} tried to leave channel ${channel_id}, but was banned!`);
-			callback(false, "You are banned!");
-			return;
+			return callback(false, "You are banned!");
 		}
 
 		leave_channel(socket, existing_status)
 			.then(_ => callback(true, null))
 			.catch(err => callback(false, err))
-
 	})
 
-	socket.on("client-message", (channel_id: number, message: string, callback: (success: boolean) => void) => {	// This function will get called whenever this client emits a message on channel "client-message"
-		if (!data.joined_channels.find((elem) => elem.channel_id == channel_id)) {
-			console.log(`User ${data.username} tried to send the message: ${message} in channel ${channel_id}, but was not in the room!`);
-			callback(false);
+	socket.on("ban_user", (channel_id: number, user_id: number, callback: (success: boolean, reason: any) => void) => {
+		let status = data.joined_channels.find((elem) => elem.channel_id == channel_id);
+		if (!status) {
+			return callback(false, "You are not in that channel!");
+		}
+		if (status.is_banned) {
+			console.log(`User ${data.username} tried to ban someone in channel ${channel_id} but was banned!`);
+			return callback(false, "You are banned!");
+		} else if (!status.is_admin) {
+			return callback(false, "You are not admin!");
+		}
+
+		ban_user(user_id, channel_id)
+			.then(_ => callback(true, null))
+			.catch(err => callback(false, err))
+	})
+
+	socket.on("unban_user", (channel_id: number, user_id: number, callback: (success: boolean, reason: any) => void) => {
+		let status = data.joined_channels.find((elem) => elem.channel_id == channel_id);
+		if (!status) {
+			callback(false, "You are not in that channel!");
 			return;
 		}
+		if (status.is_banned) {
+			console.log(`User ${data.username} tried to unban someone in channel ${channel_id} but was banned!`);
+			return callback(false, "You are banned!");
+		} else if (!status.is_admin) {
+			return callback(false, "You are not admin!");
+		}
+
+		unban_user(user_id, channel_id)
+			.then(_ => callback(true, null))
+			.catch(err => callback(false, err))
+	})
+
+	socket.on("client-message", (channel_id: number, message: string, callback: (success: boolean, reason: any) => void) => {	// This function will get called whenever this client emits a message on channel "client-message"
+		let status = data.joined_channels.find((elem) => elem.channel_id == channel_id);
+		if (!status) {
+			console.error(`User ${data.username} tried to send the message: ${message} in channel ${channel_id}, but was not in the room!`);
+			callback(false, "You are not in that channel!");
+			return;
+		}
+		if (status.is_banned) {
+			console.error(`User ${data.username} tried to send the message: ${message} in channel ${channel_id}, but was banned!`);
+			callback(false, "You are banned!");
+			return false;
+		}
+		
 		
 		io.to(get_room_name(channel_id)).emit("server-message", channel_id, data.userid, message);	// Send all the clients in the room a message on channel "server-message"
 		console.log(`User ${data.username} has send the message: ${message} in room ${channel_id}!`);
 
 		backend.add_message_to_channel(channel_id, data.userid, message)
 			.then(() => {
-				callback(true);	// Message is sent successfully once it has been added to the database
+				callback(true, null);	// Message is sent successfully once it has been added to the database
 			})
 	})
 
 	socket.on("disconnect", () => {
 		console.log(`User ${data.username} has disconnected!`);
+		delete signedInUsers[data.userid];
 	})
 });
 

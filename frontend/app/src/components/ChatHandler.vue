@@ -86,11 +86,44 @@ export default defineComponent({
 	},
 
 	methods: {
-		// TODO: Methods for kicking / banning / muting other users
 		async join_channel(channel_id: number, password: string | undefined | null): Promise<boolean> {
 			return new Promise((resolve, reject) => {
 				if (this.socket) {
 					this.socket.emit("join_channel", channel_id, password,
+					(success: boolean, result: any) => {
+						if (success) {
+							resolve(true);
+						} else {
+							reject(result);
+						}
+					});
+				} else {
+					reject("Not connected!");
+				}
+			})
+		},
+
+		async ban_user(channel_id: number, user_id: number): Promise<boolean> {
+			return new Promise((resolve, reject) => {
+				if (this.socket) {
+					this.socket.emit("ban_user", channel_id, user_id,
+					(success: boolean, result: any) => {
+						if (success) {
+							resolve(true);
+						} else {
+							reject(result);
+						}
+					});
+				} else {
+					reject("Not connected!");
+				}
+			})
+		},
+
+		async unban_user(channel_id: number, user_id: number): Promise<boolean> {
+			return new Promise((resolve, reject) => {
+				if (this.socket) {
+					this.socket.emit("unban_user", channel_id, user_id,
 					(success: boolean, result: any) => {
 						if (success) {
 							resolve(true);
