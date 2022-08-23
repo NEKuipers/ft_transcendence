@@ -11,7 +11,7 @@
 					<router-link to="/about">About</router-link>
 					<h1 class="title">ft_transcendence</h1>
 					<div v-if="loginStatusStore.loggedInStatus">
-					<LargeButton @click="logout" class="logout" text="Log out"></LargeButton>
+					<LargeButton click="logout" class="logout" text="Log out"></LargeButton>
 					</div>
 				</nav>
 			</div>

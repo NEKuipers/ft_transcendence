@@ -17,7 +17,7 @@
 			</div>
 			<div class="column" id="center_column">
 				<div>
-					<ChatBox :channel_id="currentChannel" />
+					<ChatBox :channel_id="currentChannel" @sentMsg="sendMsg"/>
 				</div>
 			</div>
 			<div class="column" id="channel-overview">
@@ -101,8 +101,9 @@ export default defineComponent({
 			user: null,
 			currentChannel: 0,
 			chatHandler: undefined as unknown as typeof ChatHandler,
-			channelNames: new Array<string>(),
-			channelIds: new Array<number>() // TODO HERE
+			// channels: new Map<number, string>(),
+			// channelNames: new Array<string>(),
+			// channelIds: new Array<number>() // TODO HERE
 		}
 	},
 	methods: {
@@ -156,6 +157,10 @@ export default defineComponent({
 		clearData() {
 			console.log(`We have just connected to the chat server, and should clear any data to its initial state`)
 		},
+		sendMsg(channel_id: number, msg: string) {
+			console.log("Working?", channel_id, msg)
+			this.chatHandler.send_message(channel_id, msg)
+		}
 	},
 	async mounted() {
 		this.chatHandler = (this.$refs.ChatHandler as typeof ChatHandler);

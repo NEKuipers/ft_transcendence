@@ -62,34 +62,13 @@ export default defineComponent({
 					.catch(err => console.log('Error retrieving messages for channel', err))
             }
         },
-        
-        // messages: {
-        //     handler(newValue) {
-        //         fetch('/api/messages/channel/' + this.channel_id)
-        //         .then(res => res.json())
-        //         .then(data => { /* console.log(data) ;*/ this.messages = data })
-        //         .catch(err => console.log('Error retrieving messages for channel', err))
-        //     }
-        // }
     },
     methods: {
         sendMsg(e: any) {
             e.preventDefault()
-            if (this.text) {
-                fetch('/api/messages/', {
-                    method: "POST",
-                    body: JSON.stringify({
-                        "channel_id": this.channel_id,
-                        "user_id": loginStatusStore().loggedInStatus?.userID,
-                        "message": this.text
-                    }),
-                    headers: {
-						'Content-type': 'application/json; charset=UTF-8'
-					}
-                })
-                .then(() => { this.updateMessages(); this.text = "" })
-                .catch(err => console.log('Problem sending text', err))
-            }
+			if (this.text) {
+				this.$emit("sentMsg", this.channel_id, this.text)
+			}
         },
         updateMessages() {
             fetch('/api/messages/channel/' + this.channel_id)
@@ -97,7 +76,8 @@ export default defineComponent({
             .then(data => { /* console.log(data) ;*/ this.messages = data })
             .catch(err => console.log('Error retrieving messages for channel', err))  
         }
-    }
+    },
+	emits: ['sentMsg']
 })
 </script>
 
