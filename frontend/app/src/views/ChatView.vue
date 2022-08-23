@@ -5,7 +5,7 @@
 		<div class="container">
 			<div class="column" id="left-column">
 				<div id="channels">
-					<MyChatChannels @open-chat="openChat" @leaveChannel="leaveChannel" :user="loginStatusStore.loggedInStatus?.userID" />
+					<MyChatChannels @open-chat="openChat" @leaveChannel="leaveChannel" @createChannel="createChannel" :user="loginStatusStore.loggedInStatus?.userID" :myChannels="myChannels"/>
 				</div>
 				<div id="channels">
 					<PublicChatChannels @joinChannel="joinChannel"/>
@@ -99,7 +99,8 @@ export default defineComponent({
 			user: null,
 			currentChannel: 0,
 			chatHandler: undefined as unknown as typeof ChatHandler,
-			messages: new Array<any>()
+			messages: new Array<any>(),
+			myChannels: new Array<any>(),
 			// channels: new Map<number, string>(),
 			// channelNames: new Array<string>(),
 			// channelIds: new Array<number>() // TODO HERE
@@ -133,9 +134,15 @@ export default defineComponent({
 		onJoin(channel_id: number, channelName: string) {
 			// Add this to an array to pass to your channels
 			console.log(`I am in channel ${channel_id}: ${channelName}`)
+			this.myChannels.push({
+				id: channel_id,
+				name: channelName,
+			})
 		},
 		onLeave(channel_id: number) {
 			console.log(`I am no longer in channel ${channel_id}`)
+
+			this.myChannels = this.myChannels.filter((elem: any) => elem.id != channel_id);
 		},
 		joinChannel(channel_id: number) {
 			this.chatHandler.join_channel(channel_id)
@@ -157,6 +164,9 @@ export default defineComponent({
 		sendMsg(channel_id: number, msg: string) {
 			// console.log("Working?", channel_id, msg)
 			this.chatHandler.send_message(channel_id, msg)
+		},
+		createChannel(name: string) {
+			this.chatHandler.create_channel(name, "public")
 		}
 	},
 	async mounted() {
