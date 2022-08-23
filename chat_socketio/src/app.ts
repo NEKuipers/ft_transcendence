@@ -33,14 +33,14 @@ io.use((socket, next) => {
 	let data = jwt.verify(socket.handshake.auth.token, SECRET_AUTH) as JwtPayload;
 	if (data === undefined) {
 		const err = new Error("Bad auth token!");
-		err.stack = null;
+		err.stack = undefined;
 		next(err);
 		return;
 	}
 
 	if (typeof(data.userid) !== typeof(0) || typeof(data.username) !== typeof("")) {
 		const err = new Error("Auth token valid, but contains bad data!");
-		err.stack = null;
+		err.stack = undefined;
 		next(err);
 		return;
 	}
@@ -156,7 +156,7 @@ io.on("connection", async (socket) => {
 		})
 	});
 
-	socket.on("join_channel", (channel_id: number, get_password_func: (callback: (password: string) => void) => string, callback: (success: boolean, reason: any) => void) => {
+	socket.on("join_channel", (channel_id: number, password: string | undefined | null, callback: (success: boolean, reason: any) => void) => {
 		let existing_status = data.joined_channels.find((elem) => elem.channel_id == channel_id);
 		if (existing_status) {
 			if (existing_status.is_banned) {
@@ -168,7 +168,13 @@ io.on("connection", async (socket) => {
 			return;
 		}
 
-		// TODO: Handle password
+		// console.log(`Got password: ${password}`)
+		
+		// TODO: Check password correctly
+		// if (password == null || password == undefined) {
+		// 	callback(false, "NEED_PASSWORD");
+		// 	return;
+		// }
 
 		join_channel(socket, {
 			is_admin: false,
@@ -207,8 +213,7 @@ io.on("connection", async (socket) => {
 			return;
 		}
 		
-		socket.to(get_room_name(channel_id)).emit("server-message", channel_id, data.username, message);	// Send all the other clients in the room a message on channel "server-message" with the first argument being the sender username, and the second argument their message
-		socket.emit("server-message", channel_id, data.username, message);	// I am lazy and do not want to add code to send text locally
+		io.to(get_room_name(channel_id)).emit("server-message", channel_id, data.username, message);	// Send all the clients in the room a message on channel "server-message"
 		console.log(`User ${data.username} has send the message: ${message} in room ${channel_id}!`);
 
 		backend.add_message_to_channel(channel_id, data.userid, message)

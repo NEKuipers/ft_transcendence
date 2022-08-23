@@ -123,6 +123,11 @@ export default defineComponent({
 				console.log("Message failed to be sent!");
 			}
 		},
+		async requestPassword(): Promise<string> {
+			return new Promise((resolve, reject) => {
+				resolve("TODO: Show dialog box requesting a password")
+			});
+		},
 
 		onMessage(channel_id: number, user: number, message: string) {
 			console.log(`Received message in channel: ${channel_id} from ${user}: ${message}`)
@@ -136,6 +141,14 @@ export default defineComponent({
 		},
 		joinChannel(channel_id: number) {
 			this.chatHandler.join_channel(channel_id)
+				.catch(async (err: string) => {
+					if (err == "NEED_PASSWORD") {
+						let pwd = await this.requestPassword();
+						await this.chatHandler.join_channel(channel_id, pwd);
+					} else {
+						console.error(err);	
+					}
+				})
 		},
 		leaveChannel(channel_id: number) {
 			this.chatHandler.leave_channel(channel_id)
@@ -147,7 +160,9 @@ export default defineComponent({
 	async mounted() {
 		this.chatHandler = (this.$refs.ChatHandler as typeof ChatHandler);
 
-		(window as any).chatHandler = this.chatHandler;	// TODO: THIS IS JUST FOR DEBUGGING, REMOVE THIS LATER
+		// TODO: THIS IS JUST FOR DEBUGGING, REMOVE THIS LATER
+		(window as any).chatHandler = this.chatHandler;
+		(window as any).joinChannel = this.joinChannel;
 	},
 	components: {
 		ChatFriendsList,
