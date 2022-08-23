@@ -6,22 +6,30 @@
 		<div class="listed-participant" v-for="participant in channelParticipants" :key="participant?.id">
 			<div>
 				<div id="participantdiv">
-					<!-- this should be username, also should have some sort of denotation whether participant is owner/admin/muted -->
-					<p>{{participant.participant_id}}</p>
+
+					<div id="nameAndRoles">
+						<p>{{participant.participant_username}}</p>
+						<div class="role" v-if="participant.participant_id === participant.channel_owner_id">
+							<p>Owner</p>
+						</div>
+						<div class="role" v-if="participant.is_admin === true">
+						<!-- <div class="role"> -->
+							<p>Admin</p>
+						</div>
+						<!-- <div class="role"> -->
+						<div class="role" v-if="participant.is_banned === true">
+							<p>Banned</p>
+						</div>
+						<!-- <div class="role"> -->
+						<div class="role" v-if="participant.is_muted === true">
+							<p>Muted</p>
+						</div>
+					</div>
 					<SmallButton class="button" text="DM" @click="directMessage(participant?.id)"/>
 					<SmallButton class="button" text="Invite to Game" @click="gameInvite(participant?.id)"/>
 					<SmallButton v-if="!participant.is_banned" class="button" text="Ban this user" @click="banUser(participant?.id)"/>
 					<!-- Need to add other buttons depending on whether is admin or owner or banned or muted etc. -->
 				</div>
-                <div v-if="participant.is_admin === true">
-                    <p>Admin</p>
-                </div>
-                <div v-if="participant.is_banned === true">
-                    <p>Banned</p>
-                </div>
-                <div v-if="participant.is_muted === true">
-                    <p>Muted</p>
-                </div>
 			</div>
 		</div>
 		<!-- owner tools and admin tools, add after is_owner is added to participants -->
@@ -98,6 +106,10 @@ export default defineComponent({
 
 <style scoped>
 
+
+/* TODO make sure it's scrollable */
+
+
 .button {
 	float: left;
 	margin-left:8px;
@@ -111,6 +123,23 @@ export default defineComponent({
 #participantdiv {
 	display: flex;
 	flex-direction: column;
+}
+
+#nameAndRoles {
+	display:flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	font-size: medium;
+	font-weight: bold;
+	justify-content: space-between;
+	margin: 5px;
+}
+
+.role {
+	border: solid 1px;
+	border-radius: 4px;
+	color: #2c3e50;
+	font-weight: normal;
 }
 
 </style>
