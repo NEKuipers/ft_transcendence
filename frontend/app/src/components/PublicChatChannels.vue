@@ -8,10 +8,8 @@
 		</div>
 		<div id="channels" v-else-if="publicChatChannels?.length">
 			<ul class="listed-channel" v-for="channel in publicChatChannels" :key="channel.id">
-				<!-- <div class="listed-channel"> -->
 				<h5 class="name">{{channel.name}}</h5>
-				<SmallButton class="button" text="join" @click="joinChannel(channel.id)"/>
-				<!-- </div> -->
+				<SmallButton class="button" text="join" @click="this.$emit('joinChannel',channel.id)"/>
 			</ul>
 		</div>
 		<div v-else>
@@ -46,21 +44,23 @@ export default defineComponent({
 		});
 		
 	},
-    components: { SmallButton 
+    components: { 
+		SmallButton 
 	},
 	methods: {
-		async joinChannel(channel_id: number) {
-				const requestOptions = {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({	participant_id: this.loginStatusStore.loggedInStatus?.userID,
-										channel_id: channel_id}) 
-			};
-			fetch('/api/participants', requestOptions)
-				.then(response => response)
-				.catch(err => console.log(err));
-		}
-	}
+		// async joinChannel(channel_id: number) {
+		// 		const requestOptions = {
+		// 		method: "POST",
+		// 		headers: { "Content-Type": "application/json" },
+		// 		body: JSON.stringify({	participant_id: this.loginStatusStore.loggedInStatus?.userID,
+		// 								channel_id: channel_id}) 
+		// 	};
+		// 	fetch('/api/participants', requestOptions)
+		// 		.then(response => response)
+		// 		.catch(err => console.log(err));
+		// }
+	},
+	emits: ['joinChannel']
 })
 
 </script>

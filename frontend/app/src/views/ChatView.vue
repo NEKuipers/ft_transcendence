@@ -1,15 +1,14 @@
 <template>
 	<div>
-		<ChatHandler ref="ChatHandler" uri=":4114" server_name="chat server"/>
-		<SmallButton class="send_message" text="Send a test message" @click="test"/>
+		<ChatHandler ref="ChatHandler" uri=":4114" server_name="chat server" @serverMessage="onMessage" @join="onJoin" @leave="onLeave" @clearData="clearData"/>
 
 		<div class="container">
 			<div class="column" id="left-column">
 				<div id="channels">
-					<MyChatChannels @open-chat="openChat"  :user="loginStatusStore.loggedInStatus?.userID" />
+					<MyChatChannels @open-chat="openChat" @leaveChannel="leaveChannel" @createChannel="createChannel" :user="loginStatusStore.loggedInStatus?.userID" :myChannels="myChannels"/>
 				</div>
 				<div id="channels">
-					<PublicChatChannels/>
+					<PublicChatChannels @joinChannel="joinChannel"/>
 				</div>
 				<div id="friends">
 					<ChatFriendsList :user="loginStatusStore.loggedInStatus?.userID" />
@@ -17,7 +16,7 @@
 			</div>
 			<div class="column" id="center_column">
 				<div>
-					<ChatBox :channel_id="currentChannel" />
+					<ChatBox :channel_id="currentChannel" :messages="messages[currentChannel]" @sentMsg="sendMsg"/>
 				</div>
 			</div>
 			<div class="column" id="channel-overview">
@@ -83,7 +82,6 @@
 
 import { defineComponent } from "@vue/runtime-core";
 import ChatFriendsList from "../components/ChatFriendsList.vue";
-import SmallButton from "../components/SmallButton.vue";
 import PublicChatChannels from "../components/PublicChatChannels.vue";
 import MyChatChannels from "../components/MyChatChannels.vue";
 import { loginStatusStore } from "../stores/profileData";
@@ -101,6 +99,11 @@ export default defineComponent({
 			user: null,
 			currentChannel: 0,
 			chatHandler: undefined as unknown as typeof ChatHandler,
+			messages: new Array<any>(),
+			myChannels: new Array<any>(),
+			// channels: new Map<number, string>(),
+			// channelNames: new Array<string>(),
+			// channelIds: new Array<number>() // TODO HERE
 		}
 	},
 	methods: {
@@ -113,17 +116,64 @@ export default defineComponent({
 		openChat(channel_id: number) {
 			this.currentChannel = channel_id
 		},
-		async test() {
-			let success = await this.chatHandler.send_message(1, "Hello, this is a test message!");
-			if (success) {
-				console.log("Message sent!");
-			} else {
-				console.log("Message failed to be sent!");
+		async requestPassword(): Promise<string> {
+			return new Promise((resolve, reject) => {
+				resolve("TODO: Show dialog box requesting a password")
+			});
+		},
+
+		onMessage(channel_id: number, user: number, message: string) {
+			console.log(`Received message in channel: ${channel_id} from ${user}: ${message}`)
+
+			const msgObj = {channel_id, user, message}
+			if (!this.messages[channel_id]) {
+				this.messages[channel_id] = []
 			}
+			this.messages[channel_id].push(msgObj)
+		},
+		onJoin(channel_id: number, channelName: string) {
+			// Add this to an array to pass to your channels
+			console.log(`I am in channel ${channel_id}: ${channelName}`)
+			this.myChannels.push({
+				id: channel_id,
+				name: channelName,
+			})
+		},
+		onLeave(channel_id: number) {
+			console.log(`I am no longer in channel ${channel_id}`)
+
+			this.myChannels = this.myChannels.filter((elem: any) => elem.id != channel_id);
+		},
+		joinChannel(channel_id: number) {
+			this.chatHandler.join_channel(channel_id)
+				.catch(async (err: string) => {
+					if (err == "NEED_PASSWORD") {
+						let pwd = await this.requestPassword();
+						await this.chatHandler.join_channel(channel_id, pwd);
+					} else {
+						console.error(err);	
+					}
+				})
+		},
+		leaveChannel(channel_id: number) {
+			this.chatHandler.leave_channel(channel_id)
+		},
+		clearData() {
+			console.log(`We have just connected to the chat server, and should clear any data to its initial state`)
+		},
+		sendMsg(channel_id: number, msg: string) {
+			// console.log("Working?", channel_id, msg)
+			this.chatHandler.send_message(channel_id, msg)
+		},
+		createChannel(name: string) {
+			this.chatHandler.create_channel(name, "public")
 		}
 	},
 	async mounted() {
 		this.chatHandler = (this.$refs.ChatHandler as typeof ChatHandler);
+
+		// TODO: THIS IS JUST FOR DEBUGGING, REMOVE THIS LATER
+		(window as any).chatHandler = this.chatHandler;
 	},
 	components: {
 		ChatFriendsList,
@@ -131,7 +181,6 @@ export default defineComponent({
 		MyChatChannels,
 		ChatBox,
 		ChannelOverview,
-		SmallButton,
 		ChatHandler
 	},
 })

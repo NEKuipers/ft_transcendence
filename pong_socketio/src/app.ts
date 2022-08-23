@@ -46,7 +46,7 @@ function make_request(port: number, path: string, method: string, data: object, 
 		},
 	}, res => {
 		if (method == "POST") {
-			if (res.statusCode != 201) {	// 201 created
+			if (res.statusCode != 201 && res.statusCode != 200) {
 				console.log(`Got statusCode for ${path}: ${res.statusCode} (${res.statusMessage}): ${JSON.stringify(res.headers, null, 4)}`)
 
 				data_callback = function(data: Object) {
@@ -84,6 +84,37 @@ function make_request(port: number, path: string, method: string, data: object, 
 	}
 	req.write(json_data);
 	req.end();
+}
+
+function update_achievements(socket: Socket) {
+	let id = socket.data.userid as number;
+	console.log(`Getting achievements of ${id}`)
+
+	make_request(DATABASE_PORT, `/rpc/fnc_get_new_achievements`, "POST", {
+		user_id: socket.data.userid
+	}, (data) => {
+		let achievements = data['achievements'];
+		if (!achievements) {
+			console.log("No achievements in success!", data)
+			return;
+		}
+
+		for (let achievement_id of achievements) {
+			make_request(DATABASE_PORT, "/user_achievements", "POST", {
+				"user_id": id,
+ 				"achievement_id": achievement_id
+			});
+
+			console.log(`user ${id} unlocked achievement ${achievement_id}: `)
+
+			// IDK, would need achievement name, which i don't have
+			// if (socket.connected) {
+			// 	socket.emit("unlock_achievement", achievement_id);
+			// }
+		}
+	}, (error) => {
+		console.log("got error:", error)
+	})
 }
 
 // Delete matches that are still "ongoing", even though we just started, therefore they are NOT running
@@ -303,6 +334,9 @@ class Match {
 				"status": "finished",
 				"reason": winner_reason,
 			})
+
+			update_achievements(this.p1);
+			update_achievements(this.p2);
 		}
 
 		delete all_matches[this.room_name];

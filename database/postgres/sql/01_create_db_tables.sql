@@ -146,7 +146,8 @@ CREATE TABLE public.channels
     name          VARCHAR(256),
     type          CHANNEL_TYPE,
     owner_id      BIGINT REFERENCES public.users(id),
-    is_closed     BOOL
+    is_closed     BOOL,
+	CONSTRAINT unique_name UNIQUE (name)
 );
 
 /*

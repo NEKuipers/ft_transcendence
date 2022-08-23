@@ -30,6 +30,19 @@ interface Message {
 	message: string,
 };
 
+let cached_names = {}
+async function get_channel_name(channel_id: number): Promise<String> {
+	let cached = cached_names[channel_id];
+	if (cached) {
+		return cached;
+	}
+
+	let data = await axios.get(`http://localhost:${DATABASE_PORT}/channels?id=eq.${channel_id}`);
+	let name = data.data[0].name;
+	cached_names[channel_id] = name;
+	return name;
+}
+
 async function make_channel(channel: CreateChannel): Promise<Channel> {
 	let data = await axios.post(`http://localhost:${DATABASE_PORT}/channels`, channel, {
 		headers: {
@@ -37,7 +50,9 @@ async function make_channel(channel: CreateChannel): Promise<Channel> {
 		}
 	});
 
-	return data.data[0];
+	let result_channel = data.data[0];
+	cached_names[result_channel.id] = result_channel.name;
+	return result_channel;
 }
 async function delete_channel(channelId: number) {
 	throw "TODO: deleting channels is not yet implemented";
@@ -54,14 +69,19 @@ async function join_channel(channel: JoinedChannelStatus, userId: number) {
 	});
 }
 async function leave_channel(channelId: number, userId: number) {
-	throw "TODO: leaving channels is not yet implemented";
+	// TODO: Error checking
+	await axios.delete(`http://localhost:${DATABASE_PORT}/participants?channel_id=eq.${channelId}&participant_id=eq.${userId}`);
 }
 
 async function ban_user_from_room(channelId: number, userId: number) {
-	throw "TODO: banning users is not yet implemented";
+	await axios.patch(`http://localhost:${DATABASE_PORT}/participants?channel_id=eq.${channelId}&participant_id=eq.${userId}`, {
+		is_banned: true,
+	});
 }
 async function unban_user_from_room(channelId: number, userId: number) {
-	throw "TODO: unbanning users is not yet implemented";
+	await axios.patch(`http://localhost:${DATABASE_PORT}/participants?channel_id=eq.${channelId}&participant_id=eq.${userId}`, {
+		is_banned: false,
+	});
 }
 
 async function get_messages_from_channel(channelId: number): Promise<Message[]> {	// userId, message
@@ -97,6 +117,8 @@ export {
 
 	make_channel,
 	delete_channel,
+
+	get_channel_name,
 
 	join_channel,
 	leave_channel,
