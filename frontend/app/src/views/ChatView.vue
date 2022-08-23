@@ -1,7 +1,6 @@
 <template>
 	<div>
 		<ChatHandler ref="ChatHandler" uri=":4114" server_name="chat server" @serverMessage="onMessage" @join="onJoin" @leave="onLeave" @clearData="clearData"/>
-		<SmallButton class="send_message" text="Send a test message" @click="test"/>
 
 		<div class="container">
 			<div class="column" id="left-column">
@@ -83,7 +82,6 @@
 
 import { defineComponent } from "@vue/runtime-core";
 import ChatFriendsList from "../components/ChatFriendsList.vue";
-import SmallButton from "../components/SmallButton.vue";
 import PublicChatChannels from "../components/PublicChatChannels.vue";
 import MyChatChannels from "../components/MyChatChannels.vue";
 import { loginStatusStore } from "../stores/profileData";
@@ -115,14 +113,6 @@ export default defineComponent({
 		},
 		openChat(channel_id: number) {
 			this.currentChannel = channel_id
-		},
-		async test() {
-			let success = await this.chatHandler.send_message(1, "Hello, this is a test message!");
-			if (success) {
-				console.log("Message sent!");
-			} else {
-				console.log("Message failed to be sent!");
-			}
 		},
 		async requestPassword(): Promise<string> {
 			return new Promise((resolve, reject) => {
@@ -167,7 +157,6 @@ export default defineComponent({
 
 		// TODO: THIS IS JUST FOR DEBUGGING, REMOVE THIS LATER
 		(window as any).chatHandler = this.chatHandler;
-		(window as any).joinChannel = this.joinChannel;
 	},
 	components: {
 		ChatFriendsList,
@@ -175,7 +164,6 @@ export default defineComponent({
 		MyChatChannels,
 		ChatBox,
 		ChannelOverview,
-		SmallButton,
 		ChatHandler
 	},
 })

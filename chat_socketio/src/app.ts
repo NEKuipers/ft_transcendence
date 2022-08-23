@@ -196,7 +196,7 @@ io.on("connection", async (socket) => {
 
 		}).catch((err) => {
 			console.error(err);
-			callback(false, "Failed to create room");
+			callback(false, "Failed to create channel");
 		})
 	});
 
