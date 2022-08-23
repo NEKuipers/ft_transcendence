@@ -145,6 +145,7 @@ CREATE TABLE public.channels
     id            BIGINT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     name          VARCHAR(256),
     type          CHANNEL_TYPE,
+    password      VARCHAR(256),
     owner_id      BIGINT REFERENCES public.users(id),
     is_closed     BOOL,
 	CONSTRAINT unique_name UNIQUE (name)
