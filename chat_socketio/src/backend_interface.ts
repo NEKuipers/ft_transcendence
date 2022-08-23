@@ -74,10 +74,14 @@ async function leave_channel(channelId: number, userId: number) {
 }
 
 async function ban_user_from_room(channelId: number, userId: number) {
-	throw "TODO: banning users is not yet implemented";
+	await axios.patch(`http://localhost:${DATABASE_PORT}/participants?channel_id=eq.${channelId}&participant_id=eq.${userId}`, {
+		is_banned: true,
+	});
 }
 async function unban_user_from_room(channelId: number, userId: number) {
-	throw "TODO: unbanning users is not yet implemented";
+	await axios.patch(`http://localhost:${DATABASE_PORT}/participants?channel_id=eq.${channelId}&participant_id=eq.${userId}`, {
+		is_banned: false,
+	});
 }
 
 async function get_messages_from_channel(channelId: number): Promise<Message[]> {	// userId, message
