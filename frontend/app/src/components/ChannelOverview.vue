@@ -6,7 +6,6 @@
 		<div class="listed-participant" v-for="participant in channelParticipants" :key="participant?.id">
 			<div>
 				<div id="participantdiv">
-
 					<div id="nameAndRoles">
 						<p>{{participant.participant_username}}</p>
 						<div class="role" v-if="participant.participant_id === participant.channel_owner_id">
@@ -25,9 +24,21 @@
 							<p>Muted</p>
 						</div>
 					</div>
-					<SmallButton class="button" text="DM" @click="directMessage(participant?.id)"/>
-					<SmallButton class="button" text="Invite to Game" @click="gameInvite(participant?.id)"/>
-					<SmallButton v-if="!participant.is_banned" class="button" text="Ban this user" @click="banUser(participant?.id)"/>
+					<div v-if="participant?.participant_id != loginStatusStore.loggedInStatus?.userID">
+						<SmallButton class="button" text="DM" @click="directMessage(participant?.id)"/>
+						<SmallButton class="button" text="Invite to Game" @click="gameInvite(participant?.id)"/>
+
+						<!-- banning/muting, with restriction for admin/owner only -->
+						<SmallButton v-if="!participant.is_banned && (userIsAdmin || userIsOwner)" class="button" text="Ban this user" @click="banUser(participant?.id)"/>
+						<SmallButton v-if="participant.is_banned && (userIsAdmin || userIsOwner)" class="button" text="Unban this user" @click="unbanUser(participant?.id)"/>
+
+						<SmallButton v-if="!participant.is_muted && (userIsAdmin || userIsOwner)" class="button" text="Mute this user" @click="muteUser(participant?.id)"/>
+						<SmallButton v-if="participant.is_muted && (userIsAdmin || userIsOwner)" class="button" text="Unmute this user" @click="unmuteUser(participant?.id)"/>
+
+						<!-- admin rights -->
+						<SmallButton v-if="!participant.is_admin && userIsOwner" class="button" text="Give admin rights" @click="makeUserAdmin(participant?.id)"/>
+						<SmallButton v-if="participant.is_admin && userIsOwner" class="button" text="Remove admin rights" @click="removeUserAdmin(participant?.id)"/>
+					</div>
 					<!-- Need to add other buttons depending on whether is admin or owner or banned or muted etc. -->
 				</div>
 			</div>
@@ -43,6 +54,7 @@
 
 
 <script lang="ts">
+import { booleanLiteral } from '@babel/types'
 import { defineComponent } from 'vue'
 import { loginStatusStore } from '../stores/profileData'
 import SmallButton from './SmallButton.vue'
@@ -62,8 +74,10 @@ export default defineComponent({
             loginStatusStore: loginStatusStore(),
             channel: null,
             messages: null, // Retrieve these from channel ID
-			channelParticipants: null,
-            text: ''
+			channelParticipants: [],
+            text: '',
+			userIsOwner: false,
+			userIsAdmin: false,
         }
     },
     watch: {
@@ -72,7 +86,7 @@ export default defineComponent({
                 if (!newValue) { return; }
                 fetch('/api/channels/' + this.channel_id)
                 .then(res => res.json())
-                .then(data => { this.channel = data[0] })
+                .then(data => { this.channel = data[0]; this.checkIfOwner(data[0].owner_id); })
                 .catch(err => console.log('Error retrieving channel', err))
                 fetch('/api/messages/channel/' + this.channel_id)
                 .then(res => res.json())
@@ -86,9 +100,22 @@ export default defineComponent({
 		async getChannelParticipants() { 
 		fetch("/api/participants/" + this.channel_id)
 			.then(res => res.json())
-			.then(data => {this.channelParticipants = data; console.log(this.channelParticipants)})
+			.then(data => {
+				this.channelParticipants = data; 
+				console.log(this.channelParticipants);
+				for (let i = 0; i < data.length; i++) {
+					if (data[i] == this.loginStatusStore.loggedInStatus?.userID) {
+						if (data[i].is_admin){
+							this.userIsAdmin = true;
+						}
+					}
+				}
+			})
 			.catch(err => console.log(err));
-		
+		},
+		checkIfOwner(owner_id: number) {
+			if (owner_id == this.loginStatusStore.loggedInStatus?.userID)
+				this.userIsOwner = true;
 		},
 		directMessage(userId: number) {
 			console.log("You want to DM", userId)
@@ -98,6 +125,21 @@ export default defineComponent({
 		},
 		banUser(userId: number) {
 			console.log("Banning user" , userId)
+		},
+		unbanUser(userId: number) {
+			console.log("Unbanning user" , userId)
+		},
+		muteUser(userId: number) {
+			console.log("Muting user" , userId)
+		},
+		unmuteUser(userId: number) {
+			console.log("Unmuting user" , userId)
+		},
+		makeUserAdmin(userId: number) {
+			console.log("Giving admin rights to user" , userId)
+		},
+		removeUserAdmin(userId: number) {
+			console.log("Removing admin rights to user" , userId)
 		},
 	}
 		
