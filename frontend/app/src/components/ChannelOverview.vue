@@ -1,7 +1,7 @@
 <template>
     <div v-if="channel!=null" class="column">
         <!-- <div> 
-            <h6>{{channel.name}}</h6>
+			<h6>{{channel.name}}</h6>
         </div> -->
 		<div class="listed-participant" v-for="participant in channelParticipants" :key="participant?.id">
 			<div>
@@ -16,11 +16,11 @@
 							<p>Admin</p>
 						</div>
 						<!-- <div class="role"> -->
-						<div class="role" v-if="participant.is_banned === true">
+							<div class="role" v-if="participant.is_banned === true">
 							<p>Banned</p>
 						</div>
 						<!-- <div class="role"> -->
-						<div class="role" v-if="participant.is_muted === true">
+							<div class="role" v-if="participant.is_muted === true">
 							<p>Muted</p>
 						</div>
 					</div>
@@ -39,11 +39,13 @@
 						<SmallButton v-if="!participant.is_admin && userIsOwner" class="button" text="Give admin rights" @click="makeUserAdmin(participant?.id)"/>
 						<SmallButton v-if="participant.is_admin && userIsOwner" class="button" text="Remove admin rights" @click="removeUserAdmin(participant?.id)"/>
 					</div>
-					<!-- Need to add other buttons depending on whether is admin or owner or banned or muted etc. -->
+				</div>
+				
+				<div v-if="userIsOwner">
+					<SmallButton v-if="participant.is_admin && userIsOwner" class="button" text="Set password" @click="setPassword()"/>
 				</div>
 			</div>
 		</div>
-		<!-- owner tools and admin tools, add after is_owner is added to participants -->
     </div>
     <div v-else>
         <h6>
@@ -69,6 +71,9 @@ export default defineComponent({
             type: Number
         }
     },
+	async created() {
+		this.getChannelParticipants();
+	},
     data() {
         return {
             loginStatusStore: loginStatusStore(),
@@ -140,6 +145,9 @@ export default defineComponent({
 		},
 		removeUserAdmin(userId: number) {
 			console.log("Removing admin rights to user" , userId)
+		},
+		setPassword() {
+			console.log("Set password")
 		},
 	}
 		
