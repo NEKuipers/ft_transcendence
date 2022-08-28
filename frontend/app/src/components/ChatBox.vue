@@ -6,6 +6,7 @@
         <div id="messages">
             <div v-for="message in messages" :key="message.id" >
                 <p v-if="message.user !== loginStatusStore.loggedInStatus?.userID" class="from-them">
+				<!-- TODO add username of sender -->
                     {{ message.message }}
                 </p>
                 <p v-else class="from-me">

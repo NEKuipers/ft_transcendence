@@ -21,7 +21,7 @@
 			</div>
 			<div class="column" id="channel-overview">
 				Channel overview
-				<ChannelOverview :channel_id="currentChannel"/>
+				<ChannelOverview :channel_id="currentChannel" @banUser="banUser" @unbanUser="unbanUser" @setPassword="setPassword"/>
 			</div>
 		</div>
 
@@ -116,6 +116,16 @@ export default defineComponent({
 		},
 		createChannel(name: string) {
 			this.chatHandler.create_channel(name, "public")
+		},
+		banUser(channel_id: number, user_id: number) {
+			this.chatHandler.ban_user(channel_id, user_id);
+		},
+		unbanUser(channel_id: number, user_id: number) {
+			this.chatHandler.unban_user(channel_id, user_id);	
+		},
+		setPassword(newPassword: string) {
+			//TODO implement this
+			console.log(newPassword);
 		}
 	},
 	async mounted() {

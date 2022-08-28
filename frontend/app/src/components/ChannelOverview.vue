@@ -33,8 +33,8 @@
 						<SmallButton class="button" text="Invite to Game" @click="gameInvite(participant?.id)"/>
 
 						<!-- banning/muting, with restriction for admin/owner only -->
-						<SmallButton v-if="!participant.is_banned && (userIsAdmin || userIsOwner)" class="button" text="Ban this user" @click="banUser(participant?.id)"/>
-						<SmallButton v-if="participant.is_banned && (userIsAdmin || userIsOwner)" class="button" text="Unban this user" @click="unbanUser(participant?.id)"/>
+						<SmallButton v-if="!participant.is_banned && (userIsAdmin || userIsOwner)" class="button" text="Ban this user" @click="this.$emit('banUser', this.channel_id, participant.id)"/>
+						<SmallButton v-if="participant.is_banned && (userIsAdmin || userIsOwner)" class="button" text="Unban this user" @click="this.$emit('unbanUser', this.channel_id, participant.id)"/>
 
 						<SmallButton v-if="!participant.is_muted && (userIsAdmin || userIsOwner)" class="button" text="Mute this user" @click="muteUser(participant?.id)"/>
 						<SmallButton v-if="participant.is_muted && (userIsAdmin || userIsOwner)" class="button" text="Unmute this user" @click="unmuteUser(participant?.id)"/>
@@ -154,11 +154,12 @@ export default defineComponent({
 		hidePasswordDialogue() {
 			this.showPasswordDialogue = false;
 		},
-		async setPassword(newname: string) {
-			this.$emit('setPassword', newname);
+		async setPassword(newPassword: string) {
+			this.$emit('setPassword', newPassword);
 			this.hidePasswordDialogue();
 		},
-	}
+	},
+	emits: ['banUser', 'unbanUser', 'setPassword']
 		
 })
 </script>
