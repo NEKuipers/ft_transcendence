@@ -21,7 +21,7 @@
 			</div>
 			<div class="column" id="channel-overview">
 				Channel overview
-				<ChannelOverview :channel_id="currentChannel" @banUser="banUser" @unbanUser="unbanUser" @setPassword="setPassword"/>
+				<ChannelOverview :channel_id="currentChannel" @banUser="banUser" @unbanUser="unbanUser" @muteUser="muteUser" @unmuteUser="unmuteUser" @makeUserAdmin="makeUserAdmin" @removeUserAdmin="removeUserAdmin" @setPassword="setPassword"/>
 			</div>
 		</div>
 
@@ -122,6 +122,18 @@ export default defineComponent({
 		},
 		unbanUser(channel_id: number, user_id: number) {
 			this.chatHandler.unban_user(channel_id, user_id);	
+		},
+		muteUser(channel_id: number, user_id: number) {	
+			this.chatHandler.mute_user(channel_id, user_id);
+		},
+		unmuteUser(channel_id: number, user_id: number) {
+			this.chatHandler.unmute_user(channel_id, user_id);	
+		},
+		makeUserAdmin(channel_id: number, user_id: number) {
+			this.chatHandler.admin_user(channel_id, user_id);
+		},
+		removeUserAdmin(channel_id: number, user_id: number) {
+			this.chatHandler.unadmin_user(channel_id, user_id);	
 		},
 		setPassword(newPassword: string) {
 			//TODO implement this

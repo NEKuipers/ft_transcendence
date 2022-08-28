@@ -137,6 +137,40 @@ export default defineComponent({
 			})
 		},
 
+		async mute_user(channel_id: number, user_id: number): Promise<boolean> {
+			return new Promise((resolve, reject) => {
+				if (this.socket) {
+					this.socket.emit("mute_user", channel_id, user_id,
+					(success: boolean, result: any) => {
+						if (success) {
+							resolve(true);
+						} else {
+							reject(result);
+						}
+					});
+				} else {
+					reject("Not connected!");
+				}
+			})
+		},
+
+		async unmute_user(channel_id: number, user_id: number): Promise<boolean> {
+			return new Promise((resolve, reject) => {
+				if (this.socket) {
+					this.socket.emit("unmute_user", channel_id, user_id,
+					(success: boolean, result: any) => {
+						if (success) {
+							resolve(true);
+						} else {
+							reject(result);
+						}
+					});
+				} else {
+					reject("Not connected!");
+				}
+			})
+		},
+
 		async leave_channel(channel_id: number): Promise<boolean> {
 			return new Promise((resolve, reject) => {
 				if (this.socket) {

@@ -138,6 +138,48 @@ async function unban_user(user_id: number, channel_id: number) {
 		})
 }
 
+async function mute_user(user_id: number, channel_id: number) {
+	await backend.mute_user_in_room(channel_id, user_id)
+		.then(() => {
+			console.log(`user ${user_id} is muted in channel ${channel_id}!`);
+
+			let socket = signedInUsers[user_id];
+			if (socket) {
+				let data = socket.data as SocketData;
+
+				let status = data.joined_channels.find((elem) => elem.channel_id == channel_id);
+				if (!status || status.is_banned) {
+					console.error(`${data.username} was muted in channel ${channel_id}, BUT WASN'T JOINED!`);
+					return;
+				}
+				status.is_banned = true;
+
+				socket.leave(get_room_name(channel_id));
+				socket.emit("leave", channel_id);
+			}
+		})
+}
+async function unmute_user(user_id: number, channel_id: number) {
+	await backend.unmute_user_in_room(channel_id, user_id)
+		.then(() => {
+			console.log(`user ${user_id} is un-muted in channel ${channel_id}!`);
+			
+			let socket = signedInUsers[user_id];
+			if (socket) {
+				let data = socket.data as SocketData;
+
+				let status = data.joined_channels.find((elem) => elem.channel_id == channel_id);
+				if (!status || !status.is_banned) {
+					console.error(`${data.username} was un-muted in channel ${channel_id}, BUT WASN'T MUTED!`);
+					return;
+				}
+
+				status.is_banned = false;
+				send_message_to_socket(socket, channel_id)
+			}
+		})
+}
+
 // Joins all the socketio-rooms this socket should be in
 async function join_rooms(socket: Socket) {
 	let data = socket.data as SocketData;
@@ -276,6 +318,41 @@ io.on("connection", async (socket) => {
 		}
 
 		unban_user(user_id, channel_id)
+			.then(_ => callback(true, null))
+			.catch(err => callback(false, err))
+	})
+
+	socket.on("mute_user", (channel_id: number, user_id: number, callback: (success: boolean, reason: any) => void) => {
+		let status = data.joined_channels.find((elem) => elem.channel_id == channel_id);
+		if (!status) {
+			return callback(false, "You are not in that channel!");
+		}
+		if (status.is_banned) {
+			console.log(`User ${data.username} tried to mute someone in channel ${channel_id} but was banned!`);
+			return callback(false, "You are banned!");
+		} else if (!status.is_admin) {
+			return callback(false, "You are not admin!");
+		}
+
+		mute_user(user_id, channel_id)
+			.then(_ => callback(true, null))
+			.catch(err => callback(false, err))
+	})
+
+	socket.on("unmute_user", (channel_id: number, user_id: number, callback: (success: boolean, reason: any) => void) => {
+		let status = data.joined_channels.find((elem) => elem.channel_id == channel_id);
+		if (!status) {
+			callback(false, "You are not in that channel!");
+			return;
+		}
+		if (status.is_banned) {
+			console.log(`User ${data.username} tried to unmute someone in channel ${channel_id} but was banned!`);
+			return callback(false, "You are banned!");
+		} else if (!status.is_admin) {
+			return callback(false, "You are not admin!");
+		}
+
+		unmute_user(user_id, channel_id)
 			.then(_ => callback(true, null))
 			.catch(err => callback(false, err))
 	})

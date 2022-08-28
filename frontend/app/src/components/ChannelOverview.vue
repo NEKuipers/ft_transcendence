@@ -33,7 +33,7 @@
 						<div v-if="userIsAdmin || userIsOwner">
 							<SmallButton v-if="!participant?.participant_is_banned" class="button" text="Ban this user" @click="this.$emit('banUser', this.channel_id, participant.participant_id)"/>
 							<SmallButton v-else class="button" text="Unban this user" @click="this.$emit('unbanUser', this.channel_id, participant.participant_id)"/>
-							<SmallButton v-if="!participant.participant_is_muted" class="button" text="Mute this user" @click="this.$emit('muteUser', this.channel_id, participant.participant_id)"/>
+							<SmallButton v-if="!participant?.participant_is_muted" class="button" text="Mute this user" @click="this.$emit('muteUser', this.channel_id, participant.participant_id)"/>
 							<SmallButton v-else class="button" text="Unmute this user" @click="this.$emit('unmuteUser', this.channel_id, participant.participant_id)"/>
 						</div>
 
@@ -106,12 +106,12 @@ export default defineComponent({
         },
     },
 	methods: {
+		//TODO turning this into a watch would make it more responsive
 		async getChannelParticipants() { 
 		fetch("/api/participants/" + this.channel_id)
 			.then(res => res.json())
 			.then(data => {
 				this.channelParticipants = data; 
-				console.log(this.channelParticipants);
 				for (let i = 0; i < data.length; i++) {
 					if (data[i] == this.loginStatusStore.loggedInStatus?.userID) {
 						if (data[i].is_admin){
@@ -128,24 +128,6 @@ export default defineComponent({
 		},
 		gameInvite(userId: number) {
 			console.log("Inviting to game" , userId)
-		},
-		banUser(userId: number) {
-			console.log("Banning user" , userId)
-		},
-		unbanUser(userId: number) {
-			console.log("Unbanning user" , userId)
-		},
-		muteUser(userId: number) {
-			console.log("Muting user" , userId)
-		},
-		unmuteUser(userId: number) {
-			console.log("Unmuting user" , userId)
-		},
-		makeUserAdmin(userId: number) {
-			console.log("Giving admin rights to user" , userId)
-		},
-		removeUserAdmin(userId: number) {
-			console.log("Removing admin rights to user" , userId)
 		},
 		async enterNewPassword() {
 			this.boxType = "setPassword";
