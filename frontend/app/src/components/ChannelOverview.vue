@@ -11,7 +11,7 @@
 			<div>
 				<div id="participantdiv">
 					<div id="nameAndRoles">
-						<p>{{participant.participant_username}}</p>
+						<a class="participantName" v-bind:href="'http://localhost:8080/profile/' + participant.participant_id">{{participant.participant_username}}</a>
 						<div class="role" v-if="participant.participant_id === participant.channel_owner_id">
 							<p>Owner</p>
 						</div>
@@ -167,6 +167,17 @@ export default defineComponent({
 
 
 /* TODO make sure it's scrollable */
+
+.participantName {
+	text-decoration: none;
+}
+
+a:visited {
+  color: #2c3e50;
+}
+a:hover {
+	text-decoration: underline;
+}
 
 #passwordButton {
 	float:center;
