@@ -25,8 +25,8 @@
             <h4> Enter channel name </h4>
             <input type="text" v-model="text" name="text" placeholder="my channel" />
             <br>
-            <input type="submit" value="Save Change" />
-            <button @click="onClick" type="button" class="close"> X </button>
+			<input type="submit" value="Save Change" />
+			<button @click="onClick" type="button" class="close"> X </button>
             </form>
 		</div>
     </div>
@@ -99,8 +99,7 @@ export default defineComponent({
     top:50%;
     left:50%;
     color: white;
-	height: 200px;
-
+	height: 250px;
 }
 
 .close {
@@ -108,4 +107,6 @@ export default defineComponent({
     /* margin-left: 270px;
     margin-top: 5px; */
 }
+
+
 </style>

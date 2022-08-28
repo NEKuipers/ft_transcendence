@@ -29,57 +29,6 @@
 </template>
 
 <script lang="ts">
-  /*
-  should probably rearrange this later in a more logical way
-  list of data requirements (fetch() calls) for this view:
-  GET:
-    - Users
-      * id
-      * username
-      * status
-      * is_logged_in
-
-    - Channels
-      * id
-      * name
-      * type
-      * owner_id
-      * is_closed
-      * 
-    - Participants
-      * id
-      * participant_id
-      * is_admin
-      * is_muted
-      * ban_meta
-      * channel_id
-
-    - Messages
-      * channel_id
-      * user_id
-      * message
-
-    - Blocked_users
-      * id
-      * blocked_by_id
-      * blocked_user_id
-  
-  POST:
-    - Channels
-    - Participants
-    - Messages
-    - Blocked_users
-
-  PATCH:
-    - Channels
-    - Participants
-
-  DELETE:
-    - Blocked_users
-    - Participants
-
-  */
-
 import { defineComponent } from "@vue/runtime-core";
 import ChatFriendsList from "../components/ChatFriendsList.vue";
 import PublicChatChannels from "../components/PublicChatChannels.vue";

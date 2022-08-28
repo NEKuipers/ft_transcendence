@@ -23,7 +23,7 @@
 			</div>
 			<div id="createchannel">
 				<SmallButton text="Create new channel" @click="createChannel"/>
-				<DialogueBox :type="boxType" :show="showDialogue" @close-dialogue="hideDialogue" @new-name="saveChannel"/>
+				<DialogueBox id="createChannelDialogueBox" :type="boxType" :show="showDialogue" @close-dialogue="hideDialogue" @new-name="saveChannel"/>
 			</div>
 		</div>
 	</div>
@@ -120,4 +120,5 @@ export default defineComponent({
 	display: flex;
 	flex-direction: column;
 }
+
 </style>

@@ -48,17 +48,7 @@ export default defineComponent({
 		SmallButton 
 	},
 	methods: {
-		// async joinChannel(channel_id: number) {
-		// 		const requestOptions = {
-		// 		method: "POST",
-		// 		headers: { "Content-Type": "application/json" },
-		// 		body: JSON.stringify({	participant_id: this.loginStatusStore.loggedInStatus?.userID,
-		// 								channel_id: channel_id}) 
-		// 	};
-		// 	fetch('/api/participants', requestOptions)
-		// 		.then(response => response)
-		// 		.catch(err => console.log(err));
-		// }
+
 	},
 	emits: ['joinChannel']
 })

@@ -4,7 +4,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import * as backend from './backend_interface';
 
 // Naming:
-//	Rooms are SOCKETIO romos
+//	Rooms are SOCKETIO rooms
 //	Channels are chat channels
 
 const SECRET_AUTH = process.env.JSON_WEB_TOKEN_SECRET;
@@ -295,7 +295,7 @@ io.on("connection", async (socket) => {
 		
 		
 		io.to(get_room_name(channel_id)).emit("server-message", channel_id, data.userid, message);	// Send all the clients in the room a message on channel "server-message"
-		console.log(`User ${data.username} has send the message: ${message} in room ${channel_id}!`);
+		console.log(`User ${data.username} has sent the message: ${message} in room ${channel_id}!`);
 
 		backend.add_message_to_channel(channel_id, data.userid, message)
 			.then(() => {

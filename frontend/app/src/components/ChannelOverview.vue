@@ -25,7 +25,7 @@
 						</div>
 					</div>
 					<div v-if="participant?.participant_id != loginStatusStore.loggedInStatus?.userID">
-						<SmallButton class="button" text="DM" @click="directMessage(participant?.id)"/>
+					<!-- DM is not required here. Should only be accessible from the friends section -->
 						<SmallButton class="button" text="Invite to Game" @click="gameInvite(participant?.id)"/>
 
 						<!-- banning/muting, with restriction for admin/owner only -->
@@ -56,7 +56,6 @@
 
 
 <script lang="ts">
-import { booleanLiteral } from '@babel/types'
 import { defineComponent } from 'vue'
 import { loginStatusStore } from '../stores/profileData'
 import SmallButton from './SmallButton.vue'
@@ -121,9 +120,6 @@ export default defineComponent({
 		checkIfOwner(owner_id: number) {
 			if (owner_id == this.loginStatusStore.loggedInStatus?.userID)
 				this.userIsOwner = true;
-		},
-		directMessage(userId: number) {
-			console.log("You want to DM", userId)
 		},
 		gameInvite(userId: number) {
 			console.log("Inviting to game" , userId)
