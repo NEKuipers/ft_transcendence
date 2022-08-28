@@ -95,6 +95,17 @@ async function unmute_user_in_room(channelId: number, userId: number) {
 	});
 }
 
+async function make_user_admin_in_room(channelId: number, userId: number) {
+	await axios.patch(`http://localhost:${DATABASE_PORT}/participants?channel_id=eq.${channelId}&participant_id=eq.${userId}`, {
+		is_admin: true,
+	});
+}
+async function remove_user_admin_in_room(channelId: number, userId: number) {
+	await axios.patch(`http://localhost:${DATABASE_PORT}/participants?channel_id=eq.${channelId}&participant_id=eq.${userId}`, {
+		is_admin: false,
+	});
+}
+
 async function get_messages_from_channel(channelId: number): Promise<Message[]> {	// userId, message
 	let data = await axios.get(`http://localhost:${DATABASE_PORT}/messages?channel_id=eq.${channelId}`);
 
@@ -139,6 +150,9 @@ export {
 
 	mute_user_in_room,
 	unmute_user_in_room,
+
+	make_user_admin_in_room,
+	remove_user_admin_in_room,
 
 	get_messages_from_channel,
 	add_message_to_channel,

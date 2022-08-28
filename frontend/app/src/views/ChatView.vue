@@ -130,10 +130,10 @@ export default defineComponent({
 			this.chatHandler.unmute_user(channel_id, user_id);	
 		},
 		makeUserAdmin(channel_id: number, user_id: number) {
-			this.chatHandler.admin_user(channel_id, user_id);
+			this.chatHandler.make_user_admin(channel_id, user_id);
 		},
 		removeUserAdmin(channel_id: number, user_id: number) {
-			this.chatHandler.unadmin_user(channel_id, user_id);	
+			this.chatHandler.remove_user_admin(channel_id, user_id);	
 		},
 		setPassword(newPassword: string) {
 			//TODO implement this

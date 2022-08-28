@@ -7,6 +7,8 @@
             <div v-for="message in messages" :key="message.id" >
                 <p v-if="message.user !== loginStatusStore.loggedInStatus?.userID" class="from-them">
 				<!-- TODO add username of sender -->
+				<!-- TODO if user has blocked sender, message should not appear -->
+				<!-- TODO if user is banned, you should only see a notification of this and no messages -->
                     {{ message.message }}
                 </p>
                 <p v-else class="from-me">
@@ -15,6 +17,7 @@
             </div>
         </div>
         <div>
+			<!-- TODO prevent muted/banned participant from sending message -->
             <form ref="TextBox" @submit="sendMsg">
                 <input id="input-box" type="text" v-model="text" placeholder="Message"/>
             </form>

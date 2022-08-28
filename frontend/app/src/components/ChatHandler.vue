@@ -171,6 +171,40 @@ export default defineComponent({
 			})
 		},
 
+		async make_user_admin(channel_id: number, user_id: number): Promise<boolean> {
+			return new Promise((resolve, reject) => {
+				if (this.socket) {
+					this.socket.emit("make_user_admin", channel_id, user_id,
+					(success: boolean, result: any) => {
+						if (success) {
+							resolve(true);
+						} else {
+							reject(result);
+						}
+					});
+				} else {
+					reject("Not connected!");
+				}
+			})
+		},
+
+		async remove_user_admin(channel_id: number, user_id: number): Promise<boolean> {
+			return new Promise((resolve, reject) => {
+				if (this.socket) {
+					this.socket.emit("remove_user_admin", channel_id, user_id,
+					(success: boolean, result: any) => {
+						if (success) {
+							resolve(true);
+						} else {
+							reject(result);
+						}
+					});
+				} else {
+					reject("Not connected!");
+				}
+			})
+		},
+
 		async leave_channel(channel_id: number): Promise<boolean> {
 			return new Promise((resolve, reject) => {
 				if (this.socket) {

@@ -148,11 +148,11 @@ async function mute_user(user_id: number, channel_id: number) {
 				let data = socket.data as SocketData;
 
 				let status = data.joined_channels.find((elem) => elem.channel_id == channel_id);
-				if (!status || status.is_banned) {
+				if (!status || status.is_muted) {
 					console.error(`${data.username} was muted in channel ${channel_id}, BUT WASN'T JOINED!`);
 					return;
 				}
-				status.is_banned = true;
+				status.is_muted = true;
 
 				socket.leave(get_room_name(channel_id));
 				socket.emit("leave", channel_id);
@@ -169,12 +169,55 @@ async function unmute_user(user_id: number, channel_id: number) {
 				let data = socket.data as SocketData;
 
 				let status = data.joined_channels.find((elem) => elem.channel_id == channel_id);
-				if (!status || !status.is_banned) {
+				if (!status || !status.is_muted) {
 					console.error(`${data.username} was un-muted in channel ${channel_id}, BUT WASN'T MUTED!`);
 					return;
 				}
 
-				status.is_banned = false;
+				status.is_muted = false;
+				send_message_to_socket(socket, channel_id)
+			}
+		})
+}
+
+async function make_user_admin(user_id: number, channel_id: number) {
+	await backend.make_user_admin_in_room(channel_id, user_id)
+		.then(() => {
+			console.log(`user ${user_id} made admin of channel ${channel_id}!`);
+
+			let socket = signedInUsers[user_id];
+			if (socket) {
+				let data = socket.data as SocketData;
+
+				let status = data.joined_channels.find((elem) => elem.channel_id == channel_id);
+				if (!status || status.is_admin) {
+					console.error(`${data.username} was made admin of channel ${channel_id}, BUT WASN'T JOINED!`);
+					return;
+				}
+				status.is_admin = true;
+
+				socket.leave(get_room_name(channel_id));
+				socket.emit("leave", channel_id);
+			}
+		})
+}
+
+async function remove_user_admin(user_id: number, channel_id: number) {
+	await backend.remove_user_admin_in_room(channel_id, user_id)
+		.then(() => {
+			console.log(`user ${user_id} is no longer admin of channel ${channel_id}!`);
+			
+			let socket = signedInUsers[user_id];
+			if (socket) {
+				let data = socket.data as SocketData;
+
+				let status = data.joined_channels.find((elem) => elem.channel_id == channel_id);
+				if (!status || !status.is_admin) {
+					console.error(`Tried to remove admin rights of ${data.username} in channel ${channel_id}, BUT WASN'T ADMIN!`);
+					return;
+				}
+
+				status.is_admin = false;
 				send_message_to_socket(socket, channel_id)
 			}
 		})
@@ -333,7 +376,7 @@ io.on("connection", async (socket) => {
 		} else if (!status.is_admin) {
 			return callback(false, "You are not admin!");
 		}
-
+		
 		mute_user(user_id, channel_id)
 			.then(_ => callback(true, null))
 			.catch(err => callback(false, err))
@@ -353,6 +396,33 @@ io.on("connection", async (socket) => {
 		}
 
 		unmute_user(user_id, channel_id)
+			.then(_ => callback(true, null))
+			.catch(err => callback(false, err))
+	})
+
+	socket.on("make_user_admin", (channel_id: number, user_id: number, callback: (success: boolean, reason: any) => void) => {
+		console.log(channel_id, user_id);
+
+		/*
+		TODO the checks for banning/muting can't be replicated here because giving or removing admin rights can only be done by a channel owner.
+		We probably need to figure out extra or different checks here.
+
+		Also, this isn't working properly yet.
+
+		*/		
+		make_user_admin(user_id, channel_id)
+			.then(_ => callback(true, null))
+			.catch(err => callback(false, err))
+	})
+
+	socket.on("remove_user_admin", (channel_id: number, user_id: number, callback: (success: boolean, reason: any) => void) => {
+		/*
+		TODO the checks for banning/muting can't be replicated here because giving or removing admin rights can only be done by a channel owner.
+		We probably need to figure out extra or different checks here.
+
+		Also, this isn't working properly yet.
+		*/
+		remove_user_admin(user_id, channel_id)
 			.then(_ => callback(true, null))
 			.catch(err => callback(false, err))
 	})

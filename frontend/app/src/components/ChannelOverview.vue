@@ -12,21 +12,18 @@
 						<div class="role" v-if="participant.participant_id === participant.channel_owner_id">
 							<p>Owner</p>
 						</div>
-						<div class="role" v-else-if="participant.is_admin === true">
-						<!-- <div class="role"> -->
+						<!-- TODO these roles below don't seem to work  -->
+						<div class="role" v-else-if="participant.is_admin == true">
 							<p>Admin</p>
 						</div>
-						<!-- <div class="role"> -->
-							<div class="role" v-if="participant.is_banned === true">
+						<div class="role" v-if="participant.is_banned == true">
 							<p>Banned</p>
 						</div>
-						<!-- <div class="role"> -->
-							<div class="role" v-if="participant.is_muted === true">
+						<div class="role" v-if="participant.is_muted == true">
 							<p>Muted</p>
 						</div>
 					</div>
 					<div v-if="participant?.participant_id != loginStatusStore.loggedInStatus?.userID">
-					<!-- DM is not required here. Should only be accessible from the friends section -->
 						<SmallButton class="button" text="Invite to Game" @click="gameInvite(participant?.id)"/>
 
 						<!-- banning/muting, with restriction for admin/owner only -->
@@ -44,7 +41,6 @@
 						</div>
 					</div>
 				</div>
-				
 			</div>
 		</div>
     </div>
