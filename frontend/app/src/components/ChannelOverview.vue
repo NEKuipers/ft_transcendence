@@ -1,8 +1,5 @@
 <template>
     <div v-if="channel!=null" class="column">
-        <!-- <div> 
-			<h6>{{channel.name}}</h6>
-        </div> -->
 		<div v-if="userIsOwner">
 			<SmallButton id="passwordButton" text="Set password" @click="enterNewPassword()"/>
 			<DialogueBox id="createChannelDialogueBox" :type="boxType" :show="showPasswordDialogue" @close-dialogue="hidePasswordDialogue" @new-name="setPassword"/>
@@ -15,7 +12,7 @@
 						<div class="role" v-if="participant.participant_id === participant.channel_owner_id">
 							<p>Owner</p>
 						</div>
-						<div class="role" v-if="participant.is_admin === true">
+						<div class="role" v-else-if="participant.is_admin === true">
 						<!-- <div class="role"> -->
 							<p>Admin</p>
 						</div>
@@ -33,15 +30,18 @@
 						<SmallButton class="button" text="Invite to Game" @click="gameInvite(participant?.id)"/>
 
 						<!-- banning/muting, with restriction for admin/owner only -->
-						<SmallButton v-if="!participant.is_banned && (userIsAdmin || userIsOwner)" class="button" text="Ban this user" @click="this.$emit('banUser', this.channel_id, participant.id)"/>
-						<SmallButton v-if="participant.is_banned && (userIsAdmin || userIsOwner)" class="button" text="Unban this user" @click="this.$emit('unbanUser', this.channel_id, participant.id)"/>
-
-						<SmallButton v-if="!participant.is_muted && (userIsAdmin || userIsOwner)" class="button" text="Mute this user" @click="muteUser(participant?.id)"/>
-						<SmallButton v-if="participant.is_muted && (userIsAdmin || userIsOwner)" class="button" text="Unmute this user" @click="unmuteUser(participant?.id)"/>
+						<div v-if="userIsAdmin || userIsOwner">
+							<SmallButton v-if="!participant?.participant_is_banned" class="button" text="Ban this user" @click="this.$emit('banUser', this.channel_id, participant.participant_id)"/>
+							<SmallButton v-else class="button" text="Unban this user" @click="this.$emit('unbanUser', this.channel_id, participant.participant_id)"/>
+							<SmallButton v-if="!participant.participant_is_muted" class="button" text="Mute this user" @click="this.$emit('muteUser', this.channel_id, participant.participant_id)"/>
+							<SmallButton v-else class="button" text="Unmute this user" @click="this.$emit('unmuteUser', this.channel_id, participant.participant_id)"/>
+						</div>
 
 						<!-- admin rights -->
-						<SmallButton v-if="!participant.is_admin && userIsOwner" class="button" text="Give admin rights" @click="makeUserAdmin(participant?.id)"/>
-						<SmallButton v-if="participant.is_admin && userIsOwner" class="button" text="Remove admin rights" @click="removeUserAdmin(participant?.id)"/>
+						<div v-if="userIsOwner">
+							<SmallButton v-if="!participant.participant_is_admin && userIsOwner" class="button" text="Give admin rights" @click="this.$emit('makeUserAdmin', this.channel_id, participant.participant_id)"/>
+							<SmallButton v-else class="button" text="Remove admin rights" @click="this.$emit('removeUserAdmin', this.channel_id, participant.participant_id)"/>
+						</div>
 					</div>
 				</div>
 				
@@ -159,7 +159,7 @@ export default defineComponent({
 			this.hidePasswordDialogue();
 		},
 	},
-	emits: ['banUser', 'unbanUser', 'setPassword']
+	emits: ['banUser', 'unbanUser', 'muteUser', 'unmuteUser', 'makeUserAdmin', 'removeUserAdmin', 'setPassword']
 		
 })
 </script>
