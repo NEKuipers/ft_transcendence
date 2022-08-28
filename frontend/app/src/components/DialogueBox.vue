@@ -29,6 +29,24 @@
 			<button @click="onClick" type="button" class="close"> X </button>
             </form>
 		</div>
+		<div v-else-if="type === 'setPassword'">
+            <form @submit="onSubmit">
+            <h4> Enter new password </h4>
+            <input type="text" v-model="text" name="text" placeholder="password" />
+            <br>
+			<input type="submit" value="Save Change" />
+			<button @click="onClick" type="button" class="close"> X </button>
+            </form>
+		</div>
+		<div v-else-if="type === 'enterPassword'">
+            <form @submit="onSubmit">
+            <h4> Enter password </h4>
+            <input type="text" v-model="text" name="text" placeholder="password" />
+            <br>
+			<input type="submit" value="Save Change" />
+			<button @click="onClick" type="button" class="close"> X </button>
+            </form>
+		</div>
     </div>
 </template>
 

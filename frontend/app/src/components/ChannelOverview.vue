@@ -3,6 +3,10 @@
         <!-- <div> 
 			<h6>{{channel.name}}</h6>
         </div> -->
+		<div v-if="userIsOwner">
+			<SmallButton id="passwordButton" text="Set password" @click="enterNewPassword()"/>
+			<DialogueBox id="createChannelDialogueBox" :type="boxType" :show="showPasswordDialogue" @close-dialogue="hidePasswordDialogue" @new-name="setPassword"/>
+		</div>
 		<div class="listed-participant" v-for="participant in channelParticipants" :key="participant?.id">
 			<div>
 				<div id="participantdiv">
@@ -41,9 +45,6 @@
 					</div>
 				</div>
 				
-				<div v-if="userIsOwner">
-					<SmallButton v-if="participant.is_admin && userIsOwner" class="button" text="Set password" @click="setPassword()"/>
-				</div>
 			</div>
 		</div>
     </div>
@@ -59,11 +60,13 @@
 import { defineComponent } from 'vue'
 import { loginStatusStore } from '../stores/profileData'
 import SmallButton from './SmallButton.vue'
+import DialogueBox from './DialogueBox.vue'
 
 export default defineComponent({
     name: 'ChannelOverview',
 	components: {
-		SmallButton
+		SmallButton,
+		DialogueBox,
 	},
     props: {
         channel_id: {
@@ -82,6 +85,8 @@ export default defineComponent({
             text: '',
 			userIsOwner: false,
 			userIsAdmin: false,
+			showPasswordDialogue: false,
+			boxType: "",
         }
     },
     watch: {
@@ -142,8 +147,16 @@ export default defineComponent({
 		removeUserAdmin(userId: number) {
 			console.log("Removing admin rights to user" , userId)
 		},
-		setPassword() {
-			console.log("Set password")
+		async enterNewPassword() {
+			this.boxType = "setPassword";
+			this.showPasswordDialogue = true;
+		},
+		hidePasswordDialogue() {
+			this.showPasswordDialogue = false;
+		},
+		async setPassword(newname: string) {
+			this.$emit('setPassword', newname);
+			this.hidePasswordDialogue();
 		},
 	}
 		
@@ -155,6 +168,9 @@ export default defineComponent({
 
 /* TODO make sure it's scrollable */
 
+#passwordButton {
+	float:center;
+}
 
 .button {
 	float: left;
