@@ -31,7 +31,7 @@
 <script lang="ts">
 import { defineComponent } from "@vue/runtime-core";
 import ChatFriendsList from "../components/ChatFriendsList.vue";
-import PublicChatChannels from "../components/PublicChatChannels.vue";
+import PublicChatChannels from "../components/OtherChatChannels.vue";
 import MyChatChannels from "../components/MyChatChannels.vue";
 import { loginStatusStore } from "../stores/profileData";
 import ChatBox from '../components/ChatBox.vue'

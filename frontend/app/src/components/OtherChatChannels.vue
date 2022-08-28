@@ -1,19 +1,19 @@
 <template>
-	<div class ="publicchatchannels">
+	<div class ="otherChatChannels">
 		<div id="title">
-			<h5>Public Channels</h5>
+			<h5>Other Channels</h5>
 		</div>
-		<div v-if="!publicChatChannels">
+		<div v-if="!otherChatChannels">
 			<h5>Channels failed to load</h5>
 		</div>
-		<div id="channels" v-else-if="publicChatChannels?.length">
-			<ul class="listed-channel" v-for="channel in publicChatChannels" :key="channel.id">
+		<div id="channels" v-else-if="otherChatChannels?.length">
+			<ul class="listed-channel" v-for="channel in otherChatChannels" :key="channel.id">
 				<h5 class="name">{{channel.name}}</h5>
 				<SmallButton class="button" text="join" @click="this.$emit('joinChannel',channel.id)"/>
 			</ul>
 		</div>
 		<div v-else>
-			<h5>No public channels available</h5>
+			<h5>No other channels available</h5>
 		</div>
 	</div>
 </template>
@@ -24,22 +24,22 @@ import SmallButton from './SmallButton.vue'
 import { loginStatusStore } from '../stores/profileData';
 
 export default defineComponent({
-    name: "PublicChatChannels",
+    name: "OtherChatChannels",
     props: {
 		user: Object
     },
     data() {
         return {
 			loginStatusStore: loginStatusStore(),
-            publicChatChannels: null as null | Array<any>,
+            otherChatChannels: null as null | Array<any>,
         };
     },
 	mounted() { 
 		fetch("/api/channels/public")
 			.then(res => res.json())
-			.then(data => this.publicChatChannels = data)
+			.then(data => this.otherChatChannels = data)
 			.catch(err => {
-			this.publicChatChannels = null;
+			this.otherChatChannels = null;
 			console.log(err);
 		});
 		
@@ -56,7 +56,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.publicchatchannels {
+.otherChatChannels {
 	display: flex;
 	flex-direction: column;
 	/* flex-wrap: wrap; */
