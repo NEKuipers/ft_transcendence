@@ -2,6 +2,7 @@ import { createServer } from "http";
 import { Server, Socket } from "socket.io";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import * as backend from './backend_interface';
+import * as bcrypt from 'bcrypt'
 
 // Naming:
 //	Rooms are SOCKETIO rooms
@@ -251,10 +252,26 @@ io.on("connection", async (socket) => {
 	await join_rooms(socket)
 		.catch((err) => console.error(`Failed to update joined rooms for user: ${data.userid} because:`, err));
 
-	socket.on("create_channel", (name: string, type: string, callback: (success: boolean, data: any) => void) => {
+	socket.on("create_channel", async (name: string, password: string, callback: (success: boolean, data: any) => void) => {
+		
+		let type
+		let hash
+		if (password) {
+			type = "protected"
+			// hash the password.
+			hash = await bcrypt.hash(password, 10)
+			console.log('hashed password is', hash)
+		}
+		else {
+			hash = ""
+			type = "public"
+		}
+		
+			
 		backend.make_channel({
 			name: name,
 			type: type,
+			password: hash,
 			owner_id: data.userid,
 			is_closed: false
 		}).then((channel) => {

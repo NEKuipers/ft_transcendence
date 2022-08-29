@@ -112,8 +112,8 @@ export default defineComponent({
 			this.chatHandler.send_message(channel_id, msg)
 		},
 		createChannel(name: string, newpassword: string | undefined | null) {
-			this.chatHandler.create_channel(name, "public")
-			console.log('Creating a channel: ', name, ' with apssword:', newpassword)
+			this.chatHandler.create_channel(name, newpassword)
+			// console.log('Creating a channel: ', name, ' with password:', newpassword)
 		},
 		banUser(channel_id: number, user_id: number) {
 			this.chatHandler.ban_user(channel_id, user_id);

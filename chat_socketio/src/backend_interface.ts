@@ -13,6 +13,7 @@ interface JoinedChannelStatus {
 interface CreateChannel {
 	name: string,
 	type: string,
+	password: string,
 	owner_id: number,
 	is_closed: boolean,
 }
