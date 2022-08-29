@@ -33,8 +33,12 @@ export default defineComponent({
 		}
     },
     components: { LargeButton },
-	mounted() {
-		this.loginStatusStore.logIn();	// We need to know
+	async mounted() {
+		// We need to know
+		if (!await this.loginStatusStore.logIn()) {
+			console.log("Failed to login!")
+			this.$router.push("/login")
+		}
 	},
 	data () {
 		return {

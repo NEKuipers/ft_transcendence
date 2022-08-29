@@ -52,10 +52,14 @@ export default defineComponent({
 			let res = await fetch(`/api/two-factor-auth/login/${this.code}`);
 
 			if (res.ok) {
-				console.log("Login success!")
+				console.log("TFA Login success!")
 
 				let loggedInStatus = await loginStatusStore().logIn();
-				loggedInStatus.TFAEnabled = true;
+				if (loggedInStatus) {
+					loggedInStatus.TFAEnabled = true;
+				} else {
+					console.error("TFA login successfull, but not logged in, WAT")
+				}
 				
 				this.$router.push('/');
 			} else {

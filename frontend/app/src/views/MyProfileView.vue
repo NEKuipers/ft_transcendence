@@ -47,7 +47,11 @@ export default defineComponent({
 	},
 	async mounted() {
 		let loggedInStatus = await loginStatusStore().logIn();
-		await this.loadUserData(loggedInStatus.userID);
+		if (loggedInStatus) {
+			await this.loadUserData(loggedInStatus.userID);
+		} else {
+			console.error("Viewing MyProfileView while not logged in!")
+		}
 	},
 	components: {
 		UserProfile,

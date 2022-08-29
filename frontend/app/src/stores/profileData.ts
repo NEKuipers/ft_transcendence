@@ -24,7 +24,7 @@ export const loginStatusStore = defineStore ('login', {
 	},
 	getters: {},
 	actions: {
-		async logIn(): Promise<LoginData> {
+		async logIn(): Promise<undefined | LoginData> {
 			if (this.loggedInStatus) {
 				return this.loggedInStatus;
 			}
@@ -41,12 +41,12 @@ export const loginStatusStore = defineStore ('login', {
 					.then(data => {
 						this.loggedInStatus = data;
 						this.isLoaded = true;
-						resolve(data)
+						resolve(this.loggedInStatus)
 					})
-					.catch(err => {
+					.catch(_ => {
 						this.loggedInStatus = undefined;
 						this.isLoaded = true;
-						reject(err)
+						resolve(this.loggedInStatus)
 					})
 			})
 		},
