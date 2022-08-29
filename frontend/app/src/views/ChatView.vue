@@ -89,6 +89,7 @@ export default defineComponent({
 			console.log(`I am no longer in channel ${channel_id}`)
 
 			this.myChannels = this.myChannels.filter((elem: any) => elem.id != channel_id);
+			delete this.messages[channel_id];
 		},
 		joinChannel(channel_id: number) {
 			this.chatHandler.join_channel(channel_id)
