@@ -313,6 +313,7 @@ SELECT
     c.is_closed         AS channel_is_closed,
     p.participant_id    AS participant_id,
     u.username          AS participant_username,
+	p.is_joined			AS participant_is_joined,
     p.is_admin          AS participant_is_admin,
     p.is_muted          AS participant_is_muted,
     p.is_banned         AS participant_is_banned

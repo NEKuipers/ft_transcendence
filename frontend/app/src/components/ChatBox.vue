@@ -9,7 +9,7 @@
 				<!-- TODO add username of sender -->
 				<!-- TODO if user has blocked sender, message should not appear -->
 				<!-- TODO if user is banned, you should only see a notification of this and no messages -->
-                    {{ message.message }}
+                    {{message.username}} : {{message.message}}
                 </p>
                 <p v-else class="from-me">
                     {{message.message}}

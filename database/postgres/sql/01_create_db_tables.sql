@@ -168,6 +168,7 @@ CREATE TABLE public.participants
 (
     id              BIGINT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     participant_id  BIGINT REFERENCES public.users(id),
+	is_joined		BOOL,
     is_admin        BOOL,
     is_muted        BOOL,
     is_banned       BOOL,
@@ -185,6 +186,7 @@ CREATE TABLE public.messages
     id          BIGINT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     channel_id  BIGINT REFERENCES public.channels(id),
     user_id     BIGINT REFERENCES public.users(id),
+	username	VARCHAR(256) REFERENCES public.users(username),
     message     TEXT
 );
 
