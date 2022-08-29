@@ -9,6 +9,7 @@
 				</div>
 				<div id="channels">
 					<PublicChatChannels @joinChannel="joinChannel"/>
+					<dialogueBox id="promptPassword" :type="boxType"   />
 				</div>
 				<div id="friends">
 					<ChatFriendsList :user="loginStatusStore.loggedInStatus?.userID" />
@@ -50,6 +51,7 @@ export default defineComponent({
 			chatHandler: undefined as unknown as typeof ChatHandler,
 			messages: new Array<any>(),
 			myChannels: new Array<any>(),
+			boxType: ""
 		}
 	},
 	methods: {
@@ -64,6 +66,7 @@ export default defineComponent({
 		},
 		async requestPassword(): Promise<string> {
 			return new Promise((resolve, reject) => {
+				// How to open dialogue box straight from the function?
 				resolve("TODO: Show dialog box requesting a password")
 			});
 		},
@@ -93,6 +96,7 @@ export default defineComponent({
 		joinChannel(channel_id: number) {
 			this.chatHandler.join_channel(channel_id)
 				.catch(async (err: string) => {
+					console.log('error is', err)
 					if (err == "NEED_PASSWORD") {
 						let pwd = await this.requestPassword();
 						await this.chatHandler.join_channel(channel_id, pwd);

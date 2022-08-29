@@ -35,7 +35,7 @@ export default defineComponent({
         };
     },
 	mounted() { 
-		fetch("/api/channels/public")
+		fetch("/api/channels")
 			.then(res => res.json())
 			.then(data => this.otherChatChannels = data)
 			.catch(err => {

@@ -316,10 +316,10 @@ io.on("connection", async (socket) => {
 		// console.log(`Got password: ${password}`)
 		
 		// TODO: Check password correctly
-		// if (password == null || password == undefined) {
-		// 	callback(false, "NEED_PASSWORD");
-		// 	return;
-		// }
+		if (password == null || password == undefined) {
+			callback(false, "NEED_PASSWORD");
+			return;
+		}
 
 		join_channel(socket, {
 			is_admin: false,
