@@ -99,14 +99,27 @@ export default defineComponent({
 
 .listed-channel{
 	display: flex;
-	font-size: large;
-	align-items: center;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	/* border-style: solid; */
+	font-size:large;
+	/* border-width: 1px; */
+	/* justify-items: space-between; */
 	box-sizing: border-box;
+	align-items: flex-start;
+	/* border-color: red; */
+	/* flex-direction: column; */
+	/* display: inline-block; */
+}
+
+.name {
+	float: left;
 }
 
 .button {
 	float: left;
 	margin-left:8px;
+	margin-top: 20px;
 }
 
 #title {
@@ -120,6 +133,8 @@ export default defineComponent({
 }
 
 #createchannel {
+	width: 100%;
+	float: bottom;
 	display: flex;
 	flex-direction: column;
 }

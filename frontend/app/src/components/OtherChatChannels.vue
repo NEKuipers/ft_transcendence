@@ -1,7 +1,7 @@
 <template>
 	<div class ="otherChatChannels">
 		<div id="title">
-			<h5>Other Channels</h5>
+			<h5>All Channels</h5>
 		</div>
 		<div v-if="!otherChatChannels">
 			<h5>Channels failed to load</h5>
@@ -68,6 +68,8 @@ export default defineComponent({
 
 .listed-channel{
 	display: flex;
+	margin-top: 0px;
+	margin-bottom: 0px;
 	/* border-style: solid; */
 	font-size:large;
 	/* border-width: 1px; */
@@ -80,7 +82,7 @@ export default defineComponent({
 }
 
 .button {
-	float: left;
+	float: right;
 	margin-left:8px;
 }
 .name {

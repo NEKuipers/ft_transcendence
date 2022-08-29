@@ -11,9 +11,9 @@ export class ChannelsController {
 		return this.channelsService.findAll();
 	}
 	
-	@Get('/public') //Retrieve all public channels
-	async findAllPublic(): Promise<Channel[]> {
-		return this.channelsService.findAllPublic();
+	@Get('/public') //Retrieve all non-dm
+	async findAllNonDirect(): Promise<Channel[]> {
+		return this.channelsService.findAllNonDirect();
 	}
 	
 	@Get('/all_for_:id') //Retrieve all channels a user is in?

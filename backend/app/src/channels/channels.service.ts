@@ -10,8 +10,8 @@ export class ChannelsService {
 		return res.data;
 	}
 
-	async findAllPublic(): Promise<Channel[]> {
-		let res = await axios.get(`http://localhost:${process.env.PGREST_PORT}/channels?type=eq.public&is_closed=eq.false`);
+	async findAllNonDirect(): Promise<Channel[]> {
+		let res = await axios.get(`http://localhost:${process.env.PGREST_PORT}/channels?type=neq.direct&is_closed=eq.false`);
 		return res.data;
 	}
 
