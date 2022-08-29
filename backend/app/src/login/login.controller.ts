@@ -28,9 +28,9 @@ export class LoginController {
     async callback(@Req() req: any, @Session() session: any, @Res() res: Response) {
 		console.log("IN here?")
 		if (await this.twoFactorAuthService.is_tfa_setup(req.user.id, session)) {
-			res.redirect('http://localhost:8080/tfa')	// Ya gotta login here too!
+			res.redirect(`${process.env.HOST_URL}/tfa`)	// Ya gotta login here too!
 		} else {
-			res.redirect('http://localhost:8080/')
+			res.redirect(`${process.env.HOST_URL}/`)
 		}
     }
 

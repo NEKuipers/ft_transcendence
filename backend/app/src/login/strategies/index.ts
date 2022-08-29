@@ -25,17 +25,14 @@ export class intraStrategy extends PassportStrategy(Strategy) {
     async validate(accessToken: string, refreshToken: string, 
         userProfile: any, callback: (error: any, user: any) => void) {
         const { id, username } = userProfile;
-        // console.log("got profile: ", userProfile);
 
         const details = { intraId: id, username }
-		// console.log("validating user: ", username);
         const user = await this.loginService.validateUser({
 			intraId: userProfile.id,
 			username: userProfile.username,
 			oauth_refresh_token: refreshToken,
-			oauth_token_expiration_time: '2020-07-20 11:44:34'	// TODO: Get this from somewhere
+			oauth_token_expiration_time: '2020-07-20 11:44:34'
 		});
-        // console.log('access token', accessToken, 'refresh token', refreshToken)
 
         callback(null, user)
     }
