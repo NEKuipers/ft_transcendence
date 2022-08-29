@@ -48,24 +48,20 @@ export default defineComponent({
 				this.value = undefined})
 	},
 	methods: {
-		login() {
-			fetch(`/api/two-factor-auth/login/${this.code}`)
-				.then(res => {
-					if (res.ok) {
-						console.log("Login success!")
+		async login() {
+			let res = await fetch(`/api/two-factor-auth/login/${this.code}`);
 
-						let login = loginStatusStore();
-						if (login.loggedInStatus) {
-							login.loggedInStatus.TFAEnabled = true;
-						}
-						
-						this.$router.push('/');
-					} else {
-						console.log("Login failure!")
-						alert("Login failure")
-					}
-				})
-				.catch(err => console.error(err))
+			if (res.ok) {
+				console.log("Login success!")
+
+				let loggedInStatus = await loginStatusStore().logIn();
+				loggedInStatus.TFAEnabled = true;
+				
+				this.$router.push('/');
+			} else {
+				console.error("Login failure!")
+				alert("Login failure")
+			}
 		}
 	}
 });

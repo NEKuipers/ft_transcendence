@@ -85,12 +85,14 @@ const router = createRouter({
 })
 
 router.beforeEach((to) => {
-  const loggedIn = loginStatusStore().loggedInStatus
-
-	if ((to.name !== 'login' && to.name !== 'tfa') && !loggedIn) {
-		return('/login')
+	const statusStore = loginStatusStore();
+	if (statusStore.is_loaded) {	// Only if we have loaded whether we have logged in or not do we start redirecting to /login
+		const loggedIn = statusStore.loggedInStatus
+	
+		if ((to.name !== 'login' && to.name !== 'tfa') && !loggedIn) {
+			return('/login')
+		}
 	}
-
 })
 
 

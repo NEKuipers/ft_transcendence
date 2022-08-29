@@ -12,20 +12,19 @@ class LoginData {
 	}
 }
 
-
 export const loginStatusStore = defineStore ('login', {
 	state: () => {
 		// All these defaults should be changed, but currently set to these for testing.
 
 		return {
 			//loggedInStatus: new LoginData(1, "nkuipers", false) as undefined | LoginData
-			loggedInStatus: undefined as undefined | LoginData
+			loggedInStatus: undefined as undefined | LoginData,
+			is_loaded: false,
 		}
 	},
-	persist: true,
 	getters: {},
 	actions: {
-		async logIn(): Promise<undefined | LoginData> {
+		async logIn(): Promise<LoginData> {
 			if (this.loggedInStatus) {
 				return this.loggedInStatus;
 			}
@@ -41,10 +40,12 @@ export const loginStatusStore = defineStore ('login', {
 					})
 					.then(data => {
 						this.loggedInStatus = data;
-						resolve(this.loggedInStatus)
+						this.is_loaded = true;
+						resolve(data)
 					})
 					.catch(err => {
 						this.loggedInStatus = undefined;
+						this.is_loaded = true;
 						reject(err)
 					})
 			})
@@ -52,12 +53,12 @@ export const loginStatusStore = defineStore ('login', {
 		async logOut(): Promise<void> {
 			return fetch("/api/login/logout")
 				.then((data) => {
-					if (data.ok) {
-						this.loggedInStatus = undefined
-						
-					} else {
+					if (!data.ok) {
 						console.error("Failed to logout!", data.statusText)
 					}
+
+					// Logout anyway
+					this.loggedInStatus = undefined
 				})
 				.catch((err) => console.error(err));
 		}
