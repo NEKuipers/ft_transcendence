@@ -9,7 +9,7 @@
 					<router-link to="/users">Users</router-link>
 					<router-link to="/leaderboard">Leaderboard</router-link>
 					<router-link to="/about">About</router-link>
-					<h1 class="title">ft_transcendence</h1>
+					<h1 class="title">ft_transcendenceeeeee</h1>
 					<div v-if="loginStatusStore.loggedInStatus">
 					<LargeButton @click="logout" class="logout" text="Log out"></LargeButton>
 					</div>
