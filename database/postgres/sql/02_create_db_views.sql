@@ -225,6 +225,7 @@ SELECT
 	summary.user_id		                        AS user_id,
 	summary.username	                        AS username,
 	summary.avatar_id	                        AS avatar_id,
+	summary.is_logged_in						AS is_logged_in,
 	summary.games_won	                        AS games_won,
 	summary.games_lost	                        AS games_lost,
 	DENSE_RANK() OVER (ORDER BY games_won DESC) AS ranking
@@ -255,6 +256,7 @@ SELECT
 	u.id		AS user_id,
 	u.username	AS username,
 	u.avatar_id	AS avatar_id,
+	u.is_logged_in AS is_logged_in,
     SUM
     (
       CASE
@@ -277,7 +279,8 @@ FROM users u
 GROUP BY
 	u.id,
 	u.username,
-	u.avatar_id
+	u.avatar_id,
+	u.is_logged_in
 ) AS summary;
 
 /*

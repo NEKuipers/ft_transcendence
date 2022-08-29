@@ -10,7 +10,7 @@
 				<h1 class="username"><a v-bind:href="'/profile/' + profile.user_id">{{profile.username}}</a></h1>
 			</div>
 			<div v-if="hasBlockedYou==false">
-				<div v-if="profile.is_logged_in === true">
+				<div v-if="profile.is_logged_in == true">
 					<h5 class="online">Online</h5>
 				</div>
 				<h5 v-else>Offline</h5>
