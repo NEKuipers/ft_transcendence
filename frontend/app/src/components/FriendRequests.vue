@@ -11,7 +11,7 @@
 					<SmallButton class="requestbutton" text="Accept" @click="acceptRequest(request.from_user_id)"/>
 					<SmallButton class="requestbutton" text="Decline" @click="declineRequest(request.from_user_id)"/>
 					<!-- TODO THIS BUTTON STORE THING DOESNT WORK -->
-					<a class="friend" v-bind:href="'http://localhost:8080/profile/' + request.from_user_id">{{request.from_username}}</a>
+					<a class="friend" v-bind:href="'/profile/' + request.from_user_id">{{request.from_username}}</a>
 				</section>
 			</div>
 		</div>

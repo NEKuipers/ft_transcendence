@@ -1,14 +1,14 @@
 <template>
     <div v-if="channel!=null" class="column">
-		<div v-if="userIsOwner">
-			<SmallButton id="passwordButton" text="Set password" @click="enterNewPassword()"/>
-			<DialogueBox id="createChannelDialogueBox" :type="boxType" :show="showPasswordDialogue" @close-dialogue="hidePasswordDialogue" @new-name="setPassword"/>
-		</div>
+		<!-- <div v-if="userIsOwner"> -->
+			<!-- <SmallButton id="passwordButton" text="Set password" @click="enterNewPassword()"/>
+			<DialogueBox id="createChannelDialogueBox" :type="boxType" :show="showPasswordDialogue" @close-dialogue="hidePasswordDialogue" @new-name="setPassword"/> -->
+		<!-- </div> -->
 		<div class="listed-participant" v-for="participant in channelParticipants" :key="participant?.id">
 			<div>
 				<div id="participantdiv">
 					<div id="nameAndRoles">
-						<a class="participantName" v-bind:href="'http://localhost:8080/profile/' + participant.participant_id">{{participant.participant_username}}</a>
+						<a class="participantName" v-bind:href="'/profile/' + participant.participant_id">{{participant.participant_username}}</a>
 						<div class="role" v-if="participant.participant_id === participant.channel_owner_id">
 							<p>Owner</p>
 						</div>
@@ -62,7 +62,7 @@ export default defineComponent({
     name: 'ChannelOverview',
 	components: {
 		SmallButton,
-		DialogueBox,
+		// DialogueBox,
 	},
     props: {
         channel_id: {
