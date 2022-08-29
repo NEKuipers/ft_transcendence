@@ -1,4 +1,5 @@
 import axios from 'axios';
+import * as bcrypt from 'bcrypt'
 
 const DATABASE_PORT = +process.env.PGREST_PORT;
 
@@ -135,6 +136,16 @@ async function get_joined_channels(userId: number): Promise<JoinedChannelStatus[
 	return data.data;
 }
 
+async function matches_password(channelId: number, password: string) {
+	let data = await axios.get(`http://localhost:${DATABASE_PORT}/channels?id=eq.${channelId}`);
+
+	let storedHashPassword = data.data[0].password;
+	if (storedHashPassword == '') { return true; }
+	if (!password) { return false; }
+
+	return await bcrypt.compare(password, storedHashPassword);
+}
+
 export {
 	JoinedChannelStatus,
 
@@ -159,4 +170,6 @@ export {
 	add_message_to_channel,
 
 	get_joined_channels,
+
+	matches_password,
 }

@@ -91,6 +91,7 @@ export default defineComponent({
 				if (this.socket) {
 					this.socket.emit("join_channel", channel_id, password,
 					(success: boolean, result: any) => {
+						console.log(success, result)
 						if (success) {
 							resolve(true);
 						} else {
