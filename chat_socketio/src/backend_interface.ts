@@ -73,34 +73,34 @@ async function leave_channel(channelId: number, userId: number) {
 	await axios.delete(`http://localhost:${DATABASE_PORT}/participants?channel_id=eq.${channelId}&participant_id=eq.${userId}`);
 }
 
-async function ban_user_from_room(channelId: number, userId: number) {
+async function ban_user_from_channel(channelId: number, userId: number) {
 	await axios.patch(`http://localhost:${DATABASE_PORT}/participants?channel_id=eq.${channelId}&participant_id=eq.${userId}`, {
 		is_banned: true,
 	});
 }
-async function unban_user_from_room(channelId: number, userId: number) {
+async function unban_user_from_channel(channelId: number, userId: number) {
 	await axios.patch(`http://localhost:${DATABASE_PORT}/participants?channel_id=eq.${channelId}&participant_id=eq.${userId}`, {
 		is_banned: false,
 	});
 }
 
-async function mute_user_in_room(channelId: number, userId: number) {
+async function mute_user_in_channel(channelId: number, userId: number) {
 	await axios.patch(`http://localhost:${DATABASE_PORT}/participants?channel_id=eq.${channelId}&participant_id=eq.${userId}`, {
 		is_muted: true,
 	});
 }
-async function unmute_user_in_room(channelId: number, userId: number) {
+async function unmute_user_in_channel(channelId: number, userId: number) {
 	await axios.patch(`http://localhost:${DATABASE_PORT}/participants?channel_id=eq.${channelId}&participant_id=eq.${userId}`, {
 		is_muted: false,
 	});
 }
 
-async function make_user_admin_in_room(channelId: number, userId: number) {
+async function make_user_admin_in_channel(channelId: number, userId: number) {
 	await axios.patch(`http://localhost:${DATABASE_PORT}/participants?channel_id=eq.${channelId}&participant_id=eq.${userId}`, {
 		is_admin: true,
 	});
 }
-async function remove_user_admin_in_room(channelId: number, userId: number) {
+async function remove_user_admin_in_channel(channelId: number, userId: number) {
 	await axios.patch(`http://localhost:${DATABASE_PORT}/participants?channel_id=eq.${channelId}&participant_id=eq.${userId}`, {
 		is_admin: false,
 	});
@@ -145,14 +145,14 @@ export {
 	join_channel,
 	leave_channel,
 
-	ban_user_from_room,
-	unban_user_from_room,
+	ban_user_from_channel,
+	unban_user_from_channel,
 
-	mute_user_in_room,
-	unmute_user_in_room,
+	mute_user_in_channel,
+	unmute_user_in_channel,
 
-	make_user_admin_in_room,
-	remove_user_admin_in_room,
+	make_user_admin_in_channel,
+	remove_user_admin_in_channel,
 
 	get_messages_from_channel,
 	add_message_to_channel,

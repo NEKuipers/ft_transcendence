@@ -97,7 +97,7 @@ async function leave_channel(socket: Socket, channel_status: backend.JoinedChann
 		})
 }
 async function ban_user(user_id: number, channel_id: number) {
-	await backend.ban_user_from_room(channel_id, user_id)
+	await backend.ban_user_from_channel(channel_id, user_id)
 		.then(() => {
 			console.log(`user ${user_id} is banned from channel ${channel_id}!`);
 
@@ -118,7 +118,7 @@ async function ban_user(user_id: number, channel_id: number) {
 		})
 }
 async function unban_user(user_id: number, channel_id: number) {
-	await backend.unban_user_from_room(channel_id, user_id)
+	await backend.unban_user_from_channel(channel_id, user_id)
 		.then(() => {
 			console.log(`user ${user_id} is un-banned from channel ${channel_id}!`);
 			
@@ -139,7 +139,7 @@ async function unban_user(user_id: number, channel_id: number) {
 }
 
 async function mute_user(user_id: number, channel_id: number) {
-	await backend.mute_user_in_room(channel_id, user_id)
+	await backend.mute_user_in_channel(channel_id, user_id)
 		.then(() => {
 			console.log(`user ${user_id} is muted in channel ${channel_id}!`);
 
@@ -160,7 +160,7 @@ async function mute_user(user_id: number, channel_id: number) {
 		})
 }
 async function unmute_user(user_id: number, channel_id: number) {
-	await backend.unmute_user_in_room(channel_id, user_id)
+	await backend.unmute_user_in_channel(channel_id, user_id)
 		.then(() => {
 			console.log(`user ${user_id} is un-muted in channel ${channel_id}!`);
 			
@@ -181,7 +181,7 @@ async function unmute_user(user_id: number, channel_id: number) {
 }
 
 async function make_user_admin(user_id: number, channel_id: number) {
-	await backend.make_user_admin_in_room(channel_id, user_id)
+	await backend.make_user_admin_in_channel(channel_id, user_id)
 		.then(() => {
 			console.log(`user ${user_id} made admin of channel ${channel_id}!`);
 
@@ -203,7 +203,7 @@ async function make_user_admin(user_id: number, channel_id: number) {
 }
 
 async function remove_user_admin(user_id: number, channel_id: number) {
-	await backend.remove_user_admin_in_room(channel_id, user_id)
+	await backend.remove_user_admin_in_channel(channel_id, user_id)
 		.then(() => {
 			console.log(`user ${user_id} is no longer admin of channel ${channel_id}!`);
 			
