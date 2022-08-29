@@ -1,7 +1,7 @@
 <template>
 	<div class="listed-user">
 		<h3 id="ranking">{{ranking}}</h3>
-		<img class="profilePictureThumbnail" width="50" height="50" v-bind:src="'http://localhost:3030/avatars/' + profile?.avatar_id">
+		<img class="profilePictureThumbnail" width="50" height="50" v-bind:src="'/api/avatars/' + profile?.avatar_id">
 		<h3 class="username" v-bind:href="'/profile/' + profile?.user_id">{{profile?.username}}</h3>
 		<h4 class="game-stats">Games played: {{profile?.games_won + profile?.games_lost}} | Wins: {{profile?.games_won}} | Losses: {{profile?.games_lost}}</h4>
 		<img class="medal" v-if="ranking===1" height="65" width="55" src="../assets/gold.png">
