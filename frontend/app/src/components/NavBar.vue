@@ -11,7 +11,7 @@
 					<router-link to="/about">About</router-link>
 					<h1 class="title">ft_transcendence</h1>
 					<div v-if="loginStatusStore.loggedInStatus">
-					<LargeButton click="logout" class="logout" text="Log out"></LargeButton>
+					<LargeButton @click="logout" class="logout" text="Log out"></LargeButton>
 					</div>
 				</nav>
 			</div>
@@ -28,12 +28,14 @@ export default defineComponent({
     name: "NavBar",
     methods: {
 		async logout() {
-			const store = loginStatusStore()
-			await store.logOut();
-			this.$router.push('/login');
+			await this.loginStatusStore.logOut();
+			this.$router.push("/login");
 		}
     },
     components: { LargeButton },
+	mounted() {
+		this.loginStatusStore.logIn();	// We need to know
+	},
 	data () {
 		return {
 			loginStatusStore: loginStatusStore(),

@@ -19,7 +19,7 @@ export const loginStatusStore = defineStore ('login', {
 		return {
 			//loggedInStatus: new LoginData(1, "nkuipers", false) as undefined | LoginData
 			loggedInStatus: undefined as undefined | LoginData,
-			is_loaded: false,
+			isLoaded: false,
 		}
 	},
 	getters: {},
@@ -40,12 +40,12 @@ export const loginStatusStore = defineStore ('login', {
 					})
 					.then(data => {
 						this.loggedInStatus = data;
-						this.is_loaded = true;
+						this.isLoaded = true;
 						resolve(data)
 					})
 					.catch(err => {
 						this.loggedInStatus = undefined;
-						this.is_loaded = true;
+						this.isLoaded = true;
 						reject(err)
 					})
 			})
