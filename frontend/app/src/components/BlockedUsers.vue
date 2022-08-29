@@ -8,7 +8,7 @@
 			<div v-for="block in blockedUsers" :key="block?.id">
 				<section class="listed-blocked">
 					<SmallButton class="unblockbutton" @click="unblockUser(block.blocked_user_id)" text="Unblock"/>
-					<a class="blocked-user" v-bind:href="'http://localhost:8080/profile/' + block.blocked_user_id">{{block.blocked_user_name}}</a>
+					<a class="blocked-user" v-bind:href="'/profile/' + block.blocked_user_id">{{block.blocked_user_name}}</a>
 				</section>
 			</div>
 		</div>

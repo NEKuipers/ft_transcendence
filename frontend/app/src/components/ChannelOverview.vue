@@ -8,7 +8,7 @@
 			<div>
 				<div id="participantdiv">
 					<div id="nameAndRoles">
-						<a class="participantName" v-bind:href="'http://localhost:8080/profile/' + participant.participant_id">{{participant.participant_username}}</a>
+						<a class="participantName" v-bind:href="'/profile/' + participant.participant_id">{{participant.participant_username}}</a>
 						<div class="role" v-if="participant.participant_id === participant.channel_owner_id">
 							<p>Owner</p>
 						</div>
