@@ -23,7 +23,10 @@
 		<div v-else-if="type === 'createChannel'">
             <form @submit="onSubmit">
             <h4> Enter channel name </h4>
+			<p class="small" >Channel Name</p>
             <input type="text" v-model="text" name="text" placeholder="my channel" />
+			<p class="small">Set password (optional)</p>
+			<input type="password" v-model="password" name="password" placeholder="abc123" />
             <br>
 			<input type="submit" value="Save Change" />
 			<button @click="onClick" type="button" class="close"> X </button>
@@ -32,7 +35,7 @@
 		<div v-else-if="type === 'setPassword'">
             <form @submit="onSubmit">
             <h4> Enter new password </h4>
-            <input type="text" v-model="text" name="text" placeholder="password" />
+            <input type="password" v-model="text" name="text" placeholder="password" />
             <br>
 			<input type="submit" value="Save Change" />
 			<button @click="onClick" type="button" class="close"> X </button>
@@ -59,6 +62,7 @@ export default defineComponent({
     data() {
         return {
             text: '',
+			password: '',
             selectedFile: null
         }
     },
@@ -68,7 +72,12 @@ export default defineComponent({
             if (!this.text)
                 alert('Give us a name')
             else {
-                this.$emit('new-name', this.text)
+				if (!this.password)
+					this.$emit('new-name', this.text)
+				else
+					this.$emit('new-name', this.text, this.password)
+				this.text = ""
+				this.password = ""
             }
         },
         onClick() {
@@ -109,7 +118,7 @@ export default defineComponent({
 <style scoped>
 .popup {
     transform: translate(-50%, -50%);
-    width: 30%;
+    width: 38%;
     border: 3px solid #f1f1f1;
     z-index: 9;
     background-color: rgb(8, 8, 97);
@@ -117,13 +126,17 @@ export default defineComponent({
     top:50%;
     left:50%;
     color: white;
-	height: 250px;
+	height: 335px;
 }
 
 .close {
     color: red;
     /* margin-left: 270px;
     margin-top: 5px; */
+}
+
+.small {
+	font-size: small;
 }
 
 

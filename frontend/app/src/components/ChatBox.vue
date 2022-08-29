@@ -65,12 +65,10 @@ export default defineComponent({
 			handler(newValue) {
 				const container = this.$el.querySelector("#messages")
 				setTimeout(function() {
-					console.log("Here it arrives")
 					if (!container) {
 						return
 					}
 					container.scrollTop = container.scrollHeight
-					console.log("Not gonna seee this")
 				}, 2)
 			},
 			deep: true	

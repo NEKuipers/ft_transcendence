@@ -71,8 +71,11 @@ export default defineComponent({
 			this.boxType = "createChannel";
 			this.showDialogue = true;
 		},
-		async saveChannel(newname: string) {
-			this.$emit('createChannel', newname);
+		async saveChannel(newname: string, newpassword: string | undefined | null) {
+			if (newpassword === undefined)
+				this.$emit('createChannel', newname);
+			else
+				this.$emit('createChannel', newname, newpassword)
 			this.hideDialogue();
 		},
 		openChat(channel_id: number) {

@@ -50,9 +50,6 @@ export default defineComponent({
 			chatHandler: undefined as unknown as typeof ChatHandler,
 			messages: new Array<any>(),
 			myChannels: new Array<any>(),
-			// channels: new Map<number, string>(),
-			// channelNames: new Array<string>(),
-			// channelIds: new Array<number>() // TODO HERE
 		}
 	},
 	methods: {
@@ -114,8 +111,9 @@ export default defineComponent({
 			// console.log("Working?", channel_id, msg)
 			this.chatHandler.send_message(channel_id, msg)
 		},
-		createChannel(name: string) {
+		createChannel(name: string, newpassword: string | undefined | null) {
 			this.chatHandler.create_channel(name, "public")
+			console.log('Creating a channel: ', name, ' with apssword:', newpassword)
 		},
 		banUser(channel_id: number, user_id: number) {
 			this.chatHandler.ban_user(channel_id, user_id);
@@ -136,8 +134,8 @@ export default defineComponent({
 			this.chatHandler.remove_user_admin(channel_id, user_id);	
 		},
 		setPassword(newPassword: string) {
-			//TODO implement this
-			console.log(newPassword);
+			//TODO implement this - How do we know which chat it is for?
+			console.log('Chosen password: ', newPassword);
 		}
 	},
 	async mounted() {
