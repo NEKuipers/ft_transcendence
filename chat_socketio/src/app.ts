@@ -312,23 +312,26 @@ io.on("connection", async (socket) => {
 				return callback(false, "Already joined!");
 			}
 		}
-
-		// console.log(`Got password: ${password}`)
 		
-		// TODO: Check password correctly
-		if (password == null || password == undefined) {
-			callback(false, "NEED_PASSWORD");
-			return;
-		}
-
-		join_channel(socket, {
-			is_admin: false,
-			is_muted: false,
-			is_banned: false,
-			channel_id: channel_id
-		})
-			.then(_ => callback(true, null))
-			.catch(err => callback(false, err))
+		backend.matches_password(channel_id, password)
+			.then((allowedToJoin) => {
+				if (!allowedToJoin ) {
+					callback(false, "NEED_PASSWORD");
+					return;
+				}
+		
+				join_channel(socket, {
+					is_admin: false,
+					is_muted: false,
+					is_banned: false,
+					channel_id: channel_id
+				})
+					.then(_ => callback(true, null))
+					.catch(err => callback(false, err))
+			})
+			.catch((err) => {
+				callback(false, err)
+			})
 	})
 
 	socket.on("leave_channel", (channel_id: number, callback: (success: boolean, reason: any) => void) => {
