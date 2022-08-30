@@ -25,12 +25,19 @@ export class ChannelsController {
 	async findById(@Param('id') id: number): Promise<Channel> {
 		return this.channelsService.findOne(id);
 	}
-	
+
 	@Post()
 	async createChannel(@Body() channel: Channel): Promise<string> {
 		return this.channelsService.createChannel(channel);
 	}
-
+	
+	@Post('/verify_password_for_:id')
+	async verifyPassword(@Param('id') id: number, @Body() password: any) : Promise<boolean> {
+		console.log('In the backend. Id:', id, password)
+		// return true
+		return this.channelsService.verifyPassword(id, password.password)
+	}
+	
 	@Patch('/close-channel') //If channel is closed
 	async closeChannel(@Body() channel: Channel): Promise<string> {
 		return this.channelsService.closeChannel(channel);

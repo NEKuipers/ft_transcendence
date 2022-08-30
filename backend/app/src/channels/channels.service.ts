@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Channel } from './channels.interface';
 import axios from 'axios';
+import * as bcrypt from 'bcrypt'
 
 
 @Injectable()
@@ -68,5 +69,15 @@ export class ChannelsService {
 			type: "private"
 		})
 		return "Channel set to private";
+	}
+
+	async verifyPassword(id: number, password: string): Promise<boolean> {
+		const channel = await this.findOne(id)
+		// console.log(channel)
+		// console.log('Plainpass', password, ' crypted', channel[0].id, channel[0].password)
+		const correctPassword = await bcrypt.compare(password, channel[0].password)
+
+		// console.log('Does the password match:', correctPassword)
+		return correctPassword
 	}
 }

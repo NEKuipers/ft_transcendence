@@ -42,9 +42,9 @@
             </form>
 		</div>
 		<div v-else-if="type === 'enterPassword'">
-            <form @submit="onSubmit">
-            <h4> Enter password </h4>
-            <input type="text" v-model="text" name="text" placeholder="password" />
+            <form @submit="onPasswordEntered">
+            <h4> Enter password for {{channel_name}} </h4>
+            <input type="password" v-model="password" name="password" placeholder="password" />
             <br>
 			<input type="submit" value="Save Change" />
 			<button @click="onClick" type="button" class="close"> X </button>
@@ -58,7 +58,7 @@ import { defineComponent } from "@vue/runtime-core";
 
 export default defineComponent({
     name: 'DialogueBox',
-    props: ['show', 'type'],
+    props: ['show', 'type', 'channel_id', 'channel_name'],
     data() {
         return {
             text: '',
@@ -87,6 +87,26 @@ export default defineComponent({
             // this.selectedFile = this.$refs.avatar.files[0]
             this.selectedFile = event.target.files[0]
         },
+        async onPasswordEntered(e: any) {
+            e.preventDefault()
+            // console.log(this.channel_id)
+            if (!this.password)
+                alert('Enter a password, numpty')
+            else {
+                console.log("Before the request password is:", this.password)
+                const verified = await fetch('/api/channels/verify_password_for_' + this.channel_id, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({password: this.password})
+                })
+                console.log("has it been verified?", verified)
+                this.$emit('password-entered', verified)
+                this.password = ""
+            }
+            this.password = ""
+        },
         async onUpload() {
             if (!this.selectedFile)
                 alert('Ye have tae load a file, son')
@@ -110,7 +130,7 @@ export default defineComponent({
             }
         }
     },
-    emits: ['close-dialogue', 'new-name', 'new-avatar']
+    emits: ['close-dialogue', 'new-name', 'new-avatar', 'password-entered']
 })
 </script>
 

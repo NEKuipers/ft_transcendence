@@ -9,7 +9,9 @@
 				</div>
 				<div id="channels">
 					<PublicChatChannels @joinChannel="joinChannel"/>
-					<dialogueBox id="promptPassword" :type="boxType"   />
+					<!-- <dialogueBox id="promptPassword" :type="boxType" 
+						:show="showDialogue" @close-dialogue="hideDialogue" 
+						@passwordEntered="verifyPassword" /> -->
 				</div>
 				<div id="friends">
 					<ChatFriendsList :user="loginStatusStore.loggedInStatus?.userID" />
@@ -67,6 +69,7 @@ export default defineComponent({
 		async requestPassword(): Promise<string> {
 			return new Promise((resolve, reject) => {
 				// How to open dialogue box straight from the function?
+
 				resolve("TODO: Show dialog box requesting a password")
 			});
 		},
@@ -118,7 +121,7 @@ export default defineComponent({
 		},
 		createChannel(name: string, newpassword: string | undefined | null) {
 			this.chatHandler.create_channel(name, newpassword)
-			// console.log('Creating a channel: ', name, ' with password:', newpassword)
+			console.log('Creating a channel: ', name, ' with password:', newpassword)
 		},
 		banUser(channel_id: number, user_id: number) {
 			this.chatHandler.ban_user(channel_id, user_id);
