@@ -1,6 +1,6 @@
 <template>
 	<div class ="mychatchannels">
-		<div id="title">
+		<div id="channel-title">
 			<h5>Your Channels</h5>
 		</div>
 		<div v-if="!myChannels">
@@ -9,20 +9,22 @@
 		<div id="channels" v-else>
 			<div v-if="myChannels?.length">
 				<div>
-					<ul class="listed-channel" v-for="channel in myChannels" :key="channel.id">
+					<div class="listed-channel" v-for="channel in myChannels" :key="channel.id">
 						<div>
 							<h5 class="name">{{ channel.name }}</h5>
-							<SmallButton  class="button" text="open" @click="openChat(channel.id)"/>
-							<SmallButton  class="button" text="leave" @click="this.$emit('leaveChannel', channel.id)"/>
 						</div>
-					</ul>
+						<div id="buttons">
+								<SmallButton  class="button" text="open" @click="openChat(channel.id)"/>
+								<SmallButton  class="button" text="leave" @click="this.$emit('leaveChannel', channel.id)"/>
+						</div>
+					</div>
 				</div>
 			</div>
 			<div v-else>
 				<h5>You are not in any channels yet</h5>
 			</div>
 			<div id="createchannel">
-				<SmallButton text="Create new channel" @click="createChannel"/>
+				<SmallButton id="createButton" text="Create new channel" @click="createChannel"/>
 				<DialogueBox id="createChannelDialogueBox" :type="boxType" :show="showDialogue" @close-dialogue="hideDialogue" @new-name="saveChannel"/>
 			</div>
 		</div>
@@ -100,36 +102,45 @@ export default defineComponent({
 .listed-channel{
 	display: flex;
 	margin-top: 0px;
+	margin-left: 40px;
 	margin-bottom: 0px;
-	/* border-style: solid; */
 	font-size:large;
 	/* border-width: 1px; */
-	/* justify-items: space-between; */
+	justify-items: space-between;
 	box-sizing: border-box;
 	align-items: flex-start;
 	/* border-color: red; */
 	/* flex-direction: column; */
 	/* display: inline-block; */
+	max-height: 40px;
 }
 
 .name {
 	float: left;
 }
 
+#buttons {
+	display: flex;
+}
+
 .button {
 	float: left;
 	margin-left:8px;
-	margin-top: 20px;
+	margin-top: 23px;
 }
 
-#title {
-	margin-left:20px;
+#channel-title {
+	margin-left:40px;
+	max-height: 45px;
+	margin-bottom: 35px;
+	justify-content: flex-end;
 }
 
 #channels {
-	max-height: 250px;
+	max-height: 200px;
 	align-content: center;
-
+	flex-direction: row;
+	flex-wrap: nowrap;
 }
 
 #createchannel {
@@ -137,6 +148,13 @@ export default defineComponent({
 	float: bottom;
 	display: flex;
 	flex-direction: column;
+	margin-top: 20px;
+}
+
+#createButton {
+	margin-left: 40px;
+	margin-bottom: 5px;
+	max-width: 200px;
 }
 
 </style>

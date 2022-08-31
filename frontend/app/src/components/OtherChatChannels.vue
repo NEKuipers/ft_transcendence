@@ -1,6 +1,6 @@
 <template>
 	<div class ="otherChatChannels">
-		<div id="title">
+		<div id="channel-title">
 			<h5>All Channels</h5>
 		</div>
 		<div v-if="!otherChatChannels">
@@ -88,6 +88,7 @@ export default defineComponent({
 	/* flex-wrap: wrap; */
 	/* margin-left: 30px; */
 	overflow: auto;
+	width:100%;
 	align-items: flex-start;
 	
 }
@@ -96,6 +97,7 @@ export default defineComponent({
 	display: flex;
 	margin-top: 0px;
 	margin-bottom: 0px;
+	max-height: 40px;
 	/* border-style: solid; */
 	font-size:large;
 	/* border-width: 1px; */
@@ -105,6 +107,7 @@ export default defineComponent({
 	/* border-color: red; */
 	/* flex-direction: column; */
 	/* display: inline-block; */
+
 }
 
 .button {
@@ -112,12 +115,15 @@ export default defineComponent({
 	margin-left:8px;
 }
 .name {
-	margin-top: -4px;
+	margin-top: 0px;
 	float: left;
 }
 
-#title {
-	margin-left: 20px;
+#channel-title {
+	margin-left:40px;
+	max-height: 45px;
+	margin-bottom: 55px;
+	justify-content: flex-end;
 }
 
 #channels {
