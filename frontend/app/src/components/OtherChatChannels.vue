@@ -1,6 +1,6 @@
 <template>
 	<div class ="otherChatChannels">
-		<div id="channel-title">
+		<div id="title">
 			<h5>All Channels</h5>
 		</div>
 		<div v-if="!otherChatChannels">
@@ -8,13 +8,15 @@
 		</div>
 		<div id="channels" v-else-if="otherChatChannels?.length">
 			<ul class="listed-channel" v-for="channel in otherChatChannels" :key="channel.id">
-				<h5 class="name">{{channel.name}}</h5>
-				<SmallButton v-if="channel.type === 'public'" class="button" text="join" @click="this.$emit('joinChannel',channel.id)"/>
-				<SmallButton v-if="channel.type === 'protected'" class="button" text="join with password" @click="requestPassword(channel.id, channel.name)"/>
-				<dialogueBox id="promptPassword" :type="boxType" :channel_id="this.channel_id"
-						:channel_name="this.channel_name"
-						:show="showDialogue" @close-dialogue="hideDialogue" 
-						@password-entered="verifyPassword" />
+				<div><h5 class="name">{{channel.name}}</h5></div>
+				<div id="buttons">
+					<SmallButton v-if="channel.type === 'public'" class="button" text="join" @click="this.$emit('joinChannel',channel.id)"/>
+					<SmallButton v-if="channel.type === 'protected'" class="button" text="join with password" @click="requestPassword(channel.id, channel.name)"/>
+					<dialogueBox id="promptPassword" :type="boxType" :channel_id="this.channel_id"
+							:channel_name="this.channel_name"
+							:show="showDialogue" @close-dialogue="hideDialogue" 
+							@password-entered="verifyPassword" />
+				</div>
 			</ul>
 		</div>
 		<div v-else>
@@ -85,48 +87,41 @@ export default defineComponent({
 .otherChatChannels {
 	display: flex;
 	flex-direction: column;
-	/* flex-wrap: wrap; */
-	/* margin-left: 30px; */
 	overflow: auto;
-	width:100%;
 	align-items: flex-start;
-	
+	width: 100%;
 }
 
 .listed-channel{
 	display: flex;
-	margin-top: 0px;
-	margin-bottom: 0px;
-	max-height: 40px;
-	/* border-style: solid; */
-	font-size:large;
-	/* border-width: 1px; */
-	/* justify-items: space-between; */
+	justify-content: space-between;
+	font-size: large;
 	box-sizing: border-box;
 	align-items: flex-start;
-	/* border-color: red; */
-	/* flex-direction: column; */
-	/* display: inline-block; */
+	max-height: 40px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
 
+.name {
+	margin-top: 0px;
+	display: flex;
+}
+
+#buttons {
+	display: flex;
+	margin-left:30px;
 }
 
 .button {
-	float: right;
 	margin-left:8px;
 }
-.name {
-	margin-top: 0px;
-	float: left;
-}
 
-#channel-title {
+#title {
 	margin-left:40px;
 	max-height: 45px;
-	margin-bottom: 55px;
-	justify-content: flex-end;
+	margin-bottom: 45px;
+	margin-top: -10px;
 }
 
-#channels {
-	max-height: 300px;
-}
 </style>

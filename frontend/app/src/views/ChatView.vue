@@ -4,10 +4,10 @@
 
 		<div class="container">
 			<div class="column" id="left-column">
-				<div id="channels">
+				<div class="channels" id="yourChannels">
 					<MyChatChannels @open-chat="openChat" @leaveChannel="leaveChannel" @createChannel="createChannel" :user="loginStatusStore.loggedInStatus?.userID" :myChannels="myChannels"/>
 				</div>
-				<div id="channels">
+				<div class="channels">
 					<PublicChatChannels @joinChannel="joinChannel"/>
 					<!-- <dialogueBox id="promptPassword" :type="boxType" 
 						:show="showDialogue" @close-dialogue="hideDialogue" 
@@ -183,8 +183,7 @@ export default defineComponent({
 	display: flex;
 	flex-direction:column;
 	float:left;
-	padding:10px;
-	box-sizing: border-box; /*this adds the border+padding into the width. can also look at flexbox*/
+	box-sizing: border-box;
 	height: 850px;
 }
 
@@ -197,6 +196,7 @@ export default defineComponent({
 
 #center_column {
 	width: 65%;
+	padding:10px;
 	background-color: #f4f4f4;
 }
 
@@ -207,16 +207,17 @@ export default defineComponent({
 	font-size: 20px;
 }
 
-#channels {
+#yourChannels {
+	border-bottom: 5px solid white;
+
+}
+
+.channels {
 	display: flex;
-	justify-content: left;
 	font-size: 30px;
 	height: 50%;
 	row-gap: 10px;
-	border: 5px solid white;
-	border-radius: 5px;
 	background-color: #f4f4f4;
-	/* width: 20%; */
 }
 
 #friends {
@@ -224,14 +225,17 @@ export default defineComponent({
 	box-sizing: border-box;
 	font-size: 15px;
 	background-color: #f4f4f4;
-	border: 5px solid white;
+	border-top: 5px solid white;
 	border-radius: 5px;
 	height: 50%;
 	justify-content: left;
+	padding-left: 40px;
 	/* width: 20%; */
 }
 
 #channel-overview {
+	padding:10px;
+
 	font-size: 30px;
 	width: 20%;
 }

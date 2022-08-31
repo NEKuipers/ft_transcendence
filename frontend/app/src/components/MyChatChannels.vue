@@ -1,32 +1,26 @@
 <template>
 	<div class ="mychatchannels">
-		<div id="channel-title">
+		<div id="title">
 			<h5>Your Channels</h5>
 		</div>
 		<div v-if="!myChannels">
 			<h5>Channels failed to load</h5>
 		</div>
-		<div id="channels" v-else>
-			<div v-if="myChannels?.length">
-				<div>
-					<div class="listed-channel" v-for="channel in myChannels" :key="channel.id">
-						<div>
-							<h5 class="name">{{ channel.name }}</h5>
-						</div>
-						<div id="buttons">
-								<SmallButton  class="button" text="open" @click="openChat(channel.id)"/>
-								<SmallButton  class="button" text="leave" @click="this.$emit('leaveChannel', channel.id)"/>
-						</div>
-					</div>
+		<div id="channels" v-else-if="myChannels?.length">
+			<ul class="listed-channel" v-for="channel in myChannels" :key="channel.id">
+				<div><h5 class="name">{{ channel.name }}</h5></div>
+				<div id="buttons">
+					<SmallButton  class="button" text="open" @click="openChat(channel.id)"/>
+					<SmallButton  class="button" text="leave" @click="this.$emit('leaveChannel', channel.id)"/>
 				</div>
-			</div>
-			<div v-else>
-				<h5>You are not in any channels yet</h5>
-			</div>
-			<div id="createchannel">
-				<SmallButton id="createButton" text="Create new channel" @click="createChannel"/>
-				<DialogueBox id="createChannelDialogueBox" :type="boxType" :show="showDialogue" @close-dialogue="hideDialogue" @new-name="saveChannel"/>
-			</div>
+			</ul>
+		</div>
+		<div v-else>
+			<h5>You are not in any channels yet</h5>
+		</div>
+		<div id="createchannel">
+			<SmallButton id="createButton" text="Create new channel" @click="createChannel"/>
+			<DialogueBox id="createChannelDialogueBox" :type="boxType" :show="showDialogue" @close-dialogue="hideDialogue" @new-name="saveChannel"/>
 		</div>
 	</div>
 </template>
@@ -101,54 +95,42 @@ export default defineComponent({
 
 .listed-channel{
 	display: flex;
-	margin-top: 0px;
-	margin-left: 40px;
-	margin-bottom: 0px;
-	font-size:large;
-	/* border-width: 1px; */
-	justify-items: space-between;
+	justify-content: space-between;
+	font-size: large;
 	box-sizing: border-box;
 	align-items: flex-start;
-	/* border-color: red; */
-	/* flex-direction: column; */
-	/* display: inline-block; */
 	max-height: 40px;
+	margin-top: 0px;
+	margin-bottom: 0px;
 }
 
 .name {
-	float: left;
+	margin-top: 0px;
+	display: flex;
 }
 
 #buttons {
 	display: flex;
+	margin-left:30px;
 }
 
 .button {
-	float: left;
 	margin-left:8px;
-	margin-top: 23px;
 }
 
-#channel-title {
+#title {
 	margin-left:40px;
 	max-height: 45px;
-	margin-bottom: 35px;
-	justify-content: flex-end;
-}
-
-#channels {
-	max-height: 200px;
-	align-content: center;
-	flex-direction: row;
-	flex-wrap: nowrap;
+	margin-bottom: 45px;
+	margin-top: -10px;
 }
 
 #createchannel {
-	width: 100%;
 	float: bottom;
 	display: flex;
 	flex-direction: column;
 	margin-top: 20px;
+	max-width: 180px;
 }
 
 #createButton {
