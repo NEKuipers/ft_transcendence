@@ -11,7 +11,7 @@ export class ChannelsController {
 		return this.channelsService.findAll();
 	}
 	
-	@Get('/public') //Retrieve all non-dm
+	@Get('/all') //Retrieve all non-dm
 	async findAllNonDirect(): Promise<Channel[]> {
 		return this.channelsService.findAllNonDirect();
 	}

@@ -56,6 +56,7 @@
 </template>
 
 <script lang="ts">
+import { stringLiteral } from '@babel/types';
 import { defineComponent } from 'vue'
 import SmallButton from '../components/SmallButton.vue'
 import { loginStatusStore } from '../stores/profileData';
@@ -112,6 +113,9 @@ export default defineComponent({
 			this.showDialogue = false;
 		},
 		async saveUsername(newname: string) {
+			if (newname.length > 14) {
+				return alert ('Username too long.');
+			}
 			const id = this.loginStatusStore.loggedInStatus?.userID
 			if (id != undefined) {
 				await fetch('/api/users/' + id, {
@@ -218,7 +222,7 @@ export default defineComponent({
 		async updateProfileData(user_id: number) {
 			fetch(`/api/profile/` + user_id)
 				.then(res => res.json())
-				.then(data => this.profile = data[0]) // Why do we index 0?
+				.then(data => this.profile = data[0]) 
 				.catch(err => console.log('Error in updateProfileData: ' + err));
 		},
 	}
