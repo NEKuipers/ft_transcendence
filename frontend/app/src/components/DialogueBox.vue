@@ -89,20 +89,22 @@ export default defineComponent({
         },
         async onPasswordEntered(e: any) {
             e.preventDefault()
-            // console.log(this.channel_id)
             if (!this.password)
                 alert('Enter a password, numpty')
             else {
                 console.log("Before the request password is:", this.password)
-                const verified = await fetch('/api/channels/verify_password_for_' + this.channel_id, {
+                let verified = false;
+				await fetch('/api/channels/verify_password_for_' + this.channel_id, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({password: this.password})
                 })
-                console.log("has it been verified?", verified)
-                this.$emit('password-entered', verified)
+				.then(res => res.json())
+				.then(data => verified = data);
+                console.log("has it been verified?", verified);
+                this.$emit('password-entered', verified, this.password);
                 this.password = ""
             }
             this.password = ""

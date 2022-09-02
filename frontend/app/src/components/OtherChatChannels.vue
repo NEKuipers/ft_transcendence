@@ -70,9 +70,12 @@ export default defineComponent({
 			this.channel_name = channel_name
 			// console.log("Requesting password for channel", this.channel_id)
 		},
-		verifyPassword(verified: boolean) {
+		verifyPassword(verified: boolean, password:string) {
 			if (verified) {
-				// console.log("Correct password")
+				console.log(password);
+				this.$emit('joinChannel',this.channel_id, password);
+				password = "";
+				this.hideDialogue();
 			}
 			else
 				alert('Wrong password')

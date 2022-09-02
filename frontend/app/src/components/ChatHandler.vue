@@ -86,12 +86,11 @@ export default defineComponent({
 	},
 
 	methods: {
-		async join_channel(channel_id: number, password: string | undefined | null): Promise<boolean> {
+		async join_channel(channel_id: number, password: string | null): Promise<boolean> {
 			return new Promise((resolve, reject) => {
 				if (this.socket) {
 					this.socket.emit("join_channel", channel_id, password,
 					(success: boolean, result: any) => {
-						console.log(success, result)
 						if (success) {
 							resolve(true);
 						} else {

@@ -303,6 +303,8 @@ io.on("connection", async (socket) => {
 	});
 
 	socket.on("join_channel", (channel_id: number, password: string | undefined | null, callback: (success: boolean, reason: any) => void) => {
+		console.log(password);
+		
 		let existing_status = data.joined_channels.find((elem) => elem.channel_id == channel_id);
 		if (existing_status) {
 			if (existing_status.is_banned) {

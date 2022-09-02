@@ -97,8 +97,8 @@ export default defineComponent({
 			this.myChannels = this.myChannels.filter((elem: any) => elem.id != channel_id);
 			delete this.messages[channel_id];
 		},
-		joinChannel(channel_id: number) {
-			this.chatHandler.join_channel(channel_id)
+		joinChannel(channel_id: number, password: string) {
+			this.chatHandler.join_channel(channel_id, password == undefined ? undefined : password)
 				.catch(async (err: string) => {
 					console.log('error is', err)
 					if (err == "NEED_PASSWORD") {

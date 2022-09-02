@@ -77,7 +77,7 @@ export class ChannelsService {
 		// console.log('Plainpass', password, ' crypted', channel[0].id, channel[0].password)
 		const correctPassword = await bcrypt.compare(password, channel[0].password)
 
-		// console.log('Does the password match:', correctPassword)
-		return correctPassword
+		console.log('Does the password match:', correctPassword)
+		return correctPassword;
 	}
 }
