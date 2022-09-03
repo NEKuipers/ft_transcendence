@@ -56,7 +56,6 @@
 </template>
 
 <script lang="ts">
-import { stringLiteral } from '@babel/types';
 import { defineComponent } from 'vue'
 import SmallButton from '../components/SmallButton.vue'
 import { loginStatusStore } from '../stores/profileData';

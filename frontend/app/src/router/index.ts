@@ -12,6 +12,7 @@ import MyProfileView from '@/views/MyProfileView.vue'
 import LeaderboardView from '@/views/LeaderboardView.vue'
 import GameSelectView from '@/views/GameSelectView.vue'
 import TFAView from '@/views/TFAView.vue'
+import SetupAccountView from '@/views/SetupAccountView.vue'
 
 
 
@@ -76,6 +77,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/tfa',
     name: 'tfa',
     component: TFAView,
+  },
+  {
+	path: '/setup-account',
+	name: 'setupAccount',
+	component: SetupAccountView,
   }
 ]
 
