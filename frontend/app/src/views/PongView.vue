@@ -275,7 +275,7 @@ export default defineComponent({
 			this.socket = socket;
 			
 			socket.on("connect", () => {
-				this.join(this.$route.params.mode as string);
+				this.join(this.$route.params.mode as string, this.$route.params.invite as string | undefined);
 			})
 			socket.on("disconnect", (reason, description) => {
 				this.stop();
@@ -332,7 +332,11 @@ export default defineComponent({
 
 				// After 2.5 seconds, join the queue again
 				setTimeout(() => {
-					this.join(this.$route.params.mode as string);	// Note: In case of spectating, this may cause us to be disconnected from a invalid request
+					if (this.$route.params.invite) {
+						this.$router.push('/chat');	// It was a single time match
+					} else {
+						this.join(this.$route.params.mode as string, undefined);	// Note: In case of spectating, this may cause us to be disconnected from a invalid request
+					}
 				}, 2500);
 			})
 		});
@@ -353,9 +357,9 @@ export default defineComponent({
 			this.keysPressed[e.code] = false;
 		},
 
-		join(queue: string) {
-			(this.socket as Socket).emit("join", queue);
-			this.draw_searching_for_players();	// Technically it should only do this IF its not a spectate request, but we have no clue if its a spectate request or not, otherwise it sould say something like "Joining..."
+		join(queue: string, invite: string | undefined) {
+			(this.socket as Socket).emit("join", queue, invite);
+			this.draw_searching_for_players(invite !== undefined);	// Technically it should only do this IF its not a spectate request, but we have no clue if its a spectate request or not, otherwise it sould say something like "Joining..."
 		},
 
 		start(player_id: number, player_1_name: string, player_2_name: string) {
@@ -490,9 +494,13 @@ export default defineComponent({
 			context.fillRect(0, 0, width, height);
 		},
 
-		draw_searching_for_players() {
+		draw_searching_for_players(is_invite: boolean) {
 			this.clear_canvas();
-			this.draw_center_text("Searching for opponent", 50);
+			if (is_invite) {
+				this.draw_center_text("Waiting for other player to join", 50);
+			} else {
+				this.draw_center_text("Searching for opponent", 50);
+			}
 		},
 
 		draw_center_text(text: string, size: number) {
