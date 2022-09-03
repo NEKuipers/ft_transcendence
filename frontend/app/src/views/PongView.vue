@@ -333,7 +333,7 @@ export default defineComponent({
 				// After 2.5 seconds, join the queue again
 				setTimeout(() => {
 					if (this.$route.params.invite) {
-						this.$router.push('/select-game');	// It was a single time match
+						this.$router.push('/chat');	// It was a single time match
 					} else {
 						this.join(this.$route.params.mode as string, undefined);	// Note: In case of spectating, this may cause us to be disconnected from a invalid request
 					}
