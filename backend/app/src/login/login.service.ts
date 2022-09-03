@@ -8,15 +8,14 @@ export class LoginService {
 	constructor(private readonly userService: UsersService) {}
 
 	async validateUser(details: IntraUserDetails): Promise<User> {
-		// console.log("Validating user: ", details);
-		
-		const userDb = await this.userService.findOneIntra(details.intraId)
+		let userDb = await this.userService.findOneIntra(details.intraId)
 		if (userDb) {
+			userDb.firstLogin = false;
 			return userDb
 		}
 
 		/* There has got be a better place to do this, right? Or perhaps not */
-		return await this.userService.createUser({
+		let newUserDb = await this.userService.createUser({
 			username: details.username,
 			status: 'online',
 			avatar_id: 1,
@@ -25,5 +24,7 @@ export class LoginService {
 			intra_id: details.intraId,
 			is_logged_in: true
 		})
+		newUserDb.firstLogin = true;
+		return newUserDb;
     }
 }
