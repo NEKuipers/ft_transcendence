@@ -33,7 +33,7 @@ const routes: Array<RouteRecordRaw> = [
     component: MyProfileView,
   },
   {
-    path: '/pong/:mode',
+    path: '/pong/:mode/:invite?',
     name: 'pong',
     component: PongView,
   },
