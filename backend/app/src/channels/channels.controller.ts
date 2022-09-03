@@ -20,6 +20,11 @@ export class ChannelsController {
 	async findAllForUser(@Param('id') id: number): Promise<Channel[]> {
 		return await this.channelsService.findAllForUser(id);
 	}
+
+	@Get('/all_not_for_:id') //Retrieve all channels a user is in?
+	async findAllNotForUser(@Param('id') id: number): Promise<Channel[]> {
+		return await this.channelsService.findAllNotForUser(id);
+	}
 	
 	@Get(':id')
 	async findById(@Param('id') id: number): Promise<Channel> {

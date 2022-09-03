@@ -8,7 +8,7 @@
 					<MyChatChannels @open-chat="openChat" @leaveChannel="leaveChannel" @createChannel="createChannel" :user="loginStatusStore.loggedInStatus?.userID" :myChannels="myChannels"/>
 				</div>
 				<div class="channels">
-					<PublicChatChannels @joinChannel="joinChannel"/>
+					<OtherChatChannels @joinChannel="joinChannel" :user="loginStatusStore.loggedInStatus?.userID"/>
 					<!-- <dialogueBox id="promptPassword" :type="boxType" 
 						:show="showDialogue" @close-dialogue="hideDialogue" 
 						@passwordEntered="verifyPassword" /> -->
@@ -34,7 +34,7 @@
 <script lang="ts">
 import { defineComponent } from "@vue/runtime-core";
 import ChatFriendsList from "../components/ChatFriendsList.vue";
-import PublicChatChannels from "../components/OtherChatChannels.vue";
+import OtherChatChannels from "../components/OtherChatChannels.vue";
 import MyChatChannels from "../components/MyChatChannels.vue";
 import { loginStatusStore } from "../stores/profileData";
 import ChatBox from '../components/ChatBox.vue'
@@ -48,8 +48,8 @@ export default defineComponent({
 		return {
 			loginStatusStore: loginStatusStore(),
 			text: '',
-			user: null,
 			currentChannel: 0,
+			user: null as any,
 			chatHandler: undefined as unknown as typeof ChatHandler,
 			messages: new Array<any>(),
 			myChannels: new Array<any>(),
@@ -57,11 +57,11 @@ export default defineComponent({
 		}
 	},
 	methods: {
-		async loadUser(id: number) {
+		async loadUserData(id: number) {
 			fetch('/api/users/' + id)
-			.then(res => res.json())
-			.then(data => this.user = data)
-			.catch(err => console.log('What is: ' + err));
+				.then(res => res.json())
+				.then(data => this.user = data)
+				.catch(err => console.log(err));
 		},
 		openChat(channel_id: number) {
 			this.currentChannel = channel_id
@@ -148,13 +148,18 @@ export default defineComponent({
 	},
 	async mounted() {
 		this.chatHandler = (this.$refs.ChatHandler as typeof ChatHandler);
-
+		let loggedInStatus = await loginStatusStore().logIn();
+		if (loggedInStatus) {
+			await this.loadUserData(loggedInStatus.userID);
+		} else {
+			console.error("Viewing ChatView while not logged in!")
+		}
 		// TODO: THIS IS JUST FOR DEBUGGING, REMOVE THIS LATER
 		(window as any).chatHandler = this.chatHandler;
 	},
 	components: {
 		ChatFriendsList,
-		PublicChatChannels,
+		OtherChatChannels,
 		MyChatChannels,
 		ChatBox,
 		ChannelOverview,

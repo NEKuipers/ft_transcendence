@@ -1,7 +1,7 @@
 <template>
 	<div class ="otherChatChannels">
 		<div id="title">
-			<h5>All Channels</h5>
+			<h5>Other Channels</h5>
 		</div>
 		<div v-if="!otherChatChannels">
 			<h5>Channels failed to load</h5>
@@ -33,9 +33,11 @@ import { loginStatusStore } from '../stores/profileData';
 
 export default defineComponent({
     name: "OtherChatChannels",
-    props: {
-		user: Object
-    },
+	props: {
+	user: {
+			type: Number
+		},
+	},
     data() {
         return {
 			boxType: "enterPassword",
@@ -44,17 +46,11 @@ export default defineComponent({
 			channel_name: "",
 			loginStatusStore: loginStatusStore(),
             otherChatChannels: null as null | Array<any>,
+			channels: null as null | any,
         };
     },
-	mounted() { 
-		fetch("/api/channels/all")
-			.then(res => res.json())
-			.then(data => this.otherChatChannels = data)
-			.catch(err => {
-			this.otherChatChannels = null;
-			console.log(err);
-		});
-		
+	mounted() {
+		this.updateAllChannels();
 	},
     components: { 
 		SmallButton,
@@ -79,7 +75,22 @@ export default defineComponent({
 			}
 			else
 				alert('Wrong password')
-		}
+		},
+		async updateOtherChannels(user_id: number) {
+			fetch("/api/channels/all_not_for_" + user_id)
+				.then(res => res.json())
+				.then(data => this.otherChatChannels = data)
+				.catch(err => {
+				this.otherChatChannels = null;
+				console.log(err);})
+		},
+		async updateAllChannels() {
+			await fetch("/api/channels")
+				.then(res => res.json())
+				.then(data => this.channels = data)
+				.catch(err =>console.log(err));
+			this.updateOtherChannels(this.user as number);
+		},
 	},
 	emits: ['joinChannel']
 })

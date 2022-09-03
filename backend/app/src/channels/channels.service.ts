@@ -17,15 +17,35 @@ export class ChannelsService {
 	}
 
 	async findAllForUser(user_id: number): Promise<Channel[]> { //
-		//This returns all participants entries of user
 		let res = await axios.get(`http://localhost:${process.env.PGREST_PORT}/participants?participant_id=eq.${user_id}`);
-		//Find all of those channels and return an array. Might be a better way to do this but ¯\_(ツ)_/¯
 		let channels: Channel[] = [];
 		for (let i = 0; i < res.data.length; i++) {
 			let temp = await axios.get(`http://localhost:${process.env.PGREST_PORT}/channels?id=eq.${res.data[i].channel_id}`);
-			channels.push(temp.data);
+			channels.push(temp.data[0]);
 		}
 		return channels;
+	}
+
+	async findAllNotForUser(user_id: number): Promise<Channel[]> { 
+		let all = await this.findAll();
+		let joined = await this.findAllForUser(user_id);
+		if (joined.length == 0) {
+			return all;
+		}
+		
+		let joined_ids: number[] = [];
+		for (let x = 0; x < joined.length; x++) {
+			joined_ids.push(joined[x].id);
+		}
+
+		let otherChannels: Channel[] = [];
+		for (let x = 0; x < all.length; x++) {
+			if (!joined_ids.includes(all[x].id)) {
+				otherChannels.push(all[x]);
+			}
+		
+		}
+		return otherChannels;
 	}
 
 	async findOne(channel_id: number) : Promise<Channel> {

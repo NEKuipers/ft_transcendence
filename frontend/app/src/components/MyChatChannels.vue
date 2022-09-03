@@ -11,7 +11,7 @@
 				<div><h5 class="name">{{ channel.name }}</h5></div>
 				<div id="buttons">
 					<SmallButton  class="button" text="open" @click="openChat(channel.id)"/>
-					<SmallButton  class="button" text="leave" @click="this.$emit('leaveChannel', channel.id)"/>
+					<SmallButton  class="button" text="leave" @click="this.$emit('leaveChannel', channel.id, channel.name)"/>
 				</div>
 			</ul>
 		</div>
