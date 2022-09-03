@@ -142,6 +142,7 @@ io.use((socket, next) => {
 })
 
 let all_matches : { [key: string]: Match } = {}
+let private_matches : { [key: number]: Match } = {}
 
 class Match {
 	settings: pong_settings;
@@ -149,6 +150,7 @@ class Match {
 	p2: Socket;
 	gamemode_name: string;
 	room_name: string;
+	group_id: number;
 	p1_score: number;
 	p2_score: number;
 	event: EventEmitter;
@@ -156,7 +158,7 @@ class Match {
 	spectators: Array<Socket>;
 	match_id: number;
 
-	constructor(gamemode_name: string, settings: pong_settings, p1: Socket, p2: Socket) {
+	constructor(gamemode_name: string, settings: pong_settings, p1: Socket, p2: Socket, group_id: number) {
 		p1.data.state = SocketState.InMatch;
 		p2.data.state = SocketState.InMatch;
 
@@ -171,6 +173,7 @@ class Match {
 		this.spectators = new Array();
 
 		this.room_name = undefined;
+		this.group_id = group_id;
 
 		this.match_id = -1;
 
@@ -232,6 +235,9 @@ class Match {
 			this.reset_ball(true);
 
 			all_matches[this.room_name] = this;
+			if (this.group_id !== 0) {
+				private_matches[this.group_id] = this;
+			}
 		}, error => {
 			console.error(`Got error when making POST request to database to start match: ${error}`);
 
@@ -340,27 +346,28 @@ class Match {
 		}
 
 		delete all_matches[this.room_name];
+		if (this.group_id !== 0) {
+			delete private_matches[this.group_id];
+		}
 	}
 }
 
 class MatchMaker {
 	gamemode_name: string;
 	settings: pong_settings;
-	waiting_for_game_connections :  { [key: string]: Array<Socket> } = {};
-	running_matches : Array<Match>;
+	waiting_for_game_connections :  { [key: number]: Array<Socket> } = {};
 
 	constructor(gamemode_name: string, settings: pong_settings) {
 		this.gamemode_name = gamemode_name;
 		this.settings = settings;
 		this.waiting_for_game_connections = {};
-		this.running_matches = new Array();
 	}
 
 	matchmake() {
 		let to_delete = new Array();
 
-		for (let group_name in this.waiting_for_game_connections) {
-			let group = this.waiting_for_game_connections[group_name];
+		for (let group_id in this.waiting_for_game_connections) {
+			let group = this.waiting_for_game_connections[group_id];
 
 			while (group.length >= 2) {
 				let p1 = group.pop();
@@ -369,17 +376,11 @@ class MatchMaker {
 				p1.removeAllListeners("disconnect");
 				p2.removeAllListeners("disconnect");
 				
-				let match = new Match(this.gamemode_name, this.settings, p1, p2);	// Will set socket state to be in match
-	
-				this.running_matches.push(match);
-				match.event.addListener("match-stop", () => {
-					let index = this.running_matches.indexOf(match);
-					this.running_matches.splice(index, 1);
-				})
+				new Match(this.gamemode_name, this.settings, p1, p2, +group_id);	// Will set socket state to be in match
 			}
 
 			if (group.length == 0) {
-				to_delete.push(group_name);
+				to_delete.push(group_id);
 			}
 		}
 
@@ -388,11 +389,11 @@ class MatchMaker {
 		}
 	}
 
-	add_to_waiting_list(socket: Socket, group_name: string) {
+	add_to_waiting_list(socket: Socket, group_id: number) {
 		socket.data.state = SocketState.InQueue;
 
-		this.waiting_for_game_connections[group_name] = this.waiting_for_game_connections[group_name] ?? new Array();
-		let group = this.waiting_for_game_connections[group_name];
+		this.waiting_for_game_connections[group_id] = this.waiting_for_game_connections[group_id] ?? new Array();
+		let group = this.waiting_for_game_connections[group_id];
 
 		group.push(socket);
 		socket.on("disconnect", (_) => {
@@ -401,7 +402,7 @@ class MatchMaker {
 				group.splice(index, 1);
 
 				if (group.length == 0) {
-					delete this.waiting_for_game_connections[group_name];
+					delete this.waiting_for_game_connections[group_id];
 				}
 			}
 		})
@@ -433,8 +434,16 @@ io.on("connection", (socket) => {
 			return;
 		}
 
+		// Hash it so that you cannot get the private id from a public spectate link
+		var group_id = 0;
+		if (group_name) {
+			for (var i = 0; i < group_name.length; i++) {
+				group_id = ~~(((group_id << 5) - group_id) + group_name.charCodeAt(i));
+			}
+		}
+
 		// Spectate request?
-		let data = all_matches[request];
+		let data = all_matches[request] || private_matches[group_id];
 		if (data) {
 			data.spectate(socket);
 			return;
@@ -443,7 +452,7 @@ io.on("connection", (socket) => {
 		//console.log(`${socket.id} wants to join on ${queue}`)
 		for (let matchmaker of matchmakers) {
 			if (matchmaker.gamemode_name === request) {
-				matchmaker.add_to_waiting_list(socket, group_name);
+				matchmaker.add_to_waiting_list(socket, group_id);
 				return;
 			}
 		}
