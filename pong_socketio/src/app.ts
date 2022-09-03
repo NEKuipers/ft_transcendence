@@ -346,42 +346,63 @@ class Match {
 class MatchMaker {
 	gamemode_name: string;
 	settings: pong_settings;
-	waiting_for_game_connections : Array<Socket>;
+	waiting_for_game_connections :  { [key: string]: Array<Socket> } = {};
 	running_matches : Array<Match>;
 
 	constructor(gamemode_name: string, settings: pong_settings) {
 		this.gamemode_name = gamemode_name;
 		this.settings = settings;
-		this.waiting_for_game_connections = new Array();
+		this.waiting_for_game_connections = {};
 		this.running_matches = new Array();
 	}
 
 	matchmake() {
-		while (this.waiting_for_game_connections.length >= 2) {
-			let p1 = this.waiting_for_game_connections.pop();
-			let p2 = this.waiting_for_game_connections.pop();
-	
-			p1.removeAllListeners("disconnect");
-			p2.removeAllListeners("disconnect");
-			
-			let match = new Match(this.gamemode_name, this.settings, p1, p2);	// Will set socket state to be in match
+		let to_delete = new Array();
 
-			this.running_matches.push(match);
-			match.event.addListener("match-stop", () => {
-				let index = this.running_matches.indexOf(match);
-				this.running_matches.splice(index, 1);
-			})
+		for (let group_name in this.waiting_for_game_connections) {
+			let group = this.waiting_for_game_connections[group_name];
+
+			while (group.length >= 2) {
+				let p1 = group.pop();
+				let p2 = group.pop();
+		
+				p1.removeAllListeners("disconnect");
+				p2.removeAllListeners("disconnect");
+				
+				let match = new Match(this.gamemode_name, this.settings, p1, p2);	// Will set socket state to be in match
+	
+				this.running_matches.push(match);
+				match.event.addListener("match-stop", () => {
+					let index = this.running_matches.indexOf(match);
+					this.running_matches.splice(index, 1);
+				})
+			}
+
+			if (group.length == 0) {
+				to_delete.push(group_name);
+			}
+		}
+
+		for (let group_name in to_delete) {
+			delete this.waiting_for_game_connections[group_name];
 		}
 	}
 
-	add_to_waiting_list(socket: Socket) {
+	add_to_waiting_list(socket: Socket, group_name: string) {
 		socket.data.state = SocketState.InQueue;
 
-		this.waiting_for_game_connections.push(socket);
+		this.waiting_for_game_connections[group_name] = this.waiting_for_game_connections[group_name] ?? new Array();
+		let group = this.waiting_for_game_connections[group_name];
+
+		group.push(socket);
 		socket.on("disconnect", (_) => {
-			let index = this.waiting_for_game_connections.indexOf(socket);
+			let index = group.indexOf(socket);
 			if (index >= 0) {
-				this.waiting_for_game_connections.splice(index, 1);
+				group.splice(index, 1);
+
+				if (group.length == 0) {
+					delete this.waiting_for_game_connections[group_name];
+				}
 			}
 		})
 
@@ -405,7 +426,7 @@ io.on("connection", (socket) => {
 	console.log("Got connection:", socket.id);
 	socket.data.state = SocketState.Menu;
 
-	socket.on("join", (request) => {
+	socket.on("join", (request, group_name) => {
 		if (socket.data.state !== SocketState.Menu) {
 			console.log("socket", socket.id, "tired to join while it was not in the menu state, it was in:", socket.data.state);
 			socket.disconnect(true);
@@ -422,7 +443,7 @@ io.on("connection", (socket) => {
 		//console.log(`${socket.id} wants to join on ${queue}`)
 		for (let matchmaker of matchmakers) {
 			if (matchmaker.gamemode_name === request) {
-				matchmaker.add_to_waiting_list(socket);
+				matchmaker.add_to_waiting_list(socket, group_name);
 				return;
 			}
 		}
