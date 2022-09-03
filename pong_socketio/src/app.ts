@@ -437,8 +437,9 @@ io.on("connection", (socket) => {
 		// Hash it so that you cannot get the private id from a public spectate link
 		var group_id = 0;
 		if (group_name) {
-			for (var i = 0; i < group_name.length; i++) {
-				group_id = ~~(((group_id << 5) - group_id) + group_name.charCodeAt(i));
+			let combined = request + group_name;
+			for (var i = 0; i < combined.length; i++) {
+				group_id = ~~(((group_id << 5) - group_id) + combined.charCodeAt(i));
 			}
 		}
 
