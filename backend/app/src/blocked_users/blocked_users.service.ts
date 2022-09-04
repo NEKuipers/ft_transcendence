@@ -23,38 +23,14 @@ export class BlockedUsersService {
 		});
 	}
 
-	findAllWhoBlockedUser(id: number) : Promise<BlockedUser[]> {
-		return new Promise((accept, reject) => {
-			axios.get(`http://localhost:${process.env.PGREST_PORT}/blocked_users?blocked_user_id=eq.${id}`)
-				.then((response) => {
-					if (response.status != 200) {
-						console.log(`Got statusCode: ${response.status} (${response.statusText}): ${JSON.stringify(response.headers, null, 4)}`)
-						reject(response);
-						return;
-					}
-					accept(response.data);
-				}).catch((error) => {
-					console.log(`Got error: ${error}`)
-					reject(error);
-				});
-			});
-		}
-		
-		findAllUsersYouBlocked(id: number) : Promise<BlockedUser[]> {
-			return new Promise((accept, reject) => {
-				axios.get(`http://localhost:${process.env.PGREST_PORT}/blocked_users?blocked_by_id=eq.${id}`)
-				.then((response) => {
-					if (response.status != 200) {
-						console.log(`Got statusCode: ${response.status} (${response.statusText}): ${JSON.stringify(response.headers, null, 4)}`)
-						reject(response);
-						return;
-					}
-					accept(response.data);
-				}).catch((error) => {
-					console.log(`Got error: ${error}`)
-					reject(error);
-				});
-		});
+	async haveYouBlockedUser(your_id: number, other_id: number) : Promise<boolean> {
+		let res = await axios.get(`http://localhost:${process.env.PGREST_PORT}/blocked_users?blocked_by_id=eq.${your_id}&blocked_user_id=eq.${other_id}`);
+		return (res.data.length > 0);
+	}
+
+	async hasUserBlockedMe(your_id: number, other_id: number) : Promise<boolean> {
+		let res = await axios.get(`http://localhost:${process.env.PGREST_PORT}/blocked_users?blocked_user_id=eq.${your_id}&blocked_by_id=eq.${other_id}`);
+		return (res.data.length > 0);
 	}
 
 	blockUser(blockedUser: BlockedUser) : string {

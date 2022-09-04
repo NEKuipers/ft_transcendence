@@ -11,15 +11,15 @@ export class BlockedUsersController {
 		return this.blockedUsersService.findAllForUser(id);
 	}
 
-	@Get('/blocked_by_them/:id')
-	findAllWhoBlockedUser(@Param('id') id: number) : Promise<BlockedUser[]> {
-		return this.blockedUsersService.findAllWhoBlockedUser(id);
+
+	@Get('have_you_blocked_them/:your_id&:other_id')
+	async haveYouBlockedUser(@Param('your_id') your_id: number, @Param('other_id') other_id: number) : Promise<boolean> {
+		return this.blockedUsersService.haveYouBlockedUser(your_id, other_id);
 	}
 
-
-	@Get('/blocked_by_you/:id')
-	findAllUsersYouBlocked(@Param('id') id: number) : Promise<BlockedUser[]> {
-		return this.blockedUsersService.findAllUsersYouBlocked(id);
+	@Get('have_they_blocked_you/:your_id&:other_id') 
+	async hasUserBlockedMe(@Param('your_id') your_id: number, @Param('other_id') other_id: number) : Promise<boolean> {
+		return this.blockedUsersService.hasUserBlockedMe(your_id, other_id);
 	}
 
 	@Post()

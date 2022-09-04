@@ -18,7 +18,7 @@
 			<h4>Overall ranking:  #{{profile.ranking}}</h4>
 		</section>
 		<section v-else>
-			<h5 id="blocked-you">User has blocked you</h5>
+			<h6 id="blocked-you">User has blocked you</h6>
 		</section>
 		<div v-if="profile.user_id == loginStatusStore.loggedInStatus?.userID">
 			<div v-if="inMyProfile == true">
@@ -62,6 +62,7 @@ export default defineComponent({
 	props: {
 		user: Number,
 		inMyProfile: Boolean,
+		isFriend: Boolean,
 	},
 	data () {
 		return {
@@ -73,6 +74,9 @@ export default defineComponent({
 			profile: null as null | any,
 		}
 	},
+	mounted() {
+		console.log(this.user);
+	},
 	components: {
 		SmallButton,
 		DialogueBox
@@ -83,8 +87,8 @@ export default defineComponent({
                 if (!id) { return; }	// If we don't have a id we don't want to update
 
 				this.updateProfileData(id);
-				this.updateHasBlockedYou(id);
-				this.updateBlockedByYou(id);
+				this.updateHasBlockedYou(this.loginStatusStore.loggedInStatus?.userID as number, this.user as number);
+				this.updateBlockedByYou(this.loginStatusStore.loggedInStatus?.userID as number, this.user as number);
 			},
 			immediate: true	// But also call the function once on mount
 		},
@@ -158,16 +162,20 @@ export default defineComponent({
 				.catch(err => console.log(err));			
 		},
 		async blockUser() {
+			const your_id = this.loginStatusStore.loggedInStatus?.userID;
+			const other_id = this.user;
+			console.log(`blockcheck by_id ${your_id} other_id${other_id}`)
 			const requestOptions = {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({	blocked_by_id: this.loginStatusStore.loggedInStatus?.userID,
-										blocked_user_id: this.user}) 
+				body: JSON.stringify({	blocked_by_id: your_id,
+										blocked_user_id: other_id}) 
 			};
 			fetch('/api/blocked_users', requestOptions)
 				.then(response => console.log(response.status))
 				.catch(err => console.log(err));
-			this.updateBlockedByYou(this.loginStatusStore.loggedInStatus?.userID as number)
+			this.updateBlockedByYou(your_id as number, other_id as number)
+			this.updateBlockedByYou(your_id as number, other_id as number)
 		},
 		
 		async unblockUser() {
@@ -180,31 +188,22 @@ export default defineComponent({
 			fetch('/api/blocked_users', requestOptions)
 				.then(response => console.log(response.status))
 				.catch(err => console.log(err));
-			this.updateBlockedByYou(this.loginStatusStore.loggedInStatus?.userID as number)
+			this.updateBlockedByYou(this.loginStatusStore.loggedInStatus?.userID as number, this.user as number)
+			this.updateBlockedByYou(this.loginStatusStore.loggedInStatus?.userID as number, this.user as number)
 		},
 
-		async updateHasBlockedYou(user_id: number) {
-			fetch(`/api/blocked_users/blocked_by_them/` + user_id)
+		async updateBlockedByYou(your_id: number, other_id: number) {
+			await fetch(`/api/blocked_users/have_you_blocked_them/${your_id}&${other_id}`)
 				.then(res => res.json())
-				.then(haveBlockedYou => {
-					for (let i = 0; i < haveBlockedYou.length; i++) {
-						if (haveBlockedYou[i].blocked_by_id == user_id)
-							this.hasBlockedYou = true;
-					}
-				})
-				.catch(err => console.log('Error in updateHasBlockedYou: ' + err));
-		},
-
-		async updateBlockedByYou(user_id: number) {
-			fetch(`/api/blocked_users/blocked_by_you/` + user_id)
-				.then(res => res.json())
-				.then(usersBlockedByYou => {
-					for (let i = 0; i < usersBlockedByYou.length; i++) {
-						if (usersBlockedByYou[i].blocked_user_id == user_id)
-							this.youHaveBlocked = true;
-					}
-				})
+				.then(data => this.youHaveBlocked = data)
 				.catch(err => console.log('Error in updateBlockedByYou: ' + err));
+		},
+
+		async updateHasBlockedYou(your_id: number, other_id: number) {
+			await fetch(`/api/blocked_users/have_they_blocked_you/` + your_id + '&' + other_id)
+				.then(res => res.json())
+				.then(data => this.hasBlockedYou = data)
+				.catch(err => console.log('Error in updateHasBlockedYou: ' + err));
 		},
 
 		async updateProfileData(user_id: number) {
@@ -218,6 +217,13 @@ export default defineComponent({
 </script>
 
 <style scoped>
+
+.userprofile {
+	height: 500px;
+	max-height: 500px;
+	display: inline-block	;
+}
+
 .names {
   margin-top: 0px;
 }
@@ -227,7 +233,7 @@ a:link{
 }
 
 #blocked-you {
-	font-size: 24px;
+	font-size: 20px;
 }
 
 .username {
