@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Patch, Delete, Body, Param } from '@nestjs/common';
 import { ChannelsService } from './channels.service';
-import { Channel } from './channels.interface';
+import { Channel, channelName } from './channels.interface';
 
 @Controller('channels')
 export class ChannelsController {
@@ -29,6 +29,11 @@ export class ChannelsController {
 	@Get(':id')
 	async findById(@Param('id') id: number): Promise<Channel> {
 		return this.channelsService.findOne(id);
+	}
+
+	@Post('/check_channel_name')
+	async checkChannelName(@Body() newChannelName: channelName): Promise<string> {
+		return this.channelsService.checkChannelName(newChannelName.name);
 	}
 
 	@Post()

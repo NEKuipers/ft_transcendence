@@ -53,6 +53,19 @@ export class ChannelsService {
 		return res.data;
 	}
 
+	async checkChannelName(newChannelName: string): Promise<string> {
+		if (newChannelName.length > 22) {
+			return "too-long";
+		}
+		let allOpenChannels = await this.findAllNonDirect();
+		for (let x = 0; x < allOpenChannels.length; x++) {
+			if (allOpenChannels[x].name == newChannelName) {
+				return "taken";
+			}
+		}
+		return "ok"
+	}
+
 	async createChannel(channel: Channel): Promise<string> {
 		let channels = await this.findAll();
 		if (channels.find((existingChannel) => existingChannel.name == channel.name)) {

@@ -68,29 +68,27 @@ export default defineComponent({
 			this.showDialogue = true;
 		},
 		async saveChannel(newname: string, newpassword: string | undefined | null) {
-			
-			await fetch("/api/channels/all")
-				.then(res => res.json())
-				.then(data => {
-					for (let i = 0; i < data.length; i++) {
-						if (data[i].name == newname) {
-							alert("A channel by that name already exists.")
+			console.log(newname);
+			await fetch('/api/channels/check_channel_name', {
+					method: "POST",
+					body: JSON.stringify({"name": newname,}),
+					headers: {'Content-type': 'application/json; charset=UTF-8'}})
+					.then(res => res.text())
+					.then(data => {
+						if (data === 'taken'){
+							alert('A channel by that name already exists.')
+						} else if (data === 'too-long') {
+							alert('That channel name is too long.')
+						} else {
+							if (newpassword) {
+								this.$emit('createChannel', newname, newpassword);
+							} else {
+								this.$emit('createChannel', newname);
+							}
+							this.hideDialogue();
 						}
-					}
-				})
-			if (newname.length > 22) {
-				return alert("Channel names may not be longer than 22 characters.");
-			} else if (newpassword) {
-				if (newpassword.length < 4 ) {
-					return alert("Password is too short. Password should be between 4 and 22 characters.");
-				} else if (newpassword.length > 22) {
-					return alert("Password is too long. Password should be between 4 and 22 characters.")
-				}
-				this.$emit('createChannel', newname, newpassword)
-			} else {
-				this.$emit('createChannel', newname);
-			}
-			this.hideDialogue();
+					})
+					.catch(err => console.log(err));	
 		},
 		openChat(channel_id: number) {
 			// console.log('Opening chat', channel_id)

@@ -45,6 +45,10 @@ export class UsersService {
 	}
 
 	async changeUsername(id: number, newUsername: string) : Promise<string> {
+		if (newUsername.length > 14) {
+			return "too-long";
+		}
+		
 		let users = await this.findAll();
 		if (users.find((user) => user.username == newUsername && user.id != id)) {
 			return "taken";

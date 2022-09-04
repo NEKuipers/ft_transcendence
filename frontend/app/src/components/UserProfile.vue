@@ -3,12 +3,7 @@
 		<img class="profilePicture" v-bind:src="'/api/avatars/' + profile.avatar_id">
 		<br>
 		<section class="names">
-			<div v-if="profile.user_id == loginStatusStore.loggedInStatus?.userID">
-				<h1 class="username">{{profile.username}}</h1>
-			</div>
-			<div v-else>
-				<h1 class="username"><a v-bind:href="'/profile/' + profile.user_id">{{profile.username}}</a></h1>
-			</div>
+			<h1 class="username"><a v-bind:href="'/profile/' + profile.user_id">{{profile.username}}</a></h1>
 			<div v-if="hasBlockedYou==false">
 				<div v-if="profile.is_logged_in == true">
 					<h5 class="online">Online</h5>
@@ -26,17 +21,22 @@
 			<h5 id="blocked-you">User has blocked you</h5>
 		</section>
 		<div v-if="profile.user_id == loginStatusStore.loggedInStatus?.userID">
-			<SmallButton class="user-btn" text="Change avatar" @click="changeAvatar"/>
-			<SmallButton class="user-btn" text="Change username" @click="changeUsername"/>
-			<DialogueBox :type="boxType" :show="showDialogue" 
-				@close-dialogue="hideDialogue" 
-				@new-name="saveUsername"
-				@new-avatar="saveAvatar"/>
-			<br>
-			<div v-if="loginStatusStore.loggedInStatus && !loginStatusStore.loggedInStatus.TFAEnabled && inMyProfile == true">
-				<router-link to="/tfa">
-					<SmallButton class="user-btn" text="Setup two-factor authentication"/>
-				</router-link>
+			<div v-if="inMyProfile == true">
+				<SmallButton class="user-btn" text="Change avatar" @click="changeAvatar"/>
+				<SmallButton class="user-btn" text="Change username" @click="changeUsername"/>
+				<DialogueBox :type="boxType" :show="showDialogue" 
+					@close-dialogue="hideDialogue" 
+					@new-name="saveUsername"
+					@new-avatar="saveAvatar"/>
+				<br>
+				<div v-if="loginStatusStore.loggedInStatus && !loginStatusStore.loggedInStatus.TFAEnabled">
+					<router-link to="/tfa">
+						<SmallButton class="user-btn" text="Setup two-factor authentication"/>
+					</router-link>
+				</div>
+			</div>
+			<div v-else>
+				<SmallButton class="user-btn" text="Go to my profile" @click="goToMyProfile"></SmallButton>
 			</div>
 		</div>
 		<div v-if="profile.user_id != loginStatusStore.loggedInStatus?.userID && hasBlockedYou==false">
@@ -102,27 +102,25 @@ export default defineComponent({
 		hideDialogue() {
 			this.showDialogue = false;
 		},
+		goToMyProfile() {
+			this.$router.push('/myprofile');
+		},
 		async saveUsername(newname: string) {
-			if (newname.length > 14) {
-				return alert ('Username too long.');
-			}
 			const id = this.loginStatusStore.loggedInStatus?.userID
 			if (id != undefined) {
 				await fetch('/api/users/' + id, {
 					method: "PATCH",
-					body: JSON.stringify({
-						"username": newname,
-					}),
-					headers: {
-						'Content-type': 'application/json; charset=UTF-8'
-					}
-				})
+					body: JSON.stringify({"username": newname,}),
+					headers: {'Content-type': 'application/json; charset=UTF-8'}})
 					.then(res => res.text())
 					.then(data => {
-						if (data === 'taken')
+						if (data === 'taken'){
 							alert('That username is already taken.')
-						else
+						} else if (data === 'too-long') {
+							alert('That username is too long.')
+						} else {
 							this.hideDialogue();
+						}
 					})
 					.catch(err => console.log(err));
 				this.updateProfileData(this.user as number);
