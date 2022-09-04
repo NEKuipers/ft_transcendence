@@ -63,6 +63,7 @@ export default defineComponent({
 				.catch(err => console.log(err));
 			this.updateFriendRequests(this.user as number);
 			this.updateFriendRequests(this.user as number);
+			this.$emit('acceptRequest');
 
 		},
 		async declineRequest(from_user_id: number) {
@@ -87,6 +88,7 @@ export default defineComponent({
 				.catch(err =>  console.log(err));
 		}
 	},
+	emits: ['acceptRequest']
 })
 </script>
 

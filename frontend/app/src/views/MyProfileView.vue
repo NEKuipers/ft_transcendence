@@ -7,8 +7,8 @@
     <br>
     <br>
     <div class="row">
-      <FriendRequests  :user="user?.id" class="column"/>
-      <FriendsList :own="true" :user="user?.id" class="column"/>
+      <FriendRequests  class="column" :user="user?.id" @acceptRequest="friendsUpdater"/>
+      <FriendsList class="column" :own="true" :user="user?.id" :key="newFriendKey"/>
       <div class="column">
         <BlockedUsers :user="user?.id" />
       </div>
@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 import  UserProfile from '../components/UserProfile.vue';
 import AchievementsList from '../components/AchievementsList.vue';
 import { loginStatusStore } from '../stores/profileData';
@@ -38,11 +38,15 @@ export default defineComponent({
 				.then(res => res.json())
 				.then(data => this.user = data)
 				.catch(err => console.log(err));
+		},
+		friendsUpdater() {
+			this.newFriendKey += 1;
 		}
 	},
 	data () {
 		return {
 			user: null as any,
+			newFriendKey: 0,
 		}
 	},
 	async mounted() {
