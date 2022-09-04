@@ -44,7 +44,9 @@
 				<SmallButton class="user-btn" text="Unblock User" @click="unblockUser"></SmallButton>
 			</div>
 			<div v-else>
-				<SmallButton class="user-btn" text="Add Friend" @click="addFriend"></SmallButton>
+				<div v-if="this.isFriend == 2"><h4 id="friendstatus">Friend</h4></div>
+				<div v-else-if="this.isFriend == 0"><SmallButton class="user-btn" id="request-sent-btn" text="Request sent"></SmallButton></div>
+				<div v-else><SmallButton class="user-btn" text="Add Friend" @click="addFriend"></SmallButton></div>
 				<SmallButton class="user-btn" text="Block User" @click="blockUser"></SmallButton>
 			</div>
 		</div>
@@ -62,7 +64,7 @@ export default defineComponent({
 	props: {
 		user: Number,
 		inMyProfile: Boolean,
-		isFriend: Boolean,
+		inDM: Boolean,
 	},
 	data () {
 		return {
@@ -71,11 +73,9 @@ export default defineComponent({
 			boxType: "",
 			hasBlockedYou: false,
 			youHaveBlocked: false,
+			isFriend: -1,
 			profile: null as null | any,
 		}
-	},
-	mounted() {
-		console.log(this.user);
 	},
 	components: {
 		SmallButton,
@@ -85,10 +85,10 @@ export default defineComponent({
         user: {	// Once the user propery has changed
             handler(id) {	// Call this function, argument is the new value user got set to
                 if (!id) { return; }	// If we don't have a id we don't want to update
-
 				this.updateProfileData(id);
 				this.updateHasBlockedYou(this.loginStatusStore.loggedInStatus?.userID as number, this.user as number);
 				this.updateBlockedByYou(this.loginStatusStore.loggedInStatus?.userID as number, this.user as number);
+				this.updateIsFriend(this.loginStatusStore.loggedInStatus?.userID as number, this.user as number);
 			},
 			immediate: true	// But also call the function once on mount
 		},
@@ -159,7 +159,9 @@ export default defineComponent({
 										to_user_id: this.user})};
 			fetch('/api/friends', requestOptions)
 				.then(res => console.log(res.status))
-				.catch(err => console.log(err));			
+				.catch(err => console.log(err));
+				await this.updateIsFriend(this.loginStatusStore.loggedInStatus?.userID as number, this.user as number)
+				await this.updateIsFriend(this.loginStatusStore.loggedInStatus?.userID as number, this.user as number)
 		},
 		async blockUser() {
 			const your_id = this.loginStatusStore.loggedInStatus?.userID;
@@ -190,6 +192,13 @@ export default defineComponent({
 				.catch(err => console.log(err));
 			this.updateBlockedByYou(this.loginStatusStore.loggedInStatus?.userID as number, this.user as number)
 			this.updateBlockedByYou(this.loginStatusStore.loggedInStatus?.userID as number, this.user as number)
+		},
+
+		async updateIsFriend(your_id: number, other_id: number) {
+			await fetch(`/api/friends/is_friend/${your_id}&${other_id}`)
+				.then(res => res.json())
+				.then(data => this.isFriend = data)
+				.catch(err => console.log('Error in updateIsFriend: ' + err));
 		},
 
 		async updateBlockedByYou(your_id: number, other_id: number) {
@@ -224,6 +233,13 @@ export default defineComponent({
 	display: inline-block	;
 }
 
+#friendstatus {
+	padding-top: 5px;
+	margin-bottom:0px;
+	color: #42b983;
+	text-decoration: bold;
+}
+
 .names {
   margin-top: 0px;
 }
@@ -253,6 +269,11 @@ a:link{
 
 a:visited {
   color: #2c3e50;
+}
+
+#request-sent {
+	background: #42b983;
+	color:#fff;
 }
 
 .game-stats {

@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { Friend, FriendRequest, FriendTable } from './friends.interface';
+import { Friend, FriendRequest, FriendTable, friend_status } from './friends.interface';
 import axios from 'axios';
 import { time } from 'console';
 import * as moment from 'moment';
+import { NONAME } from 'dns';
 
 
 @Injectable()
@@ -40,6 +41,16 @@ export class FriendsService {
 					reject(error);
 				});
 		});
+	}
+
+	async isFriend(your_id: number, other_id: number) : Promise<number> {
+		const res = await axios.get(`http://localhost:${process.env.PGREST_PORT}/friends?from_user_id=eq.${your_id}&to_user_id=eq.${other_id}`);
+
+		if (res.data.length == 0)
+			return -1;
+		if (res.data[0].status == 'accepted')
+			return 2;
+		return 1;
 	}
 
 	async createFriend(friend: FriendTable): Promise<string> {

@@ -65,7 +65,7 @@ export default defineComponent({
 				to_user_id: to_user_id}) 
 			};
 			fetch('/api/friends', requestOptions)
-				.then(response => console.log(response.status))
+				.then(response => response)
 				.catch(err => console.log(err));
 			this.updateFriendList(this.user as number);
 			this.updateFriendList(this.user as number);

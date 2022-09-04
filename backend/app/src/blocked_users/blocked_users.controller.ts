@@ -11,7 +11,6 @@ export class BlockedUsersController {
 		return this.blockedUsersService.findAllForUser(id);
 	}
 
-
 	@Get('have_you_blocked_them/:your_id&:other_id')
 	async haveYouBlockedUser(@Param('your_id') your_id: number, @Param('other_id') other_id: number) : Promise<boolean> {
 		return this.blockedUsersService.haveYouBlockedUser(your_id, other_id);

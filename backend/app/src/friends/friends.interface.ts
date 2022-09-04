@@ -17,10 +17,11 @@ export interface FriendRequest {
 }
 
 //This is for POST, DELETE and PATCH requests only, this is a one on one representation of how the data is stored in the DB table
-enum friend_status {
+export enum friend_status {
 	sent,
 	declined,
-	accepted
+	accepted,
+	none
 }
 
 export interface FriendTable {
