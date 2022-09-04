@@ -30,7 +30,7 @@ export class LoginController {
 			res.redirect(`${process.env.HOST_URL}/tfa`)	// Ya gotta login here too!
 		} else {
 			if (req.user.firstLogin) {
-				res.redirect(`${process.env.HOST_URL}/setup_account`)
+				res.redirect(`${process.env.HOST_URL}/setup-account`)
 			} else {
 				res.redirect(`${process.env.HOST_URL}/`)
 			}
