@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div class="row">
-      <UserProfile class="top-column" :user="user?.id"></UserProfile>
+    <div class="row"> 
+      <UserProfile class="top-column" :inMyProfile="true" :user="user?.id"></UserProfile>
       <AchievementsList :user="user?.id" class="top-column"/>
     </div> 
     <br>
@@ -14,7 +14,7 @@
       </div>
     </div>
     <div class="matchHistory">
-      <MatchHistory :user="user?.id"/>	<!-- Show the match history of the user with the id "user.id"-->
+      <MatchHistory :user="user?.id"/>
     </div>
   </div>
 </template>

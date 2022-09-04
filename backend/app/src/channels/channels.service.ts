@@ -7,7 +7,7 @@ import * as bcrypt from 'bcrypt'
 @Injectable()
 export class ChannelsService {
 	async findAll(): Promise<Channel[]> {
-		let res = await axios.get(`http://localhost:${process.env.PGREST_PORT}/channels?type=neq.direct`);
+		let res = await axios.get(`http://localhost:${process.env.PGREST_PORT}/channels?type=neq.direct&is_closed=eq.false`);
 		return res.data;
 	}
 

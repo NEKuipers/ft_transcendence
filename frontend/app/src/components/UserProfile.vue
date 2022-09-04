@@ -33,7 +33,7 @@
 				@new-name="saveUsername"
 				@new-avatar="saveAvatar"/>
 			<br>
-			<div v-if="loginStatusStore.loggedInStatus && !loginStatusStore.loggedInStatus.TFAEnabled">
+			<div v-if="loginStatusStore.loggedInStatus && !loginStatusStore.loggedInStatus.TFAEnabled && inMyProfile == true">
 				<router-link to="/tfa">
 					<SmallButton class="user-btn" text="Setup two-factor authentication"/>
 				</router-link>
@@ -44,10 +44,6 @@
 				<SmallButton class="user-btn" text="Unblock User" @click="unblockUser"></SmallButton>
 			</div>
 			<div v-else>
-				<SmallButton class="user-btn" text="Message" @click="directMessage"></SmallButton>
-				<SmallButton class="user-btn" text="Invite to game" @click="inviteToGame"></SmallButton>
-				<br>
-				<br>
 				<SmallButton class="user-btn" text="Add Friend" @click="addFriend"></SmallButton>
 				<SmallButton class="user-btn" text="Block User" @click="blockUser"></SmallButton>
 			</div>
@@ -65,6 +61,7 @@ export default defineComponent({
 	name: 'UserProfile',
 	props: {
 		user: Number,
+		inMyProfile: Boolean,
 	},
 	data () {
 		return {
@@ -101,12 +98,6 @@ export default defineComponent({
 		async changeUsername() {
 			this.boxType = "namechange";
 			this.showDialogue = true;
-		},
-		directMessage() {
-			console.log('direct message');
-		},
-		inviteToGame() {
-			console.log('invite to game');
 		},
 		hideDialogue() {
 			this.showDialogue = false;

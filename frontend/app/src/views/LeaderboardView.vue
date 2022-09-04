@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import  ListedUser from '../components/ListedUser.vue';
+import  ListedUser from '../components/LeaderboardListedUser.vue';
 import { User } from '../types/UserType'
 import { Profile } from '../types/ProfileType'
 
