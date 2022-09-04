@@ -44,8 +44,8 @@
 				<SmallButton class="user-btn" text="Unblock User" @click="unblockUser"></SmallButton>
 			</div>
 			<div v-else>
-				<div v-if="this.isFriend == 2"><h4 id="friendstatus">Friend</h4></div>
-				<div v-else-if="this.isFriend == 0"><SmallButton class="user-btn" color="42b983" id="request-sent-btn" text="Request sent"></SmallButton></div>
+				<div v-if="isFriend == 2"><h4 id="friendstatus">Friend</h4></div>
+				<div v-else-if="isFriend == 0"><SmallButton class="user-btn" color="42b983" id="request-sent-btn" text="Request sent"></SmallButton></div>
 				<div v-else><SmallButton class="user-btn" text="Add Friend" @click="addFriend"></SmallButton></div>
 				<SmallButton class="user-btn" text="Block User" @click="blockUser"></SmallButton>
 			</div>

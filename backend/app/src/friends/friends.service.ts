@@ -45,12 +45,11 @@ export class FriendsService {
 
 	async isFriend(your_id: number, other_id: number) : Promise<number> {
 		const res = await axios.get(`http://localhost:${process.env.PGREST_PORT}/friends?from_user_id=eq.${your_id}&to_user_id=eq.${other_id}`);
-		console.log(res.data);
 		if (res.data.length == 0)
 			return -1;
-		if (res.data[0].status == 'accepted')
+		if (res.data[res.data.length - 1].status == 'accepted')
 			return 2;
-		if (res.data[0].status == 'send')
+		if (res.data[res.data.length - 1].status == 'send')
 			return 0;
 		return 1;
 	}
@@ -68,8 +67,8 @@ export class FriendsService {
 		axios.patch(`http://localhost:${process.env.PGREST_PORT}/friends?from_user_id=eq.${friend.from_user_id}&to_user_id=eq.${friend.to_user_id}`, {
 			status: "accepted",
 			response_time: moment().format('YYYY-MM-DD HH:mm:ss')})
-				.then(res => res)
-				.catch(err => console.log(err));
+			.then(res => res)
+			.catch(err => console.log(err));
 		axios.post(`http://localhost:${process.env.PGREST_PORT}/friends`, {
 			from_user_id: friend.to_user_id,
 			to_user_id: friend.from_user_id,
