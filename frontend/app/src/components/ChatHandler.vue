@@ -34,7 +34,7 @@ export default defineComponent({
 	},
 
 	emits: {
-		"serverMessage": (_channel_id: number, _user: number, _message: string) => { return true },
+		"serverMessage": (_channel_id: number, _user: number, _username: string, _message: string) => { return true },
 		"leave": (_channel_id: number) => { return true},
 		"join": (_channel_id: number, _channel_name: string) => { return true },
 		"clearData": () => { return true },
@@ -65,10 +65,10 @@ export default defineComponent({
 				console.log(`Disconnected from chat server: ${reason}: ${description}`)
 			});
 
-			socket.on("server-message", (channel_id, user, message) => {	// This will get called whenever the server emits a message on channel "server-message"
+			socket.on("server-message", (channel_id, user, username, message) => {	// This will get called whenever the server emits a message on channel "server-message"
 				// console.log(`Received message in channel: ${channel_id} from ${user}: ${message}`)
 
-				this.$emit("serverMessage", channel_id, user, message);
+				this.$emit("serverMessage", channel_id, user, username, message);
 			})
 
 			socket.on("join", (channel_id, channel_name) => {

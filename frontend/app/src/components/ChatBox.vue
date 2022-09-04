@@ -41,6 +41,9 @@ export default defineComponent({
         channel_id: {
             type: Number
 		},
+		dmOpen : {
+			type: Boolean
+		},
 		messages: null as any // Maaaaybe could import interfaces and stuff
 		// channel_name: String // TODO
     },
@@ -48,7 +51,8 @@ export default defineComponent({
         return {
             loginStatusStore: loginStatusStore(),
             channel: null as any,
-            text: ''
+            text: '',
+			user: null as any,
         }
     },
     watch: {
@@ -84,6 +88,12 @@ export default defineComponent({
 			
 			// console.log(this.messages)
         },
+		async loadUserData(id: number) {
+			fetch('/api/users/' + id)
+				.then(res => res.json())
+				.then(data => this.user = data)
+				.catch(err => console.log(err));
+		},
     },
 	emits: ['sentMsg']
 })

@@ -14,17 +14,17 @@
 						@passwordEntered="verifyPassword" /> -->
 				</div>
 				<div id="friends">
-					<ChatFriendsList :user="loginStatusStore.loggedInStatus?.userID" />
+					<ChatFriendsList v-if="loginStatusStore" :user="loginStatusStore.loggedInStatus?.userID" @openDM="openDM"/>
 				</div>
 			</div>
 			<div class="column" id="center_column">
 				<div>
-					<ChatBox :channel_id="currentChannel" :messages="messages[currentChannel]" @sentMsg="sendMsg"/>
+					<ChatBox :channel_id="currentChannel" :dm="dmOpen" :messages="messages[currentChannel]" @sentMsg="sendMsg"/>
 				</div>
 			</div>
 			<div class="column" id="channel-overview">
 				Channel overview
-				<ChannelOverview :channel_id="currentChannel" @banUser="banUser" @unbanUser="unbanUser" @muteUser="muteUser" @unmuteUser="unmuteUser" @makeUserAdmin="makeUserAdmin" @removeUserAdmin="removeUserAdmin" @setPassword="setPassword"/>
+				<ChannelOverview :channel_id="currentChannel" :dm="dmOpen" @banUser="banUser" @unbanUser="unbanUser" @muteUser="muteUser" @unmuteUser="unmuteUser" @makeUserAdmin="makeUserAdmin" @removeUserAdmin="removeUserAdmin" @setPassword="setPassword"/>
 			</div>
 		</div>
 
@@ -54,7 +54,8 @@ export default defineComponent({
 			messages: new Array<any>(),
 			myChannels: new Array<any>(),
 			boxType: "",
-			leaveChannelKey: 0
+			leaveChannelKey: 0,
+			dmOpen: false
 		}
 	},
 	methods: {
@@ -66,6 +67,14 @@ export default defineComponent({
 		},
 		openChat(channel_id: number) {
 			this.currentChannel = channel_id
+		},
+		openDM (user_id_1: number, user_id_2: number) {
+			/*
+			 *  TODO: Check if a channel of type=eq.direct with these two users as participants exists.
+			 *  If not, create it and open it. (since channel names cannot be duplicate, generate a random string? we will not display it anyway)
+			 *  If it does exist, open it.
+			 */
+			this.dmOpen = true
 		},
 		async requestPassword(): Promise<string> {
 			return new Promise((resolve, reject) => {
@@ -190,7 +199,7 @@ export default defineComponent({
 	flex-direction:column;
 	float:left;
 	box-sizing: border-box;
-	height: 850px;
+	min-height: 1000px;
 }
 
 #left-column {

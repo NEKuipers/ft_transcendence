@@ -8,11 +8,9 @@ export type User = {
 	readonly id: number;
 	userName: string;
 	status: user_status;
+	avatar_id: number;
+	intra_id: number;
 	oauth_refresh_token: string;
-	oauth_token_expiration_timestamp: string; //TODO ask jesse if this is the correct format -> TIMESTAMP '2004-10-19 10:23:54'
-	gamesPlayed: number; //TODO remove this later on
-	gamesWon: number; //TODO remove this later on
-	gamesLost: number; //TODO remove this later on
-	isLoggedIn: boolean;
-	leaderboardPosition: number;
+	oauth_token_expiration_time: string;
+	is_logged_in: boolean;
 } 
