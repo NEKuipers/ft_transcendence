@@ -45,11 +45,13 @@ export class FriendsService {
 
 	async isFriend(your_id: number, other_id: number) : Promise<number> {
 		const res = await axios.get(`http://localhost:${process.env.PGREST_PORT}/friends?from_user_id=eq.${your_id}&to_user_id=eq.${other_id}`);
-
+		console.log(res.data);
 		if (res.data.length == 0)
 			return -1;
 		if (res.data[0].status == 'accepted')
 			return 2;
+		if (res.data[0].status == 'send')
+			return 0;
 		return 1;
 	}
 

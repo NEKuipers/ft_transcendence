@@ -45,7 +45,7 @@
 			</div>
 			<div v-else>
 				<div v-if="this.isFriend == 2"><h4 id="friendstatus">Friend</h4></div>
-				<div v-else-if="this.isFriend == 0"><SmallButton class="user-btn" id="request-sent-btn" text="Request sent"></SmallButton></div>
+				<div v-else-if="this.isFriend == 0"><SmallButton class="user-btn" color="42b983" id="request-sent-btn" text="Request sent"></SmallButton></div>
 				<div v-else><SmallButton class="user-btn" text="Add Friend" @click="addFriend"></SmallButton></div>
 				<SmallButton class="user-btn" text="Block User" @click="blockUser"></SmallButton>
 			</div>
@@ -158,10 +158,8 @@ export default defineComponent({
 				body: JSON.stringify({	from_user_id: this.loginStatusStore.loggedInStatus?.userID,
 										to_user_id: this.user})};
 			fetch('/api/friends', requestOptions)
-				.then(res => console.log(res.status))
+				.then(res => this.updateIsFriend(this.loginStatusStore.loggedInStatus?.userID as number, this.user as number))
 				.catch(err => console.log(err));
-				await this.updateIsFriend(this.loginStatusStore.loggedInStatus?.userID as number, this.user as number)
-				await this.updateIsFriend(this.loginStatusStore.loggedInStatus?.userID as number, this.user as number)
 		},
 		async blockUser() {
 			const your_id = this.loginStatusStore.loggedInStatus?.userID;
@@ -174,10 +172,8 @@ export default defineComponent({
 										blocked_user_id: other_id}) 
 			};
 			fetch('/api/blocked_users', requestOptions)
-				.then(response => console.log(response.status))
+				.then(response => this.updateBlockedByYou(your_id as number, other_id as number))
 				.catch(err => console.log(err));
-			this.updateBlockedByYou(your_id as number, other_id as number)
-			this.updateBlockedByYou(your_id as number, other_id as number)
 		},
 		
 		async unblockUser() {
@@ -188,16 +184,18 @@ export default defineComponent({
 										blocked_user_id: this.user}) 
 			};
 			fetch('/api/blocked_users', requestOptions)
-				.then(response => console.log(response.status))
+				.then(response => this.updateBlockedByYou(this.loginStatusStore.loggedInStatus?.userID as number, this.user as number))
 				.catch(err => console.log(err));
-			this.updateBlockedByYou(this.loginStatusStore.loggedInStatus?.userID as number, this.user as number)
-			this.updateBlockedByYou(this.loginStatusStore.loggedInStatus?.userID as number, this.user as number)
 		},
 
 		async updateIsFriend(your_id: number, other_id: number) {
 			await fetch(`/api/friends/is_friend/${your_id}&${other_id}`)
 				.then(res => res.json())
-				.then(data => this.isFriend = data)
+				.then(data => 
+				{
+				this.isFriend = data
+				console.log(`${your_id}&${other_id} status is ${data}`)
+				})
 				.catch(err => console.log('Error in updateIsFriend: ' + err));
 		},
 

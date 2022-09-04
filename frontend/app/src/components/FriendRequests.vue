@@ -59,12 +59,11 @@ export default defineComponent({
 				status: "accepted"}) 
 			};
 			fetch('/api/friends/accept', requestOptions)
-				.then(response => response)
+				.then(response => {
+					this.updateFriendRequests(this.user as number); 
+					this.$emit('acceptRequest')
+				})
 				.catch(err => console.log(err));
-			this.updateFriendRequests(this.user as number);
-			this.updateFriendRequests(this.user as number);
-			this.$emit('acceptRequest');
-
 		},
 		async declineRequest(from_user_id: number) {
 			const requestOptions = {
@@ -75,11 +74,8 @@ export default defineComponent({
 				status: "declined"}) 
 			};
 			fetch('/api/friends/decline', requestOptions)
-				.then(response => response)
+				.then(response => this.updateFriendRequests(this.user as number))
 				.catch(err => console.log(err));
-			this.updateFriendRequests(this.user as number);
-			this.updateFriendRequests(this.user as number); //jasper i'm truly sorry about this
-
 		},
 		async updateFriendRequests(user_id: number) {
 			fetch('/api/friends/requests/' + user_id)
