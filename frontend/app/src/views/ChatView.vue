@@ -8,7 +8,7 @@
 					<MyChatChannels @open-chat="openChat" @leaveChannel="leaveChannel" @createChannel="createChannel" :user="loginStatusStore.loggedInStatus?.userID" :myChannels="myChannels"/>
 				</div>
 				<div class="channels">
-					<OtherChatChannels @joinChannel="joinChannel" :user="loginStatusStore.loggedInStatus?.userID"/>
+					<OtherChatChannels v-if="loginStatusStore" :key="leaveChannelKey" @joinChannel="joinChannel" :user="loginStatusStore.loggedInStatus?.userID"/>
 					<!-- <dialogueBox id="promptPassword" :type="boxType" 
 						:show="showDialogue" @close-dialogue="hideDialogue" 
 						@passwordEntered="verifyPassword" /> -->
@@ -53,7 +53,8 @@ export default defineComponent({
 			chatHandler: undefined as unknown as typeof ChatHandler,
 			messages: new Array<any>(),
 			myChannels: new Array<any>(),
-			boxType: ""
+			boxType: "",
+			leaveChannelKey: 0
 		}
 	},
 	methods: {
@@ -93,7 +94,7 @@ export default defineComponent({
 		},
 		onLeave(channel_id: number) {
 			console.log(`I am no longer in channel ${channel_id}`)
-
+			this.leaveChannelKey += 1;
 			this.myChannels = this.myChannels.filter((elem: any) => elem.id != channel_id);
 			delete this.messages[channel_id];
 		},

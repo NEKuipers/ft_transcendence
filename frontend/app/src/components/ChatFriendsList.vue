@@ -9,7 +9,6 @@
 				<section class="listed-friend">
 					<div id="name-image">
 						<img class="profilePictureThumbnail" width="50" height="50" v-bind:src="'/api/avatars/' + friend.friend_avatar_id"/> 
-						<!-- src="findFriendAvatar(friend.to_user_id)" -->
 						<a class="friend" v-bind:href="'/profile/' + friend.to_user_id">{{friend.to_username}}</a>
 					</div>
 					<div id="friend-buttons">
@@ -58,20 +57,10 @@ export default defineComponent({
 		SmallButton,
 	},
 	methods: {
-		async unfriend(to_user_id: number) { 
-			const requestOptions = {
-				method: "DELETE",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({from_user_id: this.user,
-				to_user_id: to_user_id}) 
-			};
-			fetch('/api/friends', requestOptions)
-				.then(response => console.log(response.status))
-				.catch(err => console.log(err));
-			this.updateFriendList(this.user as number);
-			this.updateFriendList(this.user as number);
-		},
 		async updateFriendList(user_id: number) {
+			if (user_id == undefined) {
+				return;
+			}
 			fetch('/api/friends/' + user_id)
 				.then(res => res.json())
 				.then(data => this.friends = data)

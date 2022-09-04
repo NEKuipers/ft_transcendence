@@ -4,7 +4,7 @@
 			<h5>Your Channels</h5>
 		</div>
 		<div v-if="!myChannels">
-			<h5>Channels failed to load</h5>
+			<h5 class="no-channels-msg">Channels failed to load</h5>
 		</div>
 		<div id="channels" v-else-if="myChannels?.length">
 			<ul class="listed-channel" v-for="channel in myChannels" :key="channel.id">
@@ -16,7 +16,7 @@
 			</ul>
 		</div>
 		<div v-else>
-			<h5>You are not in any channels yet</h5>
+			<h5 class="no-channels-msg">You are not in any channels yet</h5>
 		</div>
 		<div id="createchannel">
 			<SmallButton id="createButton" text="Create new channel" @click="createChannel"/>
@@ -153,6 +153,10 @@ export default defineComponent({
 	margin-left: 40px;
 	margin-bottom: 5px;
 	max-width: 200px;
+}
+
+.no-channels-msg {
+	margin-left: 40px;
 }
 
 </style>
