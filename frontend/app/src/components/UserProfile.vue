@@ -191,11 +191,7 @@ export default defineComponent({
 		async updateIsFriend(your_id: number, other_id: number) {
 			await fetch(`/api/friends/is_friend/${your_id}&${other_id}`)
 				.then(res => res.json())
-				.then(data => 
-				{
-				this.isFriend = data
-				console.log(`${your_id}&${other_id} status is ${data}`)
-				})
+				.then(data => this.isFriend = data)
 				.catch(err => console.log('Error in updateIsFriend: ' + err));
 		},
 
@@ -232,7 +228,7 @@ export default defineComponent({
 }
 
 #friendstatus {
-	padding-top: 5px;
+	margin-top: 14px;
 	margin-bottom:0px;
 	color: #42b983;
 	text-decoration: bold;

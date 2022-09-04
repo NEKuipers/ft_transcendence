@@ -35,7 +35,16 @@ export default defineComponent({
 	data () {
 		return {
 			friendRequests: null as null | Array<any>,
+			interval: 0,
 		}
+	},
+	mounted () {
+		this.interval = setInterval(() => {
+			this.updateFriendRequests(this.user as number);
+		}, 2000);
+	},
+	unmounted() {
+		clearInterval(this.interval);
 	},
 	watch: {
 		user: {
