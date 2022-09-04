@@ -61,10 +61,9 @@ export default defineComponent({
 			this.showDialogue = false;
 		},
 		requestPassword(channel_id: number, channel_name: string) {
-			this.showDialogue = true
-			this.channel_id = channel_id
-			this.channel_name = channel_name
-			// console.log("Requesting password for channel", this.channel_id)
+			this.showDialogue = true;
+			this.channel_id = channel_id;
+			this.channel_name = channel_name;
 		},
 		verifyPassword(verified: boolean, password:string) {
 			if (verified) {
