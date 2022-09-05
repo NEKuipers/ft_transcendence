@@ -17,8 +17,10 @@
 		<div class="container">
 			<form @submit.prevent="onUpload">
 				<label for="file">Select a Profile Picture to upload</label>
-				<input type="file" ref="file" @change="onFileSelected">
-				<button>Upload</button>
+				<br><br>
+				<input id="choose-file" type="file" ref="file" @change="onFileSelected">
+				<br>
+				<button id="upload" >Upload</button>
 			</form>
 		</div>
 		<div>
@@ -164,6 +166,14 @@ export default defineComponent({
 	background-color: white;
 	color: #2c3e50;
 	border: solid #2c3e50 1px;
+}
+
+#choose-file {
+	padding-left: 170px;
+}
+
+#upload {
+	margin-top: 15px;
 }
 
 </style>
