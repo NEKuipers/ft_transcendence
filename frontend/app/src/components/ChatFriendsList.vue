@@ -138,7 +138,7 @@ a:hover {
 	margin-left: -20px;
 	margin-right: 40px;
 	min-width: 300px;
-	max-width: 450px;
+	max-width: 370px;
 	max-height: 40px;
 	margin-top: 0px;
 	margin-bottom: 0px;

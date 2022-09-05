@@ -1,7 +1,5 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-// import { AppController } from './app.controller';
-// import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { MatchesModule } from './matches/matches.module';
 import { MessagesModule } from './messages/messages.module';
@@ -25,7 +23,5 @@ import { ProfileModule } from './profile/profile.module';
   UsersModule, MatchesModule, MessagesModule,
   ParticipantsModule, TwoFactorAuthModule, ChannelsModule, UserAchievementsModule, AchievementsModule, BlockedUsersModule, 
   AvatarsModule, FriendsModule, LoginModule, ProfileModule],
-  // controllers: [AppController],
-  // providers: [AppService]
 })
 export class AppModule {}

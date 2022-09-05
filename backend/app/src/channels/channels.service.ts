@@ -20,7 +20,7 @@ export class ChannelsService {
 		let res = await axios.get(`http://localhost:${process.env.PGREST_PORT}/participants?participant_id=eq.${user_id}`);
 		let channels: Channel[] = [];
 		for (let i = 0; i < res.data.length; i++) {
-			let temp = await axios.get(`http://localhost:${process.env.PGREST_PORT}/channels?id=eq.${res.data[i].channel_id}`);
+			let temp = await axios.get(`http://localhost:${process.env.PGREST_PORT}/channels?id=eq.${res.data[i].channel_id}&type=neq.direct&is_closed=eq.false`);
 			channels.push(temp.data[0]);
 		}
 		return channels;

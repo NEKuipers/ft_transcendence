@@ -99,7 +99,7 @@ export default defineComponent({
 
 <style scoped>
 .friend {
-	font-size: 26pt;
+	font-size: 22pt;
 	font-weight: bold;
 	text-decoration: none;
 	padding-left: 30px;
