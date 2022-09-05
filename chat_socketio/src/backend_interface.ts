@@ -72,6 +72,13 @@ async function join_channel(channel: JoinedChannelStatus, userId: number) {
 }
 async function leave_channel(channelId: number, userId: number) {
 	// TODO: Error checking
+
+	let channel = await axios.get(`http://localhost:${DATABASE_PORT}/channels?id=${channelId}`);
+	if (channel.data.owner_id == userId) {
+		await axios.patch(`http://localhost:${DATABASE_PORT}/channels?id=eq.${channelId}`, {
+			is_closed: true,
+		});
+	}
 	await axios.delete(`http://localhost:${DATABASE_PORT}/participants?channel_id=eq.${channelId}&participant_id=eq.${userId}`);
 }
 
@@ -131,8 +138,9 @@ async function add_message_to_channel(channelId: number, userId: number, message
 
 async function get_joined_channels(userId: number): Promise<JoinedChannelStatus[]> {
 	let data = await axios.get(`http://localhost:${DATABASE_PORT}/participants?participant_id=eq.${userId}`);
-	// TODO: Error checking
-	
+	// TODO: This needs to be modified. You should make a request to /channels with these flags;
+	// ?is_closed=eq.false&type=neq.direct
+	// and remove each channel in JoinedChannelStatus[] with a channel_id not in the response.
 	return data.data;
 }
 

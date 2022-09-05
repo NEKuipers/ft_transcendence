@@ -34,6 +34,7 @@ export default defineComponent({
 #ranking {
 	float: left;
 	margin-left:10px;
+	min-width: 22px;
 }
 
 .medal {
@@ -61,7 +62,9 @@ export default defineComponent({
 }
 
 .game-stats {
+	border: solid 2px;
+	padding-left:50px;
+	padding-right: 50px;
 	font-size: 16px;
-	float:center;
 }
 </style>

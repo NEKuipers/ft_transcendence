@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent } from 'vue';
 import  UserProfile from '../components/UserProfile.vue';
 import AchievementsList from '../components/AchievementsList.vue';
 import { loginStatusStore } from '../stores/profileData';
@@ -87,13 +87,11 @@ export default defineComponent({
 }
 
 .row {
-  
+	min-width: 1100px;
 	border:1px solid #ccc;
 }
 
-.user-profile{
-	margin-top: 40px;
-}
+
 .row:after {
   content:"";
   display: table;

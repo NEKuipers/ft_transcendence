@@ -11,13 +11,6 @@
                 <p> {{ achievement.name }}: {{ achievement.description }}</p>
             </div>
         </ul>
-        <!-- <ul>
-            <img class="test" src="../assets/scudetto.png">
-            <div class="tester">
-                <h4>Extra Champion: win 10 games in a row</h4>
-            </div>
-        </ul> -->
-       
     </div>
 </template>
 
@@ -28,7 +21,7 @@ export default defineComponent ({
     name: 'AchievementsList',
     props: {
 		user: {
-			type: Number //You can use this.user to make requests to the db for this user. this.user is the db user id
+			type: Number
 		},
 	},
     data() { 

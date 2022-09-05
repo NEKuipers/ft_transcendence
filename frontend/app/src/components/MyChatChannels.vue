@@ -16,7 +16,8 @@
 			</ul>
 		</div>
 		<div v-else>
-			<h5 class="no-channels-msg">You are not in any channels yet</h5>
+			<h5 class="no-channels-msg">You are not in any channels
+			</h5>
 		</div>
 		<div id="createchannel">
 			<SmallButton id="createButton" text="Create new channel" @click="createChannel"/>
@@ -142,6 +143,9 @@ export default defineComponent({
 	margin-bottom: 45px;
 	margin-top: -10px;
 }
+.no-channels-msg {
+	margin-left: 40px;
+}
 
 #createchannel {
 	float: bottom;
@@ -157,8 +161,5 @@ export default defineComponent({
 	max-width: 200px;
 }
 
-.no-channels-msg {
-	margin-left: 40px;
-}
 
 </style>
