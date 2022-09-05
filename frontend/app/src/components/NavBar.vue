@@ -76,7 +76,10 @@ nav a.router-link-exact-active {
 	font-weight: bold;
 	float:top;
 	position: absolute;
-	top: 60px;
+	top: 20px;
 	right: 30px;
+	margin-right: 30px;
+	border: 2px solid white;
+
 }
 </style>

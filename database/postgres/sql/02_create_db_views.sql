@@ -228,7 +228,7 @@ SELECT
 	summary.is_logged_in						AS is_logged_in,
 	summary.games_won	                        AS games_won,
 	summary.games_lost	                        AS games_lost,
-	DENSE_RANK() OVER (ORDER BY games_won, username DESC) AS ranking
+	DENSE_RANK() OVER (ORDER BY games_won DESC, games_lost ASC, username ASC) AS ranking
 FROM
 (
 WITH match_history
