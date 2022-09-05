@@ -1,5 +1,5 @@
 <template>
-    <div v-if="channel!=null" class="column">
+    <div v-if="channel!=null" class="chat-column">
         <div> 
             <h2>{{channel.name}}</h2>
         </div>
@@ -104,7 +104,7 @@ export default defineComponent({
   background-color: #fff;
   /* border: 1px solid #e5e5ea;
   border-radius: 0.25rem; */
-  width: 800px;
+  min-width: 600px;
   min-height: 100px;
   display: flex;
   flex-direction: column;
@@ -112,7 +112,8 @@ export default defineComponent({
   font-size: 1.25rem;
   margin: 0 auto 1rem;
   max-height: 800px;
-  max-width: 800px;
+  max-width: 1000px;
+  max-width: 90%;
   overflow: auto;
   padding: 0.5rem 1.5rem;
   /* box-sizing: border-box; */
@@ -241,6 +242,7 @@ p[class^="from-"].emoji::before {
 	width: 80%;
 	height:45px;
 	font-size: 20px;
+	max-width: 1000px;
 }
 
 /* #messages {
