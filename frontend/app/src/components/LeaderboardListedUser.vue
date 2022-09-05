@@ -45,7 +45,7 @@ export default defineComponent({
 	background-color: #f3f3f3;
 	display: flex;
 	flex-direction: row;
-	justify-content: space-between;
+	justify-content: space-between; 
 }
 
 .profilePictureThumbnail {
@@ -62,7 +62,8 @@ export default defineComponent({
 }
 
 .game-stats {
-	border: solid 2px;
+	margin: auto;
+	width: 20%;
 	padding-left:50px;
 	padding-right: 50px;
 	font-size: 16px;
