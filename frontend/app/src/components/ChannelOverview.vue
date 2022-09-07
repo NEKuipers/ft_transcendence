@@ -5,25 +5,25 @@
 			<DialogueBox id="createChannelDialogueBox" :type="boxType" :show="showPasswordDialogue" @close-dialogue="hidePasswordDialogue" @new-name="setPassword"/> -->
 		<!-- </div> -->
 		<div class="listed-participant" v-for="participant in channelParticipants" :key="participant?.id">
-			<div v-if="!hasUserBlockedYou(participant?.participant_id)">
-				<div id="participantdiv">
-					<div id="nameAndRoles">
-						<a class="participantName" v-bind:href="'/profile/' + participant.participant_id">{{participant.participant_username}}</a>
-						<div class="role" v-if="participant.participant_id === participant.channel_owner_id">
-							<p>Owner</p>
-						</div>
-						<!-- TODO these roles below don't seem to work  -->
-						<div class="role" v-else-if="participant.is_admin == true">
-							<p>Admin</p>
-						</div>
-						<div class="role" v-if="participant?.is_banned == true">
-							<p>Banned</p>
-						</div>
-						<div class="role" v-else-if="participant?.is_muted == true">
-							<p>Muted</p>
-						</div>
+			<div id="participantdiv">
+				<div id="nameAndRoles">
+					<a class="participantName" v-bind:href="'/profile/' + participant.participant_id">{{participant.participant_username}}</a>
+					<div class="role" v-if="participant.participant_id === participant.channel_owner_id">
+						<p>Owner</p>
 					</div>
-					<div v-if="participant?.participant_id != loginStatusStore.loggedInStatus?.userID">
+					<!-- TODO these roles below don't seem to work  -->
+					<div class="role" v-else-if="participant.is_admin == true">
+						<p>Admin</p>
+					</div>
+					<div class="role" v-if="participant?.is_banned == true">
+						<p>Banned</p>
+					</div>
+					<div class="role" v-else-if="participant?.is_muted == true">
+						<p>Muted</p>
+					</div>
+				</div>
+				<div v-if="participant?.participant_id != loginStatusStore.loggedInStatus?.userID">
+					<div v-if="!hasUserBlockedYou(participant?.participant_id)">
 						<SmallButton class="button" text="Invite to Game" @click="gameInvite(participant?.id)"/>
 
 						<!-- banning/muting, with restriction for admin/owner only -->
@@ -40,11 +40,10 @@
 							<SmallButton v-else class="button" text="Remove admin rights" @click="this.$emit('removeUserAdmin', this.channel_id, participant.participant_id)"/>
 						</div>
 					</div>
+					<div v-else id="blocked-you-notif">
+						User has blocked you
+					</div>
 				</div>
-			</div>
-			<div v-else>
-				<p class="participantName">{{participant.participant_username}}</p>	
-				<p id="blocked-you-notif">User has blocked you</p>
 			</div>
 		</div>
     </div>
