@@ -11,11 +11,10 @@
 					<p v-else  class="from-them">{{message.username}} : {{message.message}}</p>
 				</div>
 				<!-- TODO add username of sender -->
-				<!-- TODO if user is banned, you should only see a notification of this and no messages -->
             </div>
         </div>
         <div>
-			<!-- TODO prevent muted/banned participant from sending message -->
+			<!-- TODO prevent muted participant from sending message -->
             <form ref="TextBox" @submit="sendMsg">
                 <input id="input-box" type="text" v-model="text" placeholder="Message"/>
             </form>

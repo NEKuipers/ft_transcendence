@@ -5,7 +5,7 @@
 			<DialogueBox id="createChannelDialogueBox" :type="boxType" :show="showPasswordDialogue" @close-dialogue="hidePasswordDialogue" @new-name="setPassword"/> -->
 		<!-- </div> -->
 		<div class="listed-participant" v-for="participant in channelParticipants" :key="participant?.id">
-			<div>
+			<div v-if="!hasUserBlockedYou(participant?.participant_id)">
 				<div id="participantdiv">
 					<div id="nameAndRoles">
 						<a class="participantName" v-bind:href="'/profile/' + participant.participant_id">{{participant.participant_username}}</a>
@@ -41,6 +41,10 @@
 						</div>
 					</div>
 				</div>
+			</div>
+			<div v-else>
+				<p class="participantName">{{participant.participant_username}}</p>	
+				<p id="blocked-you-notif">User has blocked you</p>
 			</div>
 		</div>
     </div>
@@ -83,7 +87,7 @@ export default defineComponent({
 			userIsAdmin: false,
 			showPasswordDialogue: false,
 			boxType: "",
-			usersWhoYouHaveBlocked: new Array<any>(),
+			usersWhoHaveBlockedYou: new Array<any>(),
         }
     },
     watch: {
@@ -137,13 +141,21 @@ export default defineComponent({
 			this.$emit('setPassword', newPassword);
 			this.hidePasswordDialogue();
 		},
+		hasUserBlockedYou(sender_id: number): boolean {
+			for (let x = 0; x < this.usersWhoHaveBlockedYou.length; x++) {
+				if ( this.usersWhoHaveBlockedYou[x] == sender_id) {
+					return true;
+				}
+			}
+			return false;
+		}
 	},
 	async mounted() {
 		let loggedInStatus = await loginStatusStore().logIn();
 		if (loggedInStatus) {
 			await fetch('/api/blocked_users/all_who_blocked_me/' + loggedInStatus.userID)
 			.then(res => res.json())
-			.then(data => this.usersWhoYouHaveBlocked = data)
+			.then(data => this.usersWhoHaveBlockedYou = data)
 			.catch(err => console.log(err));
 		}
 	},
@@ -185,6 +197,10 @@ a:hover {
 #participantdiv {
 	display: flex;
 	flex-direction: column;
+}
+
+#blocked-you-notif {
+	font-size: 14px;
 }
 
 #nameAndRoles {
