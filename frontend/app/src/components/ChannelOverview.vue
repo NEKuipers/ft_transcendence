@@ -1,9 +1,12 @@
 <template>
     <div v-if="channel!=null" class="column">
-		<!-- <div v-if="userIsOwner"> -->
-			<!-- <SmallButton id="passwordButton" text="Set password" @click="enterNewPassword()"/>
-			<DialogueBox id="createChannelDialogueBox" :type="boxType" :show="showPasswordDialogue" @close-dialogue="hidePasswordDialogue" @new-name="setPassword"/> -->
-		<!-- </div> -->
+		<div v-if="userIsOwner">
+				<SmallButton id="passwordButton" text="Set new password" @click="enterNewPassword()"/>
+				<!-- <DialogueBox id="createChannelDialogueBox" :type="boxType" :show="showPasswordDialogue" @close-dialogue="hidePasswordDialogue" @new-name="setPassword"/> -->
+			<div v-if="channel.type == 'protected'">
+				<SmallButton id="passwordButton" text="Remove password" @click="removePassword()"/>
+			</div>
+		</div>
 		<div class="listed-participant" v-for="participant in channelParticipants" :key="participant?.id">
 			<div id="participantdiv">
 				<div id="nameAndRoles">
@@ -11,10 +14,10 @@
 					<div class="role" v-if="participant.participant_id === participant.channel_owner_id">
 						<p>Owner</p>
 					</div>
-					<!-- TODO these roles below don't seem to work  -->
 					<div class="role" v-else-if="participant.is_admin == true">
 						<p>Admin</p>
 					</div>
+					<!-- TODO these roles below don't seem to work  -->
 					<div class="role" v-if="participant?.is_banned == true">
 						<p>Banned</p>
 					</div>
@@ -127,6 +130,9 @@ export default defineComponent({
 		async enterNewPassword() {
 			this.boxType = "setPassword";
 			this.showPasswordDialogue = true;
+		},
+		removePassword() {
+			console.log('remove password');
 		},
 		hidePasswordDialogue() {
 			this.showPasswordDialogue = false;
