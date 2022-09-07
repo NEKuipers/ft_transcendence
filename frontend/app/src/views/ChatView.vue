@@ -20,12 +20,17 @@
 			<div class="column" id="center_column">
 				<div>
 					<ChatBox :key="blocksKey" :user="loginStatusStore.loggedInStatus?.userID"
-						:channel_id="currentChannel" :dm="dmOpen" :messages="messages[currentChannel]" @sentMsg="sendMsg"/>
+						:channel_id="currentChannel" :dm="dmID" :messages="messages[currentChannel]" @sentMsg="sendMsg"/>
 				</div>
 			</div>
 			<div class="column" id="channel-overview">
+				<div v-if="dmID > 0">
+					<DMUserCard :user="dmID"></DMUserCard>
+				</div>
+				<div v-else>
 				Channel overview
-				<ChannelOverview :key="blocksKey"  :channel_id="currentChannel" :dm="dmOpen" @banUser="banUser" @unbanUser="unbanUser" @muteUser="muteUser" @unmuteUser="unmuteUser" @makeUserAdmin="makeUserAdmin" @removeUserAdmin="removeUserAdmin" @setPassword="setPassword"/>
+					<ChannelOverview :key="blocksKey"  :channel_id="currentChannel" :dm="dmID" @banUser="banUser" @unbanUser="unbanUser" @muteUser="muteUser" @unmuteUser="unmuteUser" @makeUserAdmin="makeUserAdmin" @removeUserAdmin="removeUserAdmin" @setPassword="setPassword"/>
+				</div>
 			</div>
 		</div>
 
@@ -42,6 +47,7 @@ import ChatBox from '../components/ChatBox.vue'
 import ChannelOverview from "../components/ChannelOverview.vue";
 
 import ChatHandler from '../components/ChatHandler.vue';
+import DMUserCard from "../components/DMUserCard.vue";
 
 export default defineComponent({
 	name: 'ChatView',
@@ -57,7 +63,7 @@ export default defineComponent({
 			boxType: "",
 			leaveChannelKey: 0,
 			blocksKey: 0,
-			dmOpen: false,
+			dmID: -1,
 		}
 	},
 	methods: {
@@ -69,6 +75,7 @@ export default defineComponent({
 		},
 		openChat(channel_id: number) {
 			this.currentChannel = channel_id
+			this.dmID = -1;
 		},
 		openDM (user_id_1: number, user_id_2: number) {
 			/*
@@ -76,7 +83,7 @@ export default defineComponent({
 			 *  If not, create it and open it. (since channel names cannot be duplicate, generate a random string? we will not display it anyway)
 			 *  If it does exist, open it.
 			 */
-			this.dmOpen = true
+			this.dmID = user_id_2
 		},
 		async requestPassword(): Promise<string> {
 			return new Promise((resolve, reject) => {
@@ -170,13 +177,14 @@ export default defineComponent({
 		(window as any).chatHandler = this.chatHandler;
 	},
 	components: {
-		ChatFriendsList,
-		OtherChatChannels,
-		MyChatChannels,
-		ChatBox,
-		ChannelOverview,
-		ChatHandler
-	},
+    ChatFriendsList,
+    OtherChatChannels,
+    MyChatChannels,
+    ChatBox,
+    ChannelOverview,
+    ChatHandler,
+    DMUserCard
+},
 })
 </script>
 

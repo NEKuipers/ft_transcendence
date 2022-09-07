@@ -1,30 +1,33 @@
 <template>
     <div v-if="channel!=null" class="column">
-		<!-- <div v-if="userIsOwner"> -->
-			<!-- <SmallButton id="passwordButton" text="Set password" @click="enterNewPassword()"/>
-			<DialogueBox id="createChannelDialogueBox" :type="boxType" :show="showPasswordDialogue" @close-dialogue="hidePasswordDialogue" @new-name="setPassword"/> -->
-		<!-- </div> -->
+		<div v-if="userIsOwner">
+				<SmallButton id="passwordButton" text="Set new password" @click="enterNewPassword()"/>
+				<!-- <DialogueBox id="createChannelDialogueBox" :type="boxType" :show="showPasswordDialogue" @close-dialogue="hidePasswordDialogue" @new-name="setPassword"/> -->
+			<div v-if="channel.type == 'protected'">
+				<SmallButton id="passwordButton" text="Remove password" @click="removePassword()"/>
+			</div>
+		</div>
 		<div class="listed-participant" v-for="participant in channelParticipants" :key="participant?.id">
 			<div id="participantdiv">
 				<div id="nameAndRoles">
 					<a class="participantName" v-bind:href="'/profile/' + participant.participant_id">{{participant.participant_username}}</a>
+					<br>
+					<br>
 					<div class="role" v-if="participant.participant_id === participant.channel_owner_id">
 						<p>Owner</p>
 					</div>
-					<!-- TODO these roles below don't seem to work  -->
-					<div class="role" v-else-if="participant.is_admin == true">
+					<div class="role" v-else-if="participant.participant_is_admin == true">
 						<p>Admin</p>
 					</div>
-					<div class="role" v-if="participant?.is_banned == true">
-						<p>Banned</p>
+					<div class="role" v-if="participant?.participant_is_banned == true">
+						<p>(banned)</p>
 					</div>
-					<div class="role" v-else-if="participant?.is_muted == true">
-						<p>Muted</p>
+					<div  class="role" v-if="participant?.participant_is_muted == true">
+						<p>(muted)</p>
 					</div>
 				</div>
 				<div v-if="participant?.participant_id != loginStatusStore.loggedInStatus?.userID">
 					<SmallButton v-if="!hasUserBlockedYou(participant?.participant_id)" class="button" text="Invite to Game" @click="gameInvite(participant?.id)"/>
-
 					<!-- banning/muting, with restriction for admin/owner only -->
 					<div v-if="userIsAdmin || userIsOwner">
 						<SmallButton v-if="!participant?.participant_is_banned" class="button" text="Ban this user" @click="this.$emit('banUser', this.channel_id, participant.participant_id)"/>
@@ -128,6 +131,9 @@ export default defineComponent({
 			this.boxType = "setPassword";
 			this.showPasswordDialogue = true;
 		},
+		removePassword() {
+			console.log('remove password');
+		},
 		hidePasswordDialogue() {
 			this.showPasswordDialogue = false;
 		},
@@ -199,19 +205,14 @@ a:hover {
 
 #nameAndRoles {
 	display:flex;
-	flex-direction: row;
 	flex-wrap: wrap;
 	font-size: medium;
 	font-weight: bold;
-	justify-content: space-between;
 	margin: 5px;
 }
 
 .role {
-	border: solid 1px;
-	border-radius: 4px;
-	color: #2c3e50;
-	font-weight: normal;
+	padding-left:10px;
 }
 
 </style>
