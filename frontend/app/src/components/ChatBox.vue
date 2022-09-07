@@ -5,15 +5,13 @@
         </div>
         <div id="messages">
             <div v-for="message in messages" :key="message.id" >
-                <p v-if="message.user !== loginStatusStore.loggedInStatus?.userID" class="from-them">
+				<p v-if="message.user === loginStatusStore.loggedInStatus?.userID" class="from-me">{{message.message}}</p>
+				<div v-else>
+					<p v-if="haveYouBlockedUser(message.user)"  class="from-them">[message from blocked user]</p>
+					<p v-else  class="from-them">{{message.username}} : {{message.message}}</p>
+				</div>
 				<!-- TODO add username of sender -->
-				<!-- TODO if user has blocked sender, message should not appear -->
 				<!-- TODO if user is banned, you should only see a notification of this and no messages -->
-                    {{message.username}} : {{message.message}}
-                </p>
-                <p v-else class="from-me">
-                    {{message.message}}
-                </p>
             </div>
         </div>
         <div>
@@ -53,7 +51,8 @@ export default defineComponent({
             channel: null as any,
             text: '',
 			user: null as any,
-        }
+			usersWhoYouHaveBlocked: new Array<any>(),
+			}
     },
     watch: {
         channel_id: {
@@ -88,13 +87,24 @@ export default defineComponent({
 			
 			// console.log(this.messages)
         },
-		async loadUserData(id: number) {
-			fetch('/api/users/' + id)
-				.then(res => res.json())
-				.then(data => this.user = data)
-				.catch(err => console.log(err));
-		},
+		haveYouBlockedUser(sender_id: number): boolean {
+			for (let x = 0; x < this.usersWhoYouHaveBlocked.length; x++) {
+				if ( this.usersWhoYouHaveBlocked[x] == sender_id) {
+					return true;
+				}
+			}
+			return false;
+		}
     },
+	async mounted() {
+		let loggedInStatus = await loginStatusStore().logIn();
+		if (loggedInStatus) {
+			await fetch('/api/blocked_users/all_who_i_have_blocked/' + loggedInStatus.userID)
+			.then(res => res.json())
+			.then(data => this.usersWhoYouHaveBlocked = data)
+			.catch(err => console.log(err));
+		}
+	},
 	emits: ['sentMsg']
 })
 </script>

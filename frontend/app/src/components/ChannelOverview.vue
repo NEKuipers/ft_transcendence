@@ -16,10 +16,10 @@
 						<div class="role" v-else-if="participant.is_admin == true">
 							<p>Admin</p>
 						</div>
-						<div class="role" v-if="participant.is_banned == true">
+						<div class="role" v-if="participant?.is_banned == true">
 							<p>Banned</p>
 						</div>
-						<div class="role" v-if="participant.is_muted == true">
+						<div class="role" v-else-if="participant?.is_muted == true">
 							<p>Muted</p>
 						</div>
 					</div>
@@ -83,6 +83,7 @@ export default defineComponent({
 			userIsAdmin: false,
 			showPasswordDialogue: false,
 			boxType: "",
+			usersWhoYouHaveBlocked: new Array<any>(),
         }
     },
     watch: {
@@ -136,6 +137,15 @@ export default defineComponent({
 			this.$emit('setPassword', newPassword);
 			this.hidePasswordDialogue();
 		},
+	},
+	async mounted() {
+		let loggedInStatus = await loginStatusStore().logIn();
+		if (loggedInStatus) {
+			await fetch('/api/blocked_users/all_who_blocked_me/' + loggedInStatus.userID)
+			.then(res => res.json())
+			.then(data => this.usersWhoYouHaveBlocked = data)
+			.catch(err => console.log(err));
+		}
 	},
 	emits: ['banUser', 'unbanUser', 'muteUser', 'unmuteUser', 'makeUserAdmin', 'removeUserAdmin', 'setPassword']
 		

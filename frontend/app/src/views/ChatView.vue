@@ -19,12 +19,13 @@
 			</div>
 			<div class="column" id="center_column">
 				<div>
-					<ChatBox :channel_id="currentChannel" :dm="dmOpen" :messages="messages[currentChannel]" @sentMsg="sendMsg"/>
+					<ChatBox :key="blocksKey" :user="loginStatusStore.loggedInStatus?.userID"
+						:channel_id="currentChannel" :dm="dmOpen" :messages="messages[currentChannel]" @sentMsg="sendMsg"/>
 				</div>
 			</div>
 			<div class="column" id="channel-overview">
 				Channel overview
-				<ChannelOverview :channel_id="currentChannel" :dm="dmOpen" @banUser="banUser" @unbanUser="unbanUser" @muteUser="muteUser" @unmuteUser="unmuteUser" @makeUserAdmin="makeUserAdmin" @removeUserAdmin="removeUserAdmin" @setPassword="setPassword"/>
+				<ChannelOverview :key="blocksKey"  :channel_id="currentChannel" :dm="dmOpen" @banUser="banUser" @unbanUser="unbanUser" @muteUser="muteUser" @unmuteUser="unmuteUser" @makeUserAdmin="makeUserAdmin" @removeUserAdmin="removeUserAdmin" @setPassword="setPassword"/>
 			</div>
 		</div>
 
@@ -55,7 +56,8 @@ export default defineComponent({
 			myChannels: new Array<any>(),
 			boxType: "",
 			leaveChannelKey: 0,
-			dmOpen: false
+			blocksKey: 0,
+			dmOpen: false,
 		}
 	},
 	methods: {
@@ -154,7 +156,7 @@ export default defineComponent({
 		setPassword(newPassword: string) {
 			//TODO implement this - How do we know which chat it is for?
 			console.log('Chosen password: ', newPassword);
-		}
+		},
 	},
 	async mounted() {
 		this.chatHandler = (this.$refs.ChatHandler as typeof ChatHandler);

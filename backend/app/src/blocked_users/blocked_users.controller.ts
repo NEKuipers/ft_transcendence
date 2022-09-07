@@ -21,6 +21,16 @@ export class BlockedUsersController {
 		return this.blockedUsersService.hasUserBlockedMe(your_id, other_id);
 	}
 
+	@Get('all_who_blocked_me/:id')
+	async getAllWhoBlockedMe(@Param('id') id: number) : Promise<number[]> {
+		return this.blockedUsersService.getAllWhoBlockedMe(id);
+	}
+
+	@Get('all_who_i_have_blocked/:id')
+	async getAllWhoIHaveBlocked(@Param('id') id: number) : Promise<number[]> {
+		return this.blockedUsersService.getAllWhoIHaveBlocked(id);
+	}
+
 	@Post()
 	blockUser(@Body() blockedUser: BlockedUser): string {		
 		return this.blockedUsersService.blockUser(blockedUser);
