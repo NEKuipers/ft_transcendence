@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<ChatHandler ref="ChatHandler" uri=":4114" server_name="chat server" @serverMessage="onMessage" @join="onJoin" @leave="onLeave" @clearData="clearData"/>
+		<ChatHandler ref="ChatHandler" uri=":4114" server_name="chat server" @serverMessage="onMessage" @join="onJoin" @leave="onLeave" @clearData="clearData" @mute_status="muteStatus" @admin_status="adminStatus"/>
 
 		<div class="container">
 			<div class="column" id="left-column">
@@ -102,12 +102,14 @@ export default defineComponent({
 			}
 			this.messages[channel_id].push(msgObj)
 		},
-		onJoin(channel_id: number, channelName: string) {
+		onJoin(channel_id: number, channelName: string, channelType: string, channelOwner: number) {
 			// Add this to an array to pass to your channels
-			console.log(`I am in channel ${channel_id}: ${channelName}`)
+			console.log(`I am in channel ${channel_id} '${channelName}' that is of type '${channelType}' and the owner's usedID is ${channelOwner}`)
 			this.myChannels.push({
 				id: channel_id,
 				name: channelName,
+				type: channelType,
+				owner: channelOwner,
 			})
 		},
 		onLeave(channel_id: number) {
@@ -133,6 +135,7 @@ export default defineComponent({
 		},
 		clearData() {
 			console.log(`We have just connected to the chat server, and should clear any data to its initial state`)
+			// TODO: This should be done!
 		},
 		sendMsg(channel_id: number, msg: string) {
 			// console.log("Working?", channel_id, msg)
@@ -161,8 +164,23 @@ export default defineComponent({
 			this.chatHandler.remove_user_admin(channel_id, user_id);	
 		},
 		setPassword(newPassword: string) {
-			//TODO implement this - How do we know which chat it is for?
+			//TODO: implement this - How do we know which chat it is for?
 			console.log('Chosen password: ', newPassword);
+		},
+
+		muteStatus(channel_id: number, isMuted: boolean) {
+			if (isMuted) {
+				console.log(`I am muted in channel ${channel_id}`);
+			} else {
+				console.log(`I am not muted in channel ${channel_id}`);
+			}
+		},
+		adminStatus(channel_id: number, isAdmin: boolean) {
+			if (isAdmin) {
+				console.log(`I am admin in channel ${channel_id}`);
+			} else {
+				console.log(`I am not admin in channel ${channel_id}`);
+			}
 		},
 	},
 	async mounted() {
@@ -177,14 +195,14 @@ export default defineComponent({
 		(window as any).chatHandler = this.chatHandler;
 	},
 	components: {
-    ChatFriendsList,
-    OtherChatChannels,
-    MyChatChannels,
-    ChatBox,
-    ChannelOverview,
-    ChatHandler,
-    DMUserCard
-},
+		ChatFriendsList,
+		OtherChatChannels,
+		MyChatChannels,
+		ChatBox,
+		ChannelOverview,
+		ChatHandler,
+		DMUserCard
+	},
 })
 </script>
 

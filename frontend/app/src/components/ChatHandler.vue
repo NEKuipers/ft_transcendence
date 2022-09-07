@@ -74,7 +74,7 @@ export default defineComponent({
 			})
 
 			socket.on("join", (channel_id, channel_name, channel_type, channel_owner) => {
-				console.log(`I am in channel ${channel_id} '${channel_name}' that is of type '${channel_type}' and the owner's usedID is ${channel_owner}`)
+				// console.log(`I am in channel ${channel_id} '${channel_name}' that is of type '${channel_type}' and the owner's usedID is ${channel_owner}`)
 
 				this.$emit("join", channel_id, channel_name, channel_type, channel_owner);
 			})
@@ -86,22 +86,10 @@ export default defineComponent({
 			})
 
 			socket.on("mute_status", (channel_id, is_muted) => {
-				if (is_muted) {
-					console.log(`I am muted in channel ${channel_id}`);
-				} else {
-					console.log(`I am not muted in channel ${channel_id}`);
-				}
-
 				this.$emit("mute_status", channel_id, is_muted);
 			})
 
 			socket.on("admin_status", (channel_id, is_admin) => {
-				if (is_admin) {
-					console.log(`I am admin in channel ${channel_id}`);
-				} else {
-					console.log(`I am not admin in channel ${channel_id}`);
-				}
-
 				this.$emit("admin_status", channel_id, is_admin);
 			})
 		})

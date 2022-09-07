@@ -470,6 +470,7 @@ io.on("connection", async (socket) => {
 			return false;
 		}
 		
+		
 		io.to(get_room_name(channel_id)).emit("server_message", channel_id, data.userid, message);	// Send all the clients in the room a message on channel "server_message"
 		console.log(`User ${data.username} has sent the message: ${message} in room ${channel_id}!`);
 
