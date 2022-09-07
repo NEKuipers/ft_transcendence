@@ -16,7 +16,7 @@
         <div>
 			<!-- TODO prevent muted participant from sending message -->
             <form ref="TextBox" @submit="sendMsg">
-                <input id="input-box" type="text" v-model="text" placeholder="Message"/>
+                <input id="input-box" type="text" v-model="text" placeholder="Message" :disabled="isMuted"/>
             </form>
         </div>
     </div>
@@ -37,6 +37,9 @@ export default defineComponent({
     props: {
         channel_id: {
             type: Number
+		},
+		isMuted: {
+			type: Boolean
 		},
 		dmOpen : {
 			type: Boolean

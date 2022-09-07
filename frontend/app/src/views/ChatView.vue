@@ -20,7 +20,7 @@
 			<div class="column" id="center_column">
 				<div>
 					<ChatBox :key="blocksKey" :user="loginStatusStore.loggedInStatus?.userID"
-						:channel_id="currentChannel" :dm="dmID" :messages="channels[currentChannel]?.messages" @sentMsg="sendMsg"/>
+						:channel_id="currentChannel" :dm="dmID" :messages="channels[currentChannel]?.messages" :isMuted="channels[currentChannel]?.muted" @sentMsg="sendMsg"/>
 				</div>
 			</div>
 			<div class="column" id="channel-overview">
