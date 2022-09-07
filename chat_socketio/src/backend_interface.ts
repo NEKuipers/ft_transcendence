@@ -77,6 +77,7 @@ async function leave_channel(channelId: number, userId: number) {
 		await axios.patch(`http://localhost:${DATABASE_PORT}/channels?id=eq.${channelId}`, {
 			is_closed: true,
 		});
+		channel.is_closed = true;
 	}
 	await axios.delete(`http://localhost:${DATABASE_PORT}/participants?channel_id=eq.${channelId}&participant_id=eq.${userId}`);
 }
