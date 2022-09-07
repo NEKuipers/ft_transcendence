@@ -21,7 +21,9 @@ export class ChannelsService {
 		let channels: Channel[] = [];
 		for (let i = 0; i < res.data.length; i++) {
 			let temp = await axios.get(`http://localhost:${process.env.PGREST_PORT}/channels?id=eq.${res.data[i].channel_id}&type=neq.direct&is_closed=eq.false`);
-			channels.push(temp.data[0]);
+			if (temp.data[0]) {	// If it does not find it because its a direct message, it can push a undefined in, and that will break the TS types, which will cause exceptions when making the assumtion that its actually that type (accessing the .id for example in findAllNotForUser)
+				channels.push(temp.data[0]);
+			}
 		}
 		return channels;
 	}

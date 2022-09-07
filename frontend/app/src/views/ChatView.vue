@@ -76,13 +76,23 @@ export default defineComponent({
 			this.currentChannel = channel_id
 			this.dmID = -1;
 		},
-		openDM (user_id_1: number, user_id_2: number) {
-			/*
-			 *  TODO: Check if a channel of type=eq.direct with these two users as participants exists.
-			 *  If not, create it and open it. (since channel names cannot be duplicate, generate a random string? we will not display it anyway)
-			 *  If it does exist, open it.
-			 */
-			this.dmID = user_id_2
+		async openDM (user_id_1: number, user_id_2: number) {
+			this.dmID = user_id_2;
+
+			// Try to find the already existing dm channel
+			let expected_name = `dm-${Math.min(user_id_1, user_id_2)}-${Math.max(user_id_1, user_id_2)}`;
+			for (let id in this.channels) {
+				let data = this.channels[id];
+
+				if (data.type == "direct" && data.name == expected_name) {
+					this.currentChannel = data.id;
+					return;
+				}
+			}
+
+			// guess it doesn't exist, create it!
+			// Does it matter that dmID is set, and currentChannel is only set after a response was gotten from the chatio server?
+			this.currentChannel = await this.chatHandler.create_dm(user_id_2);
 		},
 		async requestPassword(): Promise<string> {
 			return new Promise((resolve, reject) => {
@@ -193,6 +203,7 @@ export default defineComponent({
 		}
 		// TODO: THIS IS JUST FOR DEBUGGING, REMOVE THIS LATER
 		(window as any).chatHandler = this.chatHandler;
+		(window as any).chatView = this;
 	},
 	components: {
 		ChatFriendsList,

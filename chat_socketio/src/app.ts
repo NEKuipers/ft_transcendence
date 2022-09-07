@@ -480,6 +480,61 @@ io.on("connection", async (socket) => {
 			})
 	})
 
+	socket.on("create_dm", async (user_id: number, callback: (success: boolean, data: any) => void) => {
+		// TODO: Validate that the 2 users are actually friends
+
+		backend.make_channel({
+			name: `dm-${Math.min(user_id, data.userid)}-${Math.max(user_id, data.userid)}`,
+			type: "direct",
+			password: "",
+			owner_id: data.userid,
+			is_closed: false
+		}).then((channel) => {
+			console.log("Created channel:", channel)
+
+			// Also join it
+			let my_join = join_channel(socket, {
+				is_admin: false,
+				is_muted: false,
+				is_banned: false,
+				channel_id: channel.id
+			});
+			let other_join: Promise<void>;
+			if (signedInUsers[user_id]) {
+				other_join = join_channel(signedInUsers[user_id], {
+					is_admin: false,
+					is_muted: false,
+					is_banned: false,
+					channel_id: channel.id
+				});
+			} else {
+				other_join = backend.join_channel({
+					is_admin: false,
+					is_muted: false,
+					is_banned: false,
+					channel_id: channel.id
+				}, user_id);
+			}
+
+			Promise.all([my_join, other_join])
+				.then(() => {
+					callback(true, channel.id);
+				}).catch(() => {
+					console.error("Failed to join channel")
+					callback(false, "Failed to join channel")
+
+					// Try to delete it
+					backend.delete_channel(channel.id)
+						.catch((err) => {
+							console.error("Created a channel, failed to join, and then failed to delete:", err);
+						});
+				})
+		}).catch((err) => {
+			console.error(err);
+			callback(false, "Failed to create channel");
+		})
+	});
+
 	socket.on("disconnect", () => {
 		console.log(`User ${data.username} has disconnected!`);
 		delete signedInUsers[data.userid];

@@ -23,7 +23,7 @@ interface Channel {
 	id: number,
 	name: string,
 	type: string,
-	owner_id: number,
+	owner_id: number | undefined,	// Will be undefined only IF type is direct
 	is_closed: boolean,
 };
 
@@ -40,7 +40,14 @@ async function get_channel(channel_id: number): Promise<Channel> {
 	}
 
 	let data = await axios.get(`http://localhost:${DATABASE_PORT}/channels?id=eq.${channel_id}`);
-	channels[channel_id] = data.data[0];
+	let channel = data.data[0] as Channel;
+
+	// If you can't do it in the database, DO IT HERE INSTEAD!
+	if (channel.type == "direct") {
+		channel.owner_id = undefined;
+	}
+
+	channels[channel_id] = channel;
 	return channels[channel_id];
 }
 
@@ -51,7 +58,10 @@ async function make_channel(channel: CreateChannel): Promise<Channel> {
 		}
 	});
 
-	let result_channel = data.data[0];
+	let result_channel = data.data[0] as Channel;
+	if (result_channel.type == "direct") {
+		result_channel.owner_id = undefined;
+	}
 	channels[result_channel.id] = result_channel;
 	return result_channel;
 }

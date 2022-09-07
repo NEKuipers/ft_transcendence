@@ -257,6 +257,24 @@ export default defineComponent({
 			})
 		},
 
+		async create_dm(other_user: number): Promise<number> {
+			return new Promise((resolve, reject) => {
+				if (this.socket) {
+					this.socket.emit("create_dm", other_user,
+						(success: boolean, result: any) => {
+							if (success) {
+								resolve(result as number);
+							} else {
+								reject(result);
+							}
+						}
+					);
+				} else {
+					reject("Not connected!");
+				}
+			})
+		},
+
 		async send_message(channel_id: number, message: string): Promise<boolean> {
 			return new Promise((resolve, reject) => {
 				if (this.socket) {
