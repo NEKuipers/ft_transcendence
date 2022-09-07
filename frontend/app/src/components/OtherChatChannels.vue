@@ -34,7 +34,7 @@ import { loginStatusStore } from '../stores/profileData';
 export default defineComponent({
     name: "OtherChatChannels",
 	props: {
-	user: {
+		user: {
 			type: Number
 		},
 	},

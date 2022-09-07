@@ -3,11 +3,11 @@
 		<div id="title">
 			<h5>Your Channels</h5>
 		</div>
-		<div v-if="!myChannels">
+		<div v-if="!NonDmChannels">
 			<h5 class="no-channels-msg">Channels failed to load</h5>
 		</div>
-		<div id="channels" v-else-if="myChannels?.length">
-			<ul class="listed-channel" v-for="channel in myChannels" :key="channel.id">
+		<div id="channels" v-else-if="NonDmChannels?.length">
+			<ul class="listed-channel" v-for="channel in NonDmChannels" :key="channel.id">
 				<div><h5 class="name">{{ channel.name }}</h5></div>
 				<div id="buttons">
 					<SmallButton  class="button" text="open" @click="openChat(channel.id)"/>
@@ -35,8 +35,8 @@ import DialogueBox from './DialogueBox.vue'
 export default defineComponent({
 	name: "MyChatChannels",
 	props: {
-		myChannels: {
-			type: Array
+		channels: {
+			type: Object
 		},
 	},
 	data() {
@@ -94,6 +94,19 @@ export default defineComponent({
 		openChat(channel_id: number) {
 			// console.log('Opening chat', channel_id)
 			this.$emit('open-chat', channel_id)
+		}
+	},
+	computed: {
+		NonDmChannels: function() {
+			let channels = new Array<any>();
+			if (this.channels) {
+				for (let channel_id in this.channels) {
+					if (this.channels[channel_id].type != "direct") {
+						channels.push(this.channels[channel_id]);
+					}
+				}
+			}
+			return channels;
 		}
 	},
 	emits: ['open-chat', 'leaveChannel', 'createChannel']

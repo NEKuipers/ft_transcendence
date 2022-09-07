@@ -5,7 +5,7 @@
 		<div class="container">
 			<div class="column" id="left-column">
 				<div class="channels" id="yourChannels">
-					<MyChatChannels @open-chat="openChat" @leaveChannel="leaveChannel" @createChannel="createChannel" :user="loginStatusStore.loggedInStatus?.userID" :myChannels="myChannels"/>
+					<MyChatChannels @open-chat="openChat" @leaveChannel="leaveChannel" @createChannel="createChannel" :user="loginStatusStore.loggedInStatus?.userID" :channels="channels"/>
 				</div>
 				<div class="channels">
 					<OtherChatChannels v-if="loginStatusStore" :key="leaveChannelKey" @joinChannel="joinChannel" :user="loginStatusStore.loggedInStatus?.userID"/>
@@ -20,7 +20,7 @@
 			<div class="column" id="center_column">
 				<div>
 					<ChatBox :key="blocksKey" :user="loginStatusStore.loggedInStatus?.userID"
-						:channel_id="currentChannel" :dm="dmID" :messages="messages[currentChannel]" @sentMsg="sendMsg"/>
+						:channel_id="currentChannel" :dm="dmID" :messages="channels[currentChannel]?.messages" @sentMsg="sendMsg"/>
 				</div>
 			</div>
 			<div class="column" id="channel-overview">
@@ -58,8 +58,7 @@ export default defineComponent({
 			currentChannel: 0,
 			user: null as any,
 			chatHandler: undefined as unknown as typeof ChatHandler,
-			messages: new Array<any>(),
-			myChannels: new Array<any>(),
+			channels: {} as {[key: number]: any},
 			boxType: "",
 			leaveChannelKey: 0,
 			blocksKey: 0,
@@ -97,26 +96,23 @@ export default defineComponent({
 			console.log(`Received message in channel: ${channel_id} from ${user}: ${message}`)
 
 			const msgObj = {channel_id, user, message}
-			if (!this.messages[channel_id]) {
-				this.messages[channel_id] = []
-			}
-			this.messages[channel_id].push(msgObj)
+			this.channels[channel_id].messages.push(msgObj)
 		},
 		onJoin(channel_id: number, channelName: string, channelType: string, channelOwner: number) {
 			// Add this to an array to pass to your channels
 			console.log(`I am in channel ${channel_id} '${channelName}' that is of type '${channelType}' and the owner's usedID is ${channelOwner}`)
-			this.myChannels.push({
+			this.channels[channel_id] = {
 				id: channel_id,
 				name: channelName,
 				type: channelType,
 				owner: channelOwner,
-			})
+				messages: new Array<string>()
+			}
 		},
 		onLeave(channel_id: number) {
 			console.log(`I am no longer in channel ${channel_id}`)
 			this.leaveChannelKey += 1;
-			this.myChannels = this.myChannels.filter((elem: any) => elem.id != channel_id);
-			delete this.messages[channel_id];
+			delete this.channels[channel_id];
 		},
 		joinChannel(channel_id: number, password: string) {
 			this.chatHandler.join_channel(channel_id, password == undefined ? undefined : password)
@@ -174,6 +170,8 @@ export default defineComponent({
 			} else {
 				console.log(`I am not muted in channel ${channel_id}`);
 			}
+
+			this.channels[channel_id].muted = isMuted;
 		},
 		adminStatus(channel_id: number, isAdmin: boolean) {
 			if (isAdmin) {
@@ -181,6 +179,8 @@ export default defineComponent({
 			} else {
 				console.log(`I am not admin in channel ${channel_id}`);
 			}
+			
+			this.channels[channel_id].admin = isAdmin;
 		},
 	},
 	async mounted() {
