@@ -1,4 +1,5 @@
 <template>
+	User overview
 	<div v-if="profile" class="userprofile">
 		<img class="profilePicture" v-bind:src="'/api/avatars/' + profile.avatar_id">
 		<br>
@@ -15,6 +16,7 @@
 			<h4>Games lost: {{profile.games_lost}}</h4>
 			<h4>Overall ranking:  #{{profile.ranking}}</h4>
 		</section>
+		<br>
 		<SmallButton class="invite-btn" text="Invite to game" @click="inviteToGame"/>
 	</div>
 </template>
@@ -83,6 +85,7 @@ export default defineComponent({
 <style scoped>
 
 .userprofile {
+	margin-top: 100px;
 	height: 500px;
 	max-height: 500px;
 	display: inline-block	;
@@ -149,9 +152,7 @@ a:visited {
 	font-size: 20px;
 }
 
-.user-btn {
-	margin-top: 10px;
-	margin-left: 5px;
-	margin-right: 5px;
+.game-stats {
+	font-size: 18px;
 }
 </style>
