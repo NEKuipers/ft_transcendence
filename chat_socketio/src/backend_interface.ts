@@ -32,17 +32,16 @@ interface Message {
 	message: string,
 };
 
-let cached_names = {}
-async function get_channel_name(channel_id: number): Promise<String> {
-	let cached = cached_names[channel_id];
+let channels = {}
+async function get_channel(channel_id: number): Promise<Channel> {
+	let cached = channels[channel_id];
 	if (cached) {
 		return cached;
 	}
 
 	let data = await axios.get(`http://localhost:${DATABASE_PORT}/channels?id=eq.${channel_id}`);
-	let name = data.data[0].name;
-	cached_names[channel_id] = name;
-	return name;
+	channels[channel_id] = data.data[0];
+	return channels[channel_id];
 }
 
 async function make_channel(channel: CreateChannel): Promise<Channel> {
@@ -53,7 +52,7 @@ async function make_channel(channel: CreateChannel): Promise<Channel> {
 	});
 
 	let result_channel = data.data[0];
-	cached_names[result_channel.id] = result_channel.name;
+	channels[result_channel.id] = result_channel;
 	return result_channel;
 }
 async function delete_channel(channelId: number) {
@@ -139,7 +138,7 @@ async function add_message_to_channel(channelId: number, userId: number, message
 async function get_joined_channels(userId: number): Promise<JoinedChannelStatus[]> {
 	let data = await axios.get(`http://localhost:${DATABASE_PORT}/participants?participant_id=eq.${userId}`);
 	// TODO: This needs to be modified. You should make a request to /channels with these flags;
-	// ?is_closed=eq.false&type=neq.direct
+	// ?is_closed=eq.false	// &type=neq.direct	// No, direct messages should still be seen, if it filters it out you won't get the messages, it is on the frontends job to correctly filter it, however that was impossible as it has no idea what type of channel it is, now it is send in the join packet
 	// and remove each channel in JoinedChannelStatus[] with a channel_id not in the response.
 	return data.data;
 }
@@ -160,7 +159,7 @@ export {
 	make_channel,
 	delete_channel,
 
-	get_channel_name,
+	get_channel,
 
 	join_channel,
 	leave_channel,
