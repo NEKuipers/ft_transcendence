@@ -72,8 +72,8 @@ async function join_channel(channel: JoinedChannelStatus, userId: number) {
 async function leave_channel(channelId: number, userId: number) {
 	// TODO: Error checking
 
-	let channel = await axios.get(`http://localhost:${DATABASE_PORT}/channels?id=${channelId}`);
-	if (channel.data.owner_id == userId) {
+	let channel = await get_channel(channelId);
+	if (channel.owner_id == userId) {
 		await axios.patch(`http://localhost:${DATABASE_PORT}/channels?id=eq.${channelId}`, {
 			is_closed: true,
 		});
