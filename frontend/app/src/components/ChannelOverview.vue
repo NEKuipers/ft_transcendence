@@ -11,19 +11,19 @@
 			<div id="participantdiv">
 				<div id="nameAndRoles">
 					<a class="participantName" v-bind:href="'/profile/' + participant.participant_id">{{participant.participant_username}}</a>
-					<br>
-					<br>
-					<div class="role" v-if="participant.participant_id === participant.channel_owner_id">
-						<p>Owner</p>
-					</div>
-					<div class="role" v-else-if="participant.participant_is_admin == true">
-						<p>Admin</p>
-					</div>
-					<div class="role" v-if="participant?.participant_is_banned == true">
-						<p>(banned)</p>
-					</div>
-					<div  class="role" v-if="participant?.participant_is_muted == true">
-						<p>(muted)</p>
+					<div class="roles">
+						<div class="role" v-if="participant.participant_id === participant.channel_owner_id">
+							<p>Owner</p>
+						</div>
+						<div class="role" v-else-if="participant.participant_is_admin == true">
+							<p>Admin</p>
+						</div>
+						<div class="role" v-if="participant?.participant_is_banned == true">
+							<p>(banned)</p>
+						</div>
+						<div  class="role" v-if="participant?.participant_is_muted == true">
+							<p>(muted)</p>
+						</div>
 					</div>
 				</div>
 				<div v-if="participant?.participant_id != loginStatusStore.loggedInStatus?.userID">
@@ -189,7 +189,7 @@ a:hover {
 	margin-left:8px;
 }
 
-.listedparticipant {
+.listed-participant {
 	display: flex;
 	flex-direction: column;
 }
@@ -208,11 +208,22 @@ a:hover {
 	flex-wrap: wrap;
 	font-size: medium;
 	font-weight: bold;
+	justify-content: space-between;
 	margin: 5px;
 }
 
 .role {
-	padding-left:10px;
+	width:200px;
+	height: 15px;
+	margin-bottom:20px;
+	/* padding-left:10px; */
+	margin-left: 5px;
 }
+
+.roles {
+	display:flex;
+	margin-top:-25px;
+}
+
 
 </style>

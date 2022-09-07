@@ -41,8 +41,13 @@ export default defineComponent({
 		}
 	},
 	async mounted() {
-		await this.loadUserData(this.$route.params.id[0]);
-		console.log(this.login)
+		let isnum = /^\d+$/.test(this.$route.params.id as string);
+		if (!isnum) {
+			this.$router.push('/not-found')
+		} else {
+			await this.loadUserData(this.$route.params.id as string); 
+			console.log(this.login)
+		}
 	},
 	components: {
 		UserProfile,
