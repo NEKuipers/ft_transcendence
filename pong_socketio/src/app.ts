@@ -202,8 +202,8 @@ class Match {
 			p1.emit("match_start", 1, settings, p1.data.username, p2.data.username);
 			p2.emit("match_start", 2, settings, p1.data.username, p2.data.username);
 
-			p1.on("disconnect", () => this.finish());
-			p2.on("disconnect", () => this.finish());
+			p1.data.disconnectFunc = () => this.finish();
+			p2.data.disconnectFunc = () => this.finish();
 
 			p1.on("paddle:1", (pos: number) => this.p1.to(this.room_name).emit("paddle:1", pos));
 			p2.on("paddle:2", (pos: number) => this.p2.to(this.room_name).emit("paddle:2", pos));
@@ -302,7 +302,7 @@ class Match {
 		if (this.p1.connected) {
 			this.p1.data.state = SocketState.Menu;
 
-			this.p1.removeAllListeners("disconnect");
+			this.p1.data.disconnectFunc = undefined;
 			this.p1.removeAllListeners("paddle:1");
 			this.p1.removeAllListeners("loss");
 			this.p1.removeAllListeners("ball");
@@ -310,7 +310,7 @@ class Match {
 		if (this.p2.connected) {
 			this.p2.data.state = SocketState.Menu;
 
-			this.p2.removeAllListeners("disconnect");
+			this.p2.data.disconnectFunc = undefined;
 			this.p2.removeAllListeners("paddle:2");
 			this.p2.removeAllListeners("loss");
 			this.p2.removeAllListeners("ball");
@@ -372,10 +372,10 @@ class MatchMaker {
 			while (group.length >= 2) {
 				let p1 = group.pop();
 				let p2 = group.pop();
-		
-				p1.removeAllListeners("disconnect");
-				p2.removeAllListeners("disconnect");
-				
+
+				p1.data.disconnectFunc = undefined;
+				p2.data.disconnectFunc = undefined;
+
 				new Match(this.gamemode_name, this.settings, p1, p2, +group_id);	// Will set socket state to be in match
 			}
 
@@ -388,24 +388,24 @@ class MatchMaker {
 			delete this.waiting_for_game_connections[group_name];
 		}
 	}
-
+	
 	add_to_waiting_list(socket: Socket, group_id: number) {
 		socket.data.state = SocketState.InQueue;
 
 		this.waiting_for_game_connections[group_id] = this.waiting_for_game_connections[group_id] ?? new Array();
-		let group = this.waiting_for_game_connections[group_id];
-
-		group.push(socket);
-		socket.on("disconnect", (_) => {
+		
+		socket.data.disconnectFunc = () => {
+			let group = this.waiting_for_game_connections[group_id];
 			let index = group.indexOf(socket);
 			if (index >= 0) {
-				group.splice(index, 1);
+				this.waiting_for_game_connections[group_id] = group.splice(index, 1);
 
 				if (group.length == 0) {
 					delete this.waiting_for_game_connections[group_id];
 				}
 			}
-		})
+		}
+		this.waiting_for_game_connections[group_id].push(socket);
 
 		this.matchmake();
 	}
@@ -460,6 +460,26 @@ io.on("connection", (socket) => {
 		
 		console.log("socket", socket.id, "tired to join that does not exist:", request);
 		socket.disconnect(true);
+	})
+
+	socket.on("disconnect", () => {
+		console.log("socket", socket.id, "has disconnected!")
+
+		if (socket.data.disconnectFunc) {
+			socket.data.disconnectFunc();
+		}
+
+		// Look at how dumb this is
+		// Why did you decide to have me do it this way
+		// "Ah yes, on disconnect, make it say ONLINE"
+		// 10/10 will totaly not break when someone just alt+f4's on the pong page, yeahh..
+		make_request(DATABASE_PORT, `/users?id=eq.${socket.data.userid}`, "PATCH", {
+			"status": "online"
+		})
+	});
+
+	make_request(DATABASE_PORT, `/users?id=eq.${socket.data.userid}`, "PATCH", {
+		"status": "ingame"
 	})
 });
 

@@ -164,8 +164,8 @@ async function mute_user(user_id: number, channel_id: number) {
 					console.error(`${data.username} was muted in channel ${channel_id}, BUT WASN'T JOINED!`);
 					return;
 				}
+				
 				status.is_muted = true;
-
 				socket.emit("mute_status", channel_id, true);
 			}
 		})
