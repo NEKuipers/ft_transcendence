@@ -23,25 +23,20 @@
 					</div>
 				</div>
 				<div v-if="participant?.participant_id != loginStatusStore.loggedInStatus?.userID">
-					<div v-if="!hasUserBlockedYou(participant?.participant_id)">
-						<SmallButton class="button" text="Invite to Game" @click="gameInvite(participant?.id)"/>
+					<SmallButton v-if="!hasUserBlockedYou(participant?.participant_id)" class="button" text="Invite to Game" @click="gameInvite(participant?.id)"/>
 
-						<!-- banning/muting, with restriction for admin/owner only -->
-						<div v-if="userIsAdmin || userIsOwner">
-							<SmallButton v-if="!participant?.participant_is_banned" class="button" text="Ban this user" @click="this.$emit('banUser', this.channel_id, participant.participant_id)"/>
-							<SmallButton v-else class="button" text="Unban this user" @click="this.$emit('unbanUser', this.channel_id, participant.participant_id)"/>
-							<SmallButton v-if="!participant?.participant_is_muted" class="button" text="Mute this user" @click="this.$emit('muteUser', this.channel_id, participant.participant_id)"/>
-							<SmallButton v-else class="button" text="Unmute this user" @click="this.$emit('unmuteUser', this.channel_id, participant.participant_id)"/>
-						</div>
-
-						<!-- admin rights -->
-						<div v-if="userIsOwner">
-							<SmallButton v-if="!participant.participant_is_admin && userIsOwner" class="button" text="Give admin rights" @click="this.$emit('makeUserAdmin', this.channel_id, participant.participant_id)"/>
-							<SmallButton v-else class="button" text="Remove admin rights" @click="this.$emit('removeUserAdmin', this.channel_id, participant.participant_id)"/>
-						</div>
+					<!-- banning/muting, with restriction for admin/owner only -->
+					<div v-if="userIsAdmin || userIsOwner">
+						<SmallButton v-if="!participant?.participant_is_banned" class="button" text="Ban this user" @click="this.$emit('banUser', this.channel_id, participant.participant_id)"/>
+						<SmallButton v-else class="button" text="Unban this user" @click="this.$emit('unbanUser', this.channel_id, participant.participant_id)"/>
+						<SmallButton v-if="!participant?.participant_is_muted" class="button" text="Mute this user" @click="this.$emit('muteUser', this.channel_id, participant.participant_id)"/>
+						<SmallButton v-else class="button" text="Unmute this user" @click="this.$emit('unmuteUser', this.channel_id, participant.participant_id)"/>
 					</div>
-					<div v-else id="blocked-you-notif">
-						User has blocked you
+
+					<!-- admin rights -->
+					<div v-if="userIsOwner">
+						<SmallButton v-if="!participant.participant_is_admin && userIsOwner" class="button" text="Give admin rights" @click="this.$emit('makeUserAdmin', this.channel_id, participant.participant_id)"/>
+						<SmallButton v-else class="button" text="Remove admin rights" @click="this.$emit('removeUserAdmin', this.channel_id, participant.participant_id)"/>
 					</div>
 				</div>
 			</div>
