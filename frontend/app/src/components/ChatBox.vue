@@ -8,7 +8,7 @@
 				<p v-if="message.user === loginStatusStore.loggedInStatus?.userID" class="from-me">{{message.message}}</p>
 				<div v-else>
 					<p v-if="haveYouBlockedUser(message.user)"  class="from-them">[message from blocked user]</p>
-					<p v-else  class="from-them">{{message.username}} : {{message.message}}</p>
+					<p v-else class="from-them">{{findUsername(message.userId)}} : {{message.message}}</p>
 				</div>
 				<!-- TODO add username of sender -->
             </div>
@@ -54,6 +54,7 @@ export default defineComponent({
             text: '',
 			user: null as any,
 			usersWhoYouHaveBlocked: new Array<any>(),
+			allUsers: new Array<any>(),
 			}
     },
     watch: {
@@ -96,9 +97,21 @@ export default defineComponent({
 				}
 			}
 			return false;
+		},
+		findUsername(user_id: number) : string {
+			for (let x = 0; x < this.allUsers.length; x++) {
+				if (this.allUsers[x].id == user_id) {
+					return this.allUsers[x].username;
+				}
+			}
+			return "user " + user_id;
 		}
     },
 	async mounted() {
+		fetch('/api/users')
+			.then(res => res.json())
+			.then(data => this.allUsers = data)
+			.catch(err => console.log(err))
 		let loggedInStatus = await loginStatusStore().logIn();
 		if (loggedInStatus) {
 			await fetch('/api/blocked_users/all_who_i_have_blocked/' + loggedInStatus.userID)
