@@ -105,7 +105,7 @@ async function unban_user_from_channel(channelId: number, userId: number) {
 
 async function mute_user_in_channel(channelId: number, userId: number) {
 	await axios.patch(`http://localhost:${DATABASE_PORT}/participants?channel_id=eq.${channelId}&participant_id=eq.${userId}`, {
-		is_muted: (Date.now() + 300000).toString(),
+		is_muted: new Date(Date.now() + 300000).toISOString(),
 	});
 }
 async function unmute_user_in_channel(channelId: number, userId: number) {
