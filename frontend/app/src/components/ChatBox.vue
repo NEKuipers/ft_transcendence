@@ -16,7 +16,7 @@
         <div>
 			<!-- TODO prevent muted participant from sending message -->
             <form ref="TextBox" @submit="sendMsg">
-                <input id="input-box" type="text" v-model="text" placeholder="Message" :disabled="isMuted"/>
+                <input id="input-box" type="text" v-model="text" placeholder="Message" :disabled="isMuted > Date.now().toString()"/>
             </form>
         </div>
     </div>
@@ -39,7 +39,7 @@ export default defineComponent({
             type: Number
 		},
 		isMuted: {
-			type: Boolean
+			type: String
 		},
 		dmOpen : {
 			type: Boolean

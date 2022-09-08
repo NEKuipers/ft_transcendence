@@ -170,9 +170,8 @@ CREATE TABLE public.participants
     participant_id  BIGINT REFERENCES public.users(id),
 	is_joined		BOOL,
     is_admin        BOOL,
-    is_muted        BOOL,
+    is_muted        VARCHAR(256),
     is_banned       BOOL,
-    ban_meta        HSTORE,
     channel_id      BIGINT REFERENCES public.channels(id)
 );
 

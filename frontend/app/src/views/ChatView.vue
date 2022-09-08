@@ -174,8 +174,8 @@ export default defineComponent({
 			console.log('Chosen password: ', newPassword);
 		},
 
-		muteStatus(channel_id: number, isMuted: boolean) {
-			if (isMuted) {
+		muteStatus(channel_id: number, isMuted: string) {
+			if (isMuted > Date.now().toString()) {
 				console.log(`I am muted in channel ${channel_id}`);
 			} else {
 				console.log(`I am not muted in channel ${channel_id}`);

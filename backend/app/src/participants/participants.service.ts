@@ -18,7 +18,7 @@ export class ParticipantsService {
 			channel_id: participant.channel_id,
 			is_admin: false,
 			is_banned: false,
-			is_muted: false,
+			is_muted: null,
 			participant_id: participant.participant_id,
 			ban_meta: ""
 		})
@@ -42,7 +42,7 @@ export class ParticipantsService {
 
 	async muteUserInChannel(participant: Participant): Promise<string> {
 		axios.patch(`http://localhost:${process.env.PGREST_PORT}/participants?participant_id=eq.${participant.participant_id}&channel_id=eq.${participant.channel_id}`, {
-			is_muted: true
+			is_muted: (Date.now() + 300000).toString(),
 		})
 		return "User muted";
 		//TODO figure out ban/mute timer or something?
