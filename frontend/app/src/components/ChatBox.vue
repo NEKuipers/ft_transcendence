@@ -8,7 +8,7 @@
 				<p v-if="message.user === loginStatusStore.loggedInStatus?.userID" class="from-me">{{message.message}}</p>
 				<div v-else>
 					<p v-if="haveYouBlockedUser(message.user)"  class="from-them">[message from blocked user]</p>
-					<p v-else class="from-them">{{findUsername(message.userId)}} : {{message.message}}</p>
+					<p v-else class="from-them">{{findUsername(message.user)}} : {{message.message}}</p>
 				</div>
 				<!-- TODO add username of sender -->
             </div>
@@ -41,6 +41,9 @@ export default defineComponent({
 		isMuted: {
 			type: String
 		},
+		allUsers: {
+			type: Array as any,
+		},
 		dmOpen : {
 			type: Boolean
 		},
@@ -54,7 +57,6 @@ export default defineComponent({
             text: '',
 			user: null as any,
 			usersWhoYouHaveBlocked: new Array<any>(),
-			allUsers: new Array<any>(),
 			}
     },
     watch: {
@@ -108,10 +110,6 @@ export default defineComponent({
 		}
     },
 	async mounted() {
-		fetch('/api/users')
-			.then(res => res.json())
-			.then(data => this.allUsers = data)
-			.catch(err => console.log(err))
 		let loggedInStatus = await loginStatusStore().logIn();
 		if (loggedInStatus) {
 			await fetch('/api/blocked_users/all_who_i_have_blocked/' + loggedInStatus.userID)

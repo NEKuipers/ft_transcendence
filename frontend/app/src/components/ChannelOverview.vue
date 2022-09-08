@@ -77,7 +77,6 @@ export default defineComponent({
         return {
             loginStatusStore: loginStatusStore(),
             channel: null,
-            messages: null, // Retrieve these from channel ID
 			channelParticipants: [],
             text: '',
 			userIsOwner: false,
@@ -95,10 +94,6 @@ export default defineComponent({
                 .then(res => res.json())
                 .then(data => { this.channel = data[0]; this.checkIfOwner(data[0].owner_id); })
                 .catch(err => console.log('Error retrieving channel', err))
-                fetch('/api/messages/channel/' + this.channel_id)
-                .then(res => res.json())
-                .then(data => { /* console.log(data) ;*/ this.messages = data })
-                .catch(err => console.log('Error retrieving messages for channel', err))
 				this.getChannelParticipants();
             }
         },

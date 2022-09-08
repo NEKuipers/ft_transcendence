@@ -19,7 +19,7 @@
 			</div>
 			<div class="column" id="center_column">
 				<div>
-					<ChatBox :key="blocksKey" :user="loginStatusStore.loggedInStatus?.userID"
+					<ChatBox :key="blocksKey" :user="loginStatusStore.loggedInStatus?.userID" :allUsers="allUsers"
 						:channel_id="currentChannel" :dm="dmID" :messages="channels[currentChannel]?.messages" :isMuted="channels[currentChannel]?.muted" @sentMsg="sendMsg"/>
 				</div>
 			</div>
@@ -63,6 +63,7 @@ export default defineComponent({
 			leaveChannelKey: 0,
 			blocksKey: 0,
 			dmID: -1,
+			allUsers: new Array<any>(),
 		}
 	},
 	methods: {
@@ -194,6 +195,10 @@ export default defineComponent({
 		},
 	},
 	async mounted() {
+		fetch('/api/users')
+			.then(res => res.json())
+			.then(data => this.allUsers = data)
+			.catch(err => console.log(err))
 		this.chatHandler = (this.$refs.ChatHandler as typeof ChatHandler);
 		let loggedInStatus = await loginStatusStore().logIn();
 		if (loggedInStatus) {
