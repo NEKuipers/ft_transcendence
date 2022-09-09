@@ -19,7 +19,7 @@
 			</div>
 			<div class="column" id="center_column">
 				<div>
-					<ChatBox :key="chatBoxKey" :user="loginStatusStore.loggedInStatus?.userID" :allUsers="allUsers"
+					<ChatBox :user="loginStatusStore.loggedInStatus?.userID" :allUsers="allUsers"
 						:channel_id="currentChannel" :dm="dmID" :messages="channels[currentChannel]?.messages" :isMuted="channels[currentChannel]?.muted" @sentMsg="sendMsg"/>
 				</div>
 			</div>
@@ -61,7 +61,6 @@ export default defineComponent({
 			channels: {} as {[key: number]: any},
 			boxType: "",
 			leaveChannelKey: 0,
-			chatBoxKey: 0,
 			dmID: -1,
 			allUsers: new Array<any>(),
 		}
@@ -161,8 +160,8 @@ export default defineComponent({
 		muteUser(channel_id: number, user_id: number) {
 			this.chatHandler.mute_user(channel_id, user_id);
 		},
-		reloadChatBox() {
-			this.chatBoxKey += 1;
+		unMuteTrigger(channel_id: number, isMuted: string) {
+			this.channels[channel_id].muted = isMuted > Date.now().toString();
 		},
 		unmuteUser(channel_id: number, user_id: number) {
 			this.chatHandler.unmute_user(channel_id, user_id);	
@@ -182,14 +181,13 @@ export default defineComponent({
 			console.log('Remove password in channel ' + channel_id);
 		},
 		muteStatus(channel_id: number, isMuted: string) {
-			this.reloadChatBox();
 			if (isMuted > Date.now().toString()) {
 				console.log(`I am muted in channel ${channel_id}`);
 			} else {
 				console.log(`I am not muted in channel ${channel_id}`);
 			}
-			this.channels[channel_id].muted = isMuted;
-			const myTimeout = setTimeout(this.reloadChatBox, 300000);
+			this.channels[channel_id].muted = isMuted > Date.now().toString();
+			const myTimeout = setTimeout(() => this.unMuteTrigger(channel_id, isMuted), 300000);
 		},
 		adminStatus(channel_id: number, isAdmin: boolean) {
 			if (isAdmin) {

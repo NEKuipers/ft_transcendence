@@ -14,7 +14,7 @@
         </div>
         <div>
             <form ref="TextBox" @submit="sendMsg">
-                <input id="input-box" type="text" v-model="text" placeholder="Message" :disabled="isMuted > Date.now().toString()"/>
+                <input id="input-box" type="text" v-model="text" placeholder="Message" :disabled="isMuted"/>
             </form>
         </div>
     </div>
@@ -37,7 +37,7 @@ export default defineComponent({
             type: Number
 		},
 		isMuted: {
-			type: String
+			type: Boolean
 		},
 		allUsers: {
 			type: Array as any,
