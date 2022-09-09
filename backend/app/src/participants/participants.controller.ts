@@ -21,16 +21,6 @@ export class ParticipantsController {
 		return this.participantsService.makeUserAdmin(participant);
 	}
 
-	@Patch('/ban-user')
-	async banUserFromChannel(@Body() participant: Participant) : Promise<string> {
-		return this.participantsService.banUserFromChannel(participant);
-	}
-
-	@Patch('/mute-user')
-	async muteUserInChannel(@Body() participant: Participant) : Promise<string> {
-		return this.participantsService.muteUserInChannel(participant);
-	}
-
 	@Delete()
 	async removeUserFromChannel(@Body() participant: Participant) : Promise<string> {
 		return this.participantsService.removeUserFromChannel(participant);

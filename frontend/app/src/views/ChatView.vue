@@ -19,7 +19,7 @@
 			</div>
 			<div class="column" id="center_column">
 				<div>
-					<ChatBox :key="blocksKey" :user="loginStatusStore.loggedInStatus?.userID" :allUsers="allUsers"
+					<ChatBox :key="chatBoxKey" :user="loginStatusStore.loggedInStatus?.userID" :allUsers="allUsers"
 						:channel_id="currentChannel" :dm="dmID" :messages="channels[currentChannel]?.messages" :isMuted="channels[currentChannel]?.muted" @sentMsg="sendMsg"/>
 				</div>
 			</div>
@@ -29,7 +29,7 @@
 				</div>
 				<div v-else>
 				Channel overview
-					<ChannelOverview :key="blocksKey"  :channel_id="currentChannel" :dm="dmID" @banUser="banUser" @unbanUser="unbanUser" @muteUser="muteUser" @unmuteUser="unmuteUser" @makeUserAdmin="makeUserAdmin" @removeUserAdmin="removeUserAdmin" @setPassword="setPassword"/>
+					<ChannelOverview :channel_id="currentChannel" :dm="dmID" @banUser="banUser" @unbanUser="unbanUser" @muteUser="muteUser" @unmuteUser="unmuteUser" @makeUserAdmin="makeUserAdmin" @removeUserAdmin="removeUserAdmin" @setPassword="setPassword"/>
 				</div>
 			</div>
 		</div>
@@ -61,7 +61,7 @@ export default defineComponent({
 			channels: {} as {[key: number]: any},
 			boxType: "",
 			leaveChannelKey: 0,
-			blocksKey: 0,
+			chatBoxKey: 0,
 			dmID: -1,
 			allUsers: new Array<any>(),
 		}
@@ -158,8 +158,11 @@ export default defineComponent({
 		unbanUser(channel_id: number, user_id: number) {
 			this.chatHandler.unban_user(channel_id, user_id);	
 		},
-		muteUser(channel_id: number, user_id: number) {	
+		muteUser(channel_id: number, user_id: number) {
 			this.chatHandler.mute_user(channel_id, user_id);
+		},
+		reloadChatBox() {
+			this.chatBoxKey += 1;
 		},
 		unmuteUser(channel_id: number, user_id: number) {
 			this.chatHandler.unmute_user(channel_id, user_id);	
@@ -174,15 +177,15 @@ export default defineComponent({
 			//TODO: implement this - How do we know which chat it is for?
 			console.log('Chosen password: ', newPassword);
 		},
-
 		muteStatus(channel_id: number, isMuted: string) {
+			this.reloadChatBox();
 			if (isMuted > Date.now().toString()) {
 				console.log(`I am muted in channel ${channel_id}`);
 			} else {
 				console.log(`I am not muted in channel ${channel_id}`);
 			}
-
 			this.channels[channel_id].muted = isMuted;
+			const myTimeout = setTimeout(this.reloadChatBox, 300000);
 		},
 		adminStatus(channel_id: number, isAdmin: boolean) {
 			if (isAdmin) {

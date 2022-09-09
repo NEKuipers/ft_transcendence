@@ -31,22 +31,6 @@ export class ParticipantsService {
 		})
 		return "User made admin";
 	}
-
-	async banUserFromChannel(participant: Participant): Promise<string> {
-		axios.patch(`http://localhost:${process.env.PGREST_PORT}/participants?participant_id=eq.${participant.participant_id}&channel_id=eq.${participant.channel_id}`, {
-			is_banned: true
-		})
-		return "User banned";
-		//TODO figure out ban/mute timer or something?
-	}
-
-	async muteUserInChannel(participant: Participant): Promise<string> {
-		axios.patch(`http://localhost:${process.env.PGREST_PORT}/participants?participant_id=eq.${participant.participant_id}&channel_id=eq.${participant.channel_id}`, {
-			is_muted: (Date.now() + 300000).toString(),
-		})
-		return "User muted";
-		//TODO figure out ban/mute timer or something?
-	}
 	
 	async removeUserFromChannel(participant: Participant): Promise<string> {
 		let channel = await this.channelsService.findOne(participant.channel_id);
