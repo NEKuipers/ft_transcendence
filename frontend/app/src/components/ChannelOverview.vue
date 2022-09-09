@@ -1,8 +1,8 @@
 <template>
     <div v-if="channel!=null" class="column">
-		<div v-if="userIsOwner">
+		<div class="passwordbuttons" v-if="userIsOwner">
 				<SmallButton id="passwordButton" text="Set new password" @click="enterNewPassword()"/>
-				<!-- <DialogueBox id="createChannelDialogueBox" :type="boxType" :show="showPasswordDialogue" @close-dialogue="hidePasswordDialogue" @new-name="setPassword"/> -->
+				<DialogueBox id="createChannelDialogueBox" :type="boxType" :show="showPasswordDialogue" @close-dialogue="hidePasswordDialogue" @new-name="setPassword"/>
 			<div v-if="channel.type == 'protected'">
 				<SmallButton id="passwordButton" text="Remove password" @click="removePassword()"/>
 			</div>
@@ -63,7 +63,7 @@ export default defineComponent({
     name: 'ChannelOverview',
 	components: {
 		SmallButton,
-		// DialogueBox,
+		DialogueBox,
 	},
     props: {
         channel_id: {
@@ -127,13 +127,13 @@ export default defineComponent({
 			this.showPasswordDialogue = true;
 		},
 		removePassword() {
-			console.log('remove password');
+			this.$emit('removePassword', this.channel_id)
 		},
 		hidePasswordDialogue() {
 			this.showPasswordDialogue = false;
 		},
 		async setPassword(newPassword: string) {
-			this.$emit('setPassword', newPassword);
+			this.$emit('setPassword', newPassword, this.channel_id);
 			this.hidePasswordDialogue();
 		},
 		hasUserBlockedYou(sender_id: number): boolean {
@@ -154,7 +154,7 @@ export default defineComponent({
 			.catch(err => console.log(err));
 		}
 	},
-	emits: ['banUser', 'unbanUser', 'muteUser', 'unmuteUser', 'makeUserAdmin', 'removeUserAdmin', 'setPassword']
+	emits: ['banUser', 'unbanUser', 'muteUser', 'unmuteUser', 'makeUserAdmin', 'removeUserAdmin', 'setPassword', 'removePassword']
 		
 })
 </script>
@@ -176,12 +176,21 @@ a:hover {
 }
 
 #passwordButton {
-	float:center;
+	height: 30px;
 }
 
 .button {
 	float: left;
 	margin-left:8px;
+}
+
+.passwordbuttons {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-evenly;
+	margin-bottom: 20px;
+	margin-top: 20px;
+
 }
 
 .listed-participant {
@@ -218,6 +227,10 @@ a:hover {
 .roles {
 	display:flex;
 	margin-top:-25px;
+}
+
+.column {
+	width: 100%;
 }
 
 
