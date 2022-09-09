@@ -1,13 +1,13 @@
 <template>
     <div v-if="channel!=null" class="column">
 		<div class="passwordbuttons" v-if="userIsOwner">
-				<SmallButton id="passwordButton" text="Set new password" @click="enterNewPassword()"/>
+				<SmallButton class="passwordButton" id="setpw" text="Set new password" @click="enterNewPassword()"/>
 				<DialogueBox id="createChannelDialogueBox" :type="boxType" :show="showPasswordDialogue" @close-dialogue="hidePasswordDialogue" @new-name="setPassword"/>
 			<div v-if="channel.type == 'protected'">
-				<SmallButton id="passwordButton" text="Remove password" @click="removePassword()"/>
+				<SmallButton class="passwordButton" id="removepw" text="Remove password" @click="removePassword()"/>
 			</div>
 		</div>
-		<div class="listed-participant" v-for="participant in channelParticipants" :key="participant?.id">
+		<div class="listed-participant" v-for="participant in channelParticipants" :key="participant">
 			<div id="participantdiv">
 				<div id="nameAndRoles">
 					<a class="participantName" v-bind:href="'/profile/' + participant.participant_id">{{participant.participant_username}}</a>
@@ -59,6 +59,13 @@ import { loginStatusStore } from '../stores/profileData'
 import SmallButton from './SmallButton.vue'
 import DialogueBox from './DialogueBox.vue'
 
+/* This is just for sorting by role */
+type Participant  = {
+    participant_is_admin: number,
+	participant_is_banned: number,
+	participant_is_muted: number
+}
+
 export default defineComponent({
     name: 'ChannelOverview',
 	components: {
@@ -104,7 +111,10 @@ export default defineComponent({
 		fetch("/api/participants/" + this.channel_id)
 			.then(res => res.json())
 			.then(data => {
-				this.channelParticipants = data; 
+				data = data.sort((a: Participant, b: Participant) => b.participant_is_admin - a.participant_is_admin);
+				data = data.sort((a: Participant, b: Participant) => a.participant_is_muted - b.participant_is_muted);
+				data = data.sort((a: Participant, b: Participant) => a.participant_is_banned - b.participant_is_banned);
+				this.channelParticipants = data;
 				for (let i = 0; i < data.length; i++) {
 					if (data[i] == this.loginStatusStore.loggedInStatus?.userID) {
 						if (data[i].is_admin){
@@ -112,6 +122,7 @@ export default defineComponent({
 						}
 					}
 				}
+				console.log(this.channelParticipants)
 			})
 			.catch(err => console.log(err));
 		},
@@ -166,6 +177,7 @@ export default defineComponent({
 
 .participantName {
 	text-decoration: none;
+	margin-left: 3px;
 }
 
 a:visited {
@@ -174,14 +186,15 @@ a:visited {
 a:hover {
 	text-decoration: underline;
 }
-
-#passwordButton {
+.passwordButton {
 	height: 30px;
 }
 
 .button {
 	float: left;
 	margin-left:8px;
+	width: 130px;
+	margin-top: 2px;
 }
 
 .passwordbuttons {
@@ -191,6 +204,14 @@ a:hover {
 	margin-bottom: 20px;
 	margin-top: 20px;
 
+}
+
+#removepw {
+	margin-top: -30px;
+}
+
+#setpw {
+	margin-top: 11px;
 }
 
 .listed-participant {
@@ -214,6 +235,8 @@ a:hover {
 	font-weight: bold;
 	justify-content: space-between;
 	margin: 5px;
+	max-width: 620px;
+	min-width: 100px;
 }
 
 .role {
@@ -226,7 +249,9 @@ a:hover {
 
 .roles {
 	display:flex;
-	margin-top:-25px;
+	margin-top:-15px;
+	flex-wrap: wrap;
+
 }
 
 .column {

@@ -1,5 +1,5 @@
 export interface Participant {
-	readonly id: number;
+	id: number;
 	participant_id: number;
 	is_admin: boolean;
 	is_muted: string;
