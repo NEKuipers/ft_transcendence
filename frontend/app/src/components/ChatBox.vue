@@ -138,7 +138,7 @@ export default defineComponent({
 			return Array.from(arr, this.dec2hex).join('')
 		},
         sendGameInvite(to_username: string, game_mode: string) {
-            this.$emit("sentMsg", this.channel_id, `Hey ${to_username}, I want to play a game of Pong ${game_mode} with you!`);
+            this.$emit("sentMsg", this.channel_id, `Hey ${to_username}, I want to play a game of Pong ${game_mode} with you.!`);
             this.$emit("sentMsg", this.channel_id, `http://localhost:8080/pong/${game_mode}/${this.generateGameId()}`);
         },
 		checkIfLink(message: Message) : boolean {

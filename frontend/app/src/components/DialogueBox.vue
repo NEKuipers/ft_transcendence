@@ -57,10 +57,11 @@
 		</div>
 		<div v-else-if="type === 'selectGameMode'">
             <h4> Select a game mode </h4>
-			<button @click="onGameModeSelected('classic')" type="button"> Classic </button>
-			<button @click="onGameModeSelected('speedup')" type="button"> Speedup </button>
-			<button @click="onGameModeSelected('rush')" type="button"> Rush </button>
-			<button @click="onGameModeSelected('expert')" type="button"> Expert </button>
+			<button @click="onGameModeSelected('classic')" class="gamemodebutton" type="button"> Classic </button>
+			<button @click="onGameModeSelected('speedup')" class="gamemodebutton" type="button"> Speedup </button>
+			<br><br>
+			<button @click="onGameModeSelected('rush')" class="gamemodebutton" type="button"> Rush </button>
+			<button @click="onGameModeSelected('expert')" class="gamemodebutton" type="button"> Expert </button>
 		</div>
     </div>
 </template>
@@ -174,6 +175,11 @@ export default defineComponent({
 
 .small {
 	font-size: small;
+}
+
+.gamemodebutton {
+	font-size: 20pt;
+	margin: 10px;
 }
 
 .selectAvatarDialogue {

@@ -28,6 +28,8 @@
 				</div>
 				<div v-if="participant?.participant_id != loginStatusStore.loggedInStatus?.userID">
 					<SmallButton v-if="!hasUserBlockedYou(participant?.participant_id)" class="button" text="Invite to Game" @click="gameInvite(participant?.participant_username)"/>
+					<DialogueBox id="selectGameModeDialogueBox" :type="boxType" :show="showSelectGameModeDialogue" @game-mode-selected="gameModeSelected"/>
+
 					<!-- banning/muting, with restriction for admin/owner only -->
 					<div v-if="userIsAdmin || userIsOwner">
 						<SmallButton v-if="!participant?.participant_is_banned" class="button" text="Ban this user" @click="banUser(participant.participant_id)"/>
@@ -61,6 +63,7 @@ import SmallButton from './SmallButton.vue'
 import DialogueBox from './DialogueBox.vue'
 import { isArray } from '@vue/shared'
 import { Participant } from '../types/ParticipantType'
+import { stringLiteral } from '@babel/types'
 
 export default defineComponent({
     name: 'ChannelOverview',
@@ -86,7 +89,9 @@ export default defineComponent({
 			userIsAdmin: false,
 			showPasswordDialogue: false,
 			boxType: "",
+			showSelectGameModeDialogue: false,
 			usersWhoHaveBlockedYou: new Array<any>(),
+			invited_user: "",
         }
     },
     watch: {
@@ -130,8 +135,14 @@ export default defineComponent({
 				this.userIsOwner = true;
 		},
 		gameInvite(to_username: string) {
-			//TODO dialogue box for game mode
-			this.$emit('inviteToGame', to_username, 'classic');
+			this.boxType = "selectGameMode";
+			this.invited_user = to_username;
+			this.showSelectGameModeDialogue = true;
+		},
+		gameModeSelected(game_mode: string) {
+			this.$emit('inviteToGame', this.invited_user, game_mode);
+			this.showSelectGameModeDialogue = false;
+			this.boxType = "";
 		},
 		async enterNewPassword() {
 			this.boxType = "setPassword";
