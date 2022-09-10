@@ -73,14 +73,14 @@ export default defineComponent({
 			this.currentChannel = channel_id
 			this.dmID = -1;
 		},
-		async openDM (user_id_1: number, user_id_2: number) {
+		async openDM(user_id_1: number, user_id_2: number) {
 			this.dmID = user_id_2;
 
 			// Try to find the already existing dm channel
 			let expected_name = `dm-${Math.min(user_id_1, user_id_2)}-${Math.max(user_id_1, user_id_2)}`;
 			for (let id in this.channels) {
 				let data = this.channels[id];
-
+				
 				if (data.type == "direct" && data.name == expected_name) {
 					this.currentChannel = data.id;
 					return;

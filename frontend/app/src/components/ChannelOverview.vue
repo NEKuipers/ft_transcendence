@@ -63,7 +63,6 @@ import SmallButton from './SmallButton.vue'
 import DialogueBox from './DialogueBox.vue'
 import { isArray } from '@vue/shared'
 import { Participant } from '../types/ParticipantType'
-import { stringLiteral } from '@babel/types'
 
 export default defineComponent({
     name: 'ChannelOverview',

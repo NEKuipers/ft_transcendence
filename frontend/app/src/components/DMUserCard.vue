@@ -1,4 +1,5 @@
 <template>
+	<div>
 	User overview
 	<div v-if="profile" class="userprofile">
 		<img class="profilePicture" v-bind:src="'/api/avatars/' + profile.avatar_id">
@@ -19,6 +20,7 @@
 		<br>
 		<SmallButton class="invite-btn" text="Invite to game" @click="gameInvite"/>
 		<DialogueBox id="selectGameModeDialogueBox" :type="boxType" :show="showSelectGameModeDialogue" @game-mode-selected="gameModeSelected"/>
+	</div>
 	</div>
 </template>
 

@@ -17,7 +17,7 @@
 							<h4 class="online-status"  v-else-if="friend?.friend_status == 'ingame'" id="ingame">In game</h4>
 							<h4 class="online-status" v-else>Offline</h4>
 						</div>
-						<SmallButton id="dm-btn" text="DM" @click="openDirectMessage(friend.from_user_id, friend.to_user_id)"/>
+						<SmallButton id="dm-btn" text="DM" @click="openDirectMessage(friend.to_user_id)"/>
 					</div>
 				</section>
 			</div>
@@ -67,8 +67,8 @@ export default defineComponent({
 				.then(data => this.friends = data)
 				.catch(err => console.log(err));
 		},
-		openDirectMessage(user_id_1: number, user_id_2: number) {
-			this.$emit('openDM', user_id_1, user_id_2);
+		openDirectMessage(user_id_2: number) {
+			this.$emit('openDM', this.user, user_id_2);
 		}
 	},
 	emits: ['openDM']
