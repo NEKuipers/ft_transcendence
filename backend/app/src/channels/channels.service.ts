@@ -7,20 +7,20 @@ import * as bcrypt from 'bcrypt'
 @Injectable()
 export class ChannelsService {
 	async findAll(): Promise<Channel[]> {
-		let res = await axios.get(`http://localhost:${process.env.PGREST_PORT}/channels?type=neq.direct&is_closed=eq.false`);
+		let res = await axios.get(`http://pgrest:${process.env.PGREST_PORT}/channels?type=neq.direct&is_closed=eq.false`);
 		return res.data;
 	}
 
 	async findAllNonDirect(): Promise<Channel[]> {
-		let res = await axios.get(`http://localhost:${process.env.PGREST_PORT}/channels?type=neq.direct&is_closed=eq.false`);
+		let res = await axios.get(`http://pgrest:${process.env.PGREST_PORT}/channels?type=neq.direct&is_closed=eq.false`);
 		return res.data;
 	}
 
 	async findAllForUser(user_id: number): Promise<Channel[]> { //
-		let res = await axios.get(`http://localhost:${process.env.PGREST_PORT}/participants?participant_id=eq.${user_id}`);
+		let res = await axios.get(`http://pgrest:${process.env.PGREST_PORT}/participants?participant_id=eq.${user_id}`);
 		let channels: Channel[] = [];
 		for (let i = 0; i < res.data.length; i++) {
-			let temp = await axios.get(`http://localhost:${process.env.PGREST_PORT}/channels?id=eq.${res.data[i].channel_id}&type=neq.direct&is_closed=eq.false`);
+			let temp = await axios.get(`http://pgrest:${process.env.PGREST_PORT}/channels?id=eq.${res.data[i].channel_id}&type=neq.direct&is_closed=eq.false`);
 			if (temp.data[0]) {	// If it does not find it because its a direct message, it can push a undefined in, and that will break the TS types, which will cause exceptions when making the assumtion that its actually that type (accessing the .id for example in findAllNotForUser)
 				channels.push(temp.data[0]);
 			}
@@ -51,7 +51,7 @@ export class ChannelsService {
 	}
 
 	async findOne(channel_id: number) : Promise<Channel> {
-		let res = await axios.get(`http://localhost:${process.env.PGREST_PORT}/channels?id=eq.${channel_id}`)
+		let res = await axios.get(`http://pgrest:${process.env.PGREST_PORT}/channels?id=eq.${channel_id}`)
 		return res.data;
 	}
 
@@ -73,7 +73,7 @@ export class ChannelsService {
 		if (channels.find((existingChannel) => existingChannel.name == channel.name)) {
 			return "taken";
 		}
-		await axios.post(`http://localhost:${process.env.PGREST_PORT}/channels`, {
+		await axios.post(`http://pgrest:${process.env.PGREST_PORT}/channels`, {
 			name: channel.name,
 			type: channel.type,
 			owner_id: channel.owner_id,
@@ -84,7 +84,7 @@ export class ChannelsService {
 	}
 
 	async changeOwner(id: number, channel: Channel): Promise<string> {
-		axios.patch(`http://localhost:${process.env.PGREST_PORT}/channels?id=eq.${channel.id}`, {
+		axios.patch(`http://pgrest:${process.env.PGREST_PORT}/channels?id=eq.${channel.id}`, {
 			owner_id: id
 		})
 		return "Channel owner changed";

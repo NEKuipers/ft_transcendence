@@ -1,4 +1,4 @@
-FROM node:lts-alpine
+FROM node:16-slim
 WORKDIR /app
 RUN chown -R node:node /root
 COPY ./entrypoint.sh /

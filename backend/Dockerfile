@@ -1,7 +1,9 @@
+FROM node:16-slim
 
-FROM node:lts-alpine
+COPY app /app
+COPY entrypoint.sh /
+
 WORKDIR /app
-RUN npm i -g @nestjs/cli 
-COPY ./entrypoint.sh /
+
 EXPOSE 3030
 ENTRYPOINT [ "/bin/sh", "/entrypoint.sh" ]

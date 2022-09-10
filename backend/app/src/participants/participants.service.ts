@@ -9,12 +9,12 @@ export class ParticipantsService {
 	constructor(private readonly channelsService: ChannelsService) {}
 
 	async findAllParticipantsOfChannel(channel_id: number): Promise<Participant[]> {
-		let res = await axios.get(`http://localhost:${process.env.PGREST_PORT}/vw_participants?channel_id=eq.${channel_id}`);
+		let res = await axios.get(`http://pgrest:${process.env.PGREST_PORT}/vw_participants?channel_id=eq.${channel_id}`);
 		return res.data;
 	}
 
 	async addUserToChannel(participant: Participant): Promise<string> {
-		axios.post(`http://localhost:${process.env.PGREST_PORT}/participants`, {
+		axios.post(`http://pgrest:${process.env.PGREST_PORT}/participants`, {
 			channel_id: participant.channel_id,
 			is_admin: false,
 			is_banned: false,
@@ -26,7 +26,7 @@ export class ParticipantsService {
 	}
 
 	async makeUserAdmin(participant: Participant): Promise<string> {
-		axios.patch(`http://localhost:${process.env.PGREST_PORT}/participants?participant_id=eq.${participant.participant_id}&channel_id=eq.${participant.channel_id}`, {
+		axios.patch(`http://pgrest:${process.env.PGREST_PORT}/participants?participant_id=eq.${participant.participant_id}&channel_id=eq.${participant.channel_id}`, {
 			is_admin: true
 		})
 		return "User made admin";
@@ -49,7 +49,7 @@ export class ParticipantsService {
 				this.channelsService.changeOwner(newOwner, channel);
 			}
 		}
-		await axios.delete(`http://localhost:${process.env.PGREST_PORT}/participants?channel_id=eq.${participant.channel_id}&participant_id=eq.${participant.participant_id}`);
+		await axios.delete(`http://pgrest:${process.env.PGREST_PORT}/participants?channel_id=eq.${participant.channel_id}&participant_id=eq.${participant.participant_id}`);
 
 
 		return "User removed from channel";

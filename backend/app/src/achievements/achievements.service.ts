@@ -9,12 +9,12 @@ export class AchievementsService {
 
 	async findAll(): Promise<Achievement[]> {
 		//http request -> postgress/achievemnents
-		let res = await axios.get(`http://localhost:${process.env.PGREST_PORT}/achievements`);
+		let res = await axios.get(`http://pgrest:${process.env.PGREST_PORT}/achievements`);
 		return res.data;
 	}
 
 	async findUserAchievements(id: number): Promise<Achievement[]> {
-		const ret = await axios.get(`http://localhost:${process.env.PGREST_PORT}/user_achievements?user_id=eq.${id}`);
+		const ret = await axios.get(`http://pgrest:${process.env.PGREST_PORT}/user_achievements?user_id=eq.${id}`);
 		return ret.data
 	}
 }
