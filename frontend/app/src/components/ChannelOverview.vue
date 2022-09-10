@@ -30,16 +30,17 @@
 					<SmallButton v-if="!hasUserBlockedYou(participant?.participant_id)" class="button" text="Invite to Game" @click="gameInvite(participant?.id)"/>
 					<!-- banning/muting, with restriction for admin/owner only -->
 					<div v-if="userIsAdmin || userIsOwner">
-						<SmallButton v-if="!participant?.participant_is_banned" class="button" text="Ban this user" @click="this.$emit('banUser', this.channel_id, participant.participant_id)"/>
-						<SmallButton v-else class="button" text="Unban this user" @click="this.$emit('unbanUser', this.channel_id, participant.participant_id)"/>
-						<SmallButton v-if="participant?.participant_is_muted < Date.now().toString() " class="button" text="Mute this user" @click="this.$emit('muteUser', this.channel_id, participant.participant_id)"/>
-						<SmallButton v-else class="button" text="Unmute this user" @click="this.$emit('unmuteUser', this.channel_id, participant.participant_id)"/>
+						<SmallButton v-if="!participant?.participant_is_banned" class="button" text="Ban this user" @click="banUser(participant.participant_id)"/>
+
+						<SmallButton v-else class="button" text="Unban this user" @click="unbanUser(participant.participant_id)"/>
+						<SmallButton v-if="participant?.participant_is_muted < Date.now().toString() " class="button" text="Mute this user" @click="muteUser(participant.participant_id)"/>
+						<SmallButton v-else class="button" text="Unmute this user" @click="unmuteUser(participant.participant_id)"/>
 					</div>
 
 					<!-- admin rights -->
 					<div v-if="userIsOwner">
-						<SmallButton v-if="!participant.participant_is_admin && userIsOwner" class="button" text="Give admin rights" @click="this.$emit('makeUserAdmin', this.channel_id, participant.participant_id)"/>
-						<SmallButton v-else class="button" text="Remove admin rights" @click="this.$emit('removeUserAdmin', this.channel_id, participant.participant_id)"/>
+						<SmallButton v-if="!participant.participant_is_admin && userIsOwner" class="button" text="Give admin rights" @click="makeUserAdmin(participant.participant_id)"/>
+						<SmallButton v-else class="button" text="Take admin rights" @click="removeUserAdmin(participant.participant_id)"/>
 					</div>
 				</div>
 			</div>
@@ -61,6 +62,8 @@ import DialogueBox from './DialogueBox.vue'
 
 /* This is just for sorting by role */
 type Participant  = {
+	channel_owner_id: number,
+	participant_id: number,
     participant_is_admin: number,
 	participant_is_banned: number,
 	participant_is_muted: number
@@ -106,14 +109,18 @@ export default defineComponent({
         },
     },
 	methods: {
-		//TODO turning this into a watch would make it more responsive
 		async getChannelParticipants() { 
 		fetch("/api/participants/" + this.channel_id)
 			.then(res => res.json())
 			.then(data => {
+
+				/*sort users in channel */
 				data = data.sort((a: Participant, b: Participant) => b.participant_is_admin - a.participant_is_admin);
 				data = data.sort((a: Participant, b: Participant) => a.participant_is_muted - b.participant_is_muted);
 				data = data.sort((a: Participant, b: Participant) => a.participant_is_banned - b.participant_is_banned);
+				data = data.sort((a: Participant, b: Participant) => {if (a.channel_owner_id == a.participant_id && b.channel_owner_id != b.participant_id) return -1;})
+
+
 				this.channelParticipants = data;
 				for (let i = 0; i < data.length; i++) {
 					if (data[i] == this.loginStatusStore.loggedInStatus?.userID) {
@@ -122,7 +129,6 @@ export default defineComponent({
 						}
 					}
 				}
-				console.log(this.channelParticipants)
 			})
 			.catch(err => console.log(err));
 		},
@@ -154,7 +160,32 @@ export default defineComponent({
 				}
 			}
 			return false;
-		}
+		},
+		banUser(participant_id: number) {
+			this.$emit('banUser', this.channel_id, participant_id);
+			this.getChannelParticipants();
+		},
+		unbanUser(participant_id: number) {
+			this.$emit('unbanUser', this.channel_id, participant_id);
+			this.getChannelParticipants();
+		},
+		muteUser(participant_id: number) {
+			this.$emit('muteUser', this.channel_id, participant_id);
+			this.getChannelParticipants();
+		},
+		unmuteUser(participant_id: number) {
+			this.$emit('unmuteUser', this.channel_id, participant_id);
+			this.getChannelParticipants();
+		},
+		makeUserAdmin(participant_id: number) {
+			this.$emit('makeUserAdmin', this.channel_id, participant_id);
+			this.getChannelParticipants();
+		},
+		removeUserAdmin(participant_id: number) {
+			this.$emit('removeUserAdmin', this.channel_id, participant_id);
+			this.getChannelParticipants();
+		},
+
 	},
 	async mounted() {
 		let loggedInStatus = await loginStatusStore().logIn();
