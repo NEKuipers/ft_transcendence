@@ -110,7 +110,6 @@ export default defineComponent({
                 this.$emit("sentMsg", this.channel_id, this.text);
             }
             this.text = "";
-            // console.log(this.messages)
         },
         haveYouBlockedUser(sender_id: number): boolean {
             for (let x = 0; x < this.usersWhoYouHaveBlocked.length; x++) {
@@ -141,11 +140,10 @@ export default defineComponent({
         sendGameInvite(to_username: string, game_mode: string) {
             this.$emit("sentMsg", this.channel_id, `Hey ${to_username}, I want to play a game of Pong ${game_mode} with you!`);
             this.$emit("sentMsg", this.channel_id, `http://localhost:8080/pong/${game_mode}/${this.generateGameId()}`);
-			
         },
 		checkIfLink(message: Message) : boolean {
 			return (message.message.startsWith('http://localhost:'));
-		}
+		},
     },
     async mounted() {
         let loggedInStatus = await loginStatusStore().logIn();

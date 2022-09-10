@@ -55,6 +55,13 @@
 			<button @click="onClick" type="button" class="close"> X </button>
             </form>
 		</div>
+		<div v-else-if="type === 'selectGameMode'">
+            <h4> Select a game mode </h4>
+			<button @click="onGameModeSelected('classic')" type="button"> Classic </button>
+			<button @click="onGameModeSelected('speedup')" type="button"> Speedup </button>
+			<button @click="onGameModeSelected('rush')" type="button"> Rush </button>
+			<button @click="onGameModeSelected('expert')" type="button"> Expert </button>
+		</div>
     </div>
 </template>
 
@@ -88,6 +95,9 @@ export default defineComponent({
         onClick() {
             this.$emit('close-dialogue')
         },
+		onGameModeSelected(game_mode: string) {
+			this.$emit('game-mode-selected', game_mode);
+		},
         onFileSelected(event: any) {
             // this.selectedFile = this.$refs.avatar.files[0]
             this.selectedFile = event.target.files[0]
@@ -137,7 +147,7 @@ export default defineComponent({
             }
         }
     },
-    emits: ['close-dialogue', 'new-name', 'new-avatar', 'password-entered']
+    emits: ['close-dialogue', 'new-name', 'new-avatar', 'password-entered', 'game-mode-selected']
 })
 </script>
 

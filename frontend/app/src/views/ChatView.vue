@@ -9,9 +9,6 @@
 				</div>
 				<div class="channels">
 					<OtherChatChannels v-if="loginStatusStore" :key="leaveChannelKey" @joinChannel="joinChannel" :user="loginStatusStore.loggedInStatus?.userID"/>
-					<!-- <dialogueBox id="promptPassword" :type="boxType" 
-						:show="showDialogue" @close-dialogue="hideDialogue" 
-						@passwordEntered="verifyPassword" /> -->
 				</div>
 				<div id="friends">
 					<ChatFriendsList v-if="loginStatusStore" :user="loginStatusStore.loggedInStatus?.userID" @openDM="openDM"/>
