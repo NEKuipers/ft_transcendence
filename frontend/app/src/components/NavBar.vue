@@ -55,6 +55,7 @@ export default defineComponent({
 	color: #f2f2f2;
 	padding: 15px;
 	margin-bottom: 20px;
+	height:140px;
 }
 
 .navbar a{

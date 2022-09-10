@@ -9,9 +9,6 @@
 				</div>
 				<div class="channels">
 					<OtherChatChannels v-if="loginStatusStore" :key="leaveChannelKey" @joinChannel="joinChannel" :user="loginStatusStore.loggedInStatus?.userID"/>
-					<!-- <dialogueBox id="promptPassword" :type="boxType" 
-						:show="showDialogue" @close-dialogue="hideDialogue" 
-						@passwordEntered="verifyPassword" /> -->
 				</div>
 				<div id="friends">
 					<ChatFriendsList v-if="loginStatusStore" :user="loginStatusStore.loggedInStatus?.userID" @openDM="openDM"/>
@@ -19,17 +16,17 @@
 			</div>
 			<div class="column" id="center_column">
 				<div>
-					<ChatBox :user="loginStatusStore.loggedInStatus?.userID" :allUsers="allUsers"
+					<ChatBox ref="chatBoxRef" :user="loginStatusStore.loggedInStatus?.userID" :allUsers="allUsers"
 						:channel_id="currentChannel" :dm="dmID" :messages="channels[currentChannel]?.messages" :mutedUntil="channels[currentChannel]?.muted" @sentMsg="sendMsg"/>
 				</div>
 			</div>
 			<div class="column" id="channel-overview">
 				<div v-if="dmID > 0">
-					<DMUserCard :user="dmID"></DMUserCard>
+					<DMUserCard :user="dmID" @inviteToGame="inviteToGame"></DMUserCard>
 				</div>
 				<div v-else>
 				<div id="channel-overview-header">Channel overview</div>
-					<ChannelOverview :channel_id="currentChannel" :dm="dmID" @banUser="banUser" @unbanUser="unbanUser" @muteUser="muteUser" @unmuteUser="unmuteUser" @makeUserAdmin="makeUserAdmin" @removeUserAdmin="removeUserAdmin" @setPassword="setPassword" @removePassword="removePassword"/>
+					<ChannelOverview :channel_id="currentChannel" :dm="dmID" @banUser="banUser" @unbanUser="unbanUser" @muteUser="muteUser" @unmuteUser="unmuteUser" @makeUserAdmin="makeUserAdmin" @removeUserAdmin="removeUserAdmin" @setPassword="setPassword" @removePassword="removePassword" @inviteToGame="inviteToGame"/>
 				</div>
 			</div>
 		</div>
@@ -76,14 +73,14 @@ export default defineComponent({
 			this.currentChannel = channel_id
 			this.dmID = -1;
 		},
-		async openDM (user_id_1: number, user_id_2: number) {
+		async openDM(user_id_1: number, user_id_2: number) {
 			this.dmID = user_id_2;
 
 			// Try to find the already existing dm channel
 			let expected_name = `dm-${Math.min(user_id_1, user_id_2)}-${Math.max(user_id_1, user_id_2)}`;
 			for (let id in this.channels) {
 				let data = this.channels[id];
-
+				
 				if (data.type == "direct" && data.name == expected_name) {
 					this.currentChannel = data.id;
 					return;
@@ -194,6 +191,9 @@ export default defineComponent({
 			}
 			
 			this.channels[channel_id].admin = isAdmin;
+		},
+		inviteToGame(to_username: string, game_mode: string) {
+			(this.$refs.chatBoxRef as any).sendGameInvite(to_username, game_mode);
 		},
 	},
 	async mounted() {

@@ -11,7 +11,7 @@
 				<div><h5 class="name">{{ channel.name }}</h5></div>
 				<div id="buttons">
 					<SmallButton  class="button" text="open" @click="openChat(channel.id)"/>
-					<SmallButton  class="button" text="leave" @click="this.$emit('leaveChannel', channel.id, channel.name)"/>
+					<SmallButton  class="button" text="leave" @click="$emit('leaveChannel', channel.id, channel.name)"/>
 				</div>
 			</ul>
 		</div>
@@ -125,15 +125,9 @@ export default defineComponent({
 
 .listed-channel{
 	display: flex;
-	justify-content: space-between;
+	flex-direction: column;
 	font-size: large;
-	box-sizing: border-box;
-	align-items: flex-start;
-	max-height: 40px;
-	margin-top: 0px;
-	margin-bottom: 0px;
-	min-width: 330px;
-	max-width: 450px;
+	height: 40px;
 }
 
 .name {
@@ -143,7 +137,8 @@ export default defineComponent({
 
 #buttons {
 	display: flex;
-	margin-left:30px;
+	margin-left:-7px;
+	margin-top: -20px;
 }
 
 .button {

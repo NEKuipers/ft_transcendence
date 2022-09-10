@@ -1,4 +1,4 @@
-enum user_status {
+export enum user_status {
 	online,
 	offline,
 	ingame

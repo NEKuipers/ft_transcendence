@@ -5,10 +5,24 @@
         </div>
         <div id="messages">
             <div v-for="message in messages" :key="message.id" >
-				<p v-if="message.user === loginStatusStore.loggedInStatus?.userID" class="from-me">{{message.message}}</p>
+				<div v-if="message.user === loginStatusStore.loggedInStatus?.userID" >
+					<div v-if="checkIfLink(message) == true">
+						<a class="from-me" v-bind:href="message.message">Click here to join!</a>
+					</div>
+					<div v-else>
+						<p class="from-me">{{message.message}}</p>
+					</div>
+				</div>
 				<div v-else>
 					<p v-if="haveYouBlockedUser(message.user)"  class="from-them">[message from blocked user]</p>
-					<p v-else class="from-them">{{findUsername(message.user)}} : {{message.message}}</p>
+					<div v-else-if="checkIfLink(message) == true">
+						<a v-if="dmOpen" class="from-them" v-bind:href="message.message">Click here to join!</a>
+						<a v-else class="from-them" v-bind:href="message.message">{{findUsername(message.user)}} : Click here to join!</a>
+					</div>
+					<div v-else>
+						<p v-if="dmOpen" class="from-them">{{message.message}}</p>
+						<p v-else class="from-them">{{findUsername(message.user)}} : {{message.message}}</p>
+					</div>
 				</div>
             </div>
         </div>
@@ -30,93 +44,117 @@
 import { defineComponent } from 'vue'
 import { loginStatusStore } from '../stores/profileData'
 
+type Message = {
+	channel_id: number,
+	user: number,
+	message: string
+}
+
 export default defineComponent({
-    name: 'ChatBox',
+    name: "ChatBox",
     props: {
         channel_id: {
             type: Number
-		},
-		mutedUntil: {
-			type: Date
-		},
-		allUsers: {
-			type: Array as any,
-		},
-		dmOpen : {
-			type: Boolean
-		},
-		messages: null as any // Maaaaybe could import interfaces and stuff
-		// channel_name: String // TODO
+        },
+        mutedUntil: {
+            type: Date
+        },
+        allUsers: {
+            type: Array as any,
+        },
+        dmOpen: {
+            type: Boolean
+        },
+        messages: Array as any // Maaaaybe could import interfaces and stuff
+        // channel_name: String // TODO
     },
     data() {
         return {
             loginStatusStore: loginStatusStore(),
             channel: null as any,
-            text: '',
-			user: null as any,
-			usersWhoYouHaveBlocked: new Array<any>(),
-			}
+            text: "",
+            user: null as any,
+            usersWhoYouHaveBlocked: new Array<number>(),
+            linkStart: "http://localhost:",
+        };
     },
     watch: {
         channel_id: {
             handler(newValue) {
-                if (!newValue) { return; }
-                fetch('/api/channels/' + this.channel_id)
-					.then(res => res.json())
-					.then(data => { this.channel = data[0] })
-					.catch(err => console.log('Error retrieving channel', err))
+                if (!newValue) {
+                    return;
+                }
+                fetch("/api/channels/" + this.channel_id)
+                    .then(res => res.json())
+                    .then(data => { this.channel = data[0]; })
+                    .catch(err => console.log("Error retrieving channel", err));
             }
         },
-		messages: {
-			handler(newValue) {
-				const container = this.$el.querySelector("#messages")
-				setTimeout(function() {
-					if (!container) {
-						return
-					}
-					container.scrollTop = container.scrollHeight
-				}, 2)
-			},
-			deep: true	
-		},
+        messages: {
+            handler(newValue) {
+                const container = this.$el.querySelector("#messages");
+                setTimeout(function () {
+                    if (!container) {
+                        return;
+                    }
+                    container.scrollTop = container.scrollHeight;
+                }, 2);
+            },
+            deep: true
+        },
     },
     methods: {
         sendMsg(e: any) {
-            e.preventDefault()
-			if (this.text) {
-				this.$emit("sentMsg", this.channel_id, this.text)
-			}
-			this.text=""
-			
-			// console.log(this.messages)
+            e.preventDefault();
+            if (this.text) {
+                this.$emit("sentMsg", this.channel_id, this.text);
+            }
+            this.text = "";
         },
-		haveYouBlockedUser(sender_id: number): boolean {
-			for (let x = 0; x < this.usersWhoYouHaveBlocked.length; x++) {
-				if ( this.usersWhoYouHaveBlocked[x] == sender_id) {
-					return true;
-				}
-			}
-			return false;
+        haveYouBlockedUser(sender_id: number): boolean {
+            for (let x = 0; x < this.usersWhoYouHaveBlocked.length; x++) {
+                if (this.usersWhoYouHaveBlocked[x] == sender_id) {
+                    return true;
+                }
+            }
+            return false;
+        },
+        findUsername(user_id: number): string {
+            for (let x = 0; x < this.allUsers.length; x++) {
+                if (this.allUsers[x].id == user_id) {
+                    return this.allUsers[x].username;
+                }
+            }
+            return "user " + user_id;
+        },
+
+		/* generate random game link */ 
+		dec2hex(dec: number) {
+			return dec.toString(16).padStart(2, "0")
 		},
-		findUsername(user_id: number) : string {
-			for (let x = 0; x < this.allUsers.length; x++) {
-				if (this.allUsers[x].id == user_id) {
-					return this.allUsers[x].username;
-				}
-			}
-			return "user " + user_id;
-		}
+		generateGameId() : string {
+			var arr = new Uint8Array((16 || 40) / 2)
+			window.crypto.getRandomValues(arr)
+			return Array.from(arr, this.dec2hex).join('')
+		},
+        sendGameInvite(to_username: string, game_mode: string) {
+            this.$emit("sentMsg", this.channel_id, `Hey ${to_username}, I want to play a game of Pong ${game_mode} with you.!`);
+            this.$emit("sentMsg", this.channel_id, `http://localhost:8080/pong/${game_mode}/${this.generateGameId()}`);
+        },
+		checkIfLink(message: Message) : boolean {
+			return (message.message.startsWith('http://localhost:'));
+		},
     },
-	async mounted() {
-		let loggedInStatus = await loginStatusStore().logIn();
-		if (loggedInStatus) {
-			await fetch('/api/blocked_users/all_who_i_have_blocked/' + loggedInStatus.userID)
-			.then(res => res.json())
-			.then(data => this.usersWhoYouHaveBlocked = data)
-			.catch(err => console.log(err));
-		}
-	},
-	emits: ['sentMsg']
+    async mounted() {
+        let loggedInStatus = await loginStatusStore().logIn();
+        if (loggedInStatus) {
+            await fetch("/api/blocked_users/all_who_i_have_blocked/" + loggedInStatus.userID)
+                .then(res => res.json())
+                .then(data => this.usersWhoYouHaveBlocked = data)
+                .catch(err => console.log(err));
+        }
+    },
+    emits: ["sentMsg"],
 })
 </script>
 
@@ -127,7 +165,6 @@ export default defineComponent({
   min-height: 100px;
   display: flex;
   flex-direction: column;
-  font-family: "SanFrancisco";
   font-size: 1.25rem;
   margin: 0 auto 1rem;
   max-height: 800px;
@@ -260,6 +297,97 @@ p[class^="from-"].emoji::before {
 	height:45px;
 	font-size: 20px;
 	max-width: 1000px;
+}
+
+#messages a {
+  border-radius: 1.15rem;
+  line-height: 1.25;
+  max-width: 75%;
+  padding: 0.5rem .875rem;
+  position: relative;
+  word-wrap: break-word;
+}
+
+a.from-me {
+  align-self: flex-end;
+  float: right;
+  background-color: #05315c;
+  color: #fff; 
+  
+}
+
+a.from-me::before {
+  border-bottom-left-radius: 0.8rem 0.7rem;
+  border-right: 1rem solid #05315c;
+  right: -0.35rem;
+  transform: translate(0, -0.1rem);
+}
+
+a.from-me::after {
+  background-color: #fff;
+  border-bottom-left-radius: 0.5rem;
+  right: -40px;
+  transform:translate(-30px, -2px);
+  width: 10px;
+}
+
+a.from-them {
+  align-items: flex-start;
+  background-color: #05315c;
+  color: #000;
+}
+
+a.from-them:before {
+  border-bottom-right-radius: 0.8rem 0.7rem;
+  border-left: 1rem solid #e5e5ea;
+  left: -0.35rem;
+  transform: translate(0, -0.1rem);
+}
+
+a.from-them::after {
+  background-color: #fff;
+  border-bottom-right-radius: 0.5rem;
+  left: 20px;
+  transform: translate(-30px, -2px);
+  width: 10px;
+}
+
+a[class^="from-"] {
+  margin: 0.5rem 0;
+  width: fit-content;
+}
+
+a.from-me ~ a.from-me {
+  margin: 0.25rem 0 0;
+}
+
+a.from-me ~ a.from-me:not(:last-child) {
+  margin: 0.25rem 0 0;
+}
+
+a.from-me ~ a.from-me:last-child {
+  margin-bottom: 0.5rem;
+}
+
+a.from-them {
+  align-items: flex-start;
+  background-color: #e5e5ea;
+  color: #000;
+}
+
+a.from-them:before {
+  border-bottom-right-radius: 0.8rem 0.7rem;
+  border-left: 1rem solid #e5e5ea;
+  left: -0.35rem;
+  transform: translate(0, -0.1rem);
+}
+
+a.from-them::after {
+  background-color: #fff;
+  border-bottom-right-radius: 0.5rem;
+  left: 20px;
+  transform: translate(-30px, -2px);
+  width: 10px;
 }
 
 /* #messages {

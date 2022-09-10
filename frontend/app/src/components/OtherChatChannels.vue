@@ -107,15 +107,9 @@ export default defineComponent({
 
 .listed-channel{
 	display: flex;
-	justify-content: space-between;
+	flex-direction: column;
 	font-size: large;
-	box-sizing: border-box;
-	align-items: flex-start;
-	max-height: 40px;
-	margin-top: 0px;
-	margin-bottom: 0px;
-	min-width: 330px;
-	max-width: 450px;
+	height: 40px;
 }
 
 .name {
@@ -125,7 +119,8 @@ export default defineComponent({
 
 #buttons {
 	display: flex;
-	margin-left:30px;
+	margin-left:-7px;
+	margin-top: -20px;
 }
 
 .button {

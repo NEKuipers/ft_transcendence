@@ -1,11 +1,10 @@
-enum channel_type {
+export enum channel_type {
 	public,
 	protected,
 	direct
 }
 
-
-export interface Participant {
+export type Participant  = {
 	id: number;
 	channel_id: number,
 	channel_name: string,
