@@ -27,7 +27,7 @@
 					</div>
 				</div>
 				<div v-if="participant?.participant_id != loginStatusStore.loggedInStatus?.userID">
-					<SmallButton v-if="!hasUserBlockedYou(participant?.participant_id)" class="button" text="Invite to Game" @click="gameInvite(participant?.id)"/>
+					<SmallButton v-if="!hasUserBlockedYou(participant?.participant_id)" class="button" text="Invite to Game" @click="gameInvite(participant?.participant_username)"/>
 					<!-- banning/muting, with restriction for admin/owner only -->
 					<div v-if="userIsAdmin || userIsOwner">
 						<SmallButton v-if="!participant?.participant_is_banned" class="button" text="Ban this user" @click="banUser(participant.participant_id)"/>
@@ -129,8 +129,9 @@ export default defineComponent({
 			if (owner_id == this.loginStatusStore.loggedInStatus?.userID)
 				this.userIsOwner = true;
 		},
-		gameInvite(userId: number) {
-			console.log("Inviting to game" , userId)
+		gameInvite(to_username: string) {
+			//TODO dialogue box for game mode
+			this.$emit('inviteToGame', to_username, this.loginStatusStore.loggedInStatus?.userName, 'classic');
 		},
 		async enterNewPassword() {
 			this.boxType = "setPassword";
@@ -189,7 +190,7 @@ export default defineComponent({
 			.catch(err => console.log(err));
 		}
 	},
-	emits: ['banUser', 'unbanUser', 'muteUser', 'unmuteUser', 'makeUserAdmin', 'removeUserAdmin', 'setPassword', 'removePassword']
+	emits: ['banUser', 'unbanUser', 'muteUser', 'unmuteUser', 'makeUserAdmin', 'removeUserAdmin', 'setPassword', 'removePassword', 'inviteToGame']
 		
 })
 </script>

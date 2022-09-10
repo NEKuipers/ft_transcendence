@@ -76,7 +76,8 @@ export default defineComponent({
 				.catch(err => console.log('Error in updateProfileData: ' + err));
 		},
 		inviteToGame() {
-			console.log('invite to game');
+			//TODO add dialogue box for game mode
+			this.$emit('inviteToGame', this.profile.username, this.loginStatusStore.loggedInStatus?.userName, 'classic');
 		}
 	}
 });
