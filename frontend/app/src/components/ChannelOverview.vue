@@ -66,7 +66,6 @@ type Participant  = {
 	participant_id: number,
     participant_is_admin: number,
 	participant_is_banned: number,
-	participant_is_muted: number
 }
 
 export default defineComponent({
@@ -114,9 +113,8 @@ export default defineComponent({
 			.then(res => res.json())
 			.then(data => {
 
-				/* sort users in channel: owner then admin at the top, banned then muted at the bottom */
+				/* sort users in channel: owner then admin at the top, banned at the bottom */
 				data = data.sort((a: Participant, b: Participant) => b.participant_is_admin - a.participant_is_admin);
-				data = data.sort((a: Participant, b: Participant) => a.participant_is_muted - b.participant_is_muted);
 				data = data.sort((a: Participant, b: Participant) => a.participant_is_banned - b.participant_is_banned);
 				data = data.sort((a: Participant, b: Participant) => {if (a.channel_owner_id == a.participant_id && b.channel_owner_id != b.participant_id) return -1;})
 
@@ -264,6 +262,7 @@ a:hover {
 	flex-wrap: wrap;
 	font-size: medium;
 	font-weight: bold;
+	flex-direction: row;
 	justify-content: space-between;
 	margin: 5px;
 	max-width: 620px;
@@ -271,7 +270,7 @@ a:hover {
 }
 
 .role {
-	width:200px;
+	width:100px;
 	height: 15px;
 	margin-bottom:20px;
 	/* padding-left:10px; */
@@ -282,7 +281,7 @@ a:hover {
 	display:flex;
 	margin-top:-15px;
 	flex-wrap: wrap;
-
+	min-width: 400px;
 }
 
 .column {
