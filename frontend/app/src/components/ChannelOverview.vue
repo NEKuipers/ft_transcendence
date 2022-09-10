@@ -59,6 +59,7 @@ import { defineComponent } from 'vue'
 import { loginStatusStore } from '../stores/profileData'
 import SmallButton from './SmallButton.vue'
 import DialogueBox from './DialogueBox.vue'
+import { isArray } from '@vue/shared'
 
 /* This is just for sorting by role */
 type Participant  = {
@@ -112,12 +113,13 @@ export default defineComponent({
 		fetch("/api/participants/" + this.channel_id)
 			.then(res => res.json())
 			.then(data => {
-
-				/* sort users in channel: owner then admin at the top, banned at the bottom */
-				data = data.sort((a: Participant, b: Participant) => b.participant_is_admin - a.participant_is_admin);
-				data = data.sort((a: Participant, b: Participant) => a.participant_is_banned - b.participant_is_banned);
-				data = data.sort((a: Participant, b: Participant) => {if (a.channel_owner_id == a.participant_id && b.channel_owner_id != b.participant_id) return -1;})
-
+				
+				if (isArray(data)) {
+					/* sort users in channel: owner then admin at the top, banned at the bottom */
+					data = data.sort((a: Participant, b: Participant) => b.participant_is_admin - a.participant_is_admin);
+					data = data.sort((a: Participant, b: Participant) => a.participant_is_banned - b.participant_is_banned);
+					data = data.sort((a: Participant, b: Participant) => {if (a.channel_owner_id == a.participant_id && b.channel_owner_id != b.participant_id) return -1;})
+				}
 
 				this.channelParticipants = data;
 				for (let i = 0; i < data.length; i++) {
