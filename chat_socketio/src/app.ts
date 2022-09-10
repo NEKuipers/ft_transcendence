@@ -68,7 +68,7 @@ async function send_messages_to_socket(socket: Socket, channel_id: number) {
 	let data = socket.data as SocketData;
 	let status = data.joined_channels.find((elem) => elem.channel_id == channel_id);
 	if (status) {
-		socket.emit("mute_status", channel_id, status.is_muted);
+		socket.emit("mute_status", channel_id, status.muted_until);
 		socket.emit("admin_status", channel_id, status.is_admin);
 	} else {
 		console.error(`${data.username} is receiving messages from ${channel_id}, BUT WASN'T JOINED!`);
@@ -123,6 +123,7 @@ async function ban_user(user_id: number, channel_id: number) {
 					return;
 				}
 				status.is_banned = true;
+				status.is_joined = false;
 
 				socket.leave(get_room_name(channel_id));
 				socket.emit("leave", channel_id);
@@ -152,7 +153,7 @@ async function unban_user(user_id: number, channel_id: number) {
 
 async function mute_user(user_id: number, channel_id: number) {
 	await backend.mute_user_in_channel(channel_id, user_id)
-		.then(() => {
+		.then((date) => {
 			console.log(`user ${user_id} is muted in channel ${channel_id}!`);
 
 			let socket = signedInUsers[user_id];
@@ -160,13 +161,13 @@ async function mute_user(user_id: number, channel_id: number) {
 				let data = socket.data as SocketData;
 
 				let status = data.joined_channels.find((elem) => elem.channel_id == channel_id);
-				if (!status || status.is_muted > Date.now().toString()) {
+				if (!status || status.muted_until > new Date()) {
 					console.error(`${data.username} was muted in channel ${channel_id}, BUT WASN'T JOINED!`);
 					return;
 				}
 				
-				status.is_muted = (Date.now() + 300000).toString();
-				socket.emit("mute_status", channel_id, status.is_muted);
+				status.muted_until = date;
+				socket.emit("mute_status", channel_id, status.muted_until);
 			}
 		})
 }
@@ -180,13 +181,13 @@ async function unmute_user(user_id: number, channel_id: number) {
 				let data = socket.data as SocketData;
 
 				let status = data.joined_channels.find((elem) => elem.channel_id == channel_id);
-				if (!status || status.is_muted < Date.now().toString()) {
+				if (!status || status.muted_until < new Date()) {
 					console.error(`${data.username} was un-muted in channel ${channel_id}, BUT WASN'T MUTED!`);
 					return;
 				}
 
-				status.is_muted = null;
-				socket.emit("mute_status", channel_id, status.is_muted);
+				status.muted_until = null;
+				socket.emit("mute_status", channel_id, status.muted_until);
 			}
 		})
 }
@@ -239,12 +240,13 @@ async function join_rooms(socket: Socket) {
 
 	let joined_channels = data.joined_channels
 	let actual_joined_channels = await backend.get_joined_channels(data.userid);
+	// console.log(actual_joined_channels);
 
 	// Join new rooms
 	for (let channel_status of actual_joined_channels) {
 		joined_channels.push(channel_status);
 
-		if (channel_status.is_banned) {
+		if (!channel_status.is_joined) {
 			continue;
 		}
 
@@ -262,8 +264,8 @@ io.on("connection", async (socket) => {
 		.catch((err) => console.error(`Failed to update joined rooms for user: ${data.userid} because:`, err));
 
 	socket.on("create_channel", async (name: string, password: string, callback: (success: boolean, data: any) => void) => {
-		let type
-		let hash
+		let type: string;
+		let hash: string
 		if (password) {
 			type = "protected"
 			// hash the password.
@@ -288,13 +290,14 @@ io.on("connection", async (socket) => {
 			// Also join it
 			join_channel(socket, {
 				is_admin: true,
-				is_muted: null,
+				muted_until: null,
 				is_banned: false,
-				channel_id: channel.id
+				channel_id: channel.id,
+				is_joined: true,
 			}).then(() => {
 				callback(true, channel.id);
-			}).catch(() => {
-				console.error("Failed to join channel")
+			}).catch((err) => {
+				console.error("Failed to join channel", err)
 				callback(false, "Failed to join channel")
 
 				// Try to delete it
@@ -313,9 +316,9 @@ io.on("connection", async (socket) => {
 	socket.on("join_channel", (channel_id: number, password: string | undefined | null, callback: (success: boolean, reason: any) => void) => {
 		console.log(password);
 		
-		let existing_status = data.joined_channels.find((elem) => elem.channel_id == channel_id);
-		if (existing_status) {
-			if (existing_status.is_banned) {
+		let status = data.joined_channels.find((elem) => elem.channel_id == channel_id);
+		if (status) {
+			if (status.is_banned) {
 				console.log(`User ${data.username} tried to join channel ${channel_id} but was banned!`);
 				return callback(false, "You are banned!");
 			} else {
@@ -323,19 +326,31 @@ io.on("connection", async (socket) => {
 			}
 		}
 		
-		backend.matches_password(channel_id, password)
-			.then((allowedToJoin) => {
-				if (!allowedToJoin ) {
-					callback(false, "NEED_PASSWORD");
-					return;
+		backend.get_channel(channel_id)
+			.then((channel) => {
+				if (channel.is_closed) {
+					return null;
 				}
-		
-				join_channel(socket, {
+				return backend.matches_password(channel_id, password);
+			})
+			.then((allowedToJoin) => {
+				if (allowedToJoin === null) {
+					return callback(false, "Channel is closed!");;
+				}
+				if (!allowedToJoin) {
+					return callback(false, "NEED_PASSWORD");
+				}
+				
+				let use_status = status ?? {
 					is_admin: false,
-					is_muted: null,
+					muted_until: null,
 					is_banned: false,
-					channel_id: channel_id
-				})
+					channel_id: channel_id,
+					is_joined: true,
+				};
+				use_status.is_joined = true;
+
+				join_channel(socket, use_status)
 					.then(_ => callback(true, null))
 					.catch(err => callback(false, err))
 			})
@@ -345,30 +360,23 @@ io.on("connection", async (socket) => {
 	})
 
 	socket.on("leave_channel", (channel_id: number, callback: (success: boolean, reason: any) => void) => {
-		let existing_status = data.joined_channels.find((elem) => elem.channel_id == channel_id);
-		if (!existing_status) {
+		let status = data.joined_channels.find((elem) => elem.channel_id == channel_id);
+		if (!status || !status.is_joined) {
 			console.log(`User ${data.username} tried to leave channel ${channel_id}, but is not in the channel!`);
 			return callback(false, "You are not in the channel!");
 		}
-		if (existing_status.is_banned) {
-			console.log(`User ${data.username} tried to leave channel ${channel_id}, but was banned!`);
-			return callback(false, "You are banned!");
-		}
 
-		leave_channel(socket, existing_status)
+		leave_channel(socket, status)
 			.then(_ => callback(true, null))
 			.catch(err => callback(false, err))
 	})
 
 	socket.on("ban_user", (channel_id: number, user_id: number, callback: (success: boolean, reason: any) => void) => {
 		let status = data.joined_channels.find((elem) => elem.channel_id == channel_id);
-		if (!status) {
+		if (!status || !status.is_joined) {
 			return callback(false, "You are not in that channel!");
 		}
-		if (status.is_banned) {
-			console.log(`User ${data.username} tried to ban someone in channel ${channel_id} but was banned!`);
-			return callback(false, "You are banned!");
-		} else if (!status.is_admin) {
+		if (!status.is_admin) {
 			return callback(false, "You are not admin!");
 		}
 
@@ -379,14 +387,11 @@ io.on("connection", async (socket) => {
 
 	socket.on("unban_user", (channel_id: number, user_id: number, callback: (success: boolean, reason: any) => void) => {
 		let status = data.joined_channels.find((elem) => elem.channel_id == channel_id);
-		if (!status) {
+		if (!status || !status.is_joined) {
 			callback(false, "You are not in that channel!");
 			return;
 		}
-		if (status.is_banned) {
-			console.log(`User ${data.username} tried to unban someone in channel ${channel_id} but was banned!`);
-			return callback(false, "You are banned!");
-		} else if (!status.is_admin) {
+		if (!status.is_admin) {
 			return callback(false, "You are not admin!");
 		}
 
@@ -397,13 +402,10 @@ io.on("connection", async (socket) => {
 
 	socket.on("mute_user", (channel_id: number, user_id: number, callback: (success: boolean, reason: any) => void) => {
 		let status = data.joined_channels.find((elem) => elem.channel_id == channel_id);
-		if (!status) {
+		if (!status || !status.is_joined) {
 			return callback(false, "You are not in that channel!");
 		}
-		if (status.is_banned) {
-			console.log(`User ${data.username} tried to mute someone in channel ${channel_id} but was banned!`);
-			return callback(false, "You are banned!");
-		} else if (!status.is_admin) {
+		if (!status.is_admin) {
 			return callback(false, "You are not admin!");
 		}
 		
@@ -414,7 +416,7 @@ io.on("connection", async (socket) => {
 
 	socket.on("unmute_user", (channel_id: number, user_id: number, callback: (success: boolean, reason: any) => void) => {
 		let status = data.joined_channels.find((elem) => elem.channel_id == channel_id);
-		if (!status) {
+		if (!status || !status.is_joined) {
 			return callback(false, "You are not in that channel!");
 		}
 		if (status.is_banned) {
@@ -459,14 +461,14 @@ io.on("connection", async (socket) => {
 
 	socket.on("client_message", (channel_id: number, message: string, callback: (success: boolean, reason: any) => void) => {	// This function will get called whenever this client emits a message on channel "client-message"
 		let status = data.joined_channels.find((elem) => elem.channel_id == channel_id);
-		if (!status) {
-			console.error(`User ${data.username} tried to send the message: ${message} in channel ${channel_id}, but was not in the room!`);
+		if (!status || !status.is_joined) {
+			console.error(`User ${data.username} tried to send the message: ${message} in channel ${channel_id}, but was not in the channel!`);
 			callback(false, "You are not in that channel!");
 			return;
 		}
-		if (status.is_banned) {
-			console.error(`User ${data.username} tried to send the message: ${message} in channel ${channel_id}, but was banned!`);
-			callback(false, "You are banned!");
+		if (status.muted_until > new Date()) {
+			console.error(`User ${data.username} tried to send the message: ${message} in channel ${channel_id}, but was muted!`);
+			callback(false, "You are muted!");
 			return false;
 		}
 		
@@ -495,24 +497,27 @@ io.on("connection", async (socket) => {
 			// Also join it
 			let my_join = join_channel(socket, {
 				is_admin: false,
-				is_muted: null,
+				muted_until: null,
 				is_banned: false,
-				channel_id: channel.id
+				channel_id: channel.id,
+				is_joined: true,
 			});
 			let other_join: Promise<void>;
 			if (signedInUsers[user_id]) {
 				other_join = join_channel(signedInUsers[user_id], {
 					is_admin: false,
-					is_muted: null,
+					muted_until: null,
 					is_banned: false,
-					channel_id: channel.id
+					channel_id: channel.id,
+					is_joined: true,
 				});
 			} else {
 				other_join = backend.join_channel({
 					is_admin: false,
-					is_muted: null,
+					muted_until: null,
 					is_banned: false,
-					channel_id: channel.id
+					channel_id: channel.id,
+					is_joined: true,
 				}, user_id);
 			}
 

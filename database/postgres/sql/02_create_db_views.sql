@@ -315,7 +315,7 @@ SELECT
     u.username          AS participant_username,
 	p.is_joined			AS participant_is_joined,
     p.is_admin          AS participant_is_admin,
-    p.is_muted          AS participant_is_muted,
+    p.muted_until       AS participant_muted_until,
     p.is_banned         AS participant_is_banned
 FROM channels c
     INNER JOIN participants p

@@ -173,7 +173,9 @@ CREATE TABLE public.participants
     is_admin        BOOL,
     muted_until     TIMESTAMP,
     is_banned       BOOL,
-    channel_id      BIGINT REFERENCES public.channels(id)
+    channel_id      BIGINT REFERENCES public.channels(id),
+
+	CONSTRAINT unique_participant UNIQUE(participant_id, channel_id)
 );
 
 /*

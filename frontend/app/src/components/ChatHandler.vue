@@ -37,8 +37,8 @@ export default defineComponent({
 		"serverMessage": (_channel_id: number, _user: number, _username: string, _message: string) => { return true },
 		"leave": (_channel_id: number) => { return true},
 		"join": (_channel_id: number, _channel_name: string, _channel_type: string, _channel_owner: number) => { return true },
-		"mute_status": (_channel_id: number, is_muted: string) => { return true },
-		"admin_status": (_channel_id: number, is_admin: boolean) => { return true },
+		"mute_status": (_channel_id: number, _muted_until: Date) => { return true },
+		"admin_status": (_channel_id: number, _is_admin: boolean) => { return true },
 		"clearData": () => { return true },
 	},
 
@@ -85,8 +85,9 @@ export default defineComponent({
 				this.$emit("leave", channel_id);
 			})
 
-			socket.on("mute_status", (channel_id, is_muted) => {
-				this.$emit("mute_status", channel_id, is_muted);
+			socket.on("mute_status", (channel_id, muted_until) => {
+				if (muted_until) { muted_until = new Date(muted_until) }
+				this.$emit("mute_status", channel_id, muted_until || new Date(0));
 			})
 
 			socket.on("admin_status", (channel_id, is_admin) => {
