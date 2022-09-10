@@ -8,13 +8,11 @@
 				<p v-if="message.user === loginStatusStore.loggedInStatus?.userID" class="from-me">{{message.message}}</p>
 				<div v-else>
 					<p v-if="haveYouBlockedUser(message.user)"  class="from-them">[message from blocked user]</p>
-					<p v-else  class="from-them">{{message.username}} : {{message.message}}</p>
+					<p v-else class="from-them">{{findUsername(message.user)}} : {{message.message}}</p>
 				</div>
-				<!-- TODO add username of sender -->
             </div>
         </div>
         <div>
-			<!-- TODO prevent muted participant from sending message -->
             <form ref="TextBox" @submit="sendMsg">
                 <input id="input-box" type="text" v-model="text" placeholder="Message" :disabled="isMuted"/>
             </form>
@@ -40,6 +38,9 @@ export default defineComponent({
 		},
 		isMuted: {
 			type: Boolean
+		},
+		allUsers: {
+			type: Array as any,
 		},
 		dmOpen : {
 			type: Boolean
@@ -96,6 +97,14 @@ export default defineComponent({
 				}
 			}
 			return false;
+		},
+		findUsername(user_id: number) : string {
+			for (let x = 0; x < this.allUsers.length; x++) {
+				if (this.allUsers[x].id == user_id) {
+					return this.allUsers[x].username;
+				}
+			}
+			return "user " + user_id;
 		}
     },
 	async mounted() {
@@ -114,8 +123,6 @@ export default defineComponent({
 <style scoped>
 #messages {
   background-color: #fff;
-  /* border: 1px solid #e5e5ea;
-  border-radius: 0.25rem; */
   min-width: 600px;
   min-height: 100px;
   display: flex;
@@ -128,7 +135,6 @@ export default defineComponent({
   max-width: 90%;
   overflow: auto;
   padding: 0.5rem 1.5rem;
-  /* box-sizing: border-box; */
   justify-content: space-between;
 }
 
@@ -143,7 +149,6 @@ export default defineComponent({
 
 p.from-me {
   align-self: flex-end;
-  /* margin-left: auto; */
   float: right;
   background-color: #248bf5;
   color: #fff; 

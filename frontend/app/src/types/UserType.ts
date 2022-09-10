@@ -6,7 +6,7 @@ enum user_status {
 
 export type User = {
 	readonly id: number;
-	userName: string;
+	username: string;
 	status: user_status;
 	avatar_id: number;
 	intra_id: number;

@@ -83,27 +83,11 @@ export class ChannelsService {
 		return id.toString();
 	}
 
-	async closeChannel(channel: Channel): Promise<string> {
-		//this doesn't seem to work
-		await axios.patch(`http://localhost:${process.env.PGREST_PORT}/channels?id=eq.${channel.id}`, {
-			is_closed: true
-		})
-		console.log(channel);
-		return "Channel closed";
-	}
-
 	async changeOwner(id: number, channel: Channel): Promise<string> {
 		axios.patch(`http://localhost:${process.env.PGREST_PORT}/channels?id=eq.${channel.id}`, {
 			owner_id: id
 		})
 		return "Channel owner changed";
-	}
-
-	async makePrivate(channel: Channel): Promise<string> {
-		axios.patch(`http://localhost:${process.env.PGREST_PORT}/channels?id=eq.${channel.id}`, {
-			type: "private"
-		})
-		return "Channel set to private";
 	}
 
 	async verifyPassword(id: number, password: string): Promise<boolean> {

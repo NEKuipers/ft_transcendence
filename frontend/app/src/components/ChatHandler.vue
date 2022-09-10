@@ -11,7 +11,7 @@ import SocketIoConnection from '../components/SocketIoConnection.vue';
 
 interface JoinedChannelStatus {
 	is_admin: boolean;
-	is_muted: boolean;
+	is_muted: string;
 	is_banned: boolean;
 
 	channel_id: number;
@@ -37,7 +37,7 @@ export default defineComponent({
 		"serverMessage": (_channel_id: number, _user: number, _username: string, _message: string) => { return true },
 		"leave": (_channel_id: number) => { return true},
 		"join": (_channel_id: number, _channel_name: string, _channel_type: string, _channel_owner: number) => { return true },
-		"mute_status": (_channel_id: number, is_muted: boolean) => { return true },
+		"mute_status": (_channel_id: number, is_muted: string) => { return true },
 		"admin_status": (_channel_id: number, is_admin: boolean) => { return true },
 		"clearData": () => { return true },
 	},

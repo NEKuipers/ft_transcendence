@@ -1,13 +1,13 @@
 <template>
     <div v-if="channel!=null" class="column">
-		<div v-if="userIsOwner">
-				<SmallButton id="passwordButton" text="Set new password" @click="enterNewPassword()"/>
-				<!-- <DialogueBox id="createChannelDialogueBox" :type="boxType" :show="showPasswordDialogue" @close-dialogue="hidePasswordDialogue" @new-name="setPassword"/> -->
+		<div class="passwordbuttons" v-if="userIsOwner">
+				<SmallButton class="passwordButton" id="setpw" text="Set new password" @click="enterNewPassword()"/>
+				<DialogueBox id="createChannelDialogueBox" :type="boxType" :show="showPasswordDialogue" @close-dialogue="hidePasswordDialogue" @new-name="setPassword"/>
 			<div v-if="channel.type == 'protected'">
-				<SmallButton id="passwordButton" text="Remove password" @click="removePassword()"/>
+				<SmallButton class="passwordButton" id="removepw" text="Remove password" @click="removePassword()"/>
 			</div>
 		</div>
-		<div class="listed-participant" v-for="participant in channelParticipants" :key="participant?.id">
+		<div class="listed-participant" v-for="participant in channelParticipants" :key="participant">
 			<div id="participantdiv">
 				<div id="nameAndRoles">
 					<a class="participantName" v-bind:href="'/profile/' + participant.participant_id">{{participant.participant_username}}</a>
@@ -21,7 +21,7 @@
 						<div class="role" v-if="participant?.participant_is_banned == true">
 							<p>(banned)</p>
 						</div>
-						<div  class="role" v-if="participant?.participant_is_muted == true">
+						<div  class="role" v-if="participant?.participant_is_muted > Date.now().toString()">
 							<p>(muted)</p>
 						</div>
 					</div>
@@ -32,7 +32,7 @@
 					<div v-if="userIsAdmin || userIsOwner">
 						<SmallButton v-if="!participant?.participant_is_banned" class="button" text="Ban this user" @click="this.$emit('banUser', this.channel_id, participant.participant_id)"/>
 						<SmallButton v-else class="button" text="Unban this user" @click="this.$emit('unbanUser', this.channel_id, participant.participant_id)"/>
-						<SmallButton v-if="!participant?.participant_is_muted" class="button" text="Mute this user" @click="this.$emit('muteUser', this.channel_id, participant.participant_id)"/>
+						<SmallButton v-if="participant?.participant_is_muted < Date.now().toString() " class="button" text="Mute this user" @click="this.$emit('muteUser', this.channel_id, participant.participant_id)"/>
 						<SmallButton v-else class="button" text="Unmute this user" @click="this.$emit('unmuteUser', this.channel_id, participant.participant_id)"/>
 					</div>
 
@@ -59,11 +59,18 @@ import { loginStatusStore } from '../stores/profileData'
 import SmallButton from './SmallButton.vue'
 import DialogueBox from './DialogueBox.vue'
 
+/* This is just for sorting by role */
+type Participant  = {
+    participant_is_admin: number,
+	participant_is_banned: number,
+	participant_is_muted: number
+}
+
 export default defineComponent({
     name: 'ChannelOverview',
 	components: {
 		SmallButton,
-		// DialogueBox,
+		DialogueBox,
 	},
     props: {
         channel_id: {
@@ -77,7 +84,6 @@ export default defineComponent({
         return {
             loginStatusStore: loginStatusStore(),
             channel: null,
-            messages: null, // Retrieve these from channel ID
 			channelParticipants: [],
             text: '',
 			userIsOwner: false,
@@ -95,10 +101,6 @@ export default defineComponent({
                 .then(res => res.json())
                 .then(data => { this.channel = data[0]; this.checkIfOwner(data[0].owner_id); })
                 .catch(err => console.log('Error retrieving channel', err))
-                fetch('/api/messages/channel/' + this.channel_id)
-                .then(res => res.json())
-                .then(data => { /* console.log(data) ;*/ this.messages = data })
-                .catch(err => console.log('Error retrieving messages for channel', err))
 				this.getChannelParticipants();
             }
         },
@@ -109,7 +111,10 @@ export default defineComponent({
 		fetch("/api/participants/" + this.channel_id)
 			.then(res => res.json())
 			.then(data => {
-				this.channelParticipants = data; 
+				data = data.sort((a: Participant, b: Participant) => b.participant_is_admin - a.participant_is_admin);
+				data = data.sort((a: Participant, b: Participant) => a.participant_is_muted - b.participant_is_muted);
+				data = data.sort((a: Participant, b: Participant) => a.participant_is_banned - b.participant_is_banned);
+				this.channelParticipants = data;
 				for (let i = 0; i < data.length; i++) {
 					if (data[i] == this.loginStatusStore.loggedInStatus?.userID) {
 						if (data[i].is_admin){
@@ -117,6 +122,7 @@ export default defineComponent({
 						}
 					}
 				}
+				console.log(this.channelParticipants)
 			})
 			.catch(err => console.log(err));
 		},
@@ -132,13 +138,13 @@ export default defineComponent({
 			this.showPasswordDialogue = true;
 		},
 		removePassword() {
-			console.log('remove password');
+			this.$emit('removePassword', this.channel_id)
 		},
 		hidePasswordDialogue() {
 			this.showPasswordDialogue = false;
 		},
 		async setPassword(newPassword: string) {
-			this.$emit('setPassword', newPassword);
+			this.$emit('setPassword', newPassword, this.channel_id);
 			this.hidePasswordDialogue();
 		},
 		hasUserBlockedYou(sender_id: number): boolean {
@@ -159,7 +165,7 @@ export default defineComponent({
 			.catch(err => console.log(err));
 		}
 	},
-	emits: ['banUser', 'unbanUser', 'muteUser', 'unmuteUser', 'makeUserAdmin', 'removeUserAdmin', 'setPassword']
+	emits: ['banUser', 'unbanUser', 'muteUser', 'unmuteUser', 'makeUserAdmin', 'removeUserAdmin', 'setPassword', 'removePassword']
 		
 })
 </script>
@@ -171,6 +177,7 @@ export default defineComponent({
 
 .participantName {
 	text-decoration: none;
+	margin-left: 3px;
 }
 
 a:visited {
@@ -179,14 +186,32 @@ a:visited {
 a:hover {
 	text-decoration: underline;
 }
-
-#passwordButton {
-	float:center;
+.passwordButton {
+	height: 30px;
 }
 
 .button {
 	float: left;
 	margin-left:8px;
+	width: 130px;
+	margin-top: 2px;
+}
+
+.passwordbuttons {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-evenly;
+	margin-bottom: 20px;
+	margin-top: 20px;
+
+}
+
+#removepw {
+	margin-top: -30px;
+}
+
+#setpw {
+	margin-top: 11px;
 }
 
 .listed-participant {
@@ -210,6 +235,8 @@ a:hover {
 	font-weight: bold;
 	justify-content: space-between;
 	margin: 5px;
+	max-width: 620px;
+	min-width: 100px;
 }
 
 .role {
@@ -222,7 +249,13 @@ a:hover {
 
 .roles {
 	display:flex;
-	margin-top:-25px;
+	margin-top:-15px;
+	flex-wrap: wrap;
+
+}
+
+.column {
+	width: 100%;
 }
 
 

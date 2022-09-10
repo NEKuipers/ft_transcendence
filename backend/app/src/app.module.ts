@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { MatchesModule } from './matches/matches.module';
-import { MessagesModule } from './messages/messages.module';
 import { ParticipantsModule } from './participants/participants.module';
 import { TwoFactorAuthModule } from './two_factor_auth/two_factor_auth.module';
 import { ChannelsModule } from './channels/channels.module';
@@ -20,7 +19,7 @@ import { ProfileModule } from './profile/profile.module';
     envFilePath: '../../.env',
   }),
   PassportModule.register({ session: true}),
-  UsersModule, MatchesModule, MessagesModule,
+  UsersModule, MatchesModule,
   ParticipantsModule, TwoFactorAuthModule, ChannelsModule, UserAchievementsModule, AchievementsModule, BlockedUsersModule, 
   AvatarsModule, FriendsModule, LoginModule, ProfileModule],
 })

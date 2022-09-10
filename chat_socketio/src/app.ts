@@ -160,13 +160,13 @@ async function mute_user(user_id: number, channel_id: number) {
 				let data = socket.data as SocketData;
 
 				let status = data.joined_channels.find((elem) => elem.channel_id == channel_id);
-				if (!status || status.is_muted) {
+				if (!status || status.is_muted > Date.now().toString()) {
 					console.error(`${data.username} was muted in channel ${channel_id}, BUT WASN'T JOINED!`);
 					return;
 				}
 				
-				status.is_muted = true;
-				socket.emit("mute_status", channel_id, true);
+				status.is_muted = (Date.now() + 300000).toString();
+				socket.emit("mute_status", channel_id, status.is_muted);
 			}
 		})
 }
@@ -180,12 +180,12 @@ async function unmute_user(user_id: number, channel_id: number) {
 				let data = socket.data as SocketData;
 
 				let status = data.joined_channels.find((elem) => elem.channel_id == channel_id);
-				if (!status || !status.is_muted) {
+				if (!status || status.is_muted < Date.now().toString()) {
 					console.error(`${data.username} was un-muted in channel ${channel_id}, BUT WASN'T MUTED!`);
 					return;
 				}
 
-				status.is_muted = false;
+				status.is_muted = null;
 				socket.emit("mute_status", channel_id, status.is_muted);
 			}
 		})
@@ -288,7 +288,7 @@ io.on("connection", async (socket) => {
 			// Also join it
 			join_channel(socket, {
 				is_admin: true,
-				is_muted: false,
+				is_muted: null,
 				is_banned: false,
 				channel_id: channel.id
 			}).then(() => {
@@ -332,7 +332,7 @@ io.on("connection", async (socket) => {
 		
 				join_channel(socket, {
 					is_admin: false,
-					is_muted: false,
+					is_muted: null,
 					is_banned: false,
 					channel_id: channel_id
 				})
@@ -495,7 +495,7 @@ io.on("connection", async (socket) => {
 			// Also join it
 			let my_join = join_channel(socket, {
 				is_admin: false,
-				is_muted: false,
+				is_muted: null,
 				is_banned: false,
 				channel_id: channel.id
 			});
@@ -503,14 +503,14 @@ io.on("connection", async (socket) => {
 			if (signedInUsers[user_id]) {
 				other_join = join_channel(signedInUsers[user_id], {
 					is_admin: false,
-					is_muted: false,
+					is_muted: null,
 					is_banned: false,
 					channel_id: channel.id
 				});
 			} else {
 				other_join = backend.join_channel({
 					is_admin: false,
-					is_muted: false,
+					is_muted: null,
 					is_banned: false,
 					channel_id: channel.id
 				}, user_id);

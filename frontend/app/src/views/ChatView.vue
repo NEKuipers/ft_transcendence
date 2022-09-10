@@ -19,7 +19,7 @@
 			</div>
 			<div class="column" id="center_column">
 				<div>
-					<ChatBox :key="blocksKey" :user="loginStatusStore.loggedInStatus?.userID"
+					<ChatBox :user="loginStatusStore.loggedInStatus?.userID" :allUsers="allUsers"
 						:channel_id="currentChannel" :dm="dmID" :messages="channels[currentChannel]?.messages" :isMuted="channels[currentChannel]?.muted" @sentMsg="sendMsg"/>
 				</div>
 			</div>
@@ -28,8 +28,8 @@
 					<DMUserCard :user="dmID"></DMUserCard>
 				</div>
 				<div v-else>
-				Channel overview
-					<ChannelOverview :key="blocksKey"  :channel_id="currentChannel" :dm="dmID" @banUser="banUser" @unbanUser="unbanUser" @muteUser="muteUser" @unmuteUser="unmuteUser" @makeUserAdmin="makeUserAdmin" @removeUserAdmin="removeUserAdmin" @setPassword="setPassword"/>
+				<div id="channel-overview-header">Channel overview</div>
+					<ChannelOverview :channel_id="currentChannel" :dm="dmID" @banUser="banUser" @unbanUser="unbanUser" @muteUser="muteUser" @unmuteUser="unmuteUser" @makeUserAdmin="makeUserAdmin" @removeUserAdmin="removeUserAdmin" @setPassword="setPassword" @removePassword="removePassword"/>
 				</div>
 			</div>
 		</div>
@@ -61,8 +61,8 @@ export default defineComponent({
 			channels: {} as {[key: number]: any},
 			boxType: "",
 			leaveChannelKey: 0,
-			blocksKey: 0,
 			dmID: -1,
+			allUsers: new Array<any>(),
 		}
 	},
 	methods: {
@@ -157,8 +157,11 @@ export default defineComponent({
 		unbanUser(channel_id: number, user_id: number) {
 			this.chatHandler.unban_user(channel_id, user_id);	
 		},
-		muteUser(channel_id: number, user_id: number) {	
+		muteUser(channel_id: number, user_id: number) {
 			this.chatHandler.mute_user(channel_id, user_id);
+		},
+		unMuteTrigger(channel_id: number, isMuted: string) {
+			this.channels[channel_id].muted = isMuted > Date.now().toString();
 		},
 		unmuteUser(channel_id: number, user_id: number) {
 			this.chatHandler.unmute_user(channel_id, user_id);	
@@ -169,19 +172,22 @@ export default defineComponent({
 		removeUserAdmin(channel_id: number, user_id: number) {
 			this.chatHandler.remove_user_admin(channel_id, user_id);	
 		},
-		setPassword(newPassword: string) {
-			//TODO: implement this - How do we know which chat it is for?
-			console.log('Chosen password: ', newPassword);
+		setPassword(newPassword: string, channel_id: number) {
+			//TODO Jasper: added channel_id, needs to be passed on to handler
+			console.log('Chosen password for channel '+ channel_id+': ', newPassword);
 		},
-
-		muteStatus(channel_id: number, isMuted: boolean) {
-			if (isMuted) {
+		removePassword(channel_id: number) {
+			//TODO Jasper: pass on to handler
+			console.log('Remove password in channel ' + channel_id);
+		},
+		muteStatus(channel_id: number, isMuted: string) {
+			if (isMuted > Date.now().toString()) {
 				console.log(`I am muted in channel ${channel_id}`);
 			} else {
 				console.log(`I am not muted in channel ${channel_id}`);
 			}
-
-			this.channels[channel_id].muted = isMuted;
+			this.channels[channel_id].muted = isMuted > Date.now().toString();
+			const myTimeout = setTimeout(() => this.unMuteTrigger(channel_id, isMuted), 300000);
 		},
 		adminStatus(channel_id: number, isAdmin: boolean) {
 			if (isAdmin) {
@@ -194,6 +200,10 @@ export default defineComponent({
 		},
 	},
 	async mounted() {
+		fetch('/api/users')
+			.then(res => res.json())
+			.then(data => this.allUsers = data)
+			.catch(err => console.log(err))
 		this.chatHandler = (this.$refs.ChatHandler as typeof ChatHandler);
 		let loggedInStatus = await loginStatusStore().logIn();
 		if (loggedInStatus) {
@@ -220,6 +230,11 @@ export default defineComponent({
 <style scoped>
 * {
 	box-sizing: border-box;
+}
+
+#channel-overview-header{
+	width: 100%;
+	float: top;
 }
 
 .container {
