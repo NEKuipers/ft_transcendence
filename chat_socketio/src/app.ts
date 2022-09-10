@@ -490,7 +490,7 @@ io.on("connection", async (socket) => {
 			owner_id: data.userid,
 			is_closed: false
 		}).then((channel) => {
-			console.log("Created channel:", channel)
+			console.log("Created dm channel:", channel)
 
 			// Also join it
 			let my_join = join_channel(socket, {
