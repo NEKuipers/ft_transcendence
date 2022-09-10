@@ -55,7 +55,7 @@ export default defineComponent({
             channel: null as any,
             text: '',
 			user: null as any,
-			usersWhoYouHaveBlocked: new Array<any>(),
+			usersWhoYouHaveBlocked: new Array<number>(),
 			}
     },
     watch: {
