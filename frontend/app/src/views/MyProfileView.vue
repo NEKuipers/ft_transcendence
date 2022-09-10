@@ -1,20 +1,20 @@
 <template>
   <div>
-    <div class="row">
-      <UserProfile class="top-column" :user="user?.id"></UserProfile>
+    <div class="row"> 
+      <UserProfile class="top-column" :inMyProfile="true" :user="user?.id"></UserProfile>
       <AchievementsList :user="user?.id" class="top-column"/>
     </div> 
     <br>
     <br>
     <div class="row">
-      <FriendRequests  :user="user?.id" class="column"/>
-      <FriendsList :own="true" :user="user?.id" class="column"/>
+      <FriendRequests  class="column" :user="user?.id" @acceptRequest="friendsUpdater"/>
+      <FriendsList class="column" :own="true" :user="user?.id" :key="newFriendKey"/>
       <div class="column">
         <BlockedUsers :user="user?.id" />
       </div>
     </div>
     <div class="matchHistory">
-      <MatchHistory :user="user?.id"/>	<!-- Show the match history of the user with the id "user.id"-->
+      <MatchHistory :user="user?.id"/>
     </div>
   </div>
 </template>
@@ -38,11 +38,15 @@ export default defineComponent({
 				.then(res => res.json())
 				.then(data => this.user = data)
 				.catch(err => console.log(err));
+		},
+		friendsUpdater() {
+			this.newFriendKey += 1;
 		}
 	},
 	data () {
 		return {
 			user: null as any,
+			newFriendKey: 0,
 		}
 	},
 	async mounted() {
@@ -83,13 +87,11 @@ export default defineComponent({
 }
 
 .row {
-  
+	min-width: 1100px;
 	border:1px solid #ccc;
 }
 
-.user-profile{
-	margin-top: 40px;
-}
+
 .row:after {
   content:"";
   display: table;

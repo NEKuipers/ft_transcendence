@@ -60,13 +60,24 @@ function get_room_name(channel_id: number): string {
 	return `room_${channel_id}`
 }
 
-async function send_message_to_socket(socket: Socket, channel_id: number) {
-	socket.emit("join", channel_id, await backend.get_channel_name(channel_id));
+async function send_messages_to_socket(socket: Socket, channel_id: number) {
+	let channel = await backend.get_channel(channel_id);
+
+	socket.emit("join", channel_id, channel.name, channel.type, channel.owner_id);
+
+	let data = socket.data as SocketData;
+	let status = data.joined_channels.find((elem) => elem.channel_id == channel_id);
+	if (status) {
+		socket.emit("mute_status", channel_id, status.is_muted);
+		socket.emit("admin_status", channel_id, status.is_admin);
+	} else {
+		console.error(`${data.username} is receiving messages from ${channel_id}, BUT WASN'T JOINED!`);
+	}
 
 	backend.get_messages_from_channel(channel_id)
 		.then((messages) => {
 			for (let message of messages) {
-				socket.emit("server-message", channel_id, message.userId, message.message)
+				socket.emit("server_message", channel_id, message.userId, message.message)
 			}
 		});
 	socket.join(get_room_name(channel_id));
@@ -81,7 +92,7 @@ async function join_channel(socket: Socket, channel: backend.JoinedChannelStatus
 
 			data.joined_channels.push(channel);
 			
-			send_message_to_socket(socket, channel.channel_id)
+			send_messages_to_socket(socket, channel.channel_id)
 		})
 }
 async function leave_channel(socket: Socket, channel_status: backend.JoinedChannelStatus) {
@@ -134,7 +145,7 @@ async function unban_user(user_id: number, channel_id: number) {
 				}
 
 				status.is_banned = false;
-				send_message_to_socket(socket, channel_id)
+				send_messages_to_socket(socket, channel_id)
 			}
 		})
 }
@@ -149,14 +160,13 @@ async function mute_user(user_id: number, channel_id: number) {
 				let data = socket.data as SocketData;
 
 				let status = data.joined_channels.find((elem) => elem.channel_id == channel_id);
-				if (!status || status.is_muted) {
+				if (!status || status.is_muted > Date.now().toString()) {
 					console.error(`${data.username} was muted in channel ${channel_id}, BUT WASN'T JOINED!`);
 					return;
 				}
-				status.is_muted = true;
-
-				socket.leave(get_room_name(channel_id));
-				socket.emit("leave", channel_id);
+				
+				status.is_muted = (Date.now() + 300000).toString();
+				socket.emit("mute_status", channel_id, status.is_muted);
 			}
 		})
 }
@@ -170,13 +180,13 @@ async function unmute_user(user_id: number, channel_id: number) {
 				let data = socket.data as SocketData;
 
 				let status = data.joined_channels.find((elem) => elem.channel_id == channel_id);
-				if (!status || !status.is_muted) {
+				if (!status || status.is_muted < Date.now().toString()) {
 					console.error(`${data.username} was un-muted in channel ${channel_id}, BUT WASN'T MUTED!`);
 					return;
 				}
 
-				status.is_muted = false;
-				send_message_to_socket(socket, channel_id)
+				status.is_muted = null;
+				socket.emit("mute_status", channel_id, status.is_muted);
 			}
 		})
 }
@@ -195,10 +205,9 @@ async function make_user_admin(user_id: number, channel_id: number) {
 					console.error(`${data.username} was made admin of channel ${channel_id}, BUT WASN'T JOINED!`);
 					return;
 				}
-				status.is_admin = true;
 
-				socket.leave(get_room_name(channel_id));
-				socket.emit("leave", channel_id);
+				status.is_admin = true;
+				socket.emit("admin_status", channel_id, status.is_admin);
 			}
 		})
 }
@@ -219,7 +228,7 @@ async function remove_user_admin(user_id: number, channel_id: number) {
 				}
 
 				status.is_admin = false;
-				send_message_to_socket(socket, channel_id)
+				socket.emit("admin_status", channel_id, status.is_admin);
 			}
 		})
 }
@@ -239,7 +248,7 @@ async function join_rooms(socket: Socket) {
 			continue;
 		}
 
-		send_message_to_socket(socket, channel_status.channel_id)
+		send_messages_to_socket(socket, channel_status.channel_id)
 	}
 }
 
@@ -253,7 +262,6 @@ io.on("connection", async (socket) => {
 		.catch((err) => console.error(`Failed to update joined rooms for user: ${data.userid} because:`, err));
 
 	socket.on("create_channel", async (name: string, password: string, callback: (success: boolean, data: any) => void) => {
-		
 		let type
 		let hash
 		if (password) {
@@ -280,7 +288,7 @@ io.on("connection", async (socket) => {
 			// Also join it
 			join_channel(socket, {
 				is_admin: true,
-				is_muted: false,
+				is_muted: null,
 				is_banned: false,
 				channel_id: channel.id
 			}).then(() => {
@@ -324,7 +332,7 @@ io.on("connection", async (socket) => {
 		
 				join_channel(socket, {
 					is_admin: false,
-					is_muted: false,
+					is_muted: null,
 					is_banned: false,
 					channel_id: channel_id
 				})
@@ -407,8 +415,7 @@ io.on("connection", async (socket) => {
 	socket.on("unmute_user", (channel_id: number, user_id: number, callback: (success: boolean, reason: any) => void) => {
 		let status = data.joined_channels.find((elem) => elem.channel_id == channel_id);
 		if (!status) {
-			callback(false, "You are not in that channel!");
-			return;
+			return callback(false, "You are not in that channel!");
 		}
 		if (status.is_banned) {
 			console.log(`User ${data.username} tried to unmute someone in channel ${channel_id} but was banned!`);
@@ -423,33 +430,34 @@ io.on("connection", async (socket) => {
 	})
 
 	socket.on("make_user_admin", (channel_id: number, user_id: number, callback: (success: boolean, reason: any) => void) => {
-		console.log(channel_id, user_id);
-
-		/*
-		TODO the checks for banning/muting can't be replicated here because giving or removing admin rights can only be done by a channel owner.
-		We probably need to figure out extra or different checks here.
-
-		Also, this isn't working properly yet.
-
-		*/		
-		make_user_admin(user_id, channel_id)
-			.then(_ => callback(true, null))
-			.catch(err => callback(false, err))
+		backend.get_channel(channel_id).then(
+			(channel) => {
+				if (channel.owner_id != data.userid) {
+					return callback(false, "You are not the owner of that channel!");
+				}
+		
+				make_user_admin(user_id, channel_id)
+					.then(_ => callback(true, null))
+					.catch(err => callback(false, err))
+			}
+		).catch(err => callback(false, err));
 	})
 
 	socket.on("remove_user_admin", (channel_id: number, user_id: number, callback: (success: boolean, reason: any) => void) => {
-		/*
-		TODO the checks for banning/muting can't be replicated here because giving or removing admin rights can only be done by a channel owner.
-		We probably need to figure out extra or different checks here.
-
-		Also, this isn't working properly yet.
-		*/
-		remove_user_admin(user_id, channel_id)
-			.then(_ => callback(true, null))
-			.catch(err => callback(false, err))
+		backend.get_channel(channel_id).then(
+			(channel) => {
+				if (channel.owner_id != data.userid) {
+					return callback(false, "You are not the owner of that channel!");
+				}
+		
+				remove_user_admin(user_id, channel_id)
+					.then(_ => callback(true, null))
+					.catch(err => callback(false, err))
+			}
+		).catch(err => callback(false, err));
 	})
 
-	socket.on("client-message", (channel_id: number, message: string, callback: (success: boolean, reason: any) => void) => {	// This function will get called whenever this client emits a message on channel "client-message"
+	socket.on("client_message", (channel_id: number, message: string, callback: (success: boolean, reason: any) => void) => {	// This function will get called whenever this client emits a message on channel "client-message"
 		let status = data.joined_channels.find((elem) => elem.channel_id == channel_id);
 		if (!status) {
 			console.error(`User ${data.username} tried to send the message: ${message} in channel ${channel_id}, but was not in the room!`);
@@ -463,7 +471,7 @@ io.on("connection", async (socket) => {
 		}
 		
 		
-		io.to(get_room_name(channel_id)).emit("server-message", channel_id, data.userid, message);	// Send all the clients in the room a message on channel "server-message"
+		io.to(get_room_name(channel_id)).emit("server_message", channel_id, data.userid, message);	// Send all the clients in the room a message on channel "server_message"
 		console.log(`User ${data.username} has sent the message: ${message} in room ${channel_id}!`);
 
 		backend.add_message_to_channel(channel_id, data.userid, message)
@@ -471,6 +479,61 @@ io.on("connection", async (socket) => {
 				callback(true, null);	// Message is sent successfully once it has been added to the database
 			})
 	})
+
+	socket.on("create_dm", async (user_id: number, callback: (success: boolean, data: any) => void) => {
+		// TODO: Validate that the 2 users are actually friends
+
+		backend.make_channel({
+			name: `dm-${Math.min(user_id, data.userid)}-${Math.max(user_id, data.userid)}`,
+			type: "direct",
+			password: "",
+			owner_id: data.userid,
+			is_closed: false
+		}).then((channel) => {
+			console.log("Created channel:", channel)
+
+			// Also join it
+			let my_join = join_channel(socket, {
+				is_admin: false,
+				is_muted: null,
+				is_banned: false,
+				channel_id: channel.id
+			});
+			let other_join: Promise<void>;
+			if (signedInUsers[user_id]) {
+				other_join = join_channel(signedInUsers[user_id], {
+					is_admin: false,
+					is_muted: null,
+					is_banned: false,
+					channel_id: channel.id
+				});
+			} else {
+				other_join = backend.join_channel({
+					is_admin: false,
+					is_muted: null,
+					is_banned: false,
+					channel_id: channel.id
+				}, user_id);
+			}
+
+			Promise.all([my_join, other_join])
+				.then(() => {
+					callback(true, channel.id);
+				}).catch(() => {
+					console.error("Failed to join channel")
+					callback(false, "Failed to join channel")
+
+					// Try to delete it
+					backend.delete_channel(channel.id)
+						.catch((err) => {
+							console.error("Created a channel, failed to join, and then failed to delete:", err);
+						});
+				})
+		}).catch((err) => {
+			console.error(err);
+			callback(false, "Failed to create channel");
+		})
+	});
 
 	socket.on("disconnect", () => {
 		console.log(`User ${data.username} has disconnected!`);

@@ -102,6 +102,7 @@ CREATE TABLE public.users
     oauth_refresh_token             VARCHAR(1024),
     oauth_token_expiration_time     TIMESTAMP,
     is_logged_in                    BOOL,
+    is_ingame                       BOOL,
     CONSTRAINT unique_username UNIQUE (username)
 );
 
@@ -170,9 +171,8 @@ CREATE TABLE public.participants
     participant_id  BIGINT REFERENCES public.users(id),
 	is_joined		BOOL,
     is_admin        BOOL,
-    is_muted        BOOL,
+    muted_until     TIMESTAMP,
     is_banned       BOOL,
-    ban_meta        HSTORE,
     channel_id      BIGINT REFERENCES public.channels(id)
 );
 
@@ -186,7 +186,7 @@ CREATE TABLE public.messages
     id          BIGINT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     channel_id  BIGINT REFERENCES public.channels(id),
     user_id     BIGINT REFERENCES public.users(id),
-	username	VARCHAR(256) REFERENCES public.users(username),
+	username	VARCHAR(256),
     message     TEXT
 );
 

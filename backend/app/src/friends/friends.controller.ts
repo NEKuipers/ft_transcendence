@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Patch, Delete, Body, Param } from '@nestjs/common';
 import { FriendsService } from './friends.service';
-import { Friend, FriendRequest, FriendTable } from './friends.interface';
+import { Friend, FriendRequest, FriendTable, friend_status } from './friends.interface';
 
 @Controller('friends')
 export class FriendsController {
@@ -14,7 +14,12 @@ export class FriendsController {
 	@Get('/requests/:id')
 	async findAllRequestsForUser(@Param('id') id: number): Promise<FriendRequest[]> {		
 		return this.friendsService.findAllRequestsForUser(id);
-	} 
+	}
+
+	@Get('is_friend/:your_id&:other_id')
+	async isFriend(@Param('your_id') your_id: number, @Param('other_id') other_id: number) : Promise<number> {
+		return this.friendsService.isFriend(your_id, other_id);
+	}
 	
 	@Post()
 	async create(@Body() friend: FriendTable): Promise<string> {

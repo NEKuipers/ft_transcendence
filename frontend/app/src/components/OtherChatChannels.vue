@@ -4,7 +4,7 @@
 			<h5>Other Channels</h5>
 		</div>
 		<div v-if="!otherChatChannels">
-			<h5>Channels failed to load</h5>
+			<h5 class="no-channels-msg">Loading channels</h5>
 		</div>
 		<div id="channels" v-else-if="otherChatChannels?.length">
 			<ul class="listed-channel" v-for="channel in otherChatChannels" :key="channel.id">
@@ -20,7 +20,7 @@
 			</ul>
 		</div>
 		<div v-else>
-			<h5>No other channels available</h5>
+			<h5 class="no-channels-msg">No other channels exist</h5>
 		</div>
 	</div>
 </template>
@@ -34,7 +34,7 @@ import { loginStatusStore } from '../stores/profileData';
 export default defineComponent({
     name: "OtherChatChannels",
 	props: {
-	user: {
+		user: {
 			type: Number
 		},
 	},
@@ -46,11 +46,17 @@ export default defineComponent({
 			channel_name: "",
 			loginStatusStore: loginStatusStore(),
             otherChatChannels: null as null | Array<any>,
-			channels: null as null | any,
+			interval: 0
         };
     },
-	mounted() {
-		this.updateAllChannels();
+	mounted () {
+		this.updateOtherChannels(this.user as number);
+		this.interval = setInterval(() => {
+			this.updateOtherChannels(this.user as number);
+		}, 5000);
+	},
+	unmounted() {
+		clearInterval(this.interval);
 	},
     components: { 
 		SmallButton,
@@ -61,10 +67,9 @@ export default defineComponent({
 			this.showDialogue = false;
 		},
 		requestPassword(channel_id: number, channel_name: string) {
-			this.showDialogue = true
-			this.channel_id = channel_id
-			this.channel_name = channel_name
-			// console.log("Requesting password for channel", this.channel_id)
+			this.showDialogue = true;
+			this.channel_id = channel_id;
+			this.channel_name = channel_name;
 		},
 		verifyPassword(verified: boolean, password:string) {
 			if (verified) {
@@ -77,19 +82,13 @@ export default defineComponent({
 				alert('Wrong password')
 		},
 		async updateOtherChannels(user_id: number) {
+			if (user_id == undefined) { return }
 			fetch("/api/channels/all_not_for_" + user_id)
 				.then(res => res.json())
 				.then(data => this.otherChatChannels = data)
 				.catch(err => {
 				this.otherChatChannels = null;
 				console.log(err);})
-		},
-		async updateAllChannels() {
-			await fetch("/api/channels")
-				.then(res => res.json())
-				.then(data => this.channels = data)
-				.catch(err =>console.log(err));
-			this.updateOtherChannels(this.user as number);
 		},
 	},
 	emits: ['joinChannel']
@@ -115,6 +114,8 @@ export default defineComponent({
 	max-height: 40px;
 	margin-top: 0px;
 	margin-bottom: 0px;
+	min-width: 330px;
+	max-width: 450px;
 }
 
 .name {
@@ -136,6 +137,10 @@ export default defineComponent({
 	max-height: 45px;
 	margin-bottom: 45px;
 	margin-top: -10px;
+}
+
+.no-channels-msg {
+	margin-left: 40px;
 }
 
 </style>

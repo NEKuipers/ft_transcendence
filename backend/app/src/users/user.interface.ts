@@ -15,6 +15,7 @@ export interface User {
 	gamesLost?: number; //TODO remove this later on
 	isLoggedIn: boolean;
 	leaderboardPosition?: number;
+	firstLogin: boolean,
 }
 
 export interface newUsername {

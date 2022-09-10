@@ -3,11 +3,11 @@
 		<div id="title">
 			<h5>Your Channels</h5>
 		</div>
-		<div v-if="!myChannels">
-			<h5>Channels failed to load</h5>
+		<div v-if="!NonDmChannels">
+			<h5 class="no-channels-msg">Channels failed to load</h5>
 		</div>
-		<div id="channels" v-else-if="myChannels?.length">
-			<ul class="listed-channel" v-for="channel in myChannels" :key="channel.id">
+		<div id="channels" v-else-if="NonDmChannels?.length">
+			<ul class="listed-channel" v-for="channel in NonDmChannels" :key="channel.id">
 				<div><h5 class="name">{{ channel.name }}</h5></div>
 				<div id="buttons">
 					<SmallButton  class="button" text="open" @click="openChat(channel.id)"/>
@@ -16,7 +16,8 @@
 			</ul>
 		</div>
 		<div v-else>
-			<h5>You are not in any channels yet</h5>
+			<h5 class="no-channels-msg">You are not in any channels
+			</h5>
 		</div>
 		<div id="createchannel">
 			<SmallButton id="createButton" text="Create new channel" @click="createChannel"/>
@@ -34,8 +35,8 @@ import DialogueBox from './DialogueBox.vue'
 export default defineComponent({
 	name: "MyChatChannels",
 	props: {
-		myChannels: {
-			type: Array
+		channels: {
+			type: Object
 		},
 	},
 	data() {
@@ -68,33 +69,44 @@ export default defineComponent({
 			this.showDialogue = true;
 		},
 		async saveChannel(newname: string, newpassword: string | undefined | null) {
-			
-			await fetch("/api/channels/all")
-				.then(res => res.json())
-				.then(data => {
-					for (let i = 0; i < data.length; i++) {
-						if (data[i].name == newname) {
-							alert("A channel by that name already exists.")
+			console.log(newname);
+			await fetch('/api/channels/check_channel_name', {
+					method: "POST",
+					body: JSON.stringify({"name": newname,}),
+					headers: {'Content-type': 'application/json; charset=UTF-8'}})
+					.then(res => res.text())
+					.then(data => {
+						if (data === 'taken'){
+							alert('A channel by that name already exists.')
+						} else if (data === 'too-long') {
+							alert('That channel name is too long.')
+						} else {
+							if (newpassword) {
+								this.$emit('createChannel', newname, newpassword);
+							} else {
+								this.$emit('createChannel', newname);
+							}
+							this.hideDialogue();
 						}
-					}
-				})
-			if (newname.length > 22) {
-				return alert("Channel names may not be longer than 22 characters.");
-			} else if (newpassword) {
-				if (newpassword.length < 4 ) {
-					return alert("Password is too short. Password should be between 4 and 22 characters.");
-				} else if (newpassword.length > 22) {
-					return alert("Password is too long. Password should be between 4 and 22 characters.")
-				}
-				this.$emit('createChannel', newname, newpassword)
-			} else {
-				this.$emit('createChannel', newname);
-			}
-			this.hideDialogue();
+					})
+					.catch(err => console.log(err));	
 		},
 		openChat(channel_id: number) {
 			// console.log('Opening chat', channel_id)
 			this.$emit('open-chat', channel_id)
+		}
+	},
+	computed: {
+		NonDmChannels: function() {
+			let channels = new Array<any>();
+			if (this.channels) {
+				for (let channel_id in this.channels) {
+					if (this.channels[channel_id].type != "direct") {
+						channels.push(this.channels[channel_id]);
+					}
+				}
+			}
+			return channels;
 		}
 	},
 	emits: ['open-chat', 'leaveChannel', 'createChannel']
@@ -120,6 +132,8 @@ export default defineComponent({
 	max-height: 40px;
 	margin-top: 0px;
 	margin-bottom: 0px;
+	min-width: 330px;
+	max-width: 450px;
 }
 
 .name {
@@ -142,6 +156,9 @@ export default defineComponent({
 	margin-bottom: 45px;
 	margin-top: -10px;
 }
+.no-channels-msg {
+	margin-left: 40px;
+}
 
 #createchannel {
 	float: bottom;
@@ -156,5 +173,6 @@ export default defineComponent({
 	margin-bottom: 5px;
 	max-width: 200px;
 }
+
 
 </style>

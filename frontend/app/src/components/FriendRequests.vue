@@ -35,7 +35,16 @@ export default defineComponent({
 	data () {
 		return {
 			friendRequests: null as null | Array<any>,
+			interval: 0,
 		}
+	},
+	mounted () {
+		this.interval = setInterval(() => {
+			this.updateFriendRequests(this.user as number);
+		}, 2000);
+	},
+	unmounted() {
+		clearInterval(this.interval);
 	},
 	watch: {
 		user: {
@@ -59,11 +68,11 @@ export default defineComponent({
 				status: "accepted"}) 
 			};
 			fetch('/api/friends/accept', requestOptions)
-				.then(response => response)
+				.then(response => {
+					this.updateFriendRequests(this.user as number); 
+					this.$emit('acceptRequest')
+				})
 				.catch(err => console.log(err));
-			this.updateFriendRequests(this.user as number);
-			this.updateFriendRequests(this.user as number);
-
 		},
 		async declineRequest(from_user_id: number) {
 			const requestOptions = {
@@ -74,11 +83,8 @@ export default defineComponent({
 				status: "declined"}) 
 			};
 			fetch('/api/friends/decline', requestOptions)
-				.then(response => response)
+				.then(response => this.updateFriendRequests(this.user as number))
 				.catch(err => console.log(err));
-			this.updateFriendRequests(this.user as number);
-			this.updateFriendRequests(this.user as number); //jasper i'm truly sorry about this
-
 		},
 		async updateFriendRequests(user_id: number) {
 			fetch('/api/friends/requests/' + user_id)
@@ -87,12 +93,13 @@ export default defineComponent({
 				.catch(err =>  console.log(err));
 		}
 	},
+	emits: ['acceptRequest']
 })
 </script>
 
 <style scoped>
 .friend {
-	font-size: 26pt;
+	font-size: 22pt;
 	font-weight: bold;
 	text-decoration: none;
 	padding-left: 30px;

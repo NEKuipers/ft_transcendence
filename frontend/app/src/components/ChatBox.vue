@@ -1,25 +1,20 @@
 <template>
-    <div v-if="channel!=null" class="column">
+    <div v-if="channel!=null" class="chat-column">
         <div> 
             <h2>{{channel.name}}</h2>
         </div>
         <div id="messages">
             <div v-for="message in messages" :key="message.id" >
-                <p v-if="message.user !== loginStatusStore.loggedInStatus?.userID" class="from-them">
-				<!-- TODO add username of sender -->
-				<!-- TODO if user has blocked sender, message should not appear -->
-				<!-- TODO if user is banned, you should only see a notification of this and no messages -->
-                    {{message.username}} : {{message.message}}
-                </p>
-                <p v-else class="from-me">
-                    {{message.message}}
-                </p>
+				<p v-if="message.user === loginStatusStore.loggedInStatus?.userID" class="from-me">{{message.message}}</p>
+				<div v-else>
+					<p v-if="haveYouBlockedUser(message.user)"  class="from-them">[message from blocked user]</p>
+					<p v-else class="from-them">{{findUsername(message.user)}} : {{message.message}}</p>
+				</div>
             </div>
         </div>
         <div>
-			<!-- TODO prevent muted/banned participant from sending message -->
             <form ref="TextBox" @submit="sendMsg">
-                <input id="input-box" type="text" v-model="text" placeholder="Message"/>
+                <input id="input-box" type="text" v-model="text" placeholder="Message" :disabled="isMuted"/>
             </form>
         </div>
     </div>
@@ -41,6 +36,15 @@ export default defineComponent({
         channel_id: {
             type: Number
 		},
+		isMuted: {
+			type: Boolean
+		},
+		allUsers: {
+			type: Array as any,
+		},
+		dmOpen : {
+			type: Boolean
+		},
 		messages: null as any // Maaaaybe could import interfaces and stuff
 		// channel_name: String // TODO
     },
@@ -48,8 +52,10 @@ export default defineComponent({
         return {
             loginStatusStore: loginStatusStore(),
             channel: null as any,
-            text: ''
-        }
+            text: '',
+			user: null as any,
+			usersWhoYouHaveBlocked: new Array<any>(),
+			}
     },
     watch: {
         channel_id: {
@@ -84,7 +90,32 @@ export default defineComponent({
 			
 			// console.log(this.messages)
         },
+		haveYouBlockedUser(sender_id: number): boolean {
+			for (let x = 0; x < this.usersWhoYouHaveBlocked.length; x++) {
+				if ( this.usersWhoYouHaveBlocked[x] == sender_id) {
+					return true;
+				}
+			}
+			return false;
+		},
+		findUsername(user_id: number) : string {
+			for (let x = 0; x < this.allUsers.length; x++) {
+				if (this.allUsers[x].id == user_id) {
+					return this.allUsers[x].username;
+				}
+			}
+			return "user " + user_id;
+		}
     },
+	async mounted() {
+		let loggedInStatus = await loginStatusStore().logIn();
+		if (loggedInStatus) {
+			await fetch('/api/blocked_users/all_who_i_have_blocked/' + loggedInStatus.userID)
+			.then(res => res.json())
+			.then(data => this.usersWhoYouHaveBlocked = data)
+			.catch(err => console.log(err));
+		}
+	},
 	emits: ['sentMsg']
 })
 </script>
@@ -92,9 +123,7 @@ export default defineComponent({
 <style scoped>
 #messages {
   background-color: #fff;
-  /* border: 1px solid #e5e5ea;
-  border-radius: 0.25rem; */
-  width: 800px;
+  min-width: 600px;
   min-height: 100px;
   display: flex;
   flex-direction: column;
@@ -102,10 +131,10 @@ export default defineComponent({
   font-size: 1.25rem;
   margin: 0 auto 1rem;
   max-height: 800px;
-  max-width: 800px;
+  max-width: 1000px;
+  max-width: 90%;
   overflow: auto;
   padding: 0.5rem 1.5rem;
-  /* box-sizing: border-box; */
   justify-content: space-between;
 }
 
@@ -120,7 +149,6 @@ export default defineComponent({
 
 p.from-me {
   align-self: flex-end;
-  /* margin-left: auto; */
   float: right;
   background-color: #248bf5;
   color: #fff; 
@@ -231,6 +259,7 @@ p[class^="from-"].emoji::before {
 	width: 80%;
 	height:45px;
 	font-size: 20px;
+	max-width: 1000px;
 }
 
 /* #messages {

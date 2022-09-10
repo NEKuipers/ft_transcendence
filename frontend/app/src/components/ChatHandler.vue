@@ -11,7 +11,7 @@ import SocketIoConnection from '../components/SocketIoConnection.vue';
 
 interface JoinedChannelStatus {
 	is_admin: boolean;
-	is_muted: boolean;
+	is_muted: string;
 	is_banned: boolean;
 
 	channel_id: number;
@@ -34,9 +34,11 @@ export default defineComponent({
 	},
 
 	emits: {
-		"serverMessage": (_channel_id: number, _user: number, _message: string) => { return true },
+		"serverMessage": (_channel_id: number, _user: number, _username: string, _message: string) => { return true },
 		"leave": (_channel_id: number) => { return true},
-		"join": (_channel_id: number, _channel_name: string) => { return true },
+		"join": (_channel_id: number, _channel_name: string, _channel_type: string, _channel_owner: number) => { return true },
+		"mute_status": (_channel_id: number, is_muted: string) => { return true },
+		"admin_status": (_channel_id: number, is_admin: boolean) => { return true },
 		"clearData": () => { return true },
 	},
 
@@ -65,22 +67,30 @@ export default defineComponent({
 				console.log(`Disconnected from chat server: ${reason}: ${description}`)
 			});
 
-			socket.on("server-message", (channel_id, user, message) => {	// This will get called whenever the server emits a message on channel "server-message"
+			socket.on("server_message", (channel_id, user, username, message) => {	// This will get called whenever the server emits a message on channel "server-message"
 				// console.log(`Received message in channel: ${channel_id} from ${user}: ${message}`)
 
-				this.$emit("serverMessage", channel_id, user, message);
+				this.$emit("serverMessage", channel_id, user, username, message);
 			})
 
-			socket.on("join", (channel_id, channel_name) => {
-				// console.log(`I am in channel ${channel_id}`)
+			socket.on("join", (channel_id, channel_name, channel_type, channel_owner) => {
+				// console.log(`I am in channel ${channel_id} '${channel_name}' that is of type '${channel_type}' and the owner's usedID is ${channel_owner}`)
 
-				this.$emit("join", channel_id, channel_name);
+				this.$emit("join", channel_id, channel_name, channel_type, channel_owner);
 			})
 
 			socket.on("leave", (channel_id) => {
 				// console.log(`I am no longer in channel ${channel_id}`)
 
 				this.$emit("leave", channel_id);
+			})
+
+			socket.on("mute_status", (channel_id, is_muted) => {
+				this.$emit("mute_status", channel_id, is_muted);
+			})
+
+			socket.on("admin_status", (channel_id, is_admin) => {
+				this.$emit("admin_status", channel_id, is_admin);
 			})
 		})
 	},
@@ -90,13 +100,14 @@ export default defineComponent({
 			return new Promise((resolve, reject) => {
 				if (this.socket) {
 					this.socket.emit("join_channel", channel_id, password,
-					(success: boolean, result: any) => {
-						if (success) {
-							resolve(true);
-						} else {
-							reject(result);
+						(success: boolean, result: any) => {
+							if (success) {
+								resolve(true);
+							} else {
+								reject(result);
+							}
 						}
-					});
+					);
 				} else {
 					reject("Not connected!");
 				}
@@ -107,13 +118,14 @@ export default defineComponent({
 			return new Promise((resolve, reject) => {
 				if (this.socket) {
 					this.socket.emit("ban_user", channel_id, user_id,
-					(success: boolean, result: any) => {
-						if (success) {
-							resolve(true);
-						} else {
-							reject(result);
+						(success: boolean, result: any) => {
+							if (success) {
+								resolve(true);
+							} else {
+								reject(result);
+							}
 						}
-					});
+					);
 				} else {
 					reject("Not connected!");
 				}
@@ -141,13 +153,14 @@ export default defineComponent({
 			return new Promise((resolve, reject) => {
 				if (this.socket) {
 					this.socket.emit("mute_user", channel_id, user_id,
-					(success: boolean, result: any) => {
-						if (success) {
-							resolve(true);
-						} else {
-							reject(result);
+						(success: boolean, result: any) => {
+							if (success) {
+								resolve(true);
+							} else {
+								reject(result);
+							}
 						}
-					});
+					);
 				} else {
 					reject("Not connected!");
 				}
@@ -158,13 +171,14 @@ export default defineComponent({
 			return new Promise((resolve, reject) => {
 				if (this.socket) {
 					this.socket.emit("unmute_user", channel_id, user_id,
-					(success: boolean, result: any) => {
-						if (success) {
-							resolve(true);
-						} else {
-							reject(result);
+						(success: boolean, result: any) => {
+							if (success) {
+								resolve(true);
+							} else {
+								reject(result);
+							}
 						}
-					});
+					);
 				} else {
 					reject("Not connected!");
 				}
@@ -175,13 +189,14 @@ export default defineComponent({
 			return new Promise((resolve, reject) => {
 				if (this.socket) {
 					this.socket.emit("make_user_admin", channel_id, user_id,
-					(success: boolean, result: any) => {
-						if (success) {
-							resolve(true);
-						} else {
-							reject(result);
+						(success: boolean, result: any) => {
+							if (success) {
+								resolve(true);
+							} else {
+								reject(result);
+							}
 						}
-					});
+					);
 				} else {
 					reject("Not connected!");
 				}
@@ -192,13 +207,14 @@ export default defineComponent({
 			return new Promise((resolve, reject) => {
 				if (this.socket) {
 					this.socket.emit("remove_user_admin", channel_id, user_id,
-					(success: boolean, result: any) => {
-						if (success) {
-							resolve(true);
-						} else {
-							reject(result);
+						(success: boolean, result: any) => {
+							if (success) {
+								resolve(true);
+							} else {
+								reject(result);
+							}
 						}
-					});
+					);
 				} else {
 					reject("Not connected!");
 				}
@@ -208,13 +224,15 @@ export default defineComponent({
 		async leave_channel(channel_id: number): Promise<boolean> {
 			return new Promise((resolve, reject) => {
 				if (this.socket) {
-					this.socket.emit("leave_channel", channel_id, (success: boolean, result: any) => {
-						if (success) {
-							resolve(true);
-						} else {
-							reject(result);
+					this.socket.emit("leave_channel", channel_id,
+						(success: boolean, result: any) => {
+							if (success) {
+								resolve(true);
+							} else {
+								reject(result);
+							}
 						}
-					});
+					);
 				} else {
 					reject("Not connected!");
 				}
@@ -224,13 +242,33 @@ export default defineComponent({
 		async create_channel(name: string, type: string): Promise<number> {
 			return new Promise((resolve, reject) => {
 				if (this.socket) {
-					this.socket.emit("create_channel", name, type, (success: boolean, result: any) => {
-						if (success) {
-							resolve(result as number);
-						} else {
-							reject(result);
+					this.socket.emit("create_channel", name, type,
+						(success: boolean, result: any) => {
+							if (success) {
+								resolve(result as number);
+							} else {
+								reject(result);
+							}
 						}
-					});
+					);
+				} else {
+					reject("Not connected!");
+				}
+			})
+		},
+
+		async create_dm(other_user: number): Promise<number> {
+			return new Promise((resolve, reject) => {
+				if (this.socket) {
+					this.socket.emit("create_dm", other_user,
+						(success: boolean, result: any) => {
+							if (success) {
+								resolve(result as number);
+							} else {
+								reject(result);
+							}
+						}
+					);
 				} else {
 					reject("Not connected!");
 				}
@@ -240,13 +278,15 @@ export default defineComponent({
 		async send_message(channel_id: number, message: string): Promise<boolean> {
 			return new Promise((resolve, reject) => {
 				if (this.socket) {
-					this.socket.emit("client-message", channel_id, message, (success: boolean) => {
-						if (success) {
-							resolve(true);
-						} else {
-							resolve(false);
+					this.socket.emit("client_message", channel_id, message,
+						(success: boolean) => {
+							if (success) {
+								resolve(true);
+							} else {
+								resolve(false);
+							}
 						}
-					});
+					);
 				} else {
 					reject("Not connected!");
 				}

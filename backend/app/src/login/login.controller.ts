@@ -29,7 +29,11 @@ export class LoginController {
 		if (await this.twoFactorAuthService.is_tfa_setup(req.user.id, session)) {
 			res.redirect(`${process.env.HOST_URL}/tfa`)	// Ya gotta login here too!
 		} else {
-			res.redirect(`${process.env.HOST_URL}/`)
+			if (req.user.firstLogin) {
+				res.redirect(`${process.env.HOST_URL}/setup-account`)
+			} else {
+				res.redirect(`${process.env.HOST_URL}/`)
+			}
 		}
     }
 

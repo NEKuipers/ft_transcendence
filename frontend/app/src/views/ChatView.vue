@@ -1,30 +1,36 @@
 <template>
 	<div>
-		<ChatHandler ref="ChatHandler" uri=":4114" server_name="chat server" @serverMessage="onMessage" @join="onJoin" @leave="onLeave" @clearData="clearData"/>
+		<ChatHandler ref="ChatHandler" uri=":4114" server_name="chat server" @serverMessage="onMessage" @join="onJoin" @leave="onLeave" @clearData="clearData" @mute_status="muteStatus" @admin_status="adminStatus"/>
 
 		<div class="container">
 			<div class="column" id="left-column">
 				<div class="channels" id="yourChannels">
-					<MyChatChannels @open-chat="openChat" @leaveChannel="leaveChannel" @createChannel="createChannel" :user="loginStatusStore.loggedInStatus?.userID" :myChannels="myChannels"/>
+					<MyChatChannels @open-chat="openChat" @leaveChannel="leaveChannel" @createChannel="createChannel" :user="loginStatusStore.loggedInStatus?.userID" :channels="channels"/>
 				</div>
 				<div class="channels">
-					<OtherChatChannels @joinChannel="joinChannel" :user="loginStatusStore.loggedInStatus?.userID"/>
+					<OtherChatChannels v-if="loginStatusStore" :key="leaveChannelKey" @joinChannel="joinChannel" :user="loginStatusStore.loggedInStatus?.userID"/>
 					<!-- <dialogueBox id="promptPassword" :type="boxType" 
 						:show="showDialogue" @close-dialogue="hideDialogue" 
 						@passwordEntered="verifyPassword" /> -->
 				</div>
 				<div id="friends">
-					<ChatFriendsList :user="loginStatusStore.loggedInStatus?.userID" />
+					<ChatFriendsList v-if="loginStatusStore" :user="loginStatusStore.loggedInStatus?.userID" @openDM="openDM"/>
 				</div>
 			</div>
 			<div class="column" id="center_column">
 				<div>
-					<ChatBox :channel_id="currentChannel" :messages="messages[currentChannel]" @sentMsg="sendMsg"/>
+					<ChatBox :user="loginStatusStore.loggedInStatus?.userID" :allUsers="allUsers"
+						:channel_id="currentChannel" :dm="dmID" :messages="channels[currentChannel]?.messages" :isMuted="channels[currentChannel]?.muted" @sentMsg="sendMsg"/>
 				</div>
 			</div>
 			<div class="column" id="channel-overview">
-				Channel overview
-				<ChannelOverview :channel_id="currentChannel" @banUser="banUser" @unbanUser="unbanUser" @muteUser="muteUser" @unmuteUser="unmuteUser" @makeUserAdmin="makeUserAdmin" @removeUserAdmin="removeUserAdmin" @setPassword="setPassword"/>
+				<div v-if="dmID > 0">
+					<DMUserCard :user="dmID"></DMUserCard>
+				</div>
+				<div v-else>
+				<div id="channel-overview-header">Channel overview</div>
+					<ChannelOverview :channel_id="currentChannel" :dm="dmID" @banUser="banUser" @unbanUser="unbanUser" @muteUser="muteUser" @unmuteUser="unmuteUser" @makeUserAdmin="makeUserAdmin" @removeUserAdmin="removeUserAdmin" @setPassword="setPassword" @removePassword="removePassword"/>
+				</div>
 			</div>
 		</div>
 
@@ -41,6 +47,7 @@ import ChatBox from '../components/ChatBox.vue'
 import ChannelOverview from "../components/ChannelOverview.vue";
 
 import ChatHandler from '../components/ChatHandler.vue';
+import DMUserCard from "../components/DMUserCard.vue";
 
 export default defineComponent({
 	name: 'ChatView',
@@ -51,9 +58,11 @@ export default defineComponent({
 			currentChannel: 0,
 			user: null as any,
 			chatHandler: undefined as unknown as typeof ChatHandler,
-			messages: new Array<any>(),
-			myChannels: new Array<any>(),
-			boxType: ""
+			channels: {} as {[key: number]: any},
+			boxType: "",
+			leaveChannelKey: 0,
+			dmID: -1,
+			allUsers: new Array<any>(),
 		}
 	},
 	methods: {
@@ -65,6 +74,25 @@ export default defineComponent({
 		},
 		openChat(channel_id: number) {
 			this.currentChannel = channel_id
+			this.dmID = -1;
+		},
+		async openDM (user_id_1: number, user_id_2: number) {
+			this.dmID = user_id_2;
+
+			// Try to find the already existing dm channel
+			let expected_name = `dm-${Math.min(user_id_1, user_id_2)}-${Math.max(user_id_1, user_id_2)}`;
+			for (let id in this.channels) {
+				let data = this.channels[id];
+
+				if (data.type == "direct" && data.name == expected_name) {
+					this.currentChannel = data.id;
+					return;
+				}
+			}
+
+			// guess it doesn't exist, create it!
+			// Does it matter that dmID is set, and currentChannel is only set after a response was gotten from the chatio server?
+			this.currentChannel = await this.chatHandler.create_dm(user_id_2);
 		},
 		async requestPassword(): Promise<string> {
 			return new Promise((resolve, reject) => {
@@ -78,24 +106,23 @@ export default defineComponent({
 			console.log(`Received message in channel: ${channel_id} from ${user}: ${message}`)
 
 			const msgObj = {channel_id, user, message}
-			if (!this.messages[channel_id]) {
-				this.messages[channel_id] = []
-			}
-			this.messages[channel_id].push(msgObj)
+			this.channels[channel_id].messages.push(msgObj)
 		},
-		onJoin(channel_id: number, channelName: string) {
+		onJoin(channel_id: number, channelName: string, channelType: string, channelOwner: number) {
 			// Add this to an array to pass to your channels
-			console.log(`I am in channel ${channel_id}: ${channelName}`)
-			this.myChannels.push({
+			console.log(`I am in channel ${channel_id} '${channelName}' that is of type '${channelType}' and the owner's usedID is ${channelOwner}`)
+			this.channels[channel_id] = {
 				id: channel_id,
 				name: channelName,
-			})
+				type: channelType,
+				owner: channelOwner,
+				messages: new Array<string>()
+			}
 		},
 		onLeave(channel_id: number) {
 			console.log(`I am no longer in channel ${channel_id}`)
-
-			this.myChannels = this.myChannels.filter((elem: any) => elem.id != channel_id);
-			delete this.messages[channel_id];
+			this.leaveChannelKey += 1;
+			delete this.channels[channel_id];
 		},
 		joinChannel(channel_id: number, password: string) {
 			this.chatHandler.join_channel(channel_id, password == undefined ? undefined : password)
@@ -114,6 +141,7 @@ export default defineComponent({
 		},
 		clearData() {
 			console.log(`We have just connected to the chat server, and should clear any data to its initial state`)
+			// TODO: This should be done!
 		},
 		sendMsg(channel_id: number, msg: string) {
 			// console.log("Working?", channel_id, msg)
@@ -129,8 +157,11 @@ export default defineComponent({
 		unbanUser(channel_id: number, user_id: number) {
 			this.chatHandler.unban_user(channel_id, user_id);	
 		},
-		muteUser(channel_id: number, user_id: number) {	
+		muteUser(channel_id: number, user_id: number) {
 			this.chatHandler.mute_user(channel_id, user_id);
+		},
+		unMuteTrigger(channel_id: number, isMuted: string) {
+			this.channels[channel_id].muted = isMuted > Date.now().toString();
 		},
 		unmuteUser(channel_id: number, user_id: number) {
 			this.chatHandler.unmute_user(channel_id, user_id);	
@@ -141,12 +172,38 @@ export default defineComponent({
 		removeUserAdmin(channel_id: number, user_id: number) {
 			this.chatHandler.remove_user_admin(channel_id, user_id);	
 		},
-		setPassword(newPassword: string) {
-			//TODO implement this - How do we know which chat it is for?
-			console.log('Chosen password: ', newPassword);
-		}
+		setPassword(newPassword: string, channel_id: number) {
+			//TODO Jasper: added channel_id, needs to be passed on to handler
+			console.log('Chosen password for channel '+ channel_id+': ', newPassword);
+		},
+		removePassword(channel_id: number) {
+			//TODO Jasper: pass on to handler
+			console.log('Remove password in channel ' + channel_id);
+		},
+		muteStatus(channel_id: number, isMuted: string) {
+			if (isMuted > Date.now().toString()) {
+				console.log(`I am muted in channel ${channel_id}`);
+			} else {
+				console.log(`I am not muted in channel ${channel_id}`);
+			}
+			this.channels[channel_id].muted = isMuted > Date.now().toString();
+			const myTimeout = setTimeout(() => this.unMuteTrigger(channel_id, isMuted), 300000);
+		},
+		adminStatus(channel_id: number, isAdmin: boolean) {
+			if (isAdmin) {
+				console.log(`I am admin in channel ${channel_id}`);
+			} else {
+				console.log(`I am not admin in channel ${channel_id}`);
+			}
+			
+			this.channels[channel_id].admin = isAdmin;
+		},
 	},
 	async mounted() {
+		fetch('/api/users')
+			.then(res => res.json())
+			.then(data => this.allUsers = data)
+			.catch(err => console.log(err))
 		this.chatHandler = (this.$refs.ChatHandler as typeof ChatHandler);
 		let loggedInStatus = await loginStatusStore().logIn();
 		if (loggedInStatus) {
@@ -156,6 +213,7 @@ export default defineComponent({
 		}
 		// TODO: THIS IS JUST FOR DEBUGGING, REMOVE THIS LATER
 		(window as any).chatHandler = this.chatHandler;
+		(window as any).chatView = this;
 	},
 	components: {
 		ChatFriendsList,
@@ -163,7 +221,8 @@ export default defineComponent({
 		MyChatChannels,
 		ChatBox,
 		ChannelOverview,
-		ChatHandler
+		ChatHandler,
+		DMUserCard
 	},
 })
 </script>
@@ -171,6 +230,11 @@ export default defineComponent({
 <style scoped>
 * {
 	box-sizing: border-box;
+}
+
+#channel-overview-header{
+	width: 100%;
+	float: top;
 }
 
 .container {
@@ -189,7 +253,7 @@ export default defineComponent({
 	flex-direction:column;
 	float:left;
 	box-sizing: border-box;
-	height: 850px;
+	min-height: 1000px;
 }
 
 #left-column {
