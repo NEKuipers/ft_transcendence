@@ -114,7 +114,7 @@ export default defineComponent({
 			.then(res => res.json())
 			.then(data => {
 
-				/*sort users in channel */
+				/* sort users in channel: owner then admin at the top, banned then muted at the bottom */
 				data = data.sort((a: Participant, b: Participant) => b.participant_is_admin - a.participant_is_admin);
 				data = data.sort((a: Participant, b: Participant) => a.participant_is_muted - b.participant_is_muted);
 				data = data.sort((a: Participant, b: Participant) => a.participant_is_banned - b.participant_is_banned);
