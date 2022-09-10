@@ -8,6 +8,7 @@
 				<p v-if="message.user === loginStatusStore.loggedInStatus?.userID" class="from-me">{{message.message}}</p>
 				<div v-else>
 					<p v-if="haveYouBlockedUser(message.user)"  class="from-them">[message from blocked user]</p>
+					<p v-else-if="dmOpen" class="from-them">{{message.message}}</p>
 					<p v-else class="from-them">{{findUsername(message.user)}} : {{message.message}}</p>
 				</div>
             </div>
@@ -127,7 +128,7 @@ export default defineComponent({
   min-height: 100px;
   display: flex;
   flex-direction: column;
-  font-family: "SanFrancisco";
+  /* font-family: "SanFrancisco"; */
   font-size: 1.25rem;
   margin: 0 auto 1rem;
   max-height: 800px;

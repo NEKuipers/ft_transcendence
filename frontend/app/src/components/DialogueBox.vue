@@ -3,22 +3,27 @@
         <div v-if="type === 'namechange'">
             <form @submit="onSubmit">
             <h2> My brethren, what new username would you like? </h2>
+            <br><br>
             <input type="text" v-model="text" name="text" placeholder="Saul Goodman" />
-            <br>
+            <br><br>
             <input type="submit" value="Save Change" />
             <button @click="onClick" type="button" class="close"> X </button>
             </form>
         </div>
         <div v-else-if="type === 'avatar'">
-            <form @submit.prevent="onUpload">
-            <label for="file">Upload a new Profile Picture</label>
-            <input 
-            type="file" 
-            ref="file" 
-            @change="onFileSelected">
-            <button>Upload</button>
-            <button @click="onClick" type="button" class="close"> X </button>
-            </form>
+			<div class="selectAvatarDialogue">
+				<form @submit.prevent="onUpload">
+				<label for="file">Upload a new Profile Picture</label>
+				<br><br>
+				<input 
+				type="file" 
+				ref="file" 
+				@change="onFileSelected">
+				<br><br>
+				<button>Upload</button>
+				<button @click="onClick" type="button" class="close"> X </button>
+				</form>
+			</div>
         </div>
 		<div v-else-if="type === 'createChannel'">
             <form @submit="onSubmit">
@@ -159,6 +164,10 @@ export default defineComponent({
 
 .small {
 	font-size: small;
+}
+
+.selectAvatarDialogue {
+	margin-top: 100px;
 }
 
 
