@@ -131,7 +131,7 @@ export default defineComponent({
 		},
 		gameInvite(to_username: string) {
 			//TODO dialogue box for game mode
-			this.$emit('inviteToGame', to_username, this.loginStatusStore.loggedInStatus?.userName, 'classic');
+			this.$emit('inviteToGame', to_username, 'classic');
 		},
 		async enterNewPassword() {
 			this.boxType = "setPassword";

@@ -77,7 +77,7 @@ export default defineComponent({
 		},
 		inviteToGame() {
 			//TODO add dialogue box for game mode
-			this.$emit('inviteToGame', this.profile.username, this.loginStatusStore.loggedInStatus?.userName, 'classic');
+			this.$emit('inviteToGame', this.profile.username, 'classic');
 		}
 	}
 });
