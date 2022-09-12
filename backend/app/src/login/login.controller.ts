@@ -1,10 +1,11 @@
-import { Controller, Get, Req, Res, Session, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Patch, Req, Res, Session, UseGuards } from '@nestjs/common';
 import { Request, Response } from 'express'
 import { TFAGuard } from 'src/two_factor_auth/tfa.guard';
 import { TwoFactorAuthService } from 'src/two_factor_auth/two_factor_auth.service';
 import { AuthenticatedGuard, IntraAuthGuard } from './guards';
 import { UsersService } from 'src/users/users.service';
 import * as jwt from "jsonwebtoken";
+import axios from 'axios';
 
 @Controller('login')
 export class LoginController {
@@ -17,6 +18,7 @@ export class LoginController {
     @Get()
     @UseGuards(IntraAuthGuard)
     OAuthRequest(): any {
+		
         return 'Ye';
     }
 
@@ -26,6 +28,7 @@ export class LoginController {
     @Get('callback')
     @UseGuards(IntraAuthGuard)
     async callback(@Req() req: any, @Session() session: any, @Res() res: Response) {
+		await axios.patch(`http://localhost:${process.env.PGREST_PORT}/users?id=eq.${req.user.id}`, {is_logged_in: true, status: 'online'});
 		if (await this.twoFactorAuthService.is_tfa_setup(req.user.id, session)) {
 			res.redirect(`${process.env.HOST_URL}/tfa`)	// Ya gotta login here too!
 		} else {
@@ -40,6 +43,7 @@ export class LoginController {
 	@Get('/logout')
 	@UseGuards(AuthenticatedGuard)
 	async logout(@Req() req: any, @Session() session: any): Promise<string> {
+		await axios.patch(`http://localhost:${process.env.PGREST_PORT}/users?id=eq.${req.user.id}`, {is_logged_in: false, status: 'offline'});
 		return new Promise((resolve, reject) => {
 			this.twoFactorAuthService.logout(session);
 
