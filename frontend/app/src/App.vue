@@ -17,13 +17,14 @@ export default defineComponent({
 		NavBar,
 	},
 	created() {
-		window.addEventListener('beforeunload', this.closeBrowser);
+		window.addEventListener('beforeunload', () => {
+			let checkIfReload = (performance.getEntries()[0] as PerformanceNavigationTiming).type == "reload";
+			console.log(checkIfReload)
+			if (checkIfReload == false) {
+				loginStatusStore().logOut();
+			}
+		});
 	},
-	methods: {
-		closeBrowser() {
-			loginStatusStore().logOut();
-		}
-	}
 });
 
 </script>
