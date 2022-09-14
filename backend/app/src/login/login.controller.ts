@@ -28,10 +28,10 @@ export class LoginController {
     @Get('callback')
     @UseGuards(IntraAuthGuard)
     async callback(@Req() req: any, @Session() session: any, @Res() res: Response) {
-		await axios.patch(`http://localhost:${process.env.PGREST_PORT}/users?id=eq.${req.user.id}`, {is_logged_in: true, status: 'online'});
 		if (await this.twoFactorAuthService.is_tfa_setup(req.user.id, session)) {
 			res.redirect(`${process.env.HOST_URL}/tfa`)	// Ya gotta login here too!
 		} else {
+			await axios.patch(`http://localhost:${process.env.PGREST_PORT}/users?id=eq.${req.user.id}`, {is_logged_in: true, status: 'online'});
 			if (req.user.firstLogin) {
 				res.redirect(`${process.env.HOST_URL}/setup-account`)
 			} else {
