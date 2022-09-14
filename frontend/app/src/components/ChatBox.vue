@@ -28,7 +28,7 @@
         </div>
         <div>
             <form ref="TextBox" @submit="sendMsg">
-                <input id="input-box" type="text" v-model="text" placeholder="Message" :disabled="isMuted"/>
+                <input id="input-box" type="text" v-model="text" placeholder="Message" :disabled="mutedUntil && mutedUntil > new Date()"/>
             </form>
         </div>
     </div>
@@ -56,8 +56,8 @@ export default defineComponent({
         channel_id: {
             type: Number
         },
-        isMuted: {
-            type: Boolean
+        mutedUntil: {
+            type: Date
         },
         allUsers: {
             type: Array as any,

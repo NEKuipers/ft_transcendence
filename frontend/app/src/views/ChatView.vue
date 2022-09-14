@@ -17,7 +17,7 @@
 			<div class="column" id="center_column">
 				<div>
 					<ChatBox ref="chatBoxRef" :user="loginStatusStore.loggedInStatus?.userID" :allUsers="allUsers"
-						:channel_id="currentChannel" :dm="dmID" :messages="channels[currentChannel]?.messages" :isMuted="channels[currentChannel]?.muted" @sentMsg="sendMsg"/>
+						:channel_id="currentChannel" :dm="dmID" :messages="channels[currentChannel]?.messages" :mutedUntil="channels[currentChannel]?.muted" @sentMsg="sendMsg"/>
 				</div>
 			</div>
 			<div class="column" id="channel-overview">
@@ -157,9 +157,6 @@ export default defineComponent({
 		muteUser(channel_id: number, user_id: number) {
 			this.chatHandler.mute_user(channel_id, user_id);
 		},
-		unMuteTrigger(channel_id: number, isMuted: string) {
-			this.channels[channel_id].muted = isMuted > Date.now().toString();
-		},
 		unmuteUser(channel_id: number, user_id: number) {
 			this.chatHandler.unmute_user(channel_id, user_id);	
 		},
@@ -177,14 +174,14 @@ export default defineComponent({
 			//TODO Jasper: pass on to handler
 			console.log('Remove password in channel ' + channel_id);
 		},
-		muteStatus(channel_id: number, isMuted: string) {
-			if (isMuted > Date.now().toString()) {
-				console.log(`I am muted in channel ${channel_id}`);
+		muteStatus(channel_id: number, mutedUntil: Date) {
+			console.log("mutedUntil: ", mutedUntil, new Date());
+			if (mutedUntil > new Date()) {
+				console.log(`I am muted in channel ${channel_id} until ${mutedUntil}`);
 			} else {
 				console.log(`I am not muted in channel ${channel_id}`);
 			}
-			this.channels[channel_id].muted = isMuted > Date.now().toString();
-			const myTimeout = setTimeout(() => this.unMuteTrigger(channel_id, isMuted), 300000);
+			this.channels[channel_id].muted = mutedUntil;
 		},
 		adminStatus(channel_id: number, isAdmin: boolean) {
 			if (isAdmin) {
