@@ -18,9 +18,7 @@ export default defineComponent({
 	},
 	created() {
 		window.addEventListener('beforeunload', () => {
-			let checkIfReload = (performance.getEntries()[0] as PerformanceNavigationTiming).type == "reload";
-			console.log(checkIfReload)
-			if (checkIfReload == false) {
+			if ((performance.getEntries()[0] as PerformanceNavigationTiming).type != "reload") {
 				loginStatusStore().logOut();
 			}
 		});
