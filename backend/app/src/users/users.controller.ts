@@ -43,6 +43,16 @@ export class UsersController {
 		return this.usersService.changeAvatar(id, newavatar.avatar_id);
 	}
 
+	@Patch('/set_online/:id')
+	async setOnline(@Param('id') id: number) {
+		return this.usersService.setOnline(id);
+	}
+
+	@Patch('/set_offline/:id')
+	async setOffline(@Param('id') id: number) {
+		return this.usersService.setOffline(id);
+	}
+
 	@Delete(':id')
 	delete(@Param('id') id) : string {
 		//Delete user
