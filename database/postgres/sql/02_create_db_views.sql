@@ -226,6 +226,7 @@ SELECT
 	summary.username	                        AS username,
 	summary.avatar_id	                        AS avatar_id,
 	summary.is_logged_in						AS is_logged_in,
+	summary.status								AS status,
 	summary.games_won	                        AS games_won,
 	summary.games_lost	                        AS games_lost,
 	DENSE_RANK() OVER (ORDER BY games_won DESC, games_lost ASC, username ASC) AS ranking
@@ -257,6 +258,7 @@ SELECT
 	u.username	AS username,
 	u.avatar_id	AS avatar_id,
 	u.is_logged_in AS is_logged_in,
+	u.status	AS status,
     SUM
     (
       CASE

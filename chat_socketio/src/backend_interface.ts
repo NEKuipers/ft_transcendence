@@ -179,7 +179,9 @@ async function get_joined_channels(userId: number): Promise<JoinedChannelStatus[
 	// console.log(`got joined channels:`, data.data);
 	for (let elem of data.data) {
 		let participant = elem.participants[0] as JoinedChannelStatus;
-		participant.muted_until = parseISOString(participant.muted_until as unknown as String);
+		if (participant.muted_until) {
+			participant.muted_until = parseISOString(participant.muted_until as unknown as String);
+		}
 		// console.log(`time: ${participant.muted_until}`);
 		result.push(participant);
 	}
