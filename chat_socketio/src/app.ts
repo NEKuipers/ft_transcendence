@@ -234,6 +234,21 @@ async function remove_user_admin(user_id: number, channel_id: number) {
 		})
 }
 
+async function remove_password(channel_id: number) {
+	await backend.remove_password(channel_id)
+		.then(() => {
+			console.log(`Channel ${channel_id} is no longer protected by a password`)
+		})
+}
+
+async function set_password(new_password: string, channel_id: number) {
+	await backend.set_password(new_password, channel_id)
+		.then(() => {
+			console.log(`Channel ${channel_id} has a new password`)
+		})
+		.catch(err => console.log("something went wrong", err))
+}
+
 // Joins all the socketio-rooms this socket should be in
 async function join_rooms(socket: Socket) {
 	let data = socket.data as SocketData;
@@ -457,6 +472,21 @@ io.on("connection", async (socket) => {
 					.catch(err => callback(false, err))
 			}
 		).catch(err => callback(false, err));
+	})
+
+	socket.on("remove_password", (channel_id: number, callback: (success: boolean, reason: any) => void) => {
+		remove_password(channel_id)
+			.then(_ => callback(true, null))
+			.catch(err => callback(false, err))
+	})
+
+	socket.on("set_password", async (new_password: string, channel_id: number, callback: (success: boolean, reason: any) => void) => {
+		let hash: string
+		
+		hash = await bcrypt.hash(new_password, 10)
+		set_password(hash, channel_id)
+			.then(_ => callback(true, null))
+			.catch(err => callback(false, err))
 	})
 
 	socket.on("client_message", (channel_id: number, message: string, callback: (success: boolean, reason: any) => void) => {	// This function will get called whenever this client emits a message on channel "client-message"

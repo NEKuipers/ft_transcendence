@@ -140,6 +140,21 @@ async function remove_user_admin_in_channel(channelId: number, userId: number) {
 	});
 }
 
+async function remove_password(channelId: number) {
+	await axios.patch(`http://localhost:${DATABASE_PORT}/channels?id=eq.${channelId}`, {
+		type: "public",
+		password: ""
+	})
+}
+
+async function set_password(newPassword: string, channelId: number) {
+
+	await axios.patch(`http://localhost:${DATABASE_PORT}/channels?id=eq.${channelId}`, {
+		type: "protected",
+		password: newPassword
+	})
+}
+
 async function get_messages_from_channel(channelId: number): Promise<Message[]> {	// userId, message
 	let data = await axios.get(`http://localhost:${DATABASE_PORT}/messages?channel_id=eq.${channelId}`);
 
@@ -225,4 +240,7 @@ export {
 	get_joined_channels,
 
 	matches_password,
+
+	remove_password,
+	set_password
 }

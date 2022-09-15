@@ -222,6 +222,42 @@ export default defineComponent({
 			})
 		},
 
+		async remove_password(channel_id: number): Promise<boolean> {
+			return new Promise((resolve, reject) => {
+				if (this.socket) {
+					this.socket.emit("remove_password", channel_id,
+						(success: boolean, result: any) => {
+							if (success) {
+								resolve(true)
+							} else {
+								console.log("was it fucked?")
+								reject(result);
+							}
+						})
+				} else {
+					reject("Not connected!")
+				}
+			})
+		},
+
+		async set_password(new_password: string, channel_id: number): Promise<boolean> {
+			return new Promise((resolve, reject) => {
+				if (this.socket) {
+					this.socket.emit("set_password", new_password, channel_id,
+						(success: boolean, result: any) => {
+							if (success) {
+								resolve(true)
+							} else {
+								console.log("was it fucked?")
+								reject(result);
+							}
+						})
+				} else {
+					reject("Not connected!")
+				}
+			})
+		},
+
 		async leave_channel(channel_id: number): Promise<boolean> {
 			return new Promise((resolve, reject) => {
 				if (this.socket) {

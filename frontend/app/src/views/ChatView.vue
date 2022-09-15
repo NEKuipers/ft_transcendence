@@ -168,10 +168,12 @@ export default defineComponent({
 		},
 		setPassword(newPassword: string, channel_id: number) {
 			//TODO Jasper: added channel_id, needs to be passed on to handler
+			this.chatHandler.set_password(newPassword, channel_id)
 			console.log('Chosen password for channel '+ channel_id+': ', newPassword);
 		},
 		removePassword(channel_id: number) {
-			//TODO Jasper: pass on to handler
+			this.chatHandler.remove_password(channel_id);
+
 			console.log('Remove password in channel ' + channel_id);
 		},
 		muteStatus(channel_id: number, mutedUntil: Date) {
