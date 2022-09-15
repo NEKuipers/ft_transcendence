@@ -469,10 +469,6 @@ io.on("connection", (socket) => {
 			socket.data.disconnectFunc();
 		}
 
-		// Look at how dumb this is
-		// Why did you decide to have me do it this way
-		// "Ah yes, on disconnect, make it say ONLINE"
-		// 10/10 will totaly not break when someone just alt+f4's on the pong page, yeahh..
 		make_request(DATABASE_PORT, `/users?id=eq.${socket.data.userid}`, "PATCH", {
 			"status": "online"
 		})

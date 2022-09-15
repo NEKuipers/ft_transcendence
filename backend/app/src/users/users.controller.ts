@@ -52,13 +52,6 @@ export class UsersController {
 	async setOffline(@Param('id') id: number) {
 		return this.usersService.setOffline(id);
 	}
-
-	@Delete(':id')
-	delete(@Param('id') id) : string {
-		//Delete user
-		return `Deleted user ${id}`;
-	}
-
 }
 
 

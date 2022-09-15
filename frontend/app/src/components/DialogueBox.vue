@@ -100,7 +100,6 @@ export default defineComponent({
 			this.$emit('game-mode-selected', game_mode);
 		},
         onFileSelected(event: any) {
-            // this.selectedFile = this.$refs.avatar.files[0]
             this.selectedFile = event.target.files[0]
         },
         async onPasswordEntered(e: any) {

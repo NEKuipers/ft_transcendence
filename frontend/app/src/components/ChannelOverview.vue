@@ -97,10 +97,7 @@ export default defineComponent({
         channel_id: {
             handler(newValue) {
                 if (!newValue) { return; }
-                fetch('/api/channels/' + this.channel_id)
-                .then(res => res.json())
-                .then(data => { this.channel = data[0]; this.checkIfOwner(data[0].owner_id); })
-                .catch(err => console.log('Error retrieving channel', err))
+				this.getChannelDetails();
 				this.getChannelParticipants();
             }
         },
@@ -133,6 +130,12 @@ export default defineComponent({
 			if (owner_id == this.loginStatusStore.loggedInStatus?.userID)
 				this.userIsOwner = true;
 		},
+		async getChannelDetails() { 
+		fetch("/api/channels/" + this.channel_id)
+			.then(res => res.json())
+				.then(data => { this.channel = data[0]; this.checkIfOwner(data[0].owner_id); })
+				.catch(err => console.log('Error retrieving channel', err))
+		},
 		gameInvite(to_username: string) {
 			this.boxType = "selectGameMode";
 			this.invited_user = to_username;
@@ -149,6 +152,7 @@ export default defineComponent({
 		},
 		removePassword() {
 			this.$emit('removePassword', this.channel_id)
+			this.getChannelDetails();
 		},
 		hidePasswordDialogue() {
 			this.showPasswordDialogue = false;

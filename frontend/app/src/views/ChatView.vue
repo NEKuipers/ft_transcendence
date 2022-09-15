@@ -26,7 +26,7 @@
 				</div>
 				<div v-else>
 				<div id="channel-overview-header">Channel overview</div>
-					<ChannelOverview :channel_id="currentChannel" :dm="dmID" @banUser="banUser" @unbanUser="unbanUser" @muteUser="muteUser" @unmuteUser="unmuteUser" @makeUserAdmin="makeUserAdmin" @removeUserAdmin="removeUserAdmin" @setPassword="setPassword" @removePassword="removePassword" @inviteToGame="inviteToGame"/>
+					<ChannelOverview ref="channelOverviewRef" :channel_id="currentChannel" :dm="dmID" @banUser="banUser" @unbanUser="unbanUser" @muteUser="muteUser" @unmuteUser="unmuteUser" @makeUserAdmin="makeUserAdmin" @removeUserAdmin="removeUserAdmin" @setPassword="setPassword" @removePassword="removePassword" @inviteToGame="inviteToGame"/>
 				</div>
 			</div>
 		</div>
@@ -166,15 +166,12 @@ export default defineComponent({
 		removeUserAdmin(channel_id: number, user_id: number) {
 			this.chatHandler.remove_user_admin(channel_id, user_id);	
 		},
-		setPassword(newPassword: string, channel_id: number) {
-			//TODO Jasper: added channel_id, needs to be passed on to handler
-			this.chatHandler.set_password(newPassword, channel_id)
-			console.log('Chosen password for channel '+ channel_id+': ', newPassword);
+		async setPassword(newPassword: string, channel_id: number) {
+			await this.chatHandler.set_password(newPassword, channel_id);
+			(this.$refs.channelOverviewRef as any).getChannelDetails();
 		},
 		removePassword(channel_id: number) {
 			this.chatHandler.remove_password(channel_id);
-
-			console.log('Remove password in channel ' + channel_id);
 		},
 		muteStatus(channel_id: number, mutedUntil: Date) {
 			console.log("mutedUntil: ", mutedUntil, new Date());
@@ -186,12 +183,6 @@ export default defineComponent({
 			this.channels[channel_id].muted = mutedUntil;
 		},
 		adminStatus(channel_id: number, isAdmin: boolean) {
-			if (isAdmin) {
-				console.log(`I am admin in channel ${channel_id}`);
-			} else {
-				console.log(`I am not admin in channel ${channel_id}`);
-			}
-			
 			this.channels[channel_id].admin = isAdmin;
 		},
 		inviteToGame(to_username: string, game_mode: string) {
