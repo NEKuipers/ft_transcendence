@@ -141,7 +141,6 @@ export default defineComponent({
 			// TODO: This should be done!
 		},
 		sendMsg(channel_id: number, msg: string) {
-			// console.log("Working?", channel_id, msg)
 			this.chatHandler.send_message(channel_id, msg)
 		},
 		createChannel(name: string, newpassword: string | undefined | null) {

@@ -107,7 +107,6 @@ export default defineComponent({
             if (!this.password)
                 alert('Enter a password, numpty')
             else {
-                console.log("Before the request password is:", this.password)
                 let verified = false;
 				await fetch('/api/channels/verify_password_for_' + this.channel_id, {
                     method: 'POST',
@@ -118,7 +117,6 @@ export default defineComponent({
                 })
 				.then(res => res.json())
 				.then(data => verified = data);
-                console.log("has it been verified?", verified);
                 this.$emit('password-entered', verified, this.password);
                 this.password = ""
             }
@@ -140,9 +138,6 @@ export default defineComponent({
                 })
                 .then(res => { return res.json() })
                 .catch(err => { console.log(err); return err })
-
-                // If successful, then emit that userProfile has to patch avatar_id for user
-                // console.log('New avatar_id is', newAvatarId.avatar_id)
                 this.$emit('new-avatar', newAvatarId.avatar_id)
             }
         }

@@ -20,19 +20,6 @@ export class UsersController {
 		return user;
 	}
 
-	/* Not entirely sure this route is necessary */
-	// @Get(':userName')
-	// async findOneByName(@Param('userName') userName: string): Promise<User> {
-	// 	const user = await this.usersService.findOneByName(userName)
-	// 	return user;
-	// }
-
-	@Post()
-	create(@Body() createUserDto: CreateUserDto): string {
-		//Create user
-		return 'User created';
-	}
-
 	@Patch(':id')
 	async editUsername(@Body() newname: newUsername, @Param('id') id: number): Promise<string> {
 		return this.usersService.changeUsername(id, newname.username);

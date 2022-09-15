@@ -10,20 +10,4 @@ export class ParticipantsController {
 	async findAllParticipantsOfChannel(@Param('channel_id') channel_id: number): Promise<Participant[]> {
 		return this.participantsService.findAllParticipantsOfChannel(channel_id);
 	}
-
-	@Post()
-	async addUserToChannel(@Body() participant: Participant) : Promise<string> {
-		return this.participantsService.addUserToChannel(participant);
-	}
-
-	@Patch('/make-admin')
-	async makeUserAdmin(@Body() participant: Participant) : Promise<string> {
-		return this.participantsService.makeUserAdmin(participant);
-	}
-
-	@Delete()
-	async removeUserFromChannel(@Body() participant: Participant) : Promise<string> {
-		return this.participantsService.removeUserFromChannel(participant);
-	}
-
 }

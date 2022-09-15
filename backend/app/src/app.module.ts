@@ -5,7 +5,6 @@ import { MatchesModule } from './matches/matches.module';
 import { ParticipantsModule } from './participants/participants.module';
 import { TwoFactorAuthModule } from './two_factor_auth/two_factor_auth.module';
 import { ChannelsModule } from './channels/channels.module';
-import { UserAchievementsModule } from './user_achievements/user_achievements.module';
 import { AchievementsModule } from './achievements/achievements.module';
 import { BlockedUsersModule } from './blocked_users/blocked_users.module';
 import { AvatarsModule } from './avatars/avatars.module';
@@ -20,7 +19,7 @@ import { ProfileModule } from './profile/profile.module';
   }),
   PassportModule.register({ session: true}),
   UsersModule, MatchesModule,
-  ParticipantsModule, TwoFactorAuthModule, ChannelsModule, UserAchievementsModule, AchievementsModule, BlockedUsersModule, 
+  ParticipantsModule, TwoFactorAuthModule, ChannelsModule, AchievementsModule, BlockedUsersModule, 
   AvatarsModule, FriendsModule, LoginModule, ProfileModule],
 })
 export class AppModule {}

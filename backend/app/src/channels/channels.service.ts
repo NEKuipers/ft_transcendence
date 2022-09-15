@@ -6,10 +6,6 @@ import * as bcrypt from 'bcrypt'
 
 @Injectable()
 export class ChannelsService {
-	async findAll(): Promise<Channel[]> {
-		let res = await axios.get(`http://localhost:${process.env.PGREST_PORT}/channels?type=neq.direct&is_closed=eq.false`);
-		return res.data;
-	}
 
 	async findAllNonDirect(): Promise<Channel[]> {
 		let res = await axios.get(`http://localhost:${process.env.PGREST_PORT}/channels?type=neq.direct&is_closed=eq.false`);
@@ -29,7 +25,7 @@ export class ChannelsService {
 	}
 
 	async findAllNotForUser(user_id: number): Promise<Channel[]> { 
-		let all = await this.findAll();
+		let all = await this.findAllNonDirect();
 		let joined = await this.findAllForUser(user_id);
 		if (joined.length == 0) {
 			return all;
@@ -68,35 +64,9 @@ export class ChannelsService {
 		return "ok"
 	}
 
-	async createChannel(channel: Channel): Promise<string> {
-		let channels = await this.findAll();
-		if (channels.find((existingChannel) => existingChannel.name == channel.name)) {
-			return "taken";
-		}
-		await axios.post(`http://localhost:${process.env.PGREST_PORT}/channels`, {
-			name: channel.name,
-			type: channel.type,
-			owner_id: channel.owner_id,
-			is_closed: false
-		})
-		let id = channels.length + 1;
-		return id.toString();
-	}
-
-	async changeOwner(id: number, channel: Channel): Promise<string> {
-		axios.patch(`http://localhost:${process.env.PGREST_PORT}/channels?id=eq.${channel.id}`, {
-			owner_id: id
-		})
-		return "Channel owner changed";
-	}
-
 	async verifyPassword(id: number, password: string): Promise<boolean> {
 		const channel = await this.findOne(id)
-		// console.log(channel)
-		// console.log('Plainpass', password, ' crypted', channel[0].id, channel[0].password)
-		const correctPassword = await bcrypt.compare(password, channel[0].password)
-
-		console.log('Does the password match:', correctPassword)
-		return correctPassword;
+		const isPasswordCorrect = await bcrypt.compare(password, channel[0].password)
+		return isPasswordCorrect;
 	}
 }
