@@ -21,22 +21,22 @@ export class FriendsController {
 		return this.friendsService.isFriend(your_id, other_id);
 	}
 	
-	@Post()
+	@Post()//TODO needs guard
 	async create(@Body() friend: FriendTable): Promise<string> {
 		return this.friendsService.createFriend(friend);
 	}
 
-	@Patch('/decline')
+	@Patch('/decline')//TODO needs guard
 	async declineRequest(@Body() friend: FriendTable): Promise<string> {
 		return this.friendsService.declineRequest(friend);
 	}
 
-	@Patch('/accept')
+	@Patch('/accept')//TODO needs guard
 	async acceptRequest(@Body() friend: FriendTable): Promise<string> {
 		return this.friendsService.acceptRequest(friend);
 	}
 
-	@Delete()
+	@Delete()//TODO needs guard
 	async unfriend(@Body() friend: FriendTable): Promise<string> {
 		return this.friendsService.deleteFriend(friend);
 	}

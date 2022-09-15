@@ -21,12 +21,12 @@ export class ChannelsController {
 		return this.channelsService.findOne(id);
 	}
 
-	@Post('/check_channel_name')
+	@Post('/check_channel_name') // No guard needed, this just checks if it's taken, doesn't post to DB
 	async checkChannelName(@Body() newChannelName: channelName): Promise<string> {
 		return this.channelsService.checkChannelName(newChannelName.name);
 	}
 
-	@Post('/verify_password_for_:id')
+	@Post('/verify_password_for_:id') // No guard needed, this just checks if it's taken, doesn't post to DB
 	async verifyPassword(@Param('id') id: number, @Body() password: any) : Promise<boolean> {
 		return this.channelsService.verifyPassword(id, password.password)
 	}

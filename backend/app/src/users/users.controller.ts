@@ -1,5 +1,4 @@
 import { Controller, Get, Post, Patch, Delete, Body, Param } from '@nestjs/common';
-import { CreateUserDto } from './create-user.dto';
 import { UsersService } from './users.service';
 import { User, newUsername, newAvatar } from './user.interface';
 
@@ -10,7 +9,6 @@ export class UsersController {
 	@Get()
 	async findAll(): Promise<User[]> {
 		const users = await this.usersService.findAll()
-		// console.log('Diocane',users)
 		return users
 	}
 
@@ -20,22 +18,22 @@ export class UsersController {
 		return user;
 	}
 
-	@Patch(':id')
+	@Patch(':id')//TODO needs guard
 	async editUsername(@Body() newname: newUsername, @Param('id') id: number): Promise<string> {
 		return this.usersService.changeUsername(id, newname.username);
 	}
 
-	@Patch('/avatar/:id')
+	@Patch('/avatar/:id')//TODO needs guard
 	async updateAvatar(@Body() newavatar: newAvatar, @Param('id') id: number): Promise<string> {
 		return this.usersService.changeAvatar(id, newavatar.avatar_id);
 	}
 
-	@Patch('/set_online/:id')
+	@Patch('/set_online/:id')//TODO needs guard
 	async setOnline(@Param('id') id: number) {
 		return this.usersService.setOnline(id);
 	}
 
-	@Patch('/set_offline/:id')
+	@Patch('/set_offline/:id')//TODO needs guard
 	async setOffline(@Param('id') id: number) {
 		return this.usersService.setOffline(id);
 	}

@@ -19,7 +19,7 @@ export class AvatarsController {
 		return res.end(Buffer.from(data, 'binary'))
 	}
 
-	@Post()
+	@Post()//TODO needs guard
 	@UseInterceptors(FileInterceptor('file'))
 	async newAvatar(@Res() res: Response, @Req() req: any, @Body() image: any, @UploadedFile() file: Express.Multer.File) {
 
