@@ -117,7 +117,7 @@ export default defineComponent({
 
 				this.channelParticipants = data;
 				for (let i = 0; i < data.length; i++) {
-					if (data[i] == this.loginStatusStore.loggedInStatus?.userID) {
+					if (data[i].participant_id == this.loginStatusStore.loggedInStatus?.userID) {
 						if (data[i].is_admin){
 							this.userIsAdmin = true;
 						}
