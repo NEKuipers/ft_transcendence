@@ -32,13 +32,13 @@ export default defineComponent({
 		async setOnline() {
 			let loggedInStatus = await this.getId();
 			if (loggedInStatus?.userID != undefined) {
-				fetch('/api/users/set_online/' + loggedInStatus?.userID, {method: "PATCH"});
+				fetch('/api/users/set_online', {method: "PATCH"});
 			}
 		},
 		async setOffline() {
 			let loggedInStatus = await this.getId();
 			if (loggedInStatus?.userID != undefined) {
-				fetch('/api/users/set_offline/' + loggedInStatus?.userID, {method: "PATCH"});
+				fetch('/api/users/set_offline', {method: "PATCH"});
 			}
 		},
 	}
