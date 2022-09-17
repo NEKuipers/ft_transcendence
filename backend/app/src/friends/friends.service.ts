@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Friend, FriendRequest, FriendTable, friend_status } from './friends.interface';
+import { Friend, FriendRequest} from './friends.interface';
 import axios from 'axios';
 import { time } from 'console';
 import * as moment from 'moment';
