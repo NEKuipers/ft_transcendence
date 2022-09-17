@@ -27,7 +27,7 @@
 				<div v-else>
 				<div id="channel-overview-header">Channel overview</div>
 					<br>
-					<ChannelOverview ref="channelOverviewRef" :channel_id="currentChannel" :dm="dmID" @banUser="banUser" @unbanUser="unbanUser" @muteUser="muteUser" @unmuteUser="unmuteUser" @makeUserAdmin="makeUserAdmin" @removeUserAdmin="removeUserAdmin" @setPassword="setPassword" @removePassword="removePassword" @inviteToGame="inviteToGame"/>
+					<ChannelOverview ref="channelOverviewRef" :owner_id="channels[currentChannel]?.owner" :channel_id="currentChannel" :dm="dmID" @banUser="banUser" @unbanUser="unbanUser" @muteUser="muteUser" @unmuteUser="unmuteUser" @makeUserAdmin="makeUserAdmin" @removeUserAdmin="removeUserAdmin" @setPassword="setPassword" @removePassword="removePassword" @inviteToGame="inviteToGame"/>
 				</div>
 				</div>
 				</div>
