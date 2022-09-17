@@ -138,10 +138,10 @@ export default defineComponent({
 		},
         sendGameInvite(to_username: string, game_mode: string) {
             this.$emit("sentMsg", this.channel_id, `Hey ${to_username}, I want to play a game of Pong ${game_mode} with you!`);
-            this.$emit("sentMsg", this.channel_id, `${process.env.HOST_URL}/pong/${game_mode}/${this.generateGameId()}`);
+            this.$emit("sentMsg", this.channel_id, `/pong/${game_mode}/${this.generateGameId()}`);
         },
 		checkIfLink(message: Message) : boolean {
-			return (message.message.startsWith(`${process.env.HOST_URL}`));
+			return (message.message.startsWith(`/pong/`))
 		},
     },
     async mounted() {

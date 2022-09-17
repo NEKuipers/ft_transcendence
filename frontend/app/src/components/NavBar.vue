@@ -37,7 +37,9 @@ export default defineComponent({
 		// We need to know
 		if (!await this.loginStatusStore.logIn()) {
 			console.log("Failed to login!")
-			this.$router.push("/login")
+			if (this.$route.fullPath != '/tfa') {
+				this.$router.push("/login")
+			}
 		}
 	},
 	data () {
