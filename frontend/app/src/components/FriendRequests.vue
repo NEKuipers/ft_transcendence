@@ -63,7 +63,7 @@ export default defineComponent({
 			const requestOptions = {
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(from_user_id) 
+				body: JSON.stringify({id:from_user_id}) 
 			};
 			fetch('/api/friends/accept', requestOptions)
 				.then(response => {
@@ -76,7 +76,7 @@ export default defineComponent({
 			const requestOptions = {
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(from_user_id) 
+				body: JSON.stringify({id:from_user_id}) 
 			};
 			fetch('/api/friends/decline', requestOptions)
 				.then(response => this.updateFriendRequests(this.user as number))
