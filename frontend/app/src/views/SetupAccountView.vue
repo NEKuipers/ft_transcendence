@@ -69,7 +69,7 @@ export default defineComponent({
             if (!this.text)
                 alert('Must fill in name')
             else {
-				await fetch('/api/users/' + this.user_id, {
+				await fetch('/api/users/username/' + this.user_id, {
 					method: "PATCH",
 					body: JSON.stringify({"username": this.text,}),
 					headers: {'Content-type': 'application/json; charset=UTF-8'}})

@@ -18,7 +18,7 @@ export class UsersController {
 		return user;
 	}
 
-	@Patch(':id')//TODO needs guard
+	@Patch('/username/:id')//TODO needs guard
 	async editUsername(@Body() newname: newUsername, @Param('id') id: number): Promise<string> {
 		return this.usersService.changeUsername(id, newname.username);
 	}

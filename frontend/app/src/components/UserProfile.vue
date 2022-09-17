@@ -113,7 +113,7 @@ export default defineComponent({
 		async saveUsername(newname: string) {
 			const id = this.loginStatusStore.loggedInStatus?.userID
 			if (id != undefined) {
-				await fetch('/api/users/' + id, {
+				await fetch('/api/users/username/' + id, {
 					method: "PATCH",
 					body: JSON.stringify({"username": newname,}),
 					headers: {'Content-type': 'application/json; charset=UTF-8'}})
