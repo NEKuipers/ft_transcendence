@@ -1,6 +1,6 @@
 <template>
     <div v-if="channel!=null" class="chat-column">
-        <div> 
+        <div v-if="channel.type != `direct`"> 
             <h2>{{channel.name}}</h2>
         </div>
         <div id="messages">
