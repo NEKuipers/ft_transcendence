@@ -36,6 +36,7 @@
         <h2>
             Channel to be displayed here
         </h2>
+		<img height="900" width="900" src="../assets/face-opacity.png"/>
     </div>
 </template>
 
