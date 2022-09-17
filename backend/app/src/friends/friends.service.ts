@@ -11,7 +11,7 @@ export class FriendsService {
 
 	findAllForUser(id:number): Promise<Friend[]> {
 		return new Promise((accept, reject) => {
-			axios.get(`http://pgrest:${process.env.PGREST_PORT}/vw_friends?user_id=eq.${id}&request_status=eq.accepted`)
+			axios.get(`http://${process.env.PGREST_HOST}:${process.env.PGREST_PORT}/vw_friends?user_id=eq.${id}&request_status=eq.accepted`)
 				.then((response) => {
 					if (response.status != 200) {
 						console.log(`Got statusCode: ${response.status} (${response.statusText}): ${JSON.stringify(response.headers, null, 4)}`)
@@ -28,7 +28,7 @@ export class FriendsService {
 
 	findAllRequestsForUser(id: number) : Promise<FriendRequest[]> {
 		return new Promise((accept, reject) => {
-			axios.get(`http://pgrest:${process.env.PGREST_PORT}/vw_friend_requests?user_id=eq.${id}`)
+			axios.get(`http://${process.env.PGREST_HOST}:${process.env.PGREST_PORT}/vw_friend_requests?user_id=eq.${id}`)
 				.then((response) => {
 					if (response.status != 200) {
 						console.log(`Got statusCode: ${response.status} (${response.statusText}): ${JSON.stringify(response.headers, null, 4)}`)
@@ -44,7 +44,7 @@ export class FriendsService {
 	}
 
 	async isFriend(your_id: number, other_id: number) : Promise<number> {
-		const res = await axios.get(`http://pgrest:${process.env.PGREST_PORT}/friends?from_user_id=eq.${your_id}&to_user_id=eq.${other_id}`);
+		const res = await axios.get(`http://${process.env.PGREST_HOST}:${process.env.PGREST_PORT}/friends?from_user_id=eq.${your_id}&to_user_id=eq.${other_id}`);
 		if (res.data.length == 0)
 			return -1;
 		if (res.data[res.data.length - 1].status == 'accepted')
@@ -55,7 +55,7 @@ export class FriendsService {
 	}
 
 	async createFriend(friend: FriendTable): Promise<string> {
-		axios.post(`http://pgrest:${process.env.PGREST_PORT}/friends`, {
+		axios.post(`http://${process.env.PGREST_HOST}:${process.env.PGREST_PORT}/friends`, {
 			from_user_id: friend.from_user_id,
 			to_user_id: friend.to_user_id,
 			status: "send"
@@ -64,12 +64,12 @@ export class FriendsService {
 	}
 
 	async acceptRequest(friend: FriendTable) : Promise<string> { 
-		axios.patch(`http://pgrest:${process.env.PGREST_PORT}/friends?from_user_id=eq.${friend.from_user_id}&to_user_id=eq.${friend.to_user_id}`, {
+		axios.patch(`http://${process.env.PGREST_HOST}:${process.env.PGREST_PORT}/friends?from_user_id=eq.${friend.from_user_id}&to_user_id=eq.${friend.to_user_id}`, {
 			status: "accepted",
 			response_time: moment().format('YYYY-MM-DD HH:mm:ss')})
 			.then(res => res)
 			.catch(err => console.log(err));
-		axios.post(`http://pgrest:${process.env.PGREST_PORT}/friends`, {
+		axios.post(`http://${process.env.PGREST_HOST}:${process.env.PGREST_PORT}/friends`, {
 			from_user_id: friend.to_user_id,
 			to_user_id: friend.from_user_id,
 			status: "accepted",
@@ -79,7 +79,7 @@ export class FriendsService {
 	}
 
 	async declineRequest(friend: FriendTable) : Promise<string> {
-		axios.patch(`http://pgrest:${process.env.PGREST_PORT}/friends?from_user_id=eq.${friend.from_user_id}&to_user_id=eq.${friend.to_user_id}`, {
+		axios.patch(`http://${process.env.PGREST_HOST}:${process.env.PGREST_PORT}/friends?from_user_id=eq.${friend.from_user_id}&to_user_id=eq.${friend.to_user_id}`, {
 			status: "declined",
 			response_time: moment().format('YYYY-MM-DD HH:mm:ss')})
 				.then(res => res)
@@ -88,10 +88,10 @@ export class FriendsService {
 	}
 
 	async deleteFriend(friend: FriendTable) : Promise<string> {
-		axios.delete(`http://pgrest:${process.env.PGREST_PORT}/friends?from_user_id=eq.${friend.from_user_id}&to_user_id=eq.${friend.to_user_id}`)
+		axios.delete(`http://${process.env.PGREST_HOST}:${process.env.PGREST_PORT}/friends?from_user_id=eq.${friend.from_user_id}&to_user_id=eq.${friend.to_user_id}`)
 				.then(res => res)
 				.catch(err => console.log(err));
-		axios.delete(`http://pgrest:${process.env.PGREST_PORT}/friends?from_user_id=eq.${friend.to_user_id}&to_user_id=eq.${friend.from_user_id}`)
+		axios.delete(`http://${process.env.PGREST_HOST}:${process.env.PGREST_PORT}/friends?from_user_id=eq.${friend.to_user_id}&to_user_id=eq.${friend.from_user_id}`)
 				.then(res => res)
 				.catch(err => console.log(err));
 		return "success";

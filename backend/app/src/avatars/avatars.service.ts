@@ -8,7 +8,7 @@ export class AvatarsService {
 	async findOne(id: number): Promise<AvatarReponse|null> {
 		try {
 			const response = await axios.post(
-				`http://pgrest:${process.env.PGREST_PORT}/rpc/fnc_get_avatar`,
+				`http://${process.env.PGREST_HOST}:${process.env.PGREST_PORT}/rpc/fnc_get_avatar`,
 				{ id: id},
 				{
 					responseType: 'arraybuffer',
@@ -40,7 +40,7 @@ export class AvatarsService {
 
 
 		const response = await axios.post(
-			`http://pgrest:${process.env.PGREST_PORT}/avatars`,
+			`http://${process.env.PGREST_HOST}:${process.env.PGREST_PORT}/avatars`,
 			{
 				img:  imgdata,
 				name: file.originalname,

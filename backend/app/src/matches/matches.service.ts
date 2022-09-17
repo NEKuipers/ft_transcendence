@@ -8,7 +8,7 @@ import axios from 'axios';
 export class MatchesService {
 	findLastMatchesFromUser(id: number): Promise<CompletedMatch[]> {
 		return new Promise((accept, reject) => {
-			axios.get(`http://pgrest:${process.env.PGREST_PORT}/vw_matches?user_id=eq.${id}&limit=15&order=start_time.desc`)
+			axios.get(`http://${process.env.PGREST_HOST}:${process.env.PGREST_PORT}/vw_matches?user_id=eq.${id}&limit=15&order=start_time.desc`)
 				.then((response) => {
 					if (response.status != 200) {
 						console.log(`Got statusCode: ${response.status} (${response.statusText}): ${JSON.stringify(response.headers, null, 4)}`)
@@ -29,7 +29,7 @@ export class MatchesService {
 		*/
 
 		return new Promise((accept, reject) => {
-			axios.get(`http://pgrest:${process.env.PGREST_PORT}/vw_spectate`)
+			axios.get(`http://${process.env.PGREST_HOST}:${process.env.PGREST_PORT}/vw_spectate`)
 				.then((response) => {
 					if (response.status != 200) {
 						console.log(`Got statusCode: ${response.status} (${response.statusText}): ${JSON.stringify(response.headers, null, 4)}`)

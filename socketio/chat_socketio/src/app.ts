@@ -541,7 +541,7 @@ io.on("connection", async (socket) => {
 	})
 });
 
-const port = 4114;
+const port = process.env.SOCKETIO_CHAT_PORT;
 httpServer.listen(port, () => {
 	console.log("Chat-SocketIO server running on port,", port, "!")
 });

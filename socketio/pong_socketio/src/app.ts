@@ -36,7 +36,7 @@ function make_request(port: number, path: string, method: string, data: object, 
 	}
 
 	let req = request({
-		hostname: 'localhost',
+		hostname: process.env.PGREST_HOST,
 		port: port,
 		path: path,
 		method: method,
@@ -483,7 +483,7 @@ io.on("connection", (socket) => {
 	})
 });
 
-const port = 4113;
+const port = process.env.SOCKETIO_PONG_PORT;
 httpServer.listen(port, () => {
 	console.log("Pong-SocketIO server running on port,", port, "!")
 });
