@@ -58,7 +58,9 @@ export default defineComponent({
 
 .username {
 	float: left;
-	margin-left: 10px;
+	text-align: left;
+	margin-left: 20px;
+	min-width: 230px;
 
 }
 
