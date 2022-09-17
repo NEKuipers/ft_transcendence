@@ -26,10 +26,12 @@
 						</div>
 					</div>
 				</div>
-				<div v-if="participant?.participant_id != loginStatusStore.loggedInStatus?.userID && participant.participant_id != owner_id">
+				<div v-if="participant?.participant_id != loginStatusStore.loggedInStatus?.userID"> 
+				
 					<SmallButton v-if="!hasUserBlockedYou(participant?.participant_id)" class="button" text="Invite to Game" @click="gameInvite(participant?.participant_username)"/>
 					<DialogueBox id="selectGameModeDialogueBox" :type="boxType" :show="showSelectGameModeDialogue" @game-mode-selected="gameModeSelected" @close-dialogue="hideGameModeDialogue"/>
-
+					
+					<div v-if="participant.participant_id != owner_id">
 					<!-- banning/muting, with restriction for admin/owner only -->
 					<div v-if="userIsAdmin || userIsOwner">
 						<SmallButton v-if="!participant?.participant_is_banned" class="button" text="Ban this user" @click="banUser(participant.participant_id)"/>
@@ -43,6 +45,7 @@
 					<div v-if="userIsOwner">
 						<SmallButton v-if="!participant.participant_is_admin && userIsOwner" class="button" text="Give admin rights" @click="makeUserAdmin(participant.participant_id)"/>
 						<SmallButton v-else class="button" text="Take admin rights" @click="removeUserAdmin(participant.participant_id)"/>
+					</div>
 					</div>
 				</div>
 			</div>

@@ -374,9 +374,10 @@ a.from-me ~ a.from-me:last-child {
 }
 
 a.from-them {
+	display: flex;
   align-items: flex-start;
-  background-color: #e5e5ea;
-  color: #000;
+  background-color: #42b983;
+  color: white;
 }
 
 a.from-them:before {

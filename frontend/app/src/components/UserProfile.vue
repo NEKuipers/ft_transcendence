@@ -156,8 +156,7 @@ export default defineComponent({
 			const requestOptions = {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({	from_user_id: this.loginStatusStore.loggedInStatus?.userID,
-										to_user_id: this.user})};
+				body: JSON.stringify({to_user_id: this.user})};
 			fetch('/api/friends', requestOptions)
 				.then(res => this.updateIsFriend(this.loginStatusStore.loggedInStatus?.userID as number, this.user as number))
 				.catch(err => console.log(err));
