@@ -54,10 +54,10 @@ export class FriendsService {
 		return 1;
 	}
 
-	async createFriend(friend: FriendTable): Promise<string> {
+	async createFriend(from_id: number, friend: FriendTable): Promise<string> {
 		axios.post(`http://localhost:${process.env.PGREST_PORT}/friends`, {
 			from_user_id: friend.from_user_id,
-			to_user_id: friend.to_user_id,
+			to_user_id: from_id,
 			status: "send"
 		})
 		return "Friend request added to database";

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, Req, UseGuards } from '@nestjs/common';
 import { FriendsService } from './friends.service';
 import { Friend, FriendRequest, FriendTable, friend_status } from './friends.interface';
 import { TFAGuard } from '../two_factor_auth/tfa.guard';
@@ -24,8 +24,8 @@ export class FriendsController {
 	
 	@Post()
 	@UseGuards(TFAGuard)
-	async create(@Body() friend: FriendTable): Promise<string> {
-		return this.friendsService.createFriend(friend);	// TODO: Needs verification
+	async create(@Req() req: any, @Body() friend: FriendTable): Promise<string> {
+		return this.friendsService.createFriend(req.user.id, friend);	// TODO: Needs verification
 	}
 
 	@Patch('/decline')
