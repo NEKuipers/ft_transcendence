@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, Req, UseGuards } from '@nestjs/common';
 import { FriendsService } from './friends.service';
 import { Friend, FriendRequest, FriendTable, friend_status } from './friends.interface';
 import { TFAGuard } from '../two_factor_auth/tfa.guard';
@@ -24,25 +24,25 @@ export class FriendsController {
 	
 	@Post()
 	@UseGuards(TFAGuard)
-	async create(@Body() friend: FriendTable): Promise<string> {
-		return this.friendsService.createFriend(friend);	// TODO: Needs verification
+	async create(@Req() req: any, @Body() other_id: number): Promise<string> {
+		return this.friendsService.createFriend(req.user.id, other_id);	// TODO: Needs verification
 	}
 
 	@Patch('/decline')
 	@UseGuards(TFAGuard)
-	async declineRequest(@Body() friend: FriendTable): Promise<string> {
-		return this.friendsService.declineRequest(friend);	// TODO: Needs verification
+	async declineRequest(@Req() req: any, @Body() other_id: number): Promise<string> {
+		return this.friendsService.declineRequest(req.user.id, other_id);	// TODO: Needs verification
 	}
 
 	@Patch('/accept')
 	@UseGuards(TFAGuard)
-	async acceptRequest(@Body() friend: FriendTable): Promise<string> {
-		return this.friendsService.acceptRequest(friend);	// TODO: Needs verification
+	async acceptRequest(@Req() req: any, @Body() other_id: number): Promise<string> {
+		return this.friendsService.acceptRequest(req.user.id, other_id);	// TODO: Needs verification
 	}
 
 	@Delete()
 	@UseGuards(TFAGuard)
-	async unfriend(@Body() friend: FriendTable): Promise<string> {
-		return this.friendsService.deleteFriend(friend);	// TODO: Needs verification
+	async unfriend(@Req() req: any, @Body() other_id: number): Promise<string> {
+		return this.friendsService.deleteFriend(req.user.id, other_id);	// TODO: Needs verification
 	}
 }
