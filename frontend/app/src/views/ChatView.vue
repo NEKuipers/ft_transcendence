@@ -173,7 +173,6 @@ export default defineComponent({
 			this.chatHandler.remove_password(channel_id);
 		},
 		muteStatus(channel_id: number, mutedUntil: Date) {
-			console.log("mutedUntil: ", mutedUntil, new Date());
 			if (mutedUntil > new Date()) {
 				console.log(`I am muted in channel ${channel_id} until ${mutedUntil}`);
 			} else {

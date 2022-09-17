@@ -21,7 +21,7 @@
 						<div class="role" v-if="participant?.participant_is_banned == true">
 							<p>(banned)</p>
 						</div>
-						<div  class="role" v-if="participant?.participant_is_muted > new Date(Date.now()).toISOString()">
+						<div  class="role" v-if="participant?.participant_muted_until > new Date(Date.now()).toISOString()">
 							<p>(muted)</p>
 						</div>
 					</div>
@@ -35,7 +35,7 @@
 						<SmallButton v-if="!participant?.participant_is_banned" class="button" text="Ban this user" @click="banUser(participant.participant_id)"/>
 
 						<SmallButton v-else class="button" text="Unban this user" @click="unbanUser(participant.participant_id)"/>
-						<SmallButton v-if="!participant.participant_is_muted || participant.participant_is_muted < new Date(Date.now()).toISOString() " class="button" text="Mute this user" @click="muteUser(participant.participant_id)"/>
+						<SmallButton v-if="participant.participant_muted_until < new Date(Date.now()).toISOString() " class="button" text="Mute this user" @click="muteUser(participant.participant_id)"/>
 						<SmallButton v-else class="button" text="Unmute this user" @click="unmuteUser(participant.participant_id)"/>
 					</div>
 
