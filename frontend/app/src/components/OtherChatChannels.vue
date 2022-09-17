@@ -71,15 +71,11 @@ export default defineComponent({
 			this.channel_id = channel_id;
 			this.channel_name = channel_name;
 		},
-		verifyPassword(verified: boolean, password:string) {
-			if (verified) {
-				console.log(password);
-				this.$emit('joinChannel',this.channel_id, password);
-				password = "";
-				this.hideDialogue();
-			}
-			else
-				alert('Wrong password')
+		verifyPassword(password:string) {
+			console.log(password);
+			this.$emit('joinChannel',this.channel_id, password);
+			password = "";
+			this.hideDialogue();
 		},
 		async updateOtherChannels(user_id: number) {
 			if (user_id == undefined) { return }
