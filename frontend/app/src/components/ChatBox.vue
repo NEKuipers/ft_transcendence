@@ -1,6 +1,6 @@
 <template>
     <div v-if="channel!=null" class="chat-column">
-        <div> 
+        <div v-if="channel.type != `direct`"> 
             <h2>{{channel.name}}</h2>
         </div>
         <div id="messages">
@@ -15,7 +15,6 @@
 				</div>
 				<div v-else>
 					<p v-if="haveYouBlockedUser(message.user)"  class="from-them">[message from blocked user]</p>
-					<!-- <p v-if="message.user in usersWhoYouHaveBlocked" class="from-them">[Message from blocked user]</p> -->
 					<div v-else-if="checkIfLink(message) == true">
 						<a v-if="dmOpen" class="from-them" v-bind:href="message.message">Click here to join!</a>
 						<a v-else class="from-them" v-bind:href="message.message">{{findUsername(message.user)}} : Click here to join!</a>
