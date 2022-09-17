@@ -31,7 +31,7 @@
 					<DialogueBox id="selectGameModeDialogueBox" :type="boxType" :show="showSelectGameModeDialogue" @game-mode-selected="gameModeSelected" @close-dialogue="hideGameModeDialogue"/>
 
 					<!-- banning/muting, with restriction for admin/owner only -->
-					<div v-if="isAdmin || userIsOwner">
+					<div v-if="userIsAdmin || userIsOwner">
 						<SmallButton v-if="!participant?.participant_is_banned" class="button" text="Ban this user" @click="banUser(participant.participant_id)"/>
 
 						<SmallButton v-else class="button" text="Unban this user" @click="unbanUser(participant.participant_id)"/>
@@ -74,9 +74,6 @@ export default defineComponent({
         channel_id: {
             type: Number
         },
-		isAdmin : {
-			type: Boolean
-		},
     },
 	async created() {
 		this.getChannelParticipants();
@@ -88,6 +85,7 @@ export default defineComponent({
 			channelParticipants: new Array<Participant>(),
             text: '',
 			userIsOwner: false,
+			userIsAdmin: false,
 			showPasswordDialogue: false,
 			boxType: "",
 			showSelectGameModeDialogue: false,
@@ -118,6 +116,13 @@ export default defineComponent({
 				}
 
 				this.channelParticipants = data;
+				for (let i = 0; i < data.length; i++) {
+					if (data[i] == this.loginStatusStore.loggedInStatus?.userID) {
+						if (data[i].is_admin){
+							this.userIsAdmin = true;
+						}
+					}
+				}
 			})
 			.catch(err => console.log(err));
 		},
