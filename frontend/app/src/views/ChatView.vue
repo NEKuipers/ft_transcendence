@@ -92,13 +92,6 @@ export default defineComponent({
 			// Does it matter that dmID is set, and currentChannel is only set after a response was gotten from the chatio server?
 			this.currentChannel = await this.chatHandler.create_dm(user_id_2);
 		},
-		async requestPassword(): Promise<string> {
-			return new Promise((resolve, reject) => {
-				// How to open dialogue box straight from the function?
-
-				resolve("TODO: Show dialog box requesting a password")
-			});
-		},
 
 		onMessage(channel_id: number, user: number, message: string) {
 			console.log(`Received message in channel: ${channel_id} from ${user}: ${message}`)
@@ -127,8 +120,9 @@ export default defineComponent({
 				.catch(async (err: string) => {
 					console.log('error is', err)
 					if (err == "NEED_PASSWORD") {
-						let pwd = await this.requestPassword();
-						await this.chatHandler.join_channel(channel_id, pwd);
+						alert("need password but none given")
+					} else if (err == "WRONG_PASSWORD") {
+						alert("wrong password")
 					} else {
 						console.log(err);	
 					}

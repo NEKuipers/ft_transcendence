@@ -44,11 +44,12 @@ export class BlockedUsersService {
 	}
 
 	async getAllWhoIHaveBlocked(id: number) : Promise<number[]> {
-		let res = await axios.get(`http://localhost:${process.env.PGREST_PORT}/blocked_users?blocked_by_id=eq.${id}`);
+		// let res = await axios.get(`http://localhost:${process.env.PGREST_PORT}/blocked_users?blocked_by_id=eq.${id}`);
+		let res = await axios.get(`http://localhost:${process.env.PGREST_PORT}/vw_blocked_users?user_id=eq.${id}`);
 		let ids = [];
 		let blocked_users = res.data;
 		for (let x = 0; x < blocked_users.length ; x++) {
-			ids.push(blocked_users[x].id);
+			ids.push(blocked_users[x].blocked_user_id);
 		}
 		return ids;
 	}

@@ -63,10 +63,4 @@ export class ChannelsService {
 		}
 		return "ok"
 	}
-
-	async verifyPassword(id: number, password: string): Promise<boolean> {
-		const channel = await this.findOne(id)
-		const isPasswordCorrect = await bcrypt.compare(password, channel[0].password)
-		return isPasswordCorrect;
-	}
 }

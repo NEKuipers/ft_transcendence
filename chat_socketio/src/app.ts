@@ -336,7 +336,7 @@ io.on("connection", async (socket) => {
 			if (status.is_banned) {
 				console.log(`User ${data.username} tried to join channel ${channel_id} but was banned!`);
 				return callback(false, "You are banned!");
-			} else {
+			} else if (status.is_joined) {
 				return callback(false, "Already joined!");
 			}
 		}
@@ -353,7 +353,11 @@ io.on("connection", async (socket) => {
 					return callback(false, "Channel is closed!");;
 				}
 				if (!allowedToJoin) {
-					return callback(false, "NEED_PASSWORD");
+					if (password) {
+						return callback(false, "WRONG_PASSWORD");
+					} else {
+						return callback(false, "NEED_PASSWORD");
+					}
 				}
 				
 				let use_status = status ?? {
