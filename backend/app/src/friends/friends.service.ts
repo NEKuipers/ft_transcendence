@@ -54,32 +54,32 @@ export class FriendsService {
 		return 1;
 	}
 
-	async createFriend(from_id: number, friend: FriendTable): Promise<string> {
+	async createFriend(from_id: number, other_id: number): Promise<string> {
 		axios.post(`http://localhost:${process.env.PGREST_PORT}/friends`, {
-			from_user_id: friend.from_user_id,
-			to_user_id: from_id,
+			from_user_id: from_id,
+			to_user_id: other_id,
 			status: "send"
 		})
 		return "Friend request added to database";
 	}
 
-	async acceptRequest(friend: FriendTable) : Promise<string> { 
-		axios.patch(`http://localhost:${process.env.PGREST_PORT}/friends?from_user_id=eq.${friend.from_user_id}&to_user_id=eq.${friend.to_user_id}`, {
+	async acceptRequest(from_id: number, other_id: number) : Promise<string> { 
+		axios.patch(`http://localhost:${process.env.PGREST_PORT}/friends?from_user_id=eq.${other_id}&to_user_id=eq.${from_id}`, {
 			status: "accepted",
 			response_time: moment().format('YYYY-MM-DD HH:mm:ss')})
 			.then(res => res)
 			.catch(err => console.log(err));
 		axios.post(`http://localhost:${process.env.PGREST_PORT}/friends`, {
-			from_user_id: friend.to_user_id,
-			to_user_id: friend.from_user_id,
+			from_user_id: from_id,
+			to_user_id: other_id,
 			status: "accepted",
 			response_time: moment().format('YYYY-MM-DD HH:mm:ss')
 		})
 		return "Friend request updated";
 	}
 
-	async declineRequest(friend: FriendTable) : Promise<string> {
-		axios.patch(`http://localhost:${process.env.PGREST_PORT}/friends?from_user_id=eq.${friend.from_user_id}&to_user_id=eq.${friend.to_user_id}`, {
+	async declineRequest(from_id: number, other_id: number) : Promise<string> {
+		axios.patch(`http://localhost:${process.env.PGREST_PORT}/friends?from_user_id=eq.${other_id}&to_user_id=eq.${from_id}`, {
 			status: "declined",
 			response_time: moment().format('YYYY-MM-DD HH:mm:ss')})
 				.then(res => res)
@@ -87,11 +87,11 @@ export class FriendsService {
 		return "Friend request updated";
 	}
 
-	async deleteFriend(friend: FriendTable) : Promise<string> {
-		axios.delete(`http://localhost:${process.env.PGREST_PORT}/friends?from_user_id=eq.${friend.from_user_id}&to_user_id=eq.${friend.to_user_id}`)
+	async deleteFriend(from_id: number, other_id: number) : Promise<string> {
+		axios.delete(`http://localhost:${process.env.PGREST_PORT}/friends?from_user_id=eq.${from_id}&to_user_id=eq.${other_id}`)
 				.then(res => res)
 				.catch(err => console.log(err));
-		axios.delete(`http://localhost:${process.env.PGREST_PORT}/friends?from_user_id=eq.${friend.to_user_id}&to_user_id=eq.${friend.from_user_id}`)
+		axios.delete(`http://localhost:${process.env.PGREST_PORT}/friends?from_user_id=eq.${other_id}&to_user_id=eq.${from_id}`)
 				.then(res => res)
 				.catch(err => console.log(err));
 		return "success";
