@@ -145,6 +145,10 @@ async function remove_password(channelId: number) {
 		type: "public",
 		password: ""
 	})
+
+	let channel = await get_channel(channelId);
+	channel.type = "public"
+	channel.password = ""
 }
 
 async function set_password(newPassword: string, channelId: number) {
@@ -153,6 +157,10 @@ async function set_password(newPassword: string, channelId: number) {
 		type: "protected",
 		password: newPassword
 	})
+
+	let channel = await get_channel(channelId);
+	channel.type = "protected"
+	channel.password = newPassword
 }
 
 async function get_messages_from_channel(channelId: number): Promise<Message[]> {	// userId, message

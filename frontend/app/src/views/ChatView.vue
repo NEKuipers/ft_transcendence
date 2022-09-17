@@ -124,7 +124,7 @@ export default defineComponent({
 					} else if (err == "WRONG_PASSWORD") {
 						alert("wrong password")
 					} else {
-						console.log(err);	
+						alert(`Failed to join: ${err}`)
 					}
 				})
 		},
