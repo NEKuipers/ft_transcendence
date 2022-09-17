@@ -15,6 +15,7 @@
 				</div>
 				<div v-else>
 					<p v-if="haveYouBlockedUser(message.user)"  class="from-them">[message from blocked user]</p>
+					<!-- <p v-if="message.user in usersWhoYouHaveBlocked" class="from-them">[Message from blocked user]</p> -->
 					<div v-else-if="checkIfLink(message) == true">
 						<a v-if="dmOpen" class="from-them" v-bind:href="message.message">Click here to join!</a>
 						<a v-else class="from-them" v-bind:href="message.message">{{findUsername(message.user)}} : Click here to join!</a>
@@ -111,7 +112,10 @@ export default defineComponent({
             this.text = "";
         },
         haveYouBlockedUser(sender_id: number): boolean {
+			console.log("Checking for blocked user")
             for (let x = 0; x < this.usersWhoYouHaveBlocked.length; x++) {
+				console.log("Blocked users: ", this.usersWhoYouHaveBlocked[x])
+				console.log("User who sent message:", sender_id)
                 if (this.usersWhoYouHaveBlocked[x] == sender_id) {
                     return true;
                 }
@@ -148,8 +152,9 @@ export default defineComponent({
         let loggedInStatus = await loginStatusStore().logIn();
         if (loggedInStatus) {
             await fetch("/api/blocked_users/all_who_i_have_blocked/" + loggedInStatus.userID)
+			// await fetch("/api/vw_blocked_users?user_id?eq." + loggedInStatus.userID)
                 .then(res => res.json())
-                .then(data => this.usersWhoYouHaveBlocked = data)
+                .then(data => { this.usersWhoYouHaveBlocked = data ; console.log(this.usersWhoYouHaveBlocked)})
                 .catch(err => console.log(err));
         }
     },

@@ -1,7 +1,7 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Body, Param, UseGuards } from '@nestjs/common';
 import { BlockedUsersService } from './blocked_users.service';
 import { BlockedUser, BlockedUserVW } from './blocked_users.interface';
-import { AuthenticatedGuard, IntraAuthGuard } from '../login/guards';
+import { AuthenticatedGuard } from '../login/guards';
 
 @Controller('blocked_users')
 export class BlockedUsersController {
@@ -33,7 +33,6 @@ export class BlockedUsersController {
 	}
 
 	@Post() //TODO needs guard
-	@UseGuards(AuthenticatedGuard)
 	blockUser(@Body() blockedUser: BlockedUser): string {		
 		return this.blockedUsersService.blockUser(blockedUser);
 	}
