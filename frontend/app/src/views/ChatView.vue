@@ -129,7 +129,7 @@ export default defineComponent({
 						let pwd = await this.requestPassword();
 						await this.chatHandler.join_channel(channel_id, pwd);
 					} else {
-						console.error(err);	
+						console.log(err);	
 					}
 				})
 		},
@@ -198,7 +198,7 @@ export default defineComponent({
 		if (loggedInStatus) {
 			await this.loadUserData(loggedInStatus.userID);
 		} else {
-			console.error("Viewing ChatView while not logged in!")
+			console.log("Viewing ChatView while not logged in!")
 		}
 		// TODO: THIS IS JUST FOR DEBUGGING, REMOVE THIS LATER
 		(window as any).chatHandler = this.chatHandler;

@@ -73,7 +73,7 @@ export default defineComponent({
 				})
 			.catch((err) => {
 				this.connection_error = "Failed to fetch token"
-				console.error(err)
+				console.log(err)
 			})
 			.catch((err) => {
 				console.log("err", err)

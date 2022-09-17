@@ -54,7 +54,7 @@ export default defineComponent({
 		if (loggedInStatus) {
 			await this.loadUserData(loggedInStatus.userID);
 		} else {
-			console.error("Viewing MyProfileView while not logged in!")
+			console.log("Viewing MyProfileView while not logged in!")
 		}
 	},
 	components: {
