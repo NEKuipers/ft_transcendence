@@ -479,18 +479,37 @@ io.on("connection", async (socket) => {
 	})
 
 	socket.on("remove_password", (channel_id: number, callback: (success: boolean, reason: any) => void) => {
-		remove_password(channel_id)
-			.then(_ => callback(true, null))
-			.catch(err => callback(false, err))
+		backend.get_channel(channel_id).then(
+			(channel) => {
+				if (channel.owner_id != data.userid) {
+					return callback(false, "You are not the owner of that channel!");
+				}
+		
+				remove_password(channel_id)
+					.then(_ => callback(true, null))
+					.catch(err => callback(false, err))
+			}
+		).catch(err => callback(false, err));
 	})
 
 	socket.on("set_password", async (new_password: string, channel_id: number, callback: (success: boolean, reason: any) => void) => {
-		let hash: string
+		backend.get_channel(channel_id).then(
+			(channel) => {
+				if (channel.owner_id != data.userid) {
+					return callback(false, "You are not the owner of that channel!");
+				}
 		
-		hash = await bcrypt.hash(new_password, 10)
-		set_password(hash, channel_id)
-			.then(_ => callback(true, null))
-			.catch(err => callback(false, err))
+				bcrypt.hash(new_password, 10)
+					.then(hash => {
+						set_password(hash, channel_id)
+							.then(_ => callback(true, null))
+							.catch(err => callback(false, err))
+					})
+					.catch((err) => {
+						return callback(false, err)
+					})
+			}
+		).catch(err => callback(false, err));
 	})
 
 	socket.on("client_message", (channel_id: number, message: string, callback: (success: boolean, reason: any) => void) => {	// This function will get called whenever this client emits a message on channel "client-message"

@@ -230,7 +230,6 @@ export default defineComponent({
 							if (success) {
 								resolve(true)
 							} else {
-								console.log("was it fucked?")
 								reject(result);
 							}
 						})
@@ -248,7 +247,6 @@ export default defineComponent({
 							if (success) {
 								resolve(true)
 							} else {
-								console.log("was it fucked?")
 								reject(result);
 							}
 						})
