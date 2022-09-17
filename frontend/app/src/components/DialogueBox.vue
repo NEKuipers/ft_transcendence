@@ -62,6 +62,7 @@
 			<br><br>
 			<button @click="onGameModeSelected('rush')" class="gamemodebutton" type="button"> Rush </button>
 			<button @click="onGameModeSelected('expert')" class="gamemodebutton" type="button"> Expert </button>
+			<button @click="onClick" type="button" class="close"> X </button>
 		</div>
     </div>
 </template>

@@ -33,6 +33,7 @@ export class BlockedUsersController {
 	}
 
 	@Post() //TODO needs guard
+	@UseGuards(AuthenticatedGuard)
 	blockUser(@Body() blockedUser: BlockedUser): string {		
 		return this.blockedUsersService.blockUser(blockedUser);
 	}

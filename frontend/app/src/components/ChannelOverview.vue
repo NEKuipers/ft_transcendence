@@ -28,7 +28,7 @@
 				</div>
 				<div v-if="participant?.participant_id != loginStatusStore.loggedInStatus?.userID">
 					<SmallButton v-if="!hasUserBlockedYou(participant?.participant_id)" class="button" text="Invite to Game" @click="gameInvite(participant?.participant_username)"/>
-					<DialogueBox id="selectGameModeDialogueBox" :type="boxType" :show="showSelectGameModeDialogue" @game-mode-selected="gameModeSelected"/>
+					<DialogueBox id="selectGameModeDialogueBox" :type="boxType" :show="showSelectGameModeDialogue" @game-mode-selected="gameModeSelected" @close-dialogue="hideGameModeDialogue"/>
 
 					<!-- banning/muting, with restriction for admin/owner only -->
 					<div v-if="userIsAdmin || userIsOwner">
@@ -156,6 +156,9 @@ export default defineComponent({
 		},
 		hidePasswordDialogue() {
 			this.showPasswordDialogue = false;
+		},
+		hideGameModeDialogue() {
+			this.showSelectGameModeDialogue = false;
 		},
 		async setPassword(newPassword: string) {
 			this.$emit('setPassword', newPassword, this.channel_id);
