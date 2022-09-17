@@ -168,8 +168,7 @@ export default defineComponent({
 			const requestOptions = {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({	blocked_by_id: your_id,
-										blocked_user_id: other_id}) 
+				body: JSON.stringify({other_id: other_id}) 
 			};
 			fetch('/api/blocked_users', requestOptions)
 				.then(response => this.updateBlockedByYou(your_id as number, other_id as number))
@@ -180,8 +179,7 @@ export default defineComponent({
 			const requestOptions = {
 				method: "DELETE",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({	blocked_by_id: this.loginStatusStore.loggedInStatus?.userID,
-										blocked_user_id: this.user}) 
+				body: JSON.stringify({other_id: this.user}) 
 			};
 			fetch('/api/blocked_users', requestOptions)
 				.then(response => this.updateBlockedByYou(this.loginStatusStore.loggedInStatus?.userID as number, this.user as number))

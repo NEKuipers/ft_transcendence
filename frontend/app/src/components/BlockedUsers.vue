@@ -50,8 +50,7 @@ export default defineComponent({
 			const requestOptions = {
 				method: "DELETE",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({	blocked_by_id: this.user,
-										blocked_user_id: bid}) 
+				body: JSON.stringify({other_id: bid}) 
 			};
 			fetch('/api/blocked_users', requestOptions)
 				.then(response => this.updateBlockedUsers(this.user as number))
