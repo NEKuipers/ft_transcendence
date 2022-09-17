@@ -16,18 +16,3 @@ export interface FriendRequest {
 	send_time: string;
 }
 
-export enum friend_status {
-	sent,
-	declined,
-	accepted,
-	none
-}
-
-export interface FriendTable {
-	readonly id: number;
-	from_user_id: number;
-	to_user_id: number;
-	status: friend_status;
-	sent_time: string; 
-	response_time: string;
-}
