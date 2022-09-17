@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Delete, Body, Param, UseGuards } from '@nestjs/common';
 import { BlockedUsersService } from './blocked_users.service';
 import { BlockedUser, BlockedUserVW } from './blocked_users.interface';
-import { AuthenticatedGuard } from '../login/guards';
+import { TFAGuard } from '../two_factor_auth/tfa.guard';
 
 @Controller('blocked_users')
 export class BlockedUsersController {
@@ -32,13 +32,15 @@ export class BlockedUsersController {
 		return this.blockedUsersService.getAllWhoIHaveBlocked(id);
 	}
 
-	@Post() //TODO needs guard
+	@Post()
+	@UseGuards(TFAGuard)
 	blockUser(@Body() blockedUser: BlockedUser): string {		
-		return this.blockedUsersService.blockUser(blockedUser);
+		return this.blockedUsersService.blockUser(blockedUser);	// TODO: Needs verification
 	}
 
-	@Delete()//TODO needs guard
+	@Delete()
+	@UseGuards(TFAGuard)
 	unblockUser(@Body() blockedUser: BlockedUser): string {
-		return this.blockedUsersService.unblockUser(blockedUser);
+		return this.blockedUsersService.unblockUser(blockedUser);	// TODO: Needs verification
 	}
 }

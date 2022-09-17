@@ -1,6 +1,7 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, UseGuards, Req } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User, newUsername, newAvatar } from './user.interface';
+import { TFAGuard } from '../two_factor_auth/tfa.guard';
 
 @Controller('users')
 export class UsersController {
@@ -18,24 +19,28 @@ export class UsersController {
 		return user;
 	}
 
-	@Patch('/username/:id')//TODO needs guard
-	async editUsername(@Body() newname: newUsername, @Param('id') id: number): Promise<string> {
-		return this.usersService.changeUsername(id, newname.username);
+	@Patch('/username')
+	@UseGuards(TFAGuard)
+	async editUsername(@Req() req: any, @Body() newname: newUsername): Promise<string> {
+		return this.usersService.changeUsername(req.user.id, newname.username);
 	}
 
-	@Patch('/avatar/:id')//TODO needs guard
-	async updateAvatar(@Body() newavatar: newAvatar, @Param('id') id: number): Promise<string> {
-		return this.usersService.changeAvatar(id, newavatar.avatar_id);
+	@Patch('/avatar')
+	@UseGuards(TFAGuard)
+	async updateAvatar(@Req() req: any, @Body() newavatar: newAvatar): Promise<string> {
+		return this.usersService.changeAvatar(req.user.id, newavatar.avatar_id);
 	}
 
-	@Patch('/set_online/:id')//TODO needs guard
-	async setOnline(@Param('id') id: number) {
-		return this.usersService.setOnline(id);
+	@Patch('/set_online')
+	@UseGuards(TFAGuard)
+	async setOnline(@Req() req: any) {
+		return this.usersService.setOnline(req.user.id);
 	}
 
-	@Patch('/set_offline/:id')//TODO needs guard
-	async setOffline(@Param('id') id: number) {
-		return this.usersService.setOffline(id);
+	@Patch('/set_offline')
+	@UseGuards(TFAGuard)
+	async setOffline(@Req() req: any) {
+		return this.usersService.setOffline(req.user.id);
 	}
 }
 
