@@ -26,7 +26,7 @@
 						</div>
 					</div>
 				</div>
-				<div v-if="participant?.participant_id != loginStatusStore.loggedInStatus?.userID">
+				<div v-if="participant?.participant_id != loginStatusStore.loggedInStatus?.userID && participant.participant_id != owner_id">
 					<SmallButton v-if="!hasUserBlockedYou(participant?.participant_id)" class="button" text="Invite to Game" @click="gameInvite(participant?.participant_username)"/>
 					<DialogueBox id="selectGameModeDialogueBox" :type="boxType" :show="showSelectGameModeDialogue" @game-mode-selected="gameModeSelected" @close-dialogue="hideGameModeDialogue"/>
 
@@ -74,6 +74,9 @@ export default defineComponent({
         channel_id: {
             type: Number
         },
+		owner_id: {
+			type: Number
+		},
     },
 	async created() {
 		this.getChannelParticipants();
@@ -117,7 +120,7 @@ export default defineComponent({
 
 				this.channelParticipants = data;
 				for (let i = 0; i < data.length; i++) {
-					if (data[i] == this.loginStatusStore.loggedInStatus?.userID) {
+					if (data[i].participant_id == this.loginStatusStore.loggedInStatus?.userID) {
 						if (data[i].is_admin){
 							this.userIsAdmin = true;
 						}

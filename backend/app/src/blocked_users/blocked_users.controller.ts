@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Body, Param, UseGuards } from '@nestjs/common';
 import { BlockedUsersService } from './blocked_users.service';
 import { BlockedUser, BlockedUserVW } from './blocked_users.interface';
 import { TFAGuard } from '../two_factor_auth/tfa.guard';
