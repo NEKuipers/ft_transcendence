@@ -41,7 +41,7 @@ async function get_channel(channel_id: number): Promise<Channel> {
 		return cached;
 	}
 
-	let data = await axios.get(`http://postgres:${DATABASE_PORT}/channels?id=eq.${channel_id}`);
+	let data = await axios.get(`http://${process.env.PGREST_HOST}:${DATABASE_PORT}/channels?id=eq.${channel_id}`);
 	let channel = data.data[0] as Channel;
 
 	// If you can't do it in the database, DO IT HERE INSTEAD!
@@ -54,7 +54,7 @@ async function get_channel(channel_id: number): Promise<Channel> {
 }
 
 async function make_channel(channel: CreateChannel): Promise<Channel> {
-	let data = await axios.post(`http://postgres:${DATABASE_PORT}/channels`, channel, {
+	let data = await axios.post(`http://${process.env.PGREST_HOST}:${DATABASE_PORT}/channels`, channel, {
 		headers: {
 			"Prefer": "return=representation",
 		}
@@ -74,7 +74,7 @@ async function delete_channel(channelId: number) {
 async function join_channel(channel: JoinedChannelStatus, userId: number) {
 	// TODO: Error checking
 	console.log(`Joining with:`, channel)
-	await axios.post(`http://postgres:${DATABASE_PORT}/participants?on_conflict=channel_id,participant_id`, {
+	await axios.post(`http://${process.env.PGREST_HOST}:${DATABASE_PORT}/participants?on_conflict=channel_id,participant_id`, {
 		participant_id: userId,
 		is_admin: channel.is_admin,
 		muted_until: channel.muted_until?.toISOString(),
@@ -92,25 +92,24 @@ async function leave_channel(channelId: number, userId: number) {
 
 	let channel = await get_channel(channelId);
 	if (channel.owner_id == userId) {
-		await axios.patch(`http://postgres:${DATABASE_PORT}/channels?id=eq.${channelId}`, {
+		await axios.patch(`http://${process.env.PGREST_HOST}:${DATABASE_PORT}/channels?id=eq.${channelId}`, {
 			is_closed: true,
 		});
 		channel.is_closed = true;
 	}
-	// await axios.delete(`http://localhost:${DATABASE_PORT}/participants?channel_id=eq.${channelId}&participant_id=eq.${userId}`);
-	await axios.patch(`http://postgres:${DATABASE_PORT}/participants?channel_id=eq.${channelId}&participant_id=eq.${userId}`, {
+	await axios.patch(`http://${process.env.PGREST_HOST}:${DATABASE_PORT}/participants?channel_id=eq.${channelId}&participant_id=eq.${userId}`, {
 		is_joined: false,
 	});
 }
 
 async function ban_user_from_channel(channelId: number, userId: number) {
-	await axios.patch(`http://postgres:${DATABASE_PORT}/participants?channel_id=eq.${channelId}&participant_id=eq.${userId}`, {
+	await axios.patch(`http://${process.env.PGREST_HOST}:${DATABASE_PORT}/participants?channel_id=eq.${channelId}&participant_id=eq.${userId}`, {
 		is_banned: true,
 		is_joined: false,
 	});
 }
 async function unban_user_from_channel(channelId: number, userId: number) {
-	await axios.patch(`http://postgres:${DATABASE_PORT}/participants?channel_id=eq.${channelId}&participant_id=eq.${userId}`, {
+	await axios.patch(`http://${process.env.PGREST_HOST}:${DATABASE_PORT}/participants?channel_id=eq.${channelId}&participant_id=eq.${userId}`, {
 		is_banned: false,
 	});
 }
@@ -118,30 +117,30 @@ async function unban_user_from_channel(channelId: number, userId: number) {
 async function mute_user_in_channel(channelId: number, userId: number): Promise<Date> {
 	var time = new Date(Date.now() + 300000);
 	console.log(`Muting user ${userId} in ${channelId} til ${time} / ${time.toISOString()}`);
-	await axios.patch(`http://postgres:${DATABASE_PORT}/participants?channel_id=eq.${channelId}&participant_id=eq.${userId}`, {
+	await axios.patch(`http://${process.env.PGREST_HOST}:${DATABASE_PORT}/participants?channel_id=eq.${channelId}&participant_id=eq.${userId}`, {
 		muted_until: time.toISOString(),
 	});
 	return time;
 }
 async function unmute_user_in_channel(channelId: number, userId: number) {
-	await axios.patch(`http://postgres:${DATABASE_PORT}/participants?channel_id=eq.${channelId}&participant_id=eq.${userId}`, {
+	await axios.patch(`http://${process.env.PGREST_HOST}:${DATABASE_PORT}/participants?channel_id=eq.${channelId}&participant_id=eq.${userId}`, {
 		muted_until: null,
 	});
 }
 
 async function make_user_admin_in_channel(channelId: number, userId: number) {
-	await axios.patch(`http://postgres:${DATABASE_PORT}/participants?channel_id=eq.${channelId}&participant_id=eq.${userId}`, {
+	await axios.patch(`http://${process.env.PGREST_HOST}:${DATABASE_PORT}/participants?channel_id=eq.${channelId}&participant_id=eq.${userId}`, {
 		is_admin: true,
 	});
 }
 async function remove_user_admin_in_channel(channelId: number, userId: number) {
-	await axios.patch(`http://postgres:${DATABASE_PORT}/participants?channel_id=eq.${channelId}&participant_id=eq.${userId}`, {
+	await axios.patch(`http://${process.env.PGREST_HOST}:${DATABASE_PORT}/participants?channel_id=eq.${channelId}&participant_id=eq.${userId}`, {
 		is_admin: false,
 	});
 }
 
 async function remove_password(channelId: number) {
-	await axios.patch(`http://localhost:${DATABASE_PORT}/channels?id=eq.${channelId}`, {
+	await axios.patch(`http://${process.env.PGREST_HOST}:${DATABASE_PORT}/channels?id=eq.${channelId}`, {
 		type: "public",
 		password: ""
 	})
@@ -153,7 +152,7 @@ async function remove_password(channelId: number) {
 
 async function set_password(newPassword: string, channelId: number) {
 
-	await axios.patch(`http://localhost:${DATABASE_PORT}/channels?id=eq.${channelId}`, {
+	await axios.patch(`http://${process.env.PGREST_HOST}:${DATABASE_PORT}/channels?id=eq.${channelId}`, {
 		type: "protected",
 		password: newPassword
 	})
@@ -164,7 +163,7 @@ async function set_password(newPassword: string, channelId: number) {
 }
 
 async function get_messages_from_channel(channelId: number): Promise<Message[]> {	// userId, message
-	let data = await axios.get(`http://postgres:${DATABASE_PORT}/messages?channel_id=eq.${channelId}`);
+	let data = await axios.get(`http://${process.env.PGREST_HOST}:${DATABASE_PORT}/messages?channel_id=eq.${channelId}`);
 
 	let ret = new Array();
 	for (let elem of data.data) {
@@ -177,7 +176,7 @@ async function get_messages_from_channel(channelId: number): Promise<Message[]> 
 	return ret;
 }
 async function add_message_to_channel(channelId: number, userId: number, message: string) {
-	await axios.post(`http://postgres:${DATABASE_PORT}/messages`, {
+	await axios.post(`http://${process.env.PGREST_HOST}:${DATABASE_PORT}/messages`, {
 		channel_id: channelId,
 		user_id: userId,
 		message: message
@@ -191,11 +190,7 @@ function parseISOString(s: String): Date {	// It no worky with ts
   }
 
 async function get_joined_channels(userId: number): Promise<JoinedChannelStatus[]> {
-	//let data = await axios.get(`http://localhost:${DATABASE_PORT}/participants?participant_id=eq.${userId}`);
-	let data = await axios.get(`http://postgres:${DATABASE_PORT}/channels?select=is_closed,participants!inner(*)&participants.participant_id=eq.${userId}&is_closed=eq.false`);
-	// TODO: This needs to be modified. You should make a request to /channels with these flags;
-	// ?is_closed=eq.false	// &type=neq.direct	// No, direct messages should still be seen, if it filters it out you won't get the messages, it is on the frontends job to correctly filter it, however that was impossible as it has no idea what type of channel it is, now it is send in the join packet
-	// and remove each channel in JoinedChannelStatus[] with a channel_id not in the response.
+	let data = await axios.get(`http://${process.env.PGREST_HOST}:${DATABASE_PORT}/channels?select=is_closed,participants!inner(*)&participants.participant_id=eq.${userId}&is_closed=eq.false`);
 
 	let result = new Array<JoinedChannelStatus>;
 
