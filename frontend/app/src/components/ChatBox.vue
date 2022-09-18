@@ -112,7 +112,7 @@ export default defineComponent({
             this.text = "";
         },
         haveYouBlockedUser(sender_id: number): boolean {
-			console.log("Checking for blocked user")
+			// console.log("Checking for blocked user")
             for (let x = 0; x < this.usersWhoYouHaveBlocked.length; x++) {
 				console.log("Blocked users: ", this.usersWhoYouHaveBlocked[x])
 				console.log("User who sent message:", sender_id)
