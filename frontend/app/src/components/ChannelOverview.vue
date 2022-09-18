@@ -97,6 +97,7 @@ export default defineComponent({
 			showSelectGameModeDialogue: false,
 			usersWhoHaveBlockedYou: new Array<any>(),
 			invited_user: "",
+			interval: 0
         }
     },
     watch: {
@@ -212,6 +213,12 @@ export default defineComponent({
 			.then(data => this.usersWhoHaveBlockedYou = data)
 			.catch(err => console.log(err));
 		}
+		this.interval = setInterval(() => {
+			this.getChannelParticipants();
+		}, 2000)
+	},
+	unmounted() {
+		clearInterval(this.interval)
 	},
 	emits: ['banUser', 'unbanUser', 'muteUser', 'unmuteUser', 'makeUserAdmin', 'removeUserAdmin', 'setPassword', 'removePassword', 'inviteToGame']
 		
