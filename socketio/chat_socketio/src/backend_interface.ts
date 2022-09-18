@@ -1,5 +1,5 @@
 import axios from 'axios';
-import * as bcrypt from 'bcryptjs'
+import * as bcrypt from 'bcrypt'
 
 const DATABASE_PORT = +process.env.PGREST_PORT;
 

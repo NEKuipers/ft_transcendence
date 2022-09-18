@@ -45,11 +45,11 @@ export class UsersService {
 	}
 
 	async setOnline(id: number) {
-		await axios.patch(`http://localhost:${process.env.PGREST_PORT}/users?id=eq.${id}`, {status: 'online'});
+		await axios.patch(`http://${process.env.PGREST_HOST}:${process.env.PGREST_PORT}/users?id=eq.${id}`, {status: 'online'});
 	}
 
 	async setOffline(id: number) {
-		await axios.patch(`http://localhost:${process.env.PGREST_PORT}/users?id=eq.${id}`, {status: 'offline'});
+		await axios.patch(`http://${process.env.PGREST_HOST}:${process.env.PGREST_PORT}/users?id=eq.${id}`, {status: 'offline'});
 	}
 
 	async changeUsername(id: number, newUsername: string) : Promise<string> {
