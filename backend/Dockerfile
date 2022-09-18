@@ -1,4 +1,4 @@
-FROM node:16-slim
+FROM node:16.15.1-alpine
 
 COPY app /app
 
@@ -6,7 +6,7 @@ WORKDIR /app
 
 # installation
 RUN npm install --legacy-peer-deps \
-    && npm run prebuild
+    && npx tsc
 
 EXPOSE 3030
 
