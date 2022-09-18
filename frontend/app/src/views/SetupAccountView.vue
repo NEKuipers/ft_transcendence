@@ -69,7 +69,7 @@ export default defineComponent({
             if (!this.text)
                 alert('Must fill in name')
             else {
-				await fetch('/api/users/' + this.user_id, {
+				await fetch('/api/users/username/', {
 					method: "PATCH",
 					body: JSON.stringify({"username": this.text,}),
 					headers: {'Content-type': 'application/json; charset=UTF-8'}})
@@ -107,7 +107,7 @@ export default defineComponent({
                 .catch(err => { console.log(err); return err })
 
                 // If successful, then emit that userProfile has to patch avatar_id for user
-                await fetch('/api/users/avatar/' + this.user_id, {
+                await fetch('/api/users/avatar', {
 					method: "PATCH",
 					body: JSON.stringify({
 						"avatar_id": newAvatarId.avatar_id

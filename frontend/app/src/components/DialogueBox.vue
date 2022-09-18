@@ -62,6 +62,7 @@
 			<br><br>
 			<button @click="onGameModeSelected('rush')" class="gamemodebutton" type="button"> Rush </button>
 			<button @click="onGameModeSelected('expert')" class="gamemodebutton" type="button"> Expert </button>
+			<button @click="onClick" type="button" class="close"> X </button>
 		</div>
     </div>
 </template>
@@ -107,17 +108,7 @@ export default defineComponent({
             if (!this.password)
                 alert('Enter a password, numpty')
             else {
-                let verified = false;
-				await fetch('/api/channels/verify_password_for_' + this.channel_id, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({password: this.password})
-                })
-				.then(res => res.json())
-				.then(data => verified = data);
-                this.$emit('password-entered', verified, this.password);
+                this.$emit('password-entered', this.password);
                 this.password = ""
             }
             this.password = ""

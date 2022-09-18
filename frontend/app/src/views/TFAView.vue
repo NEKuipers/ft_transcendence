@@ -58,12 +58,12 @@ export default defineComponent({
 				if (loggedInStatus) {
 					loggedInStatus.TFAEnabled = true;
 				} else {
-					console.error("TFA login successfull, but not logged in, WAT")
+					console.log("TFA login successfull, but not logged in, WAT")
 				}
 				
 				this.$router.push('/');
 			} else {
-				console.error("Login failure!")
+				console.log("Login failure!")
 				alert("Login failure")
 			}
 		}

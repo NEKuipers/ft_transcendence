@@ -1,6 +1,6 @@
 <template>
     <div v-if="channel!=null" class="chat-column">
-        <div> 
+        <div v-if="channel.type != `direct`"> 
             <h2>{{channel.name}}</h2>
         </div>
         <div id="messages">
@@ -36,6 +36,7 @@
         <h2>
             Channel to be displayed here
         </h2>
+		<img height="900" width="900" src="../assets/face-opacity.png"/>
     </div>
 </template>
 
@@ -75,7 +76,6 @@ export default defineComponent({
             text: "",
             user: null as any,
             usersWhoYouHaveBlocked: new Array<number>(),
-            linkStart: "http://localhost:",
         };
     },
     watch: {
@@ -112,7 +112,10 @@ export default defineComponent({
             this.text = "";
         },
         haveYouBlockedUser(sender_id: number): boolean {
+			console.log("Checking for blocked user")
             for (let x = 0; x < this.usersWhoYouHaveBlocked.length; x++) {
+				console.log("Blocked users: ", this.usersWhoYouHaveBlocked[x])
+				console.log("User who sent message:", sender_id)
                 if (this.usersWhoYouHaveBlocked[x] == sender_id) {
                     return true;
                 }
@@ -138,19 +141,20 @@ export default defineComponent({
 			return Array.from(arr, this.dec2hex).join('')
 		},
         sendGameInvite(to_username: string, game_mode: string) {
-            this.$emit("sentMsg", this.channel_id, `Hey ${to_username}, I want to play a game of Pong ${game_mode} with you.!`);
-            this.$emit("sentMsg", this.channel_id, `http://localhost:8080/pong/${game_mode}/${this.generateGameId()}`);
+            this.$emit("sentMsg", this.channel_id, `Hey ${to_username}, I want to play a game of Pong ${game_mode} with you!`);
+            this.$emit("sentMsg", this.channel_id, `/pong/${game_mode}/${this.generateGameId()}`);
         },
 		checkIfLink(message: Message) : boolean {
-			return (message.message.startsWith('http://localhost:'));
+			return (message.message.startsWith(`/pong/`))
 		},
     },
     async mounted() {
         let loggedInStatus = await loginStatusStore().logIn();
         if (loggedInStatus) {
             await fetch("/api/blocked_users/all_who_i_have_blocked/" + loggedInStatus.userID)
+			// await fetch("/api/vw_blocked_users?user_id?eq." + loggedInStatus.userID)
                 .then(res => res.json())
-                .then(data => this.usersWhoYouHaveBlocked = data)
+                .then(data => { this.usersWhoYouHaveBlocked = data ; console.log(this.usersWhoYouHaveBlocked)})
                 .catch(err => console.log(err));
         }
     },
@@ -370,9 +374,10 @@ a.from-me ~ a.from-me:last-child {
 }
 
 a.from-them {
+	display: flex;
   align-items: flex-start;
-  background-color: #e5e5ea;
-  color: #000;
+  background-color: #42b983;
+  color: white;
 }
 
 a.from-them:before {

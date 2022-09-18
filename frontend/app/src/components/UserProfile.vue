@@ -113,7 +113,7 @@ export default defineComponent({
 		async saveUsername(newname: string) {
 			const id = this.loginStatusStore.loggedInStatus?.userID
 			if (id != undefined) {
-				await fetch('/api/users/' + id, {
+				await fetch('/api/users/username', {
 					method: "PATCH",
 					body: JSON.stringify({"username": newname,}),
 					headers: {'Content-type': 'application/json; charset=UTF-8'}})
@@ -137,7 +137,7 @@ export default defineComponent({
 			const id = this.loginStatusStore.loggedInStatus?.userID
 
 			if (id) {
-				await fetch('/api/users/avatar/' + id, {
+				await fetch('/api/users/avatar', {
 					method: "PATCH",
 					body: JSON.stringify({
 						"avatar_id": avatar_id
@@ -156,8 +156,7 @@ export default defineComponent({
 			const requestOptions = {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({	from_user_id: this.loginStatusStore.loggedInStatus?.userID,
-										to_user_id: this.user})};
+				body: JSON.stringify({id: this.user})};
 			fetch('/api/friends', requestOptions)
 				.then(res => this.updateIsFriend(this.loginStatusStore.loggedInStatus?.userID as number, this.user as number))
 				.catch(err => console.log(err));
@@ -169,8 +168,7 @@ export default defineComponent({
 			const requestOptions = {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({	blocked_by_id: your_id,
-										blocked_user_id: other_id}) 
+				body: JSON.stringify({other_id: other_id}) 
 			};
 			fetch('/api/blocked_users', requestOptions)
 				.then(response => this.updateBlockedByYou(your_id as number, other_id as number))
@@ -181,8 +179,7 @@ export default defineComponent({
 			const requestOptions = {
 				method: "DELETE",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({	blocked_by_id: this.loginStatusStore.loggedInStatus?.userID,
-										blocked_user_id: this.user}) 
+				body: JSON.stringify({other_id: this.user}) 
 			};
 			fetch('/api/blocked_users', requestOptions)
 				.then(response => this.updateBlockedByYou(this.loginStatusStore.loggedInStatus?.userID as number, this.user as number))

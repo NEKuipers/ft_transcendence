@@ -15,6 +15,6 @@ export type Participant  = {
 	participant_username: string,
 	participant_is_joined: boolean,
 	participant_is_admin: boolean,
-	participant_is_muted: string,
 	participant_is_banned: boolean
+	participant_muted_until: string,
 }

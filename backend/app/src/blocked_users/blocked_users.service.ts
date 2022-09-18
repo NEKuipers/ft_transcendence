@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { BlockedUser, BlockedUserVW } from './blocked_users.interface';
+import { BlockedUserVW } from './blocked_users.interface';
 import axios from 'axios';
-import { request, createServer, IncomingMessage } from "http";
 
 @Injectable()
 export class BlockedUsersService {
@@ -44,26 +43,26 @@ export class BlockedUsersService {
 	}
 
 	async getAllWhoIHaveBlocked(id: number) : Promise<number[]> {
-		let res = await axios.get(`http://${process.env.PGREST_HOST}:${process.env.PGREST_PORT}/blocked_users?blocked_by_id=eq.${id}`);
+		let res = await axios.get(`http://${process.env.PGREST_HOST}:${process.env.PGREST_PORT}/vw_blocked_users?user_id=eq.${id}`);
 		let ids = [];
 		let blocked_users = res.data;
 		for (let x = 0; x < blocked_users.length ; x++) {
-			ids.push(blocked_users[x].id);
+			ids.push(blocked_users[x].blocked_user_id);
 		}
 		return ids;
 	}
 
-	blockUser(blockedUser: BlockedUser) : string {
+	blockUser(from_id: number, other_id: number) : string {
 		axios.post(`http://${process.env.PGREST_HOST}:${process.env.PGREST_PORT}/blocked_users`, {
-			"blocked_by_id": blockedUser.blocked_by_id,
-			"blocked_user_id": blockedUser.blocked_user_id,})
+			"blocked_by_id": from_id,
+			"blocked_user_id": other_id})
 				.then(res => res)
 				.catch(err => console.log(err));
 		return "success";
 	}
 
-	unblockUser(blockedUser: BlockedUser): string {
-		axios.delete(`http://${process.env.PGREST_HOST}:${process.env.PGREST_PORT}/blocked_users?blocked_by_id=eq.${blockedUser.blocked_by_id}&blocked_user_id=eq.${blockedUser.blocked_user_id}`)
+	unblockUser(from_id: number, other_id: number): string {
+		axios.delete(`http://${process.env.PGREST_HOST}:${process.env.PGREST_PORT}/blocked_users?blocked_by_id=eq.${from_id}&blocked_user_id=eq.${other_id}`)
 				.then(res => res)
 				.catch(err => console.log(err));
 		return "success";

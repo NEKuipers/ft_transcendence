@@ -26,10 +26,11 @@
 				</div>
 				<div v-else>
 				<div id="channel-overview-header">Channel overview</div>
-					<ChannelOverview ref="channelOverviewRef" :channel_id="currentChannel" :dm="dmID" @banUser="banUser" @unbanUser="unbanUser" @muteUser="muteUser" @unmuteUser="unmuteUser" @makeUserAdmin="makeUserAdmin" @removeUserAdmin="removeUserAdmin" @setPassword="setPassword" @removePassword="removePassword" @inviteToGame="inviteToGame"/>
+					<br>
+					<ChannelOverview ref="channelOverviewRef" :owner_id="channels[currentChannel]?.owner" :channel_id="currentChannel" :dm="dmID" @banUser="banUser" @unbanUser="unbanUser" @muteUser="muteUser" @unmuteUser="unmuteUser" @makeUserAdmin="makeUserAdmin" @removeUserAdmin="removeUserAdmin" @setPassword="setPassword" @removePassword="removePassword" @inviteToGame="inviteToGame"/>
 				</div>
-			</div>
-		</div>
+				</div>
+				</div>
 
 	</div>
 </template>
@@ -91,13 +92,6 @@ export default defineComponent({
 			// Does it matter that dmID is set, and currentChannel is only set after a response was gotten from the chatio server?
 			this.currentChannel = await this.chatHandler.create_dm(user_id_2);
 		},
-		async requestPassword(): Promise<string> {
-			return new Promise((resolve, reject) => {
-				// How to open dialogue box straight from the function?
-
-				resolve("TODO: Show dialog box requesting a password")
-			});
-		},
 
 		onMessage(channel_id: number, user: number, message: string) {
 			console.log(`Received message in channel: ${channel_id} from ${user}: ${message}`)
@@ -126,10 +120,11 @@ export default defineComponent({
 				.catch(async (err: string) => {
 					console.log('error is', err)
 					if (err == "NEED_PASSWORD") {
-						let pwd = await this.requestPassword();
-						await this.chatHandler.join_channel(channel_id, pwd);
+						alert("need password but none given")
+					} else if (err == "WRONG_PASSWORD") {
+						alert("wrong password")
 					} else {
-						console.error(err);	
+						alert(`Failed to join: ${err}`)
 					}
 				})
 		},
@@ -173,7 +168,6 @@ export default defineComponent({
 			this.chatHandler.remove_password(channel_id);
 		},
 		muteStatus(channel_id: number, mutedUntil: Date) {
-			console.log("mutedUntil: ", mutedUntil, new Date());
 			if (mutedUntil > new Date()) {
 				console.log(`I am muted in channel ${channel_id} until ${mutedUntil}`);
 			} else {
@@ -198,7 +192,7 @@ export default defineComponent({
 		if (loggedInStatus) {
 			await this.loadUserData(loggedInStatus.userID);
 		} else {
-			console.error("Viewing ChatView while not logged in!")
+			console.log("Viewing ChatView while not logged in!")
 		}
 		// TODO: THIS IS JUST FOR DEBUGGING, REMOVE THIS LATER
 		(window as any).chatHandler = this.chatHandler;

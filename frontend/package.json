@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "dotenv-webpack": "^7.1.1",
+    "qrcode.vue": "^3.3.3",
+    "socket.io-client": "^4.5.1",
+    "socketio": "^1.0.0",
+    "vue3-promise-dialog": "^0.3.4",
+    "webpack-env": "^0.8.0"
+  }
+}

@@ -21,21 +21,23 @@
 						<div class="role" v-if="participant?.participant_is_banned == true">
 							<p>(banned)</p>
 						</div>
-						<div  class="role" v-if="participant?.participant_is_muted > Date.now().toString()">
+						<div  class="role" v-if="participant?.participant_muted_until > new Date(Date.now()).toISOString()">
 							<p>(muted)</p>
 						</div>
 					</div>
 				</div>
-				<div v-if="participant?.participant_id != loginStatusStore.loggedInStatus?.userID">
+				<div v-if="participant?.participant_id != loginStatusStore.loggedInStatus?.userID"> 
+				
 					<SmallButton v-if="!hasUserBlockedYou(participant?.participant_id)" class="button" text="Invite to Game" @click="gameInvite(participant?.participant_username)"/>
-					<DialogueBox id="selectGameModeDialogueBox" :type="boxType" :show="showSelectGameModeDialogue" @game-mode-selected="gameModeSelected"/>
-
+					<DialogueBox id="selectGameModeDialogueBox" :type="boxType" :show="showSelectGameModeDialogue" @game-mode-selected="gameModeSelected" @close-dialogue="hideGameModeDialogue"/>
+					
+					<div v-if="participant.participant_id != owner_id">
 					<!-- banning/muting, with restriction for admin/owner only -->
 					<div v-if="userIsAdmin || userIsOwner">
 						<SmallButton v-if="!participant?.participant_is_banned" class="button" text="Ban this user" @click="banUser(participant.participant_id)"/>
 
 						<SmallButton v-else class="button" text="Unban this user" @click="unbanUser(participant.participant_id)"/>
-						<SmallButton v-if="participant?.participant_is_muted < Date.now().toString() " class="button" text="Mute this user" @click="muteUser(participant.participant_id)"/>
+						<SmallButton v-if="!participant.participant_muted_until || participant.participant_muted_until < new Date(Date.now()).toISOString() " class="button" text="Mute this user" @click="muteUser(participant.participant_id)"/>
 						<SmallButton v-else class="button" text="Unmute this user" @click="unmuteUser(participant.participant_id)"/>
 					</div>
 
@@ -43,6 +45,7 @@
 					<div v-if="userIsOwner">
 						<SmallButton v-if="!participant.participant_is_admin && userIsOwner" class="button" text="Give admin rights" @click="makeUserAdmin(participant.participant_id)"/>
 						<SmallButton v-else class="button" text="Take admin rights" @click="removeUserAdmin(participant.participant_id)"/>
+					</div>
 					</div>
 				</div>
 			</div>
@@ -73,7 +76,10 @@ export default defineComponent({
     props: {
         channel_id: {
             type: Number
-        }
+        },
+		owner_id: {
+			type: Number
+		},
     },
 	async created() {
 		this.getChannelParticipants();
@@ -117,7 +123,7 @@ export default defineComponent({
 
 				this.channelParticipants = data;
 				for (let i = 0; i < data.length; i++) {
-					if (data[i] == this.loginStatusStore.loggedInStatus?.userID) {
+					if (data[i].participant_id == this.loginStatusStore.loggedInStatus?.userID) {
 						if (data[i].is_admin){
 							this.userIsAdmin = true;
 						}
@@ -156,6 +162,9 @@ export default defineComponent({
 		},
 		hidePasswordDialogue() {
 			this.showPasswordDialogue = false;
+		},
+		hideGameModeDialogue() {
+			this.showSelectGameModeDialogue = false;
 		},
 		async setPassword(newPassword: string) {
 			this.$emit('setPassword', newPassword, this.channel_id);

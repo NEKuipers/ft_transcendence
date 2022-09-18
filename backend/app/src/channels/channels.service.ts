@@ -13,7 +13,7 @@ export class ChannelsService {
 	}
 
 	async findAllForUser(user_id: number): Promise<Channel[]> { //
-		let res = await axios.get(`http://${process.env.PGREST_HOST}:${process.env.PGREST_PORT}/participants?participant_id=eq.${user_id}`);
+		let res = await axios.get(`http://${process.env.PGREST_HOST}:${process.env.PGREST_PORT}/participants?participant_id=eq.${user_id}&is_joined=eq.true`);
 		let channels: Channel[] = [];
 		for (let i = 0; i < res.data.length; i++) {
 			let temp = await axios.get(`http://${process.env.PGREST_HOST}:${process.env.PGREST_PORT}/channels?id=eq.${res.data[i].channel_id}&type=neq.direct&is_closed=eq.false`);
@@ -62,11 +62,5 @@ export class ChannelsService {
 			}
 		}
 		return "ok"
-	}
-
-	async verifyPassword(id: number, password: string): Promise<boolean> {
-		const channel = await this.findOne(id)
-		const isPasswordCorrect = await bcrypt.compare(password, channel[0].password)
-		return isPasswordCorrect;
 	}
 }

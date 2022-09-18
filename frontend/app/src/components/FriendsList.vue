@@ -65,8 +65,7 @@ export default defineComponent({
 			const requestOptions = {
 				method: "DELETE",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({from_user_id: this.user,
-				to_user_id: to_user_id}) 
+				body: JSON.stringify({id: to_user_id}) 
 			};
 			fetch('/api/friends', requestOptions)
 				.then(response => this.updateFriendList(this.user as number))
