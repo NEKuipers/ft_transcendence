@@ -27,19 +27,22 @@
 					</div>
 				</div>
 				<div v-if="participant?.participant_id != loginStatusStore.loggedInStatus?.userID">
-					<SmallButton v-if="!hasUserBlockedYou(participant?.participant_id)" class="button" text="Invite to Game" @click="gameInvite(participant?.id)"/>
+					<SmallButton v-if="!hasUserBlockedYou(participant?.participant_id)" class="button" text="Invite to Game" @click="gameInvite(participant?.participant_username)"/>
+					<DialogueBox id="selectGameModeDialogueBox" :type="boxType" :show="showSelectGameModeDialogue" @game-mode-selected="gameModeSelected"/>
+
 					<!-- banning/muting, with restriction for admin/owner only -->
 					<div v-if="userIsAdmin || userIsOwner">
-						<SmallButton v-if="!participant?.participant_is_banned" class="button" text="Ban this user" @click="this.$emit('banUser', this.channel_id, participant.participant_id)"/>
-						<SmallButton v-else class="button" text="Unban this user" @click="this.$emit('unbanUser', this.channel_id, participant.participant_id)"/>
-						<SmallButton v-if="participant?.participant_is_muted < Date.now().toString() " class="button" text="Mute this user" @click="this.$emit('muteUser', this.channel_id, participant.participant_id)"/>
-						<SmallButton v-else class="button" text="Unmute this user" @click="this.$emit('unmuteUser', this.channel_id, participant.participant_id)"/>
+						<SmallButton v-if="!participant?.participant_is_banned" class="button" text="Ban this user" @click="banUser(participant.participant_id)"/>
+
+						<SmallButton v-else class="button" text="Unban this user" @click="unbanUser(participant.participant_id)"/>
+						<SmallButton v-if="participant?.participant_is_muted < Date.now().toString() " class="button" text="Mute this user" @click="muteUser(participant.participant_id)"/>
+						<SmallButton v-else class="button" text="Unmute this user" @click="unmuteUser(participant.participant_id)"/>
 					</div>
 
 					<!-- admin rights -->
 					<div v-if="userIsOwner">
-						<SmallButton v-if="!participant.participant_is_admin && userIsOwner" class="button" text="Give admin rights" @click="this.$emit('makeUserAdmin', this.channel_id, participant.participant_id)"/>
-						<SmallButton v-else class="button" text="Remove admin rights" @click="this.$emit('removeUserAdmin', this.channel_id, participant.participant_id)"/>
+						<SmallButton v-if="!participant.participant_is_admin && userIsOwner" class="button" text="Give admin rights" @click="makeUserAdmin(participant.participant_id)"/>
+						<SmallButton v-else class="button" text="Take admin rights" @click="removeUserAdmin(participant.participant_id)"/>
 					</div>
 				</div>
 			</div>
@@ -58,13 +61,8 @@ import { defineComponent } from 'vue'
 import { loginStatusStore } from '../stores/profileData'
 import SmallButton from './SmallButton.vue'
 import DialogueBox from './DialogueBox.vue'
-
-/* This is just for sorting by role */
-type Participant  = {
-    participant_is_admin: number,
-	participant_is_banned: number,
-	participant_is_muted: number
-}
+import { isArray } from '@vue/shared'
+import { Participant } from '../types/ParticipantType'
 
 export default defineComponent({
     name: 'ChannelOverview',
@@ -84,36 +82,39 @@ export default defineComponent({
         return {
             loginStatusStore: loginStatusStore(),
             channel: null,
-			channelParticipants: [],
+			channelParticipants: new Array<Participant>(),
             text: '',
 			userIsOwner: false,
 			userIsAdmin: false,
 			showPasswordDialogue: false,
 			boxType: "",
+			showSelectGameModeDialogue: false,
 			usersWhoHaveBlockedYou: new Array<any>(),
+			invited_user: "",
         }
     },
     watch: {
         channel_id: {
             handler(newValue) {
                 if (!newValue) { return; }
-                fetch('/api/channels/' + this.channel_id)
-                .then(res => res.json())
-                .then(data => { this.channel = data[0]; this.checkIfOwner(data[0].owner_id); })
-                .catch(err => console.log('Error retrieving channel', err))
+				this.getChannelDetails();
 				this.getChannelParticipants();
             }
         },
     },
 	methods: {
-		//TODO turning this into a watch would make it more responsive
 		async getChannelParticipants() { 
 		fetch("/api/participants/" + this.channel_id)
 			.then(res => res.json())
 			.then(data => {
-				data = data.sort((a: Participant, b: Participant) => b.participant_is_admin - a.participant_is_admin);
-				data = data.sort((a: Participant, b: Participant) => a.participant_is_muted - b.participant_is_muted);
-				data = data.sort((a: Participant, b: Participant) => a.participant_is_banned - b.participant_is_banned);
+
+				if (isArray(data)) {
+					/* sort users in channel: owner then admin at the top, banned at the bottom */
+					data = data.sort((a: Participant, b: Participant) => Number(b.participant_is_admin) - Number(a.participant_is_admin));
+					data = data.sort((a: Participant, b: Participant) => Number(a.participant_is_banned) - Number(b.participant_is_banned));
+					data = data.sort((a: Participant, b: Participant) => {if (a.channel_owner_id == a.participant_id && b.channel_owner_id != b.participant_id) return -1;})
+				}
+
 				this.channelParticipants = data;
 				for (let i = 0; i < data.length; i++) {
 					if (data[i] == this.loginStatusStore.loggedInStatus?.userID) {
@@ -122,7 +123,6 @@ export default defineComponent({
 						}
 					}
 				}
-				console.log(this.channelParticipants)
 			})
 			.catch(err => console.log(err));
 		},
@@ -130,8 +130,21 @@ export default defineComponent({
 			if (owner_id == this.loginStatusStore.loggedInStatus?.userID)
 				this.userIsOwner = true;
 		},
-		gameInvite(userId: number) {
-			console.log("Inviting to game" , userId)
+		async getChannelDetails() { 
+		fetch("/api/channels/" + this.channel_id)
+			.then(res => res.json())
+				.then(data => { this.channel = data[0]; this.checkIfOwner(data[0].owner_id); })
+				.catch(err => console.log('Error retrieving channel', err))
+		},
+		gameInvite(to_username: string) {
+			this.boxType = "selectGameMode";
+			this.invited_user = to_username;
+			this.showSelectGameModeDialogue = true;
+		},
+		gameModeSelected(game_mode: string) {
+			this.$emit('inviteToGame', this.invited_user, game_mode);
+			this.showSelectGameModeDialogue = false;
+			this.boxType = "";
 		},
 		async enterNewPassword() {
 			this.boxType = "setPassword";
@@ -139,6 +152,7 @@ export default defineComponent({
 		},
 		removePassword() {
 			this.$emit('removePassword', this.channel_id)
+			this.getChannelDetails();
 		},
 		hidePasswordDialogue() {
 			this.showPasswordDialogue = false;
@@ -154,7 +168,32 @@ export default defineComponent({
 				}
 			}
 			return false;
-		}
+		},
+		banUser(participant_id: number) {
+			this.$emit('banUser', this.channel_id, participant_id);
+			this.getChannelParticipants();
+		},
+		unbanUser(participant_id: number) {
+			this.$emit('unbanUser', this.channel_id, participant_id);
+			this.getChannelParticipants();
+		},
+		muteUser(participant_id: number) {
+			this.$emit('muteUser', this.channel_id, participant_id);
+			this.getChannelParticipants();
+		},
+		unmuteUser(participant_id: number) {
+			this.$emit('unmuteUser', this.channel_id, participant_id);
+			this.getChannelParticipants();
+		},
+		makeUserAdmin(participant_id: number) {
+			this.$emit('makeUserAdmin', this.channel_id, participant_id);
+			this.getChannelParticipants();
+		},
+		removeUserAdmin(participant_id: number) {
+			this.$emit('removeUserAdmin', this.channel_id, participant_id);
+			this.getChannelParticipants();
+		},
+
 	},
 	async mounted() {
 		let loggedInStatus = await loginStatusStore().logIn();
@@ -165,7 +204,7 @@ export default defineComponent({
 			.catch(err => console.log(err));
 		}
 	},
-	emits: ['banUser', 'unbanUser', 'muteUser', 'unmuteUser', 'makeUserAdmin', 'removeUserAdmin', 'setPassword', 'removePassword']
+	emits: ['banUser', 'unbanUser', 'muteUser', 'unmuteUser', 'makeUserAdmin', 'removeUserAdmin', 'setPassword', 'removePassword', 'inviteToGame']
 		
 })
 </script>
@@ -233,6 +272,7 @@ a:hover {
 	flex-wrap: wrap;
 	font-size: medium;
 	font-weight: bold;
+	flex-direction: row;
 	justify-content: space-between;
 	margin: 5px;
 	max-width: 620px;
@@ -240,7 +280,7 @@ a:hover {
 }
 
 .role {
-	width:200px;
+	width:100px;
 	height: 15px;
 	margin-bottom:20px;
 	/* padding-left:10px; */
@@ -251,7 +291,7 @@ a:hover {
 	display:flex;
 	margin-top:-15px;
 	flex-wrap: wrap;
-
+	min-width: 400px;
 }
 
 .column {

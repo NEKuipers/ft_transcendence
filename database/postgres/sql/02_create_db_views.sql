@@ -226,6 +226,7 @@ SELECT
 	summary.username	                        AS username,
 	summary.avatar_id	                        AS avatar_id,
 	summary.is_logged_in						AS is_logged_in,
+	summary.status								AS status,
 	summary.games_won	                        AS games_won,
 	summary.games_lost	                        AS games_lost,
 	DENSE_RANK() OVER (ORDER BY games_won DESC, games_lost ASC, username ASC) AS ranking
@@ -257,6 +258,7 @@ SELECT
 	u.username	AS username,
 	u.avatar_id	AS avatar_id,
 	u.is_logged_in AS is_logged_in,
+	u.status	AS status,
     SUM
     (
       CASE
@@ -315,7 +317,7 @@ SELECT
     u.username          AS participant_username,
 	p.is_joined			AS participant_is_joined,
     p.is_admin          AS participant_is_admin,
-    p.is_muted          AS participant_is_muted,
+    p.muted_until       AS participant_muted_until,
     p.is_banned         AS participant_is_banned
 FROM channels c
     INNER JOIN participants p

@@ -1,4 +1,5 @@
 <template>
+	<div>
 	User overview
 	<div v-if="profile" class="userprofile">
 		<img class="profilePicture" v-bind:src="'/api/avatars/' + profile.avatar_id">
@@ -17,7 +18,9 @@
 			<h4>Overall ranking:  #{{profile.ranking}}</h4>
 		</section>
 		<br>
-		<SmallButton class="invite-btn" text="Invite to game" @click="inviteToGame"/>
+		<SmallButton class="invite-btn" text="Invite to game" @click="gameInvite"/>
+		<DialogueBox id="selectGameModeDialogueBox" :type="boxType" :show="showSelectGameModeDialogue" @game-mode-selected="gameModeSelected"/>
+	</div>
 	</div>
 </template>
 
@@ -35,14 +38,15 @@ export default defineComponent({
 	data () {
 		return {
 			loginStatusStore: loginStatusStore(),
-			showDialogue: false,
-			boxType: "",
+			showSelectGameModeDialogue: false,
+			boxType: "selectGameMode",
 			isFriend: -1,
 			profile: null as null | any,
 		}
 	},
 	components: {
 		SmallButton,
+		DialogueBox,
 	},
 	watch: {
         user: {	// Once the user propery has changed
@@ -55,9 +59,6 @@ export default defineComponent({
 		},
 	},
 	methods: {
-		hideDialogue() {
-			this.showDialogue = false;
-		},
 		goToMyProfile() {
 			this.$router.push('/myprofile');
 		},
@@ -75,10 +76,15 @@ export default defineComponent({
 				.then(data => this.profile = data[0]) 
 				.catch(err => console.log('Error in updateProfileData: ' + err));
 		},
-		inviteToGame() {
-			console.log('invite to game');
-		}
-	}
+		gameInvite() {
+			this.showSelectGameModeDialogue = true;
+		},
+		gameModeSelected(game_mode: string) {
+			this.$emit('inviteToGame', this.profile.username, game_mode);
+			this.showSelectGameModeDialogue = false;
+		},
+	},
+	emits: ['inviteToGame']
 });
 </script>
 

@@ -9,9 +9,6 @@
 				</div>
 				<div class="channels">
 					<OtherChatChannels v-if="loginStatusStore" :key="leaveChannelKey" @joinChannel="joinChannel" :user="loginStatusStore.loggedInStatus?.userID"/>
-					<!-- <dialogueBox id="promptPassword" :type="boxType" 
-						:show="showDialogue" @close-dialogue="hideDialogue" 
-						@passwordEntered="verifyPassword" /> -->
 				</div>
 				<div id="friends">
 					<ChatFriendsList v-if="loginStatusStore" :user="loginStatusStore.loggedInStatus?.userID" @openDM="openDM"/>
@@ -19,17 +16,17 @@
 			</div>
 			<div class="column" id="center_column">
 				<div>
-					<ChatBox :user="loginStatusStore.loggedInStatus?.userID" :allUsers="allUsers"
-						:channel_id="currentChannel" :dm="dmID" :messages="channels[currentChannel]?.messages" :isMuted="channels[currentChannel]?.muted" @sentMsg="sendMsg"/>
+					<ChatBox ref="chatBoxRef" :user="loginStatusStore.loggedInStatus?.userID" :allUsers="allUsers"
+						:channel_id="currentChannel" :dm="dmID" :messages="channels[currentChannel]?.messages" :mutedUntil="channels[currentChannel]?.muted" @sentMsg="sendMsg"/>
 				</div>
 			</div>
 			<div class="column" id="channel-overview">
 				<div v-if="dmID > 0">
-					<DMUserCard :user="dmID"></DMUserCard>
+					<DMUserCard :user="dmID" @inviteToGame="inviteToGame"></DMUserCard>
 				</div>
 				<div v-else>
 				<div id="channel-overview-header">Channel overview</div>
-					<ChannelOverview :channel_id="currentChannel" :dm="dmID" @banUser="banUser" @unbanUser="unbanUser" @muteUser="muteUser" @unmuteUser="unmuteUser" @makeUserAdmin="makeUserAdmin" @removeUserAdmin="removeUserAdmin" @setPassword="setPassword" @removePassword="removePassword"/>
+					<ChannelOverview ref="channelOverviewRef" :channel_id="currentChannel" :dm="dmID" @banUser="banUser" @unbanUser="unbanUser" @muteUser="muteUser" @unmuteUser="unmuteUser" @makeUserAdmin="makeUserAdmin" @removeUserAdmin="removeUserAdmin" @setPassword="setPassword" @removePassword="removePassword" @inviteToGame="inviteToGame"/>
 				</div>
 			</div>
 		</div>
@@ -76,14 +73,14 @@ export default defineComponent({
 			this.currentChannel = channel_id
 			this.dmID = -1;
 		},
-		async openDM (user_id_1: number, user_id_2: number) {
+		async openDM(user_id_1: number, user_id_2: number) {
 			this.dmID = user_id_2;
 
 			// Try to find the already existing dm channel
 			let expected_name = `dm-${Math.min(user_id_1, user_id_2)}-${Math.max(user_id_1, user_id_2)}`;
 			for (let id in this.channels) {
 				let data = this.channels[id];
-
+				
 				if (data.type == "direct" && data.name == expected_name) {
 					this.currentChannel = data.id;
 					return;
@@ -144,7 +141,6 @@ export default defineComponent({
 			// TODO: This should be done!
 		},
 		sendMsg(channel_id: number, msg: string) {
-			// console.log("Working?", channel_id, msg)
 			this.chatHandler.send_message(channel_id, msg)
 		},
 		createChannel(name: string, newpassword: string | undefined | null) {
@@ -160,9 +156,6 @@ export default defineComponent({
 		muteUser(channel_id: number, user_id: number) {
 			this.chatHandler.mute_user(channel_id, user_id);
 		},
-		unMuteTrigger(channel_id: number, isMuted: string) {
-			this.channels[channel_id].muted = isMuted > Date.now().toString();
-		},
 		unmuteUser(channel_id: number, user_id: number) {
 			this.chatHandler.unmute_user(channel_id, user_id);	
 		},
@@ -172,31 +165,27 @@ export default defineComponent({
 		removeUserAdmin(channel_id: number, user_id: number) {
 			this.chatHandler.remove_user_admin(channel_id, user_id);	
 		},
-		setPassword(newPassword: string, channel_id: number) {
-			//TODO Jasper: added channel_id, needs to be passed on to handler
-			console.log('Chosen password for channel '+ channel_id+': ', newPassword);
+		async setPassword(newPassword: string, channel_id: number) {
+			await this.chatHandler.set_password(newPassword, channel_id);
+			(this.$refs.channelOverviewRef as any).getChannelDetails();
 		},
 		removePassword(channel_id: number) {
-			//TODO Jasper: pass on to handler
-			console.log('Remove password in channel ' + channel_id);
+			this.chatHandler.remove_password(channel_id);
 		},
-		muteStatus(channel_id: number, isMuted: string) {
-			if (isMuted > Date.now().toString()) {
-				console.log(`I am muted in channel ${channel_id}`);
+		muteStatus(channel_id: number, mutedUntil: Date) {
+			console.log("mutedUntil: ", mutedUntil, new Date());
+			if (mutedUntil > new Date()) {
+				console.log(`I am muted in channel ${channel_id} until ${mutedUntil}`);
 			} else {
 				console.log(`I am not muted in channel ${channel_id}`);
 			}
-			this.channels[channel_id].muted = isMuted > Date.now().toString();
-			const myTimeout = setTimeout(() => this.unMuteTrigger(channel_id, isMuted), 300000);
+			this.channels[channel_id].muted = mutedUntil;
 		},
 		adminStatus(channel_id: number, isAdmin: boolean) {
-			if (isAdmin) {
-				console.log(`I am admin in channel ${channel_id}`);
-			} else {
-				console.log(`I am not admin in channel ${channel_id}`);
-			}
-			
 			this.channels[channel_id].admin = isAdmin;
+		},
+		inviteToGame(to_username: string, game_mode: string) {
+			(this.$refs.chatBoxRef as any).sendGameInvite(to_username, game_mode);
 		},
 	},
 	async mounted() {

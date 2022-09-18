@@ -87,7 +87,6 @@ export default defineComponent({
             }
         },
 		onFileSelected(event: any) {
-            // this.selectedFile = this.$refs.avatar.files[0]
             this.selectedFile = event.target.files[0]
         },
 		async onUpload() {

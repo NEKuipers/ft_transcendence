@@ -3,22 +3,27 @@
         <div v-if="type === 'namechange'">
             <form @submit="onSubmit">
             <h2> My brethren, what new username would you like? </h2>
+            <br><br>
             <input type="text" v-model="text" name="text" placeholder="Saul Goodman" />
-            <br>
+            <br><br>
             <input type="submit" value="Save Change" />
             <button @click="onClick" type="button" class="close"> X </button>
             </form>
         </div>
         <div v-else-if="type === 'avatar'">
-            <form @submit.prevent="onUpload">
-            <label for="file">Upload a new Profile Picture</label>
-            <input 
-            type="file" 
-            ref="file" 
-            @change="onFileSelected">
-            <button>Upload</button>
-            <button @click="onClick" type="button" class="close"> X </button>
-            </form>
+			<div class="selectAvatarDialogue">
+				<form @submit.prevent="onUpload">
+				<label for="file">Upload a new Profile Picture</label>
+				<br><br>
+				<input 
+				type="file" 
+				ref="file" 
+				@change="onFileSelected">
+				<br><br>
+				<button>Upload</button>
+				<button @click="onClick" type="button" class="close"> X </button>
+				</form>
+			</div>
         </div>
 		<div v-else-if="type === 'createChannel'">
             <form @submit="onSubmit">
@@ -49,6 +54,14 @@
 			<input type="submit" value="Save Change" />
 			<button @click="onClick" type="button" class="close"> X </button>
             </form>
+		</div>
+		<div v-else-if="type === 'selectGameMode'">
+            <h4> Select a game mode </h4>
+			<button @click="onGameModeSelected('classic')" class="gamemodebutton" type="button"> Classic </button>
+			<button @click="onGameModeSelected('speedup')" class="gamemodebutton" type="button"> Speedup </button>
+			<br><br>
+			<button @click="onGameModeSelected('rush')" class="gamemodebutton" type="button"> Rush </button>
+			<button @click="onGameModeSelected('expert')" class="gamemodebutton" type="button"> Expert </button>
 		</div>
     </div>
 </template>
@@ -83,8 +96,10 @@ export default defineComponent({
         onClick() {
             this.$emit('close-dialogue')
         },
+		onGameModeSelected(game_mode: string) {
+			this.$emit('game-mode-selected', game_mode);
+		},
         onFileSelected(event: any) {
-            // this.selectedFile = this.$refs.avatar.files[0]
             this.selectedFile = event.target.files[0]
         },
         async onPasswordEntered(e: any) {
@@ -92,7 +107,6 @@ export default defineComponent({
             if (!this.password)
                 alert('Enter a password, numpty')
             else {
-                console.log("Before the request password is:", this.password)
                 let verified = false;
 				await fetch('/api/channels/verify_password_for_' + this.channel_id, {
                     method: 'POST',
@@ -103,7 +117,6 @@ export default defineComponent({
                 })
 				.then(res => res.json())
 				.then(data => verified = data);
-                console.log("has it been verified?", verified);
                 this.$emit('password-entered', verified, this.password);
                 this.password = ""
             }
@@ -125,14 +138,11 @@ export default defineComponent({
                 })
                 .then(res => { return res.json() })
                 .catch(err => { console.log(err); return err })
-
-                // If successful, then emit that userProfile has to patch avatar_id for user
-                // console.log('New avatar_id is', newAvatarId.avatar_id)
                 this.$emit('new-avatar', newAvatarId.avatar_id)
             }
         }
     },
-    emits: ['close-dialogue', 'new-name', 'new-avatar', 'password-entered']
+    emits: ['close-dialogue', 'new-name', 'new-avatar', 'password-entered', 'game-mode-selected']
 })
 </script>
 
@@ -159,6 +169,15 @@ export default defineComponent({
 
 .small {
 	font-size: small;
+}
+
+.gamemodebutton {
+	font-size: 20pt;
+	margin: 10px;
+}
+
+.selectAvatarDialogue {
+	margin-top: 100px;
 }
 
 

@@ -13,12 +13,10 @@ export class IntraAuthGuard extends AuthGuard('42') {
     }
 }
 
-
 @Injectable()
 export class AuthenticatedGuard implements CanActivate {
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const req = context.switchToHttp().getRequest()
-        // console.log("authenticated:", req.isAuthenticated())
         return req.isAuthenticated()
     }
 }

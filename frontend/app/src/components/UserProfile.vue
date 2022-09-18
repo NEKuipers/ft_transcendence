@@ -5,9 +5,10 @@
 		<section class="names">
 			<h1 class="username"><a v-bind:href="'/profile/' + profile.user_id">{{profile.username}}</a></h1>
 			<div v-if="hasBlockedYou==false">
-				<div v-if="profile.is_logged_in == true">
+				<div v-if="profile.status == 'online'">
 					<h5 class="online">Online</h5>
 				</div>
+				<h5 v-else-if="profile.status == 'ingame'">Ingame</h5>
 				<h5 v-else>Offline</h5>
 			</div>
 		</section>

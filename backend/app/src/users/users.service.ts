@@ -44,6 +44,14 @@ export class UsersService {
 		return this.findOneByName(CreateUserDto.username)
 	}
 
+	async setOnline(id: number) {
+		await axios.patch(`http://localhost:${process.env.PGREST_PORT}/users?id=eq.${id}`, {status: 'online'});
+	}
+
+	async setOffline(id: number) {
+		await axios.patch(`http://localhost:${process.env.PGREST_PORT}/users?id=eq.${id}`, {status: 'offline'});
+	}
+
 	async changeUsername(id: number, newUsername: string) : Promise<string> {
 		if (newUsername.length > 14) {
 			return "too-long";
