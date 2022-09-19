@@ -8,7 +8,7 @@
 			</div>
 		</div>
 		<div class="listed-participant" v-for="participant in channelParticipants" :key="participant">
-			<div id="participantdiv">
+			<div v-if="participant.participant_is_joined" id="participantdiv">
 				<div id="nameAndRoles">
 					<a class="participantName" v-bind:href="'/profile/' + participant.participant_id">{{participant.participant_username}}</a>
 					<div class="roles">
