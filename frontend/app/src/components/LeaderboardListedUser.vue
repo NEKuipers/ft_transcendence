@@ -10,7 +10,6 @@
 		<img class="medal" v-else-if="profile?.ranking===2" height="65" width="55" src="../assets/silver.png">
 		<img class="medal" v-else-if="profile?.ranking===3" height="65" width="55" src="../assets/bronze.png">
 		<img class="medal" v-else height="65" width="55" src="../assets/none.png">
-
 	</div>
 
 </template>
@@ -44,7 +43,6 @@ export default defineComponent({
 	background-color: #f3f3f3;
 	display: flex;
 	flex-direction: row;
-	/* justify-content: space-between;  */
 	align-items: center;
 	justify-content: center;
 }
