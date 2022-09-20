@@ -1,6 +1,15 @@
-FROM node:lts-alpine
+FROM node:16-slim
+
+COPY app /app
+
 WORKDIR /app
-RUN chown -R node:node /root
-COPY ./entrypoint.sh /
+
+# installation
+RUN npm install
+
 EXPOSE 8080
-ENTRYPOINT [ "/bin/sh", "/entrypoint.sh" ]
+
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT [ "/bin/bash", "/entrypoint.sh" ]

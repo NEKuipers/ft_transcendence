@@ -1,7 +1,16 @@
+FROM node:16-slim
 
-FROM node:lts-alpine
+COPY app /app
+
 WORKDIR /app
-RUN npm i -g @nestjs/cli 
-COPY ./entrypoint.sh /
+
+# # installation
+# RUN npm install --legacy-peer-deps \
+#     && npm run prebuild
+
 EXPOSE 3030
-ENTRYPOINT [ "/bin/sh", "/entrypoint.sh" ]
+
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT [ "/bin/bash", "/entrypoint.sh" ]

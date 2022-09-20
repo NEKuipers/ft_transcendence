@@ -6,27 +6,27 @@ import axios from 'axios';
 @Injectable()
 export class UsersService {
 	async findAll(): Promise<User[]> {
-		let res = await axios.get(`http://localhost:${process.env.PGREST_PORT}/users`);
+		let res = await axios.get(`http://${process.env.PGREST_HOST}:${process.env.PGREST_PORT}/users`);
 		return res.data;
 	}
 
 	async findOne(id: number): Promise<User | undefined> {
-		let res = await axios.get(`http://localhost:${process.env.PGREST_PORT}/users?id=eq.${id}`)
+		let res = await axios.get(`http://${process.env.PGREST_HOST}:${process.env.PGREST_PORT}/users?id=eq.${id}`)
 		return res.data[0];
 	}
 
 	async findOneIntra(intra_id: number): Promise<User | undefined> {
-		let res = await axios.get(`http://localhost:${process.env.PGREST_PORT}/users?intra_id=eq.${intra_id}`)
+		let res = await axios.get(`http://${process.env.PGREST_HOST}:${process.env.PGREST_PORT}/users?intra_id=eq.${intra_id}`)
 		return res.data[0];
 	}
 
 	async findOneByName(userName: string): Promise<User | undefined> {
-		let res = await axios.get(`http://localhost:${process.env.PGREST_PORT}/users?username=eq.${userName}`)
+		let res = await axios.get(`http://${process.env.PGREST_HOST}:${process.env.PGREST_PORT}/users?username=eq.${userName}`)
 		return res.data[0];
 	}
 
 	async createUser(CreateUserDto: CreateUserDto): Promise<User | undefined> {
-		await axios.post(`http://localhost:${process.env.PGREST_PORT}/users`, {
+		await axios.post(`http://${process.env.PGREST_HOST}:${process.env.PGREST_PORT}/users`, {
 			username: CreateUserDto.username,
 			status: CreateUserDto.status,
 			avatar_id: CreateUserDto.avatar_id,
@@ -45,11 +45,11 @@ export class UsersService {
 	}
 
 	async setOnline(id: number) {
-		await axios.patch(`http://localhost:${process.env.PGREST_PORT}/users?id=eq.${id}`, {status: 'online'});
+		await axios.patch(`http://${process.env.PGREST_HOST}:${process.env.PGREST_PORT}/users?id=eq.${id}`, {status: 'online'});
 	}
 
 	async setOffline(id: number) {
-		await axios.patch(`http://localhost:${process.env.PGREST_PORT}/users?id=eq.${id}`, {status: 'offline'});
+		await axios.patch(`http://${process.env.PGREST_HOST}:${process.env.PGREST_PORT}/users?id=eq.${id}`, {status: 'offline'});
 	}
 
 	async changeUsername(id: number, newUsername: string) : Promise<string> {
@@ -62,13 +62,13 @@ export class UsersService {
 			return "taken";
 		}
 
-		await axios.patch(`http://localhost:${process.env.PGREST_PORT}/users?id=eq.${id}`, {
+		await axios.patch(`http://${process.env.PGREST_HOST}:${process.env.PGREST_PORT}/users?id=eq.${id}`, {
 			username: newUsername})
 		return "success";
 	}
 
 	async changeAvatar(id: number, newavatar: number) {
-		await axios.patch(`http://localhost:${process.env.PGREST_PORT}/users?id=eq.${id}`, {
+		await axios.patch(`http://${process.env.PGREST_HOST}:${process.env.PGREST_PORT}/users?id=eq.${id}`, {
 			avatar_id: newavatar})
 		return "success";
 	}

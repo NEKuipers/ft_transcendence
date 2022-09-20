@@ -6,7 +6,7 @@ module.exports = defineConfig({
 		allowedHosts: "all",
     	proxy: {
         	'^/api': {
-				target: `http://localhost:3030`,
+				target: `http://${process.env.BACKEND_HOST}:${process.env.NESTJS_PORT}`,
 				changeOrigin: true,
 				logLevel: 'debug',
 				pathRewrite: { '^/api': '/'},

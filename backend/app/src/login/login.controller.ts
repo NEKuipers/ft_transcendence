@@ -31,7 +31,7 @@ export class LoginController {
 		if (await this.twoFactorAuthService.is_tfa_setup(req.user.id, session)) {
 			res.redirect(`${process.env.HOST_URL}/tfa`)	// Ya gotta login here too!
 		} else {
-			await axios.patch(`http://localhost:${process.env.PGREST_PORT}/users?id=eq.${req.user.id}`, {is_logged_in: true, status: 'online'});
+			await axios.patch(`http://${process.env.PGREST_HOST}:${process.env.PGREST_PORT}/users?id=eq.${req.user.id}`, {is_logged_in: true, status: 'online'});
 			if (req.user.firstLogin) {
 				res.redirect(`${process.env.HOST_URL}/setup-account`)
 			} else {
@@ -43,7 +43,7 @@ export class LoginController {
 	@Get('/logout')
 	@UseGuards(AuthenticatedGuard)
 	async logout(@Req() req: any, @Session() session: any): Promise<string> {
-		await axios.patch(`http://localhost:${process.env.PGREST_PORT}/users?id=eq.${req.user.id}`, {is_logged_in: false, status: 'offline'});
+		await axios.patch(`http://${process.env.PGREST_HOST}:${process.env.PGREST_PORT}/users?id=eq.${req.user.id}`, {is_logged_in: false, status: 'offline'});
 		return new Promise((resolve, reject) => {
 			this.twoFactorAuthService.logout(session);
 

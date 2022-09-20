@@ -15,7 +15,7 @@ export class TwoFactorAuthService {
 		//	Get secret from database, if it exists, return [true, token]
 		//	Otherwise get it from the session, if it does not exist generate a new one and return [false, token]
 
-		let ret = await axios.get(`http://localhost:${process.env.PGREST_PORT}/two_factor_auth?user_id=eq.${userId}`)
+		let ret = await axios.get(`http://${process.env.PGREST_HOST}:${process.env.PGREST_PORT}/two_factor_auth?user_id=eq.${userId}`)
 
 		let seed = ret.data[0]?.seed;
 		if (seed) {
@@ -36,7 +36,7 @@ export class TwoFactorAuthService {
 			return session.tfa_setup;
 		}
 
-		let ret = await axios.get(`http://localhost:${process.env.PGREST_PORT}/two_factor_auth?user_id=eq.${userId}`);
+		let ret = await axios.get(`http://${process.env.PGREST_HOST}:${process.env.PGREST_PORT}/two_factor_auth?user_id=eq.${userId}`);
 		let is_setup = ret.data[0] !== undefined;
 
 		session.tfa_setup = is_setup;
@@ -50,7 +50,7 @@ export class TwoFactorAuthService {
 			throw new HttpException("2FA is already setup!", 403);
 		}
 
-		let ret = await axios.get(`http://localhost:${process.env.PGREST_PORT}/users?id=eq.${userId}`);
+		let ret = await axios.get(`http://${process.env.PGREST_HOST}:${process.env.PGREST_PORT}/users?id=eq.${userId}`);
 		let username = ret.data[0]?.username;
 
 		if (username === undefined) {
@@ -78,7 +78,7 @@ export class TwoFactorAuthService {
 			// This is the first login, upload this secret to the database
 			//console.log("First login complete!");
 
-			axios.post(`http://localhost:${process.env.PGREST_PORT}/two_factor_auth`, {"user_id": userId, "seed": secret[1]})
+			axios.post(`http://${process.env.PGREST_HOST}:${process.env.PGREST_PORT}/two_factor_auth`, {"user_id": userId, "seed": secret[1]})
 				.then((response) => {
 					if (response.status != HttpStatus.CREATED) {
 						console.log(`Got statusCode: ${response.status} (${response.statusText}): ${JSON.stringify(response.headers, null, 4)}`);
