@@ -5,12 +5,10 @@
 			<h3>Friend requests failed to load</h3>			
 		</div>
 		<div v-else-if="friendRequests.length">
-		<!-- Need to figure out how to filter only friends of logged in user! -->
 			<div v-for="request in friendRequests" :key="request?.id">
-				<section  v-if="request.status='send'" class="listed-friend">
+				<section v-if="request.status='send'" class="listed-friend">
 					<SmallButton class="requestbutton" text="Accept" @click="acceptRequest(request.from_user_id)"/>
 					<SmallButton class="requestbutton" text="Decline" @click="declineRequest(request.from_user_id)"/>
-					<!-- TODO THIS BUTTON STORE THING DOESNT WORK -->
 					<a class="friend" v-bind:href="'/profile/' + request.from_user_id">{{request.from_username}}</a>
 				</section>
 			</div>
@@ -60,6 +58,7 @@ export default defineComponent({
 	},
 	methods: {
 		async acceptRequest(from_user_id: number) {
+			this.friendRequests = null;
 			const requestOptions = {
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },
@@ -73,6 +72,7 @@ export default defineComponent({
 				.catch(err => console.log(err));
 		},
 		async declineRequest(from_user_id: number) {
+			this.friendRequests = null;
 			const requestOptions = {
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },

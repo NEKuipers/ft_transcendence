@@ -47,8 +47,8 @@
 			<div v-else>
 				<div v-if="isFriend == 2"><h4 id="friendstatus">Friend</h4></div>
 				<div v-else-if="isFriend == 0"><SmallButton class="user-btn" color="42b983" id="request-sent-btn" text="Request sent"></SmallButton></div>
-				<div v-else><SmallButton class="user-btn" text="Add Friend" @click="addFriend"></SmallButton></div>
-				<SmallButton class="user-btn" text="Block User" @click="blockUser"></SmallButton>
+				<div v-else-if="showButtons==true"><SmallButton class="user-btn" text="Add Friend" @click="addFriend"></SmallButton></div>
+				<SmallButton v-if="showButtons==true" class="user-btn" text="Block User" @click="blockUser"></SmallButton>
 			</div>
 		</div>
 	</div>
@@ -76,6 +76,7 @@ export default defineComponent({
 			youHaveBlocked: false,
 			isFriend: -1,
 			profile: null as null | any,
+			showButtons: true,
 		}
 	},
 	components: {
@@ -153,15 +154,19 @@ export default defineComponent({
 			this.hideDialogue()
 		},
 		async addFriend() {
+			this.showButtons = false;
 			const requestOptions = {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({id: this.user})};
-			fetch('/api/friends', requestOptions)
+			await fetch('/api/friends', requestOptions)
 				.then(res => this.updateIsFriend(this.loginStatusStore.loggedInStatus?.userID as number, this.user as number))
 				.catch(err => console.log(err));
+			this.showButtons = true;
+
 		},
 		async blockUser() {
+			this.showButtons = false;
 			const your_id = this.loginStatusStore.loggedInStatus?.userID;
 			const other_id = this.user;
 			console.log(`blockcheck by_id ${your_id} other_id${other_id}`)
@@ -170,9 +175,11 @@ export default defineComponent({
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({other_id: other_id}) 
 			};
-			fetch('/api/blocked_users', requestOptions)
+			await fetch('/api/blocked_users', requestOptions)
 				.then(response => this.updateBlockedByYou(your_id as number, other_id as number))
 				.catch(err => console.log(err));
+			this.showButtons = true;
+
 		},
 		
 		async unblockUser() {
