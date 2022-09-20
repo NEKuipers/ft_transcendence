@@ -4,9 +4,6 @@ COPY app /app
 
 WORKDIR /app
 
-# installation
-RUN npm install
-
 EXPOSE 8080
 
 COPY entrypoint.sh /entrypoint.sh
