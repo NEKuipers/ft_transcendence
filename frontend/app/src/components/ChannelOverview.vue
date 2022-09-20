@@ -8,7 +8,7 @@
 			</div>
 		</div>
 		<div class="listed-participant" v-for="participant in channelParticipants" :key="participant">
-			<div id="participantdiv">
+			<div v-if="participant.participant_is_joined" id="participantdiv">
 				<div id="nameAndRoles">
 					<a class="participantName" v-bind:href="'/profile/' + participant.participant_id">{{participant.participant_username}}</a>
 					<div class="roles">
@@ -97,6 +97,7 @@ export default defineComponent({
 			showSelectGameModeDialogue: false,
 			usersWhoHaveBlockedYou: new Array<any>(),
 			invited_user: "",
+			interval: 0
         }
     },
     watch: {
@@ -124,7 +125,7 @@ export default defineComponent({
 				this.channelParticipants = data;
 				for (let i = 0; i < data.length; i++) {
 					if (data[i].participant_id == this.loginStatusStore.loggedInStatus?.userID) {
-						if (data[i].is_admin){
+						if (data[i].participant_is_admin) {
 							this.userIsAdmin = true;
 						}
 					}
@@ -212,6 +213,12 @@ export default defineComponent({
 			.then(data => this.usersWhoHaveBlockedYou = data)
 			.catch(err => console.log(err));
 		}
+		this.interval = setInterval(() => {
+			this.getChannelParticipants();
+		}, 2000)
+	},
+	unmounted() {
+		clearInterval(this.interval)
 	},
 	emits: ['banUser', 'unbanUser', 'muteUser', 'unmuteUser', 'makeUserAdmin', 'removeUserAdmin', 'setPassword', 'removePassword', 'inviteToGame']
 		
