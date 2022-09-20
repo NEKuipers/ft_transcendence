@@ -4,9 +4,9 @@ COPY app /app
 
 WORKDIR /app
 
-# installation
-RUN npm install --legacy-peer-deps \
-    && npm run prebuild
+# # installation
+# RUN npm install --legacy-peer-deps \
+#     && npm run prebuild
 
 EXPOSE 3030
 
