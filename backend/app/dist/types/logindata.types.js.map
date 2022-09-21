@@ -1,1 +1,0 @@
-{"version":3,"file":"logindata.types.js","sourceRoot":"","sources":["../../src/types/logindata.types.ts"],"names":[],"mappings":";;;AAAA,MAAa,SAAS;IAKrB,YAAY,MAAc,EAAE,QAAgB,EAAE,UAAmB;QAChE,IAAI,CAAC,MAAM,GAAG,MAAM,CAAC;QACrB,IAAI,CAAC,QAAQ,GAAG,QAAQ,CAAC;QACzB,IAAI,CAAC,UAAU,GAAG,UAAU,CAAC;IAC9B,CAAC;CACD;AAVD,8BAUC"}
