@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Channel } from './channels.interface';
 import axios from 'axios';
-import * as bcrypt from 'bcryptjs'
 
 
 @Injectable()
