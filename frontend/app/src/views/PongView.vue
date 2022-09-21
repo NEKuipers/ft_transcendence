@@ -282,7 +282,7 @@ export default defineComponent({
 				this.clear_canvas();
 				this.draw_center_text("Disconnected", 100)
 
-				console.error("Disconnect reason:", reason, description)
+				console.log("Disconnect reason:", reason, description)
 
 				// The socketIO server has purposefully disconnected us, lets not retry
 				if (reason == "io server disconnect") {

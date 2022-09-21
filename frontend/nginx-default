@@ -1,0 +1,23 @@
+upstream backend {
+        server backend:3030;
+}
+server {
+
+    listen 8080;
+    listen [::]:8080;
+    server_name DOMAIN_NAME www.DOMAIN_NAME;
+
+    root /app/dist;
+    autoindex on;
+    index index.html;
+
+    location / {
+            try_files $uri $uri/ /index.html =404;
+    }
+
+    location ~* /api/(.*) {
+        #rewrite ^/api/(.*)\.?.*$ http://localhost:3030/$1;
+        # return 302;
+        proxy_pass http://backend/$1;
+    }
+}

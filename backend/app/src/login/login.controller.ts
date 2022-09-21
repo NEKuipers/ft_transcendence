@@ -18,7 +18,7 @@ export class LoginController {
     @Get()
     @UseGuards(IntraAuthGuard)
     OAuthRequest(): any {
-		
+		console.log('GET ON LOGIN')
         return 'Ye';
     }
 
@@ -28,6 +28,7 @@ export class LoginController {
     @Get('callback')
     @UseGuards(IntraAuthGuard)
     async callback(@Req() req: any, @Session() session: any, @Res() res: Response) {
+		console.log('GET ON CALLBACK')
 		if (await this.twoFactorAuthService.is_tfa_setup(req.user.id, session)) {
 			res.redirect(`${process.env.HOST_URL}/tfa`)	// Ya gotta login here too!
 		} else {

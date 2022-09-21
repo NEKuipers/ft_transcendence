@@ -26,9 +26,11 @@ let LoginController = class LoginController {
         this.usersService = usersService;
     }
     OAuthRequest() {
+        console.log('GET ON LOGIN');
         return 'Ye';
     }
     async callback(req, session, res) {
+        console.log('GET ON CALLBACK');
         if (await this.twoFactorAuthService.is_tfa_setup(req.user.id, session)) {
             res.redirect(`${process.env.HOST_URL}/tfa`);
         }

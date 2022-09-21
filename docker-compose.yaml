@@ -16,8 +16,6 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - backend
-    volumes:
-      - ./frontend/app:/app
     ports:
       - 8080:8080
     restart: on-failure
